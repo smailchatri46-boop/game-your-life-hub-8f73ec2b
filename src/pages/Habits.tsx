@@ -85,7 +85,6 @@ const generateChartData = (habits: Habit[], daysInMonth: number, currentDay: num
 
 export default function Habits() {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [habits, setHabits] = useState<Habit[]>([]);
   
   const {
     monthName,
@@ -100,15 +99,35 @@ export default function Habits() {
   const daysInMonth = getDaysInMonth();
   const currentDay = getCurrentDay();
 
-  // Initialize habits with completions for the current month
-  const displayHabits = useMemo<Habit[]>(() => {
-    const templateHabits = habitTemplates.map(template => ({
+  // Initialize all habits with completions - stored in state for interactivity
+  const [allHabits, setAllHabits] = useState<Habit[]>(() => {
+    return habitTemplates.map(template => ({
       ...template,
       completions: generateCompletions(year, month, currentDay, template.target),
     }));
-    return [...templateHabits, ...habits];
-  }, [year, month, currentDay, habits]);
+  });
 
+  // Regenerate completions when month changes
+  const displayHabits = useMemo<Habit[]>(() => {
+    // Update template habits with current month's data if needed
+    return allHabits.map(habit => {
+      // Check if this habit has data for the current month
+      const firstDayKey = `${year}-${String(month + 1).padStart(2, '0')}-01`;
+      if (habit.completions[firstDayKey] === undefined && habitTemplates.some(t => t.id === habit.id)) {
+        // Generate new completions for template habits in new month
+        return {
+          ...habit,
+          completions: {
+            ...habit.completions,
+            ...generateCompletions(year, month, currentDay, habit.target),
+          },
+        };
+      }
+      return habit;
+    });
+  }, [allHabits, year, month, currentDay]);
+
+  // Calculate chart data from actual habit completions
   const chartData = useMemo(() => {
     return generateChartData(displayHabits, daysInMonth, currentDay, year, month);
   }, [displayHabits, daysInMonth, currentDay, year, month]);
@@ -138,15 +157,45 @@ export default function Habits() {
       name: newHabit.name,
       icon: newHabit.icon,
       category: newHabit.category,
+      categoryColor: newHabit.categoryColor,
       target: newHabit.target,
       importance: newHabit.importance,
       completions: {},
     };
-    setHabits(prev => [...prev, habit]);
+    setAllHabits(prev => [...prev, habit]);
   };
 
   const handleDeleteHabit = (habitId: string) => {
-    setHabits(prev => prev.filter(h => h.id !== habitId));
+    setAllHabits(prev => prev.filter(h => h.id !== habitId));
+  };
+
+  // Toggle habit completion for a specific day
+  const toggleHabitCompletion = (habitId: string, day: number) => {
+    const dateKey = getDateKey(day);
+    
+    setAllHabits(prev => prev.map(habit => {
+      if (habit.id !== habitId) return habit;
+      
+      const currentValue = habit.completions[dateKey];
+      let newValue: boolean | number;
+      
+      if (habit.target === 1) {
+        // Boolean habit - toggle true/false
+        newValue = currentValue !== true;
+      } else {
+        // Numeric habit - cycle through values (0 -> 1 -> 2 -> ... -> target -> 0)
+        const current = typeof currentValue === 'number' ? currentValue : 0;
+        newValue = current >= habit.target ? 0 : current + 1;
+      }
+      
+      return {
+        ...habit,
+        completions: {
+          ...habit.completions,
+          [dateKey]: newValue,
+        },
+      };
+    }));
   };
 
   return (
@@ -242,6 +291,7 @@ export default function Habits() {
                       <td key={i} className="p-0.5 lg:p-1">
                         <button
                           disabled={isFuture}
+                          onClick={() => !isFuture && toggleHabitCompletion(habit.id, day)}
                           className={`w-5 h-5 lg:w-6 lg:h-6 xl:w-7 xl:h-7 mx-auto rounded-md flex items-center justify-center text-xs transition-all duration-200 ${
                             isFuture 
                               ? 'bg-muted/30 cursor-not-allowed'
@@ -253,8 +303,10 @@ export default function Habits() {
                           {!isFuture && habit.target === 1 && isCompleted && (
                             <Check className="w-3 h-3 lg:w-4 lg:h-4" />
                           )}
-                          {!isFuture && habit.target > 1 && typeof value === 'number' && (
-                            <span className="font-medium text-[10px] lg:text-xs">{value}</span>
+                          {!isFuture && habit.target > 1 && (
+                            <span className="font-medium text-[10px] lg:text-xs">
+                              {typeof value === 'number' ? value : 0}
+                            </span>
                           )}
                         </button>
                       </td>
