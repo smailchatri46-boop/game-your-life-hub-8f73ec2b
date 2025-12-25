@@ -103,22 +103,22 @@ export default function Habits() {
     <div className="min-h-screen gradient-bg">
       <Navbar />
       
-      <main className="pt-28 pb-12 px-4 max-w-7xl mx-auto">
-        <div className="flex items-center justify-between mb-8">
+      <main className="pt-28 pb-12 px-2 lg:px-4 max-w-[1600px] mx-auto">
+        <div className="flex items-center justify-between mb-6 px-2">
           <div>
-            <h1 className="font-display text-3xl font-semibold">Dashboard</h1>
-            <p className="text-muted-foreground mt-1">Track your habits</p>
+            <h1 className="font-display text-2xl lg:text-3xl font-semibold">Dashboard</h1>
+            <p className="text-muted-foreground mt-1 text-sm">Track your habits</p>
           </div>
           
           {/* Month Navigation */}
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-2 lg:gap-4">
             <button 
               onClick={goToPreviousMonth}
               className="p-2 rounded-full hover:bg-secondary transition-colors"
             >
               <ChevronLeft className="w-5 h-5 text-muted-foreground" />
             </button>
-            <h2 className="font-display text-lg min-w-[150px] text-center">
+            <h2 className="font-display text-base lg:text-lg min-w-[130px] lg:min-w-[150px] text-center">
               <span className="text-primary font-semibold">{monthName}</span>
               <span className="text-foreground ml-2">{year}</span>
             </h2>
@@ -129,44 +129,47 @@ export default function Habits() {
               <ChevronRight className="w-5 h-5 text-muted-foreground" />
             </button>
             
-            <Button variant="gradient" size="lg" className="ml-4">
+            <Button variant="gradient" size="lg" className="ml-2 lg:ml-4 hidden sm:flex">
               <Plus className="w-5 h-5 mr-2" />
               Add Habit
+            </Button>
+            <Button variant="gradient" size="icon" className="ml-2 sm:hidden">
+              <Plus className="w-5 h-5" />
             </Button>
           </div>
         </div>
         
-        {/* Habits Grid */}
-        <GlassCard className="p-3 mb-8">
-          <table className="w-full table-fixed">
+        {/* Habits Grid - responsive: scroll on mobile/tablet, fit on desktop */}
+        <GlassCard className="p-2 lg:p-4 mb-8 overflow-x-auto lg:overflow-x-visible">
+          <table className="w-full lg:table-fixed min-w-[900px] lg:min-w-0">
             <thead>
               <tr>
-                <th className="text-left p-1 w-32 min-w-[120px]">
-                  <span className="text-xs font-semibold text-foreground">Habit</span>
+                <th className="text-left p-1.5 lg:p-2 w-36 lg:w-44 min-w-[140px]">
+                  <span className="text-xs lg:text-sm font-semibold text-foreground">Habit</span>
                 </th>
                 {Array.from({ length: daysInMonth }, (_, i) => (
-                  <th key={i} className="p-0.5 text-center">
-                    <span className={`text-[10px] font-medium ${i + 1 === currentDay ? 'text-primary' : 'text-muted-foreground'}`}>
+                  <th key={i} className="p-0.5 lg:p-1 text-center min-w-[32px]">
+                    <span className={`text-xs lg:text-sm font-medium ${i + 1 === currentDay ? 'text-primary font-bold' : 'text-muted-foreground'}`}>
                       {i + 1}
                     </span>
                   </th>
                 ))}
-                <th className="p-1 w-12 text-right">
-                  <span className="text-xs font-semibold text-foreground">%</span>
+                <th className="p-1.5 lg:p-2 w-14 lg:w-16 text-right">
+                  <span className="text-xs lg:text-sm font-semibold text-foreground">%</span>
                 </th>
-                <th className="w-8"></th>
+                <th className="w-9 lg:w-10"></th>
               </tr>
             </thead>
             <tbody>
               {habits.map((habit) => (
                 <tr key={habit.id} className="border-t border-border/30">
-                  <td className="p-1">
-                    <div className="flex items-center gap-1.5">
-                      <GripVertical className="w-3 h-3 text-muted-foreground/50 cursor-grab flex-shrink-0" />
-                      <AppleEmoji emoji={habit.icon} size="md" />
+                  <td className="p-1.5 lg:p-2">
+                    <div className="flex items-center gap-2">
+                      <GripVertical className="w-3.5 h-3.5 text-muted-foreground/50 cursor-grab flex-shrink-0 hidden sm:block" />
+                      <AppleEmoji emoji={habit.icon} size="lg" />
                       <div className="min-w-0">
-                        <p className="text-xs font-medium truncate">{habit.name}</p>
-                        <p className="text-[10px] text-muted-foreground">{habit.category}</p>
+                        <p className="text-xs lg:text-sm font-medium truncate">{habit.name}</p>
+                        <p className="text-[10px] lg:text-xs text-muted-foreground">{habit.category}</p>
                       </div>
                     </div>
                   </td>
@@ -180,32 +183,33 @@ export default function Habits() {
                     const isFuture = day > currentDay;
                     
                     return (
-                      <td key={i} className="p-0.5">
-                        <div
-                          className={`w-5 h-5 mx-auto rounded-md flex items-center justify-center text-[10px] transition-all duration-200 ${
+                      <td key={i} className="p-0.5 lg:p-1">
+                        <button
+                          disabled={isFuture}
+                          className={`w-6 h-6 lg:w-7 lg:h-7 mx-auto rounded-lg flex items-center justify-center text-xs transition-all duration-200 ${
                             isFuture 
-                              ? 'bg-muted/30'
+                              ? 'bg-muted/30 cursor-not-allowed'
                               : isCompleted
-                                ? 'bg-gradient-to-br from-accent to-primary text-primary-foreground shadow-sm'
-                                : 'bg-secondary'
+                                ? 'bg-gradient-to-br from-accent to-primary text-primary-foreground shadow-sm hover:scale-105'
+                                : 'bg-secondary hover:bg-secondary/80 cursor-pointer'
                           }`}
                         >
                           {!isFuture && habit.target === 1 && isCompleted && (
-                            <Check className="w-3 h-3" />
+                            <Check className="w-3.5 h-3.5 lg:w-4 lg:h-4" />
                           )}
                           {!isFuture && habit.target > 1 && typeof value === 'number' && (
-                            <span className="font-medium">{value}</span>
+                            <span className="font-medium text-[11px] lg:text-xs">{value}</span>
                           )}
-                        </div>
+                        </button>
                       </td>
                     );
                   })}
-                  <td className="p-1 text-right">
-                    <span className="text-xs font-bold gradient-text">{getHabitProgress(habit)}%</span>
+                  <td className="p-1.5 lg:p-2 text-right">
+                    <span className="text-xs lg:text-sm font-bold gradient-text">{getHabitProgress(habit)}%</span>
                   </td>
-                  <td className="p-1">
-                    <button className="p-1 rounded-lg hover:bg-destructive/10 text-muted-foreground hover:text-destructive transition-colors">
-                      <Trash2 className="w-3.5 h-3.5" />
+                  <td className="p-1 lg:p-2">
+                    <button className="p-1.5 rounded-lg hover:bg-destructive/10 text-muted-foreground hover:text-destructive transition-colors">
+                      <Trash2 className="w-4 h-4" />
                     </button>
                   </td>
                 </tr>
@@ -213,13 +217,13 @@ export default function Habits() {
               
               {/* Mood Row */}
               <tr className="border-t-2 border-border/50">
-                <td className="p-1">
-                  <div className="flex items-center gap-1.5">
-                    <GripVertical className="w-3 h-3 text-muted-foreground/50 flex-shrink-0" />
-                    <AppleEmoji emoji="😊" size="md" />
+                <td className="p-1.5 lg:p-2">
+                  <div className="flex items-center gap-2">
+                    <GripVertical className="w-3.5 h-3.5 text-muted-foreground/50 flex-shrink-0 hidden sm:block" />
+                    <AppleEmoji emoji="😊" size="lg" />
                     <div className="min-w-0">
-                      <p className="text-xs font-medium">Daily Mood</p>
-                      <p className="text-[10px] text-muted-foreground">How are you?</p>
+                      <p className="text-xs lg:text-sm font-medium">Daily Mood</p>
+                      <p className="text-[10px] lg:text-xs text-muted-foreground">How are you?</p>
                     </div>
                   </div>
                 </td>
@@ -228,14 +232,15 @@ export default function Habits() {
                   const isFuture = day > currentDay;
                   
                   return (
-                    <td key={i} className="p-0.5">
-                      <div
-                        className={`w-5 h-5 mx-auto rounded-md flex items-center justify-center ${
-                          isFuture ? 'bg-muted/30' : 'bg-secondary'
+                    <td key={i} className="p-0.5 lg:p-1">
+                      <button
+                        disabled={isFuture}
+                        className={`w-6 h-6 lg:w-7 lg:h-7 mx-auto rounded-lg flex items-center justify-center ${
+                          isFuture ? 'bg-muted/30 cursor-not-allowed' : 'bg-secondary hover:bg-secondary/80 cursor-pointer'
                         }`}
                       >
                         {!isFuture && <AppleEmoji emoji={moodData[day]} size="sm" />}
-                      </div>
+                      </button>
                     </td>
                   );
                 })}
