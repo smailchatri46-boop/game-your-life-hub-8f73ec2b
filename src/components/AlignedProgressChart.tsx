@@ -48,9 +48,9 @@ export function AlignedProgressChart({ data, daysInMonth, currentDay, monthName 
     return map;
   }, [data]);
 
-  // Calculate cell width based on container width - reduced padding
+  // Calculate cell width based on container width - minimal padding
   const cellWidth = containerWidth / daysInMonth;
-  const edgePadding = cellWidth * 0.1; // Minimal edge padding
+  const edgePadding = cellWidth * 0.02; // Nearly no edge padding
 
   // Generate smooth SVG path for area chart
   const { linePath, areaPath, points } = useMemo(() => {
@@ -60,10 +60,10 @@ export function AlignedProgressChart({ data, daysInMonth, currentDay, monthName 
 
     const pts: { x: number; y: number; day: number; progress: number }[] = [];
     
-    // Generate points for each day with data - closer to edges
+    // Generate points for each day with data - very close to edges
     for (let i = 0; i < data.length; i++) {
       const d = data[i];
-      // Position points closer to edges
+      // Position points with minimal edge padding
       const x = edgePadding + (d.day - 1) * ((containerWidth - edgePadding * 2) / (daysInMonth - 1));
       const y = chartHeight - (d.progress / maxProgress) * (chartHeight - 10);
       pts.push({ x, y, day: d.day, progress: d.progress });
@@ -98,16 +98,38 @@ export function AlignedProgressChart({ data, daysInMonth, currentDay, monthName 
     return { linePath, areaPath, points: pts };
   }, [data, cellWidth, containerWidth, chartHeight, maxProgress, daysInMonth, edgePadding]);
 
-  const handleMouseMove = (e: React.MouseEvent<SVGElement>, point: { x: number; y: number; day: number; progress: number }) => {
+  // Find nearest point to mouse position for easier hover
+  const handleChartMouseMove = (e: React.MouseEvent<SVGSVGElement>) => {
+    if (points.length === 0) return;
+    
     const rect = containerRef.current?.getBoundingClientRect();
-    if (rect) {
+    if (!rect) return;
+    
+    const mouseX = e.clientX - rect.left;
+    
+    // Find the nearest point by X position
+    let nearestPoint = points[0];
+    let minDist = Math.abs(mouseX - points[0].x);
+    
+    for (const point of points) {
+      const dist = Math.abs(mouseX - point.x);
+      if (dist < minDist) {
+        minDist = dist;
+        nearestPoint = point;
+      }
+    }
+    
+    // Only show tooltip if within reasonable range (half cell width)
+    if (minDist <= cellWidth / 2) {
       setTooltip({
         visible: true,
-        x: e.clientX - rect.left,
-        y: e.clientY - rect.top - 50,
-        day: point.day,
-        progress: point.progress
+        x: nearestPoint.x,
+        y: nearestPoint.y - 50,
+        day: nearestPoint.day,
+        progress: nearestPoint.progress
       });
+    } else {
+      setTooltip(prev => ({ ...prev, visible: false }));
     }
   };
 
@@ -154,13 +176,15 @@ export function AlignedProgressChart({ data, daysInMonth, currentDay, monthName 
             />
           ))}
           
-          {/* SVG Area Chart */}
+          {/* SVG Area Chart with full-area hover detection */}
           {containerWidth > 0 && (
             <svg 
               width={containerWidth} 
               height={chartHeight} 
-              className="absolute inset-0"
+              className="absolute inset-0 cursor-crosshair"
               style={{ overflow: 'visible' }}
+              onMouseMove={handleChartMouseMove}
+              onMouseLeave={handleMouseLeave}
             >
               <defs>
                 <linearGradient id="areaGradient" x1="0" y1="0" x2="0" y2="1">
@@ -168,6 +192,15 @@ export function AlignedProgressChart({ data, daysInMonth, currentDay, monthName 
                   <stop offset="100%" stopColor="hsl(38, 100%, 60%)" stopOpacity={0.05} />
                 </linearGradient>
               </defs>
+              
+              {/* Invisible full-height hit area for easier hover */}
+              <rect
+                x={0}
+                y={0}
+                width={containerWidth}
+                height={chartHeight}
+                fill="transparent"
+              />
               
               {/* Area fill */}
               <path
@@ -185,21 +218,17 @@ export function AlignedProgressChart({ data, daysInMonth, currentDay, monthName 
                 strokeLinejoin="round"
               />
               
-              {/* Data points with hover */}
+              {/* Data points (visual only, hover handled by SVG) */}
               {points.map((point, i) => (
                 <circle
                   key={i}
                   cx={point.x}
                   cy={point.y}
-                  r={6}
+                  r={5}
                   fill="hsl(24, 95%, 53%)"
                   stroke="white"
                   strokeWidth={2}
-                  className="cursor-pointer transition-all hover:r-8"
-                  style={{ transition: 'r 0.2s' }}
-                  onMouseEnter={(e) => handleMouseMove(e, point)}
-                  onMouseMove={(e) => handleMouseMove(e, point)}
-                  onMouseLeave={handleMouseLeave}
+                  className="pointer-events-none"
                 />
               ))}
             </svg>
