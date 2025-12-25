@@ -50,7 +50,7 @@ export function AlignedProgressChart({ data, daysInMonth, currentDay, monthName 
 
   // Calculate cell width based on container width - minimal padding
   const cellWidth = containerWidth / daysInMonth;
-  const edgePadding = cellWidth * 0.02; // Nearly no edge padding
+  const edgePadding = 0; // No edge padding - points at exact edges
 
   // Generate smooth SVG path for area chart
   const { linePath, areaPath, points } = useMemo(() => {
@@ -181,7 +181,7 @@ export function AlignedProgressChart({ data, daysInMonth, currentDay, monthName 
             <svg 
               width={containerWidth} 
               height={chartHeight} 
-              className="absolute inset-0 cursor-crosshair"
+              className="absolute inset-0 cursor-default"
               style={{ overflow: 'visible' }}
               onMouseMove={handleChartMouseMove}
               onMouseLeave={handleMouseLeave}
