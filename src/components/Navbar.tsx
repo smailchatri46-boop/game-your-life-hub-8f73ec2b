@@ -5,7 +5,6 @@ import { Settings } from "lucide-react";
 const navItems = [
   { name: "Dashboard", path: "/dashboard" },
   { name: "Overview", path: "/overview" },
-  { name: "Habits", path: "/habits" },
   { name: "Journal", path: "/journal" },
   { name: "AI Chat", path: "/ai-chat" },
   { name: "Tutorials", path: "/tutorials" },

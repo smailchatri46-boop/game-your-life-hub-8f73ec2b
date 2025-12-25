@@ -62,8 +62,8 @@ export default function Habits() {
       <main className="pt-28 pb-12 px-4 max-w-7xl mx-auto">
         <div className="flex items-center justify-between mb-8">
           <div>
-            <h1 className="font-display text-3xl font-semibold">Habits</h1>
-            <p className="text-muted-foreground mt-1">December 2025</p>
+            <h1 className="font-display text-3xl font-semibold">Dashboard</h1>
+            <p className="text-muted-foreground mt-1">Track your habits • December 2025</p>
           </div>
           <Button variant="gradient" size="lg">
             <Plus className="w-5 h-5 mr-2" />
