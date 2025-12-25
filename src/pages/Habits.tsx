@@ -2,9 +2,10 @@ import { Navbar } from "@/components/Navbar";
 import { GlassCard } from "@/components/GlassCard";
 import { AppleEmoji } from "@/components/AppleEmoji";
 import { AlignedProgressChart } from "@/components/AlignedProgressChart";
+import { AddHabitModal, NewHabit } from "@/components/AddHabitModal";
 import { Button } from "@/components/ui/button";
 import { Plus, Trash2, GripVertical, Check, ChevronLeft, ChevronRight } from "lucide-react";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { useSelectedMonth } from "@/hooks/use-selected-month";
 
 interface Habit {
@@ -13,6 +14,7 @@ interface Habit {
   icon: string;
   category: string;
   target: number;
+  importance?: number;
   completions: Record<string, boolean | number>; // key is "YYYY-MM-DD"
 }
 
@@ -30,22 +32,46 @@ const generateCompletions = (year: number, month: number, maxDay: number, target
 };
 
 const habitTemplates = [
-  { id: "1", name: "Morning Meditation", icon: "🧘", category: "Mind", target: 1 },
-  { id: "2", name: "Exercise", icon: "💪", category: "Health", target: 1 },
-  { id: "3", name: "Read 30 mins", icon: "📚", category: "Growth", target: 1 },
-  { id: "4", name: "Drink Water", icon: "💧", category: "Health", target: 8 },
-  { id: "5", name: "No Social Media", icon: "📵", category: "Focus", target: 1 },
+  { id: "1", name: "Morning Meditation", icon: "🧘", category: "Mind", target: 1, importance: 70 },
+  { id: "2", name: "Exercise", icon: "💪", category: "Health", target: 1, importance: 80 },
+  { id: "3", name: "Read 30 mins", icon: "📚", category: "Growth", target: 1, importance: 60 },
+  { id: "4", name: "Drink Water", icon: "💧", category: "Health", target: 8, importance: 50 },
+  { id: "5", name: "No Social Media", icon: "📵", category: "Focus", target: 1, importance: 40 },
 ];
 
-const generateChartData = (daysInMonth: number, currentDay: number) => {
+const generateChartData = (habits: Habit[], daysInMonth: number, currentDay: number, year: number, month: number) => {
   const maxDay = Math.min(daysInMonth, currentDay);
-  return Array.from({ length: maxDay }, (_, i) => ({
-    day: i + 1,
-    progress: Math.floor(50 + Math.random() * 40 + Math.sin(i / 3) * 15),
-  }));
+  return Array.from({ length: maxDay }, (_, i) => {
+    const day = i + 1;
+    const dateKey = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+    
+    let totalWeight = 0;
+    let weightedProgress = 0;
+    
+    habits.forEach(habit => {
+      const weight = habit.importance || 50;
+      totalWeight += weight;
+      const value = habit.completions[dateKey];
+      if (habit.target === 1) {
+        if (value === true) weightedProgress += weight;
+      } else {
+        if (typeof value === 'number') {
+          weightedProgress += (Math.min(value, habit.target) / habit.target) * weight;
+        }
+      }
+    });
+    
+    return {
+      day,
+      progress: totalWeight > 0 ? Math.round((weightedProgress / totalWeight) * 100) : 0,
+    };
+  });
 };
 
 export default function Habits() {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [habits, setHabits] = useState<Habit[]>([]);
+  
   const {
     monthName,
     year,
@@ -59,17 +85,18 @@ export default function Habits() {
   const daysInMonth = getDaysInMonth();
   const currentDay = getCurrentDay();
 
-  // Generate habits with completions for the current month
-  const habits = useMemo<Habit[]>(() => {
-    return habitTemplates.map(template => ({
+  // Initialize habits with completions for the current month
+  const displayHabits = useMemo<Habit[]>(() => {
+    const templateHabits = habitTemplates.map(template => ({
       ...template,
       completions: generateCompletions(year, month, currentDay, template.target),
     }));
-  }, [year, month, currentDay]);
+    return [...templateHabits, ...habits];
+  }, [year, month, currentDay, habits]);
 
   const chartData = useMemo(() => {
-    return generateChartData(daysInMonth, currentDay);
-  }, [daysInMonth, currentDay]);
+    return generateChartData(displayHabits, daysInMonth, currentDay, year, month);
+  }, [displayHabits, daysInMonth, currentDay, year, month]);
 
   // Generate mood data for the month
   const moodData = useMemo(() => {
@@ -97,6 +124,23 @@ export default function Habits() {
       }
     }
     return Math.round((completed / currentDay) * 100);
+  };
+
+  const handleAddHabit = (newHabit: NewHabit) => {
+    const habit: Habit = {
+      id: newHabit.id,
+      name: newHabit.name,
+      icon: newHabit.icon,
+      category: newHabit.category,
+      target: newHabit.target,
+      importance: newHabit.importance,
+      completions: {},
+    };
+    setHabits(prev => [...prev, habit]);
+  };
+
+  const handleDeleteHabit = (habitId: string) => {
+    setHabits(prev => prev.filter(h => h.id !== habitId));
   };
 
   return (
@@ -129,11 +173,11 @@ export default function Habits() {
               <ChevronRight className="w-5 h-5 text-muted-foreground" />
             </button>
             
-            <Button variant="gradient" size="lg" className="ml-2 sm:ml-4 hidden sm:flex">
+            <Button variant="gradient" size="lg" className="ml-2 sm:ml-4 hidden sm:flex" onClick={() => setIsModalOpen(true)}>
               <Plus className="w-5 h-5 mr-2" />
               Add Habit
             </Button>
-            <Button variant="gradient" size="icon" className="ml-2 sm:hidden">
+            <Button variant="gradient" size="icon" className="ml-2 sm:hidden" onClick={() => setIsModalOpen(true)}>
               <Plus className="w-5 h-5" />
             </Button>
           </div>
@@ -161,7 +205,7 @@ export default function Habits() {
               </tr>
             </thead>
             <tbody>
-              {habits.map((habit) => (
+              {displayHabits.map((habit) => (
                 <tr key={habit.id} className="border-t border-border/30">
                   <td className="p-1.5 lg:p-2">
                     <div className="flex items-center gap-1.5">
@@ -262,6 +306,12 @@ export default function Habits() {
           </div>
         </GlassCard>
       </main>
+
+      <AddHabitModal
+        open={isModalOpen}
+        onOpenChange={setIsModalOpen}
+        onSave={handleAddHabit}
+      />
     </div>
   );
 }
