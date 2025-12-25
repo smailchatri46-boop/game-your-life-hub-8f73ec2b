@@ -1,5 +1,6 @@
 import { Navbar } from "@/components/Navbar";
 import { GlassCard } from "@/components/GlassCard";
+import { Emoji } from "@/components/Emoji";
 import { Button } from "@/components/ui/button";
 import { Plus, Trash2, GripVertical, Check, ChevronLeft, ChevronRight } from "lucide-react";
 import { useState, useMemo } from "react";
@@ -162,7 +163,7 @@ export default function Habits() {
                   <td className="p-2">
                     <div className="flex items-center gap-2">
                       <GripVertical className="w-4 h-4 text-muted-foreground/50 cursor-grab" />
-                      <span className="text-lg">{habit.icon}</span>
+                      <Emoji emoji={habit.icon} size="lg" />
                       <div>
                         <p className="text-sm font-medium">{habit.name}</p>
                         <p className="text-xs text-muted-foreground">{habit.category}</p>
@@ -215,7 +216,7 @@ export default function Habits() {
                 <td className="p-2">
                   <div className="flex items-center gap-2">
                     <GripVertical className="w-4 h-4 text-muted-foreground/50" />
-                    <span className="text-lg">😊</span>
+                    <Emoji emoji="😊" size="lg" />
                     <div>
                       <p className="text-sm font-medium">Daily Mood</p>
                       <p className="text-xs text-muted-foreground">How are you feeling?</p>
@@ -229,11 +230,11 @@ export default function Habits() {
                   return (
                     <td key={i} className="p-1">
                       <div
-                        className={`w-7 h-7 rounded-lg flex items-center justify-center text-sm ${
+                        className={`w-7 h-7 rounded-lg flex items-center justify-center ${
                           isFuture ? 'bg-muted/30' : 'bg-secondary'
                         }`}
                       >
-                        {!isFuture && moodData[day]}
+                        {!isFuture && <Emoji emoji={moodData[day]} size="sm" />}
                       </div>
                     </td>
                   );
