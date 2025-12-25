@@ -1,5 +1,6 @@
 import { Navbar } from "@/components/Navbar";
 import { GlassCard } from "@/components/GlassCard";
+import { Emoji } from "@/components/Emoji";
 import { Play, Clock } from "lucide-react";
 
 interface Tutorial {
@@ -99,7 +100,7 @@ export default function Tutorials() {
               hover
             >
               <div className="aspect-video bg-gradient-to-br from-secondary to-muted flex items-center justify-center relative">
-                <span className="text-6xl">{tutorial.thumbnail}</span>
+                <Emoji emoji={tutorial.thumbnail} size="5xl" className="w-16 h-16" />
                 <div className="absolute inset-0 bg-foreground/0 group-hover:bg-foreground/10 transition-colors flex items-center justify-center">
                   <div className="w-14 h-14 rounded-full bg-primary/90 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity shadow-large">
                     <Play className="w-6 h-6 text-primary-foreground ml-1" />

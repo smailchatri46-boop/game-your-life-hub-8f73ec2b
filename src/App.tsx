@@ -22,32 +22,57 @@ function EmojiRenderer() {
     const root = document.getElementById("root");
     if (!root) return;
 
-    let raf = 0;
-    let observer: MutationObserver | null = null;
+    let debounceTimer: number;
+    let isProcessing = false;
 
     const parse = () => {
-      // Prevent feedback loops (parsing itself mutates the DOM)
-      observer?.disconnect();
+      if (isProcessing) return;
+      isProcessing = true;
+      
+      // Parse all text nodes for emojis
       twemoji.parse(root, {
-        // Use a reliable CDN base (maxcdn can be blocked in some networks)
         base: "https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/",
         folder: "svg",
         ext: ".svg",
+        className: "emoji",
       });
-      observer?.observe(root, { childList: true, subtree: true, characterData: true });
+      
+      // Small delay before allowing next parse to prevent infinite loops
+      setTimeout(() => {
+        isProcessing = false;
+      }, 50);
     };
 
-    observer = new MutationObserver(() => {
-      cancelAnimationFrame(raf);
-      raf = requestAnimationFrame(parse);
-    });
-
-    // Initial parse + keep it in sync as UI updates
+    // Initial parse
     parse();
 
+    // Use MutationObserver with debounce for dynamic content
+    const observer = new MutationObserver((mutations) => {
+      // Skip if mutations are only from emoji img elements
+      const hasRelevantChanges = mutations.some(m => {
+        if (m.type === "childList") {
+          return Array.from(m.addedNodes).some(
+            node => !(node instanceof HTMLImageElement && (node as HTMLImageElement).classList.contains("emoji"))
+          );
+        }
+        return m.type === "characterData";
+      });
+
+      if (hasRelevantChanges) {
+        clearTimeout(debounceTimer);
+        debounceTimer = window.setTimeout(parse, 100);
+      }
+    });
+
+    observer.observe(root, { 
+      childList: true, 
+      subtree: true, 
+      characterData: true 
+    });
+
     return () => {
-      observer?.disconnect();
-      cancelAnimationFrame(raf);
+      observer.disconnect();
+      clearTimeout(debounceTimer);
     };
   }, []);
 

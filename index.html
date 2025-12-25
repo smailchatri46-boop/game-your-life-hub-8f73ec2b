@@ -18,12 +18,23 @@
 
     <!-- Emoji rendering (consistent cross-platform emoji images) -->
     <style>
+      /* Hide native emojis, show Twemoji images instead */
       img.emoji {
         height: 1em;
         width: 1em;
         margin: 0 0.05em 0 0.1em;
-        vertical-align: -0.1em;
-        display: inline-block;
+        vertical-align: -0.15em;
+        display: inline-block !important;
+        object-fit: contain;
+      }
+      /* Ensure emoji images in larger contexts scale properly */
+      .text-xl img.emoji,
+      .text-2xl img.emoji,
+      .text-3xl img.emoji,
+      .text-4xl img.emoji,
+      .text-5xl img.emoji {
+        height: 1em;
+        width: 1em;
       }
     </style>
   </head>
