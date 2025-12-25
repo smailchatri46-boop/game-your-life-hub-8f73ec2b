@@ -5,7 +5,8 @@ import { GlassCard } from "@/components/GlassCard";
 import { Target, Calendar, TrendingUp, Flame, Sparkles, Lock, ChevronLeft, ChevronRight, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
-import { useState } from "react";
+import { useState, useMemo } from "react";
+import { useSelectedMonth } from "@/hooks/use-selected-month";
 
 interface DayData {
   date: number;
@@ -14,12 +15,14 @@ interface DayData {
   journal?: string;
 }
 
-const generateMonthData = (): Record<number, DayData> => {
+const generateMonthData = (daysInMonth: number, currentDay: number): Record<number, DayData> => {
   const data: Record<number, DayData> = {};
   const habits = ["Morning Meditation", "Exercise", "Read 30 mins", "Drink Water", "No Social Media"];
   const moods = ["😊", "😌", "😐", "😔", "🥳"];
   
-  for (let i = 1; i <= 25; i++) {
+  const maxDay = Math.min(daysInMonth, currentDay);
+  
+  for (let i = 1; i <= maxDay; i++) {
     data[i] = {
       date: i,
       habits: habits.map(name => ({
@@ -35,20 +38,73 @@ const generateMonthData = (): Record<number, DayData> => {
 
 export default function Overview() {
   const [selectedDate, setSelectedDate] = useState<number | null>(null);
-  const [monthData] = useState(generateMonthData);
-  const [currentMonth] = useState(new Date());
-  const daysInMonth = 31;
-  const startDay = 1;
+  const {
+    monthName,
+    year,
+    month,
+    goToPreviousMonth,
+    goToNextMonth,
+    getDaysInMonth,
+    getFirstDayOfMonth,
+    isCurrentMonth,
+    getCurrentDay,
+  } = useSelectedMonth();
+
+  const daysInMonth = getDaysInMonth();
+  const startDay = getFirstDayOfMonth();
+  const currentDay = getCurrentDay();
   
   const weekDays = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
-  const monthName = currentMonth.toLocaleString('default', { month: 'long' });
-  const year = currentMonth.getFullYear();
+  
+  // Regenerate data when month changes
+  const monthData = useMemo(() => {
+    return generateMonthData(daysInMonth, currentDay);
+  }, [month, year, daysInMonth, currentDay]);
+
+  // Calculate stats from month data
+  const stats = useMemo(() => {
+    const entries = Object.values(monthData);
+    if (entries.length === 0) return { todayPercent: 0, weekAvg: 0, monthPercent: 0 };
+
+    const todayData = monthData[currentDay];
+    const todayPercent = todayData 
+      ? Math.round((todayData.habits.filter(h => h.completed).length / todayData.habits.length) * 100)
+      : 0;
+
+    const last7Days = entries.slice(-7);
+    const weekAvg = Math.round(
+      last7Days.reduce((sum, day) => {
+        const completed = day.habits.filter(h => h.completed).length;
+        return sum + (completed / day.habits.length) * 100;
+      }, 0) / last7Days.length
+    );
+
+    const monthPercent = Math.round(
+      entries.reduce((sum, day) => {
+        const completed = day.habits.filter(h => h.completed).length;
+        return sum + (completed / day.habits.length) * 100;
+      }, 0) / entries.length
+    );
+
+    return { todayPercent, weekAvg, monthPercent };
+  }, [monthData, currentDay]);
   
   const getCompletionRate = (day: number) => {
     const data = monthData[day];
     if (!data) return 0;
     const completed = data.habits.filter(h => h.completed).length;
     return Math.round((completed / data.habits.length) * 100);
+  };
+
+  // Reset selected date when month changes
+  const handlePreviousMonth = () => {
+    setSelectedDate(null);
+    goToPreviousMonth();
+  };
+
+  const handleNextMonth = () => {
+    setSelectedDate(null);
+    goToNextMonth();
   };
 
   return (
@@ -58,14 +114,20 @@ export default function Overview() {
       <main className="pt-28 pb-12 px-4 max-w-6xl mx-auto">
         {/* Month Navigation */}
         <div className="flex items-center justify-center gap-4 mb-8">
-          <button className="p-2 rounded-full hover:bg-secondary transition-colors">
+          <button 
+            onClick={handlePreviousMonth}
+            className="p-2 rounded-full hover:bg-secondary transition-colors"
+          >
             <ChevronLeft className="w-5 h-5 text-muted-foreground" />
           </button>
-          <h2 className="font-display text-xl">
+          <h2 className="font-display text-xl min-w-[180px] text-center">
             <span className="text-primary font-semibold">{monthName}</span>
             <span className="text-foreground ml-2">{year}</span>
           </h2>
-          <button className="p-2 rounded-full hover:bg-secondary transition-colors">
+          <button 
+            onClick={handleNextMonth}
+            className="p-2 rounded-full hover:bg-secondary transition-colors"
+          >
             <ChevronRight className="w-5 h-5 text-muted-foreground" />
           </button>
         </div>
@@ -74,27 +136,27 @@ export default function Overview() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
           <StatCard
             title="Today"
-            subtitle="4/6 completed"
-            value={70}
+            subtitle={isCurrentMonth() ? `${Math.round(stats.todayPercent / 100 * 6)}/6 completed` : "View current month"}
+            value={isCurrentMonth() ? stats.todayPercent : 0}
             icon={Target}
             iconColor="text-primary"
-            progress={70}
+            progress={isCurrentMonth() ? stats.todayPercent : 0}
           />
           <StatCard
             title="This Week Average"
-            subtitle="This week"
-            value={60}
+            subtitle="Last 7 days"
+            value={stats.weekAvg}
             icon={Calendar}
             iconColor="text-accent"
-            progress={60}
+            progress={stats.weekAvg}
           />
           <StatCard
             title="This Month"
-            subtitle="December"
-            value={80}
+            subtitle={monthName}
+            value={stats.monthPercent}
             icon={TrendingUp}
             iconColor="text-primary"
-            progress={80}
+            progress={stats.monthPercent}
           />
           <StatCard
             title="Current Streak"
@@ -138,7 +200,7 @@ export default function Overview() {
                 {Array.from({ length: daysInMonth }, (_, i) => {
                   const day = i + 1;
                   const completionRate = getCompletionRate(day);
-                  const isFuture = day > 25;
+                  const isFuture = day > currentDay;
                   const isSelected = selectedDate === day;
                   
                   return (
@@ -179,7 +241,7 @@ export default function Overview() {
               <GlassCard className="p-6 sticky top-28">
                 <div className="flex items-center justify-between mb-4">
                   <h3 className="font-display text-xl font-semibold">
-                    December {selectedDate}
+                    {monthName} {selectedDate}
                   </h3>
                   <button 
                     onClick={() => setSelectedDate(null)}

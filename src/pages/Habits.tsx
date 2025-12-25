@@ -1,9 +1,10 @@
 import { Navbar } from "@/components/Navbar";
 import { GlassCard } from "@/components/GlassCard";
 import { Button } from "@/components/ui/button";
-import { Plus, Trash2, GripVertical, Check } from "lucide-react";
-import { useState } from "react";
+import { Plus, Trash2, GripVertical, Check, ChevronLeft, ChevronRight } from "lucide-react";
+import { useState, useMemo } from "react";
 import { Area, AreaChart, XAxis, YAxis, ResponsiveContainer, Tooltip } from "recharts";
+import { useSelectedMonth } from "@/hooks/use-selected-month";
 
 interface Habit {
   id: string;
@@ -11,48 +12,90 @@ interface Habit {
   icon: string;
   category: string;
   target: number;
-  completions: Record<number, boolean | number>;
+  completions: Record<string, boolean | number>; // key is "YYYY-MM-DD"
 }
 
-const initialHabits: Habit[] = [
-  { id: "1", name: "Morning Meditation", icon: "🧘", category: "Mind", target: 1, completions: { 1: true, 2: true, 3: true, 4: false, 5: true, 6: true, 7: true, 8: true, 9: false, 10: true, 11: true, 12: true, 13: true, 14: true, 15: true, 16: true, 17: false, 18: true, 19: true, 20: true, 21: true, 22: true, 23: true, 24: true, 25: true } },
-  { id: "2", name: "Exercise", icon: "💪", category: "Health", target: 1, completions: { 1: true, 2: false, 3: true, 4: true, 5: true, 6: false, 7: true, 8: true, 9: true, 10: true, 11: false, 12: true, 13: true, 14: true, 15: false, 16: true, 17: true, 18: true, 19: true, 20: false, 21: true, 22: true, 23: true, 24: false, 25: true } },
-  { id: "3", name: "Read 30 mins", icon: "📚", category: "Growth", target: 1, completions: { 1: true, 2: true, 3: true, 4: true, 5: true, 6: true, 7: false, 8: true, 9: true, 10: true, 11: true, 12: true, 13: false, 14: true, 15: true, 16: true, 17: true, 18: true, 19: true, 20: true, 21: true, 22: false, 23: true, 24: true, 25: true } },
-  { id: "4", name: "Drink Water", icon: "💧", category: "Health", target: 8, completions: { 1: 8, 2: 6, 3: 8, 4: 7, 5: 8, 6: 5, 7: 8, 8: 8, 9: 6, 10: 8, 11: 7, 12: 8, 13: 8, 14: 6, 15: 8, 16: 8, 17: 7, 18: 8, 19: 8, 20: 6, 21: 8, 22: 8, 23: 7, 24: 8, 25: 8 } },
-  { id: "5", name: "No Social Media", icon: "📵", category: "Focus", target: 1, completions: { 1: true, 2: true, 3: false, 4: true, 5: true, 6: true, 7: true, 8: false, 9: true, 10: true, 11: true, 12: true, 13: true, 14: true, 15: true, 16: false, 17: true, 18: true, 19: true, 20: true, 21: true, 22: true, 23: true, 24: true, 25: true } },
+const generateCompletions = (year: number, month: number, maxDay: number, target: number) => {
+  const completions: Record<string, boolean | number> = {};
+  for (let day = 1; day <= maxDay; day++) {
+    const dateKey = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+    if (target === 1) {
+      completions[dateKey] = Math.random() > 0.2;
+    } else {
+      completions[dateKey] = Math.floor(Math.random() * (target + 2));
+    }
+  }
+  return completions;
+};
+
+const habitTemplates = [
+  { id: "1", name: "Morning Meditation", icon: "🧘", category: "Mind", target: 1 },
+  { id: "2", name: "Exercise", icon: "💪", category: "Health", target: 1 },
+  { id: "3", name: "Read 30 mins", icon: "📚", category: "Growth", target: 1 },
+  { id: "4", name: "Drink Water", icon: "💧", category: "Health", target: 8 },
+  { id: "5", name: "No Social Media", icon: "📵", category: "Focus", target: 1 },
 ];
 
-const generateChartData = () => {
-  return Array.from({ length: 30 }, (_, i) => ({
+const generateChartData = (daysInMonth: number, currentDay: number) => {
+  const maxDay = Math.min(daysInMonth, currentDay);
+  return Array.from({ length: maxDay }, (_, i) => ({
     day: i + 1,
     progress: Math.floor(50 + Math.random() * 40 + Math.sin(i / 3) * 15),
   }));
 };
 
 export default function Habits() {
-  const [habits, setHabits] = useState<Habit[]>(initialHabits);
-  const chartData = generateChartData();
-  const daysInMonth = 31;
-  const today = 25;
+  const {
+    monthName,
+    year,
+    month,
+    goToPreviousMonth,
+    goToNextMonth,
+    getDaysInMonth,
+    getCurrentDay,
+  } = useSelectedMonth();
 
-  const toggleHabit = (habitId: string, day: number) => {
-    setHabits(habits.map(habit => {
-      if (habit.id === habitId) {
-        const newCompletions = { ...habit.completions };
-        if (habit.target === 1) {
-          newCompletions[day] = !newCompletions[day];
-        }
-        return { ...habit, completions: newCompletions };
-      }
-      return habit;
+  const daysInMonth = getDaysInMonth();
+  const currentDay = getCurrentDay();
+
+  // Generate habits with completions for the current month
+  const habits = useMemo<Habit[]>(() => {
+    return habitTemplates.map(template => ({
+      ...template,
+      completions: generateCompletions(year, month, currentDay, template.target),
     }));
+  }, [year, month, currentDay]);
+
+  const chartData = useMemo(() => {
+    return generateChartData(daysInMonth, currentDay);
+  }, [daysInMonth, currentDay]);
+
+  // Generate mood data for the month
+  const moodData = useMemo(() => {
+    const moods: Record<number, string> = {};
+    const moodEmojis = ['😊', '😌', '😐', '😔', '🥳'];
+    for (let day = 1; day <= currentDay; day++) {
+      moods[day] = moodEmojis[Math.floor(Math.random() * 5)];
+    }
+    return moods;
+  }, [currentDay, month, year]);
+
+  const getDateKey = (day: number) => {
+    return `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
   };
 
   const getHabitProgress = (habit: Habit) => {
-    const completed = Object.values(habit.completions).filter(v => 
-      typeof v === 'boolean' ? v : (v as number) >= habit.target
-    ).length;
-    return Math.round((completed / today) * 100);
+    let completed = 0;
+    for (let day = 1; day <= currentDay; day++) {
+      const dateKey = getDateKey(day);
+      const value = habit.completions[dateKey];
+      if (habit.target === 1) {
+        if (value === true) completed++;
+      } else {
+        if (typeof value === 'number' && value >= habit.target) completed++;
+      }
+    }
+    return Math.round((completed / currentDay) * 100);
   };
 
   return (
@@ -63,12 +106,33 @@ export default function Habits() {
         <div className="flex items-center justify-between mb-8">
           <div>
             <h1 className="font-display text-3xl font-semibold">Dashboard</h1>
-            <p className="text-muted-foreground mt-1">Track your habits • December 2025</p>
+            <p className="text-muted-foreground mt-1">Track your habits</p>
           </div>
-          <Button variant="gradient" size="lg">
-            <Plus className="w-5 h-5 mr-2" />
-            Add Habit
-          </Button>
+          
+          {/* Month Navigation */}
+          <div className="flex items-center gap-4">
+            <button 
+              onClick={goToPreviousMonth}
+              className="p-2 rounded-full hover:bg-secondary transition-colors"
+            >
+              <ChevronLeft className="w-5 h-5 text-muted-foreground" />
+            </button>
+            <h2 className="font-display text-lg min-w-[150px] text-center">
+              <span className="text-primary font-semibold">{monthName}</span>
+              <span className="text-foreground ml-2">{year}</span>
+            </h2>
+            <button 
+              onClick={goToNextMonth}
+              className="p-2 rounded-full hover:bg-secondary transition-colors"
+            >
+              <ChevronRight className="w-5 h-5 text-muted-foreground" />
+            </button>
+            
+            <Button variant="gradient" size="lg" className="ml-4">
+              <Plus className="w-5 h-5 mr-2" />
+              Add Habit
+            </Button>
+          </div>
         </div>
         
         {/* Habits Grid */}
@@ -81,7 +145,7 @@ export default function Habits() {
                 </th>
                 {Array.from({ length: daysInMonth }, (_, i) => (
                   <th key={i} className="p-1 w-8">
-                    <span className={`text-xs font-medium ${i + 1 === today ? 'text-primary' : 'text-muted-foreground'}`}>
+                    <span className={`text-xs font-medium ${i + 1 === currentDay ? 'text-primary' : 'text-muted-foreground'}`}>
                       {i + 1}
                     </span>
                   </th>
@@ -107,23 +171,22 @@ export default function Habits() {
                   </td>
                   {Array.from({ length: daysInMonth }, (_, i) => {
                     const day = i + 1;
-                    const value = habit.completions[day];
+                    const dateKey = getDateKey(day);
+                    const value = habit.completions[dateKey];
                     const isCompleted = habit.target === 1 
                       ? value === true 
                       : typeof value === 'number' && value >= habit.target;
-                    const isFuture = day > today;
+                    const isFuture = day > currentDay;
                     
                     return (
                       <td key={i} className="p-1">
-                        <button
-                          onClick={() => !isFuture && toggleHabit(habit.id, day)}
-                          disabled={isFuture}
+                        <div
                           className={`w-7 h-7 rounded-lg flex items-center justify-center text-xs transition-all duration-200 ${
                             isFuture 
-                              ? 'bg-muted/30 cursor-not-allowed'
+                              ? 'bg-muted/30'
                               : isCompleted
                                 ? 'bg-gradient-to-br from-accent to-primary text-primary-foreground shadow-sm'
-                                : 'bg-secondary hover:bg-secondary/80'
+                                : 'bg-secondary'
                           }`}
                         >
                           {!isFuture && habit.target === 1 && isCompleted && (
@@ -132,7 +195,7 @@ export default function Habits() {
                           {!isFuture && habit.target > 1 && typeof value === 'number' && (
                             <span className="font-medium">{value}</span>
                           )}
-                        </button>
+                        </div>
                       </td>
                     );
                   })}
@@ -161,20 +224,17 @@ export default function Habits() {
                 </td>
                 {Array.from({ length: daysInMonth }, (_, i) => {
                   const day = i + 1;
-                  const moods = ['😊', '😌', '😐', '😔', '🥳'];
-                  const moodIndex = Math.floor(Math.random() * 5);
-                  const isFuture = day > today;
+                  const isFuture = day > currentDay;
                   
                   return (
                     <td key={i} className="p-1">
-                      <button
-                        disabled={isFuture}
+                      <div
                         className={`w-7 h-7 rounded-lg flex items-center justify-center text-sm ${
-                          isFuture ? 'bg-muted/30 cursor-not-allowed' : 'bg-secondary hover:bg-secondary/80'
+                          isFuture ? 'bg-muted/30' : 'bg-secondary'
                         }`}
                       >
-                        {!isFuture && moods[moodIndex]}
-                      </button>
+                        {!isFuture && moodData[day]}
+                      </div>
                     </td>
                   );
                 })}
@@ -186,7 +246,7 @@ export default function Habits() {
         
         {/* Progress Chart */}
         <GlassCard className="p-6">
-          <h3 className="font-display text-xl font-semibold mb-6">30-Day Progress</h3>
+          <h3 className="font-display text-xl font-semibold mb-6">{monthName} Progress</h3>
           <div className="h-64">
             <ResponsiveContainer width="100%" height="100%">
               <AreaChart data={chartData}>
