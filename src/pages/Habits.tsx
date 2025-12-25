@@ -1,10 +1,10 @@
 import { Navbar } from "@/components/Navbar";
 import { GlassCard } from "@/components/GlassCard";
 import { AppleEmoji } from "@/components/AppleEmoji";
+import { AlignedProgressChart } from "@/components/AlignedProgressChart";
 import { Button } from "@/components/ui/button";
 import { Plus, Trash2, GripVertical, Check, ChevronLeft, ChevronRight } from "lucide-react";
-import { useState, useMemo } from "react";
-import { Area, AreaChart, XAxis, YAxis, ResponsiveContainer, Tooltip } from "recharts";
+import { useMemo } from "react";
 import { useSelectedMonth } from "@/hooks/use-selected-month";
 
 interface Habit {
@@ -250,64 +250,15 @@ export default function Habits() {
           </table>
         </GlassCard>
         
-        {/* Progress Chart - aligned with table above */}
+        {/* Progress Chart - perfectly aligned with table columns */}
         <GlassCard className="p-2 sm:p-3 lg:p-4 overflow-x-auto lg:overflow-visible">
           <div style={{ minWidth: '900px' }}>
-            <div className="flex">
-              {/* Left column matching habit name column */}
-              <div style={{ width: '140px' }} className="flex-shrink-0 p-1.5 lg:p-2">
-                <h3 className="font-display text-sm lg:text-base font-semibold">{monthName} Progress</h3>
-              </div>
-              {/* Chart area matching day columns */}
-              <div className="flex-1 h-48 lg:h-56">
-                <ResponsiveContainer width="100%" height="100%">
-                  <AreaChart data={chartData} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
-                    <defs>
-                      <linearGradient id="progressGradient" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="0%" stopColor="hsl(24, 95%, 53%)" stopOpacity={0.4} />
-                        <stop offset="100%" stopColor="hsl(38, 100%, 60%)" stopOpacity={0.05} />
-                      </linearGradient>
-                    </defs>
-                    <XAxis 
-                      dataKey="day" 
-                      axisLine={false}
-                      tickLine={false}
-                      tick={{ fill: 'hsl(25, 15%, 50%)', fontSize: 10 }}
-                      ticks={Array.from({ length: daysInMonth }, (_, i) => i + 1)}
-                      domain={[1, daysInMonth]}
-                      interval={0}
-                    />
-                    <YAxis 
-                      domain={[0, 100]}
-                      axisLine={false}
-                      tickLine={false}
-                      tick={{ fill: 'hsl(25, 15%, 50%)', fontSize: 10 }}
-                      tickFormatter={(value) => `${value}%`}
-                      width={35}
-                    />
-                    <Tooltip
-                      contentStyle={{
-                        background: 'hsl(0, 0%, 100%)',
-                        border: 'none',
-                        borderRadius: '12px',
-                        boxShadow: '0 4px 24px -4px hsl(24, 95%, 53%, 0.1)',
-                      }}
-                      formatter={(value: number) => [`${value}%`, 'Completion']}
-                      labelFormatter={(label) => `Day ${label}`}
-                    />
-                    <Area
-                      type="monotone"
-                      dataKey="progress"
-                      stroke="hsl(24, 95%, 53%)"
-                      strokeWidth={2}
-                      fill="url(#progressGradient)"
-                    />
-                  </AreaChart>
-                </ResponsiveContainer>
-              </div>
-              {/* Right columns matching % and delete columns */}
-              <div style={{ width: '84px' }} className="flex-shrink-0"></div>
-            </div>
+            <AlignedProgressChart 
+              data={chartData}
+              daysInMonth={daysInMonth}
+              currentDay={currentDay}
+              monthName={monthName}
+            />
           </div>
         </GlassCard>
       </main>
