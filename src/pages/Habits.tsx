@@ -3,7 +3,7 @@ import { GlassCard } from "@/components/GlassCard";
 import { AppleEmoji } from "@/components/AppleEmoji";
 import { AlignedProgressChart } from "@/components/AlignedProgressChart";
 import { AddHabitModal, NewHabit } from "@/components/AddHabitModal";
-import { MoodMotivationSection } from "@/components/MoodMotivationSection";
+
 import { Button } from "@/components/ui/button";
 import { Plus, Trash2, GripVertical, Check, ChevronLeft, ChevronRight } from "lucide-react";
 import { useMemo, useState } from "react";
@@ -285,14 +285,6 @@ export default function Habits() {
             />
           </div>
         </GlassCard>
-
-        {/* Mood & Motivation Section */}
-        <MoodMotivationSection
-          daysInMonth={daysInMonth}
-          currentDay={currentDay}
-          year={year}
-          month={month}
-        />
       </main>
 
       <AddHabitModal
