@@ -12,11 +12,20 @@ interface AlignedProgressChartProps {
   monthName: string;
 }
 
+interface TooltipState {
+  visible: boolean;
+  x: number;
+  y: number;
+  day: number;
+  progress: number;
+}
+
 export function AlignedProgressChart({ data, daysInMonth, currentDay, monthName }: AlignedProgressChartProps) {
   const chartHeight = 120;
   const maxProgress = 100;
   const containerRef = useRef<HTMLDivElement>(null);
   const [containerWidth, setContainerWidth] = useState(0);
+  const [tooltip, setTooltip] = useState<TooltipState>({ visible: false, x: 0, y: 0, day: 0, progress: 0 });
 
   // Measure the day columns container width
   useEffect(() => {
@@ -39,8 +48,9 @@ export function AlignedProgressChart({ data, daysInMonth, currentDay, monthName 
     return map;
   }, [data]);
 
-  // Calculate cell width based on container width
+  // Calculate cell width based on container width - reduced padding
   const cellWidth = containerWidth / daysInMonth;
+  const edgePadding = cellWidth * 0.1; // Minimal edge padding
 
   // Generate smooth SVG path for area chart
   const { linePath, areaPath, points } = useMemo(() => {
@@ -48,15 +58,15 @@ export function AlignedProgressChart({ data, daysInMonth, currentDay, monthName 
       return { linePath: '', areaPath: '', points: [] };
     }
 
-    const pts: { x: number; y: number; day: number }[] = [];
+    const pts: { x: number; y: number; day: number; progress: number }[] = [];
     
-    // Generate points for each day with data
+    // Generate points for each day with data - closer to edges
     for (let i = 0; i < data.length; i++) {
       const d = data[i];
-      // Center of each day's cell
-      const x = (d.day - 1) * cellWidth + cellWidth / 2;
+      // Position points closer to edges
+      const x = edgePadding + (d.day - 1) * ((containerWidth - edgePadding * 2) / (daysInMonth - 1));
       const y = chartHeight - (d.progress / maxProgress) * (chartHeight - 10);
-      pts.push({ x, y, day: d.day });
+      pts.push({ x, y, day: d.day, progress: d.progress });
     }
 
     if (pts.length === 0) return { linePath: '', areaPath: '', points: [] };
@@ -86,15 +96,35 @@ export function AlignedProgressChart({ data, daysInMonth, currentDay, monthName 
     const areaPath = `${path} L ${lastPoint.x} ${chartHeight} L ${firstPoint.x} ${chartHeight} Z`;
 
     return { linePath, areaPath, points: pts };
-  }, [data, cellWidth, containerWidth, chartHeight, maxProgress]);
+  }, [data, cellWidth, containerWidth, chartHeight, maxProgress, daysInMonth, edgePadding]);
+
+  const handleMouseMove = (e: React.MouseEvent<SVGElement>, point: { x: number; y: number; day: number; progress: number }) => {
+    const rect = containerRef.current?.getBoundingClientRect();
+    if (rect) {
+      setTooltip({
+        visible: true,
+        x: e.clientX - rect.left,
+        y: e.clientY - rect.top - 50,
+        day: point.day,
+        progress: point.progress
+      });
+    }
+  };
+
+  const handleMouseLeave = () => {
+    setTooltip(prev => ({ ...prev, visible: false }));
+  };
+
+  const yAxisLabels = [
+    { value: 100, label: '100%' },
+    { value: 75, label: '75%' },
+    { value: 50, label: '50%' },
+    { value: 25, label: '25%' },
+    { value: 0, label: '0%' },
+  ];
 
   return (
     <div>
-      {/* Title centered at top */}
-      <h3 className="font-display text-sm lg:text-base font-semibold text-center mb-4">
-        {monthName} Progress
-      </h3>
-      
       {/* Chart container with same structure as habit table */}
       <div className="flex">
         {/* Left column matching habit name column - contains Y axis */}
@@ -102,9 +132,11 @@ export function AlignedProgressChart({ data, daysInMonth, currentDay, monthName 
           className="flex-shrink-0 flex flex-col justify-between text-right pr-3"
           style={{ width: '140px', height: `${chartHeight}px` }}
         >
-          <span className="text-[10px] lg:text-xs text-muted-foreground leading-none">100%</span>
-          <span className="text-[10px] lg:text-xs text-muted-foreground leading-none">50%</span>
-          <span className="text-[10px] lg:text-xs text-muted-foreground leading-none">0%</span>
+          {yAxisLabels.map(({ label }) => (
+            <span key={label} className="text-[10px] lg:text-xs text-foreground/70 font-medium leading-none">
+              {label}
+            </span>
+          ))}
         </div>
         
         {/* Day columns - chart area (same flex-1 as table day columns) */}
@@ -113,11 +145,14 @@ export function AlignedProgressChart({ data, daysInMonth, currentDay, monthName 
           className="flex-1 relative"
           style={{ height: `${chartHeight}px`, minWidth: 0 }}
         >
-          {/* 50% grid line */}
-          <div 
-            className="absolute w-full border-t border-dashed border-border/40"
-            style={{ top: `${chartHeight / 2}px` }}
-          />
+          {/* Grid lines for 25%, 50%, 75% */}
+          {[25, 50, 75].map(percent => (
+            <div 
+              key={percent}
+              className="absolute w-full border-t border-dashed border-border/30"
+              style={{ top: `${chartHeight - (percent / 100) * (chartHeight - 10)}px` }}
+            />
+          ))}
           
           {/* SVG Area Chart */}
           {containerWidth > 0 && (
@@ -150,19 +185,39 @@ export function AlignedProgressChart({ data, daysInMonth, currentDay, monthName 
                 strokeLinejoin="round"
               />
               
-              {/* Data points */}
+              {/* Data points with hover */}
               {points.map((point, i) => (
                 <circle
                   key={i}
                   cx={point.x}
                   cy={point.y}
-                  r={4}
+                  r={6}
                   fill="hsl(24, 95%, 53%)"
                   stroke="white"
                   strokeWidth={2}
+                  className="cursor-pointer transition-all hover:r-8"
+                  style={{ transition: 'r 0.2s' }}
+                  onMouseEnter={(e) => handleMouseMove(e, point)}
+                  onMouseMove={(e) => handleMouseMove(e, point)}
+                  onMouseLeave={handleMouseLeave}
                 />
               ))}
             </svg>
+          )}
+
+          {/* Tooltip */}
+          {tooltip.visible && (
+            <div 
+              className="absolute z-50 pointer-events-none bg-background border border-border rounded-lg shadow-lg px-3 py-2 text-sm"
+              style={{ 
+                left: tooltip.x, 
+                top: tooltip.y,
+                transform: 'translateX(-50%)'
+              }}
+            >
+              <div className="font-semibold text-foreground">Day {tooltip.day}</div>
+              <div className="text-muted-foreground">{Math.round(tooltip.progress)}% completed</div>
+            </div>
           )}
         </div>
         
