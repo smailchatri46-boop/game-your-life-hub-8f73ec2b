@@ -1,6 +1,6 @@
 import { Navbar } from "@/components/Navbar";
 import { GlassCard } from "@/components/GlassCard";
-import { Emoji } from "@/components/Emoji";
+import { AppleEmoji } from "@/components/AppleEmoji";
 import { Button } from "@/components/ui/button";
 import { Plus, Trash2, GripVertical, Check, ChevronLeft, ChevronRight } from "lucide-react";
 import { useState, useMemo } from "react";
@@ -163,7 +163,7 @@ export default function Habits() {
                   <td className="p-2">
                     <div className="flex items-center gap-2">
                       <GripVertical className="w-4 h-4 text-muted-foreground/50 cursor-grab" />
-                      <Emoji emoji={habit.icon} size="lg" />
+                      <AppleEmoji emoji={habit.icon} size="lg" />
                       <div>
                         <p className="text-sm font-medium">{habit.name}</p>
                         <p className="text-xs text-muted-foreground">{habit.category}</p>
@@ -216,7 +216,7 @@ export default function Habits() {
                 <td className="p-2">
                   <div className="flex items-center gap-2">
                     <GripVertical className="w-4 h-4 text-muted-foreground/50" />
-                    <Emoji emoji="😊" size="lg" />
+                    <AppleEmoji emoji="😊" size="lg" />
                     <div>
                       <p className="text-sm font-medium">Daily Mood</p>
                       <p className="text-xs text-muted-foreground">How are you feeling?</p>
@@ -234,7 +234,7 @@ export default function Habits() {
                           isFuture ? 'bg-muted/30' : 'bg-secondary'
                         }`}
                       >
-                        {!isFuture && <Emoji emoji={moodData[day]} size="sm" />}
+                        {!isFuture && <AppleEmoji emoji={moodData[day]} size="sm" />}
                       </div>
                     </td>
                   );

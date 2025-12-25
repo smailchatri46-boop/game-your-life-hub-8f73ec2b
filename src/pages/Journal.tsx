@@ -1,6 +1,6 @@
 import { Navbar } from "@/components/Navbar";
 import { GlassCard } from "@/components/GlassCard";
-import { Emoji } from "@/components/Emoji";
+import { AppleEmoji } from "@/components/AppleEmoji";
 import { Button } from "@/components/ui/button";
 import { Plus, Pencil, Trash2 } from "lucide-react";
 import { useState } from "react";
@@ -99,7 +99,7 @@ export default function Journal() {
               <div className="flex items-start justify-between mb-4">
                 <div className="flex items-center gap-3">
                   {entry.emoji && (
-                    <Emoji emoji={entry.emoji} size="2xl" />
+                    <AppleEmoji emoji={entry.emoji} size="2xl" />
                   )}
                   <div>
                     <p className="font-semibold text-foreground">{entry.date}</p>
@@ -128,7 +128,7 @@ export default function Journal() {
         
         {entries.length === 0 && (
           <GlassCard className="p-12 text-center">
-            <span className="mb-4 block"><Emoji emoji="📝" size="5xl" /></span>
+            <span className="mb-4 block"><AppleEmoji emoji="📝" size="5xl" /></span>
             <h3 className="font-display text-xl font-semibold mb-2">No entries yet</h3>
             <p className="text-muted-foreground mb-6">
               Start journaling to track your thoughts and progress
