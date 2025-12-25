@@ -14,10 +14,24 @@ interface Habit {
   name: string;
   icon: string;
   category: string;
+  categoryColor?: string;
   target: number;
   importance?: number;
   completions: Record<string, boolean | number>; // key is "YYYY-MM-DD"
 }
+
+const CATEGORY_COLORS: Record<string, string> = {
+  Mind: "#8B5CF6",
+  Health: "#22C55E",
+  Growth: "#EC4899",
+  Focus: "#3B82F6",
+  Work: "#3B82F6",
+  Fitness: "#F59E0B",
+  Learning: "#8B5CF6",
+  "Personal Growth": "#EC4899",
+  Spiritual: "#06B6D4",
+  Other: "#6B7280",
+};
 
 const generateCompletions = (year: number, month: number, maxDay: number, target: number) => {
   const completions: Record<string, boolean | number> = {};
@@ -33,11 +47,11 @@ const generateCompletions = (year: number, month: number, maxDay: number, target
 };
 
 const habitTemplates = [
-  { id: "1", name: "Morning Meditation", icon: "🧘", category: "Mind", target: 1, importance: 70 },
-  { id: "2", name: "Exercise", icon: "💪", category: "Health", target: 1, importance: 80 },
-  { id: "3", name: "Read 30 mins", icon: "📚", category: "Growth", target: 1, importance: 60 },
-  { id: "4", name: "Drink Water", icon: "💧", category: "Health", target: 8, importance: 50 },
-  { id: "5", name: "No Social Media", icon: "📵", category: "Focus", target: 1, importance: 40 },
+  { id: "1", name: "Morning Meditation", icon: "🧘", category: "Mind", categoryColor: "#8B5CF6", target: 1, importance: 70 },
+  { id: "2", name: "Exercise", icon: "💪", category: "Health", categoryColor: "#22C55E", target: 1, importance: 80 },
+  { id: "3", name: "Read 30 mins", icon: "📚", category: "Growth", categoryColor: "#EC4899", target: 1, importance: 60 },
+  { id: "4", name: "Drink Water", icon: "💧", category: "Health", categoryColor: "#22C55E", target: 8, importance: 50 },
+  { id: "5", name: "No Social Media", icon: "📵", category: "Focus", categoryColor: "#3B82F6", target: 1, importance: 40 },
 ];
 
 const generateChartData = (habits: Habit[], daysInMonth: number, currentDay: number, year: number, month: number) => {
@@ -205,7 +219,13 @@ export default function Habits() {
                       <AppleEmoji emoji={habit.icon} size="lg" />
                       <div className="min-w-0 flex-1">
                         <p className="text-xs lg:text-sm font-medium truncate">{habit.name}</p>
-                        <p className="text-[10px] lg:text-xs text-muted-foreground">{habit.category}</p>
+                        <div className="flex items-center gap-1.5">
+                          <span 
+                            className="w-2 h-2 rounded-full flex-shrink-0"
+                            style={{ backgroundColor: habit.categoryColor || CATEGORY_COLORS[habit.category] || "#6B7280" }}
+                          />
+                          <p className="text-[10px] lg:text-xs text-muted-foreground">{habit.category}</p>
+                        </div>
                       </div>
                     </div>
                   </td>
