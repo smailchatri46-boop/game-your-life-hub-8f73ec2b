@@ -3,6 +3,7 @@ import { GlassCard } from "@/components/GlassCard";
 import { AppleEmoji } from "@/components/AppleEmoji";
 import { AlignedProgressChart } from "@/components/AlignedProgressChart";
 import { AddHabitModal, NewHabit } from "@/components/AddHabitModal";
+import { MoodMotivationSection } from "@/components/MoodMotivationSection";
 import { Button } from "@/components/ui/button";
 import { Plus, Trash2, GripVertical, Check, ChevronLeft, ChevronRight } from "lucide-react";
 import { useMemo, useState } from "react";
@@ -98,15 +99,6 @@ export default function Habits() {
     return generateChartData(displayHabits, daysInMonth, currentDay, year, month);
   }, [displayHabits, daysInMonth, currentDay, year, month]);
 
-  // Generate mood data for the month
-  const moodData = useMemo(() => {
-    const moods: Record<number, string> = {};
-    const moodEmojis = ['😊', '😌', '😐', '😔', '🥳'];
-    for (let day = 1; day <= currentDay; day++) {
-      moods[day] = moodEmojis[Math.floor(Math.random() * 5)];
-    }
-    return moods;
-  }, [currentDay, month, year]);
 
   const getDateKey = (day: number) => {
     return `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
@@ -258,38 +250,6 @@ export default function Habits() {
                   </td>
                 </tr>
               ))}
-              
-              {/* Mood Row */}
-              <tr className="border-t-2 border-border/50">
-                <td className="p-1.5 lg:p-2">
-                  <div className="flex items-center gap-1.5">
-                    <GripVertical className="w-3 h-3 text-muted-foreground/50 flex-shrink-0 hidden lg:block" />
-                    <AppleEmoji emoji="😊" size="lg" />
-                    <div className="min-w-0 flex-1">
-                      <p className="text-xs lg:text-sm font-medium">Daily Mood</p>
-                      <p className="text-[10px] lg:text-xs text-muted-foreground">How are you?</p>
-                    </div>
-                  </div>
-                </td>
-                {Array.from({ length: daysInMonth }, (_, i) => {
-                  const day = i + 1;
-                  const isFuture = day > currentDay;
-                  
-                  return (
-                    <td key={i} className="p-0.5 lg:p-1">
-                      <button
-                        disabled={isFuture}
-                        className={`w-5 h-5 lg:w-6 lg:h-6 xl:w-7 xl:h-7 mx-auto rounded-md flex items-center justify-center ${
-                          isFuture ? 'bg-muted/30 cursor-not-allowed' : 'bg-secondary hover:bg-secondary/80 cursor-pointer'
-                        }`}
-                      >
-                        {!isFuture && <AppleEmoji emoji={moodData[day]} size="sm" />}
-                      </button>
-                    </td>
-                  );
-                })}
-                <td colSpan={2}></td>
-              </tr>
             </tbody>
           </table>
         </GlassCard>
@@ -305,6 +265,14 @@ export default function Habits() {
             />
           </div>
         </GlassCard>
+
+        {/* Mood & Motivation Section */}
+        <MoodMotivationSection
+          daysInMonth={daysInMonth}
+          currentDay={currentDay}
+          year={year}
+          month={month}
+        />
       </main>
 
       <AddHabitModal
