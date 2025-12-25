@@ -1,22 +1,5 @@
 import { useState, useMemo } from "react";
 import { GlassCard } from "@/components/GlassCard";
-import { AppleEmoji } from "@/components/AppleEmoji";
-
-const MOOD_OPTIONS = [
-  { emoji: "🥳", label: "Amazing", value: 5 },
-  { emoji: "😊", label: "Happy", value: 4 },
-  { emoji: "😌", label: "Good", value: 3 },
-  { emoji: "😐", label: "Okay", value: 2 },
-  { emoji: "😔", label: "Low", value: 1 },
-];
-
-const MOTIVATION_OPTIONS = [
-  { emoji: "🔥", label: "On Fire", value: 5 },
-  { emoji: "💪", label: "Motivated", value: 4 },
-  { emoji: "⚡", label: "Energized", value: 3 },
-  { emoji: "🌱", label: "Growing", value: 2 },
-  { emoji: "😴", label: "Tired", value: 1 },
-];
 
 interface MoodMotivationSectionProps {
   daysInMonth: number;
@@ -25,220 +8,250 @@ interface MoodMotivationSectionProps {
   month: number;
 }
 
+const getMoodEmoji = (value: number) => {
+  if (value <= 2) return "😢";
+  if (value <= 4) return "😕";
+  if (value <= 6) return "🙂";
+  if (value <= 8) return "😄";
+  return "🤩";
+};
+
+const getMotivationEmoji = (value: number) => {
+  if (value <= 2) return "💤";
+  if (value <= 4) return "😴";
+  if (value <= 6) return "🙂";
+  if (value <= 8) return "💪";
+  return "🔥";
+};
+
 export function MoodMotivationSection({ daysInMonth, currentDay, year, month }: MoodMotivationSectionProps) {
-  const [selectedDay, setSelectedDay] = useState<number | null>(null);
-  
-  // Generate sample mood/motivation data
-  const { moodData, motivationData } = useMemo(() => {
-    const moods: Record<number, number> = {};
-    const motivations: Record<number, number> = {};
-    for (let day = 1; day <= currentDay; day++) {
-      moods[day] = Math.floor(Math.random() * 5) + 1;
-      motivations[day] = Math.floor(Math.random() * 5) + 1;
-    }
-    return { moodData: moods, motivationData: motivations };
-  }, [currentDay, month, year]);
+  const [mood, setMood] = useState(7);
+  const [motivation, setMotivation] = useState(6);
 
-  const getMoodEmoji = (value: number) => MOOD_OPTIONS.find(m => m.value === value)?.emoji || "😐";
-  const getMotivationEmoji = (value: number) => MOTIVATION_OPTIONS.find(m => m.value === value)?.emoji || "⚡";
-
-  // Chart data for mood trend
+  // Generate sample historical data for the chart
   const chartData = useMemo(() => {
-    return Array.from({ length: currentDay }, (_, i) => ({
-      day: i + 1,
-      mood: moodData[i + 1] || 0,
-      motivation: motivationData[i + 1] || 0,
-    }));
-  }, [currentDay, moodData, motivationData]);
-
-  const chartHeight = 80;
-  const maxValue = 5;
-
-  // Generate SVG paths for mood and motivation lines
-  const { moodPath, motivationPath, moodAreaPath, motivationAreaPath } = useMemo(() => {
-    if (chartData.length === 0) return { moodPath: '', motivationPath: '', moodAreaPath: '', motivationAreaPath: '' };
-
-    const width = 100; // percentage based
-    const padding = 2;
-    
-    const getX = (index: number) => padding + (index / (chartData.length - 1 || 1)) * (width - padding * 2);
-    const getY = (value: number) => chartHeight - (value / maxValue) * (chartHeight - 10) - 5;
-
-    let moodPath = `M ${getX(0)} ${getY(chartData[0].mood)}`;
-    let motivationPath = `M ${getX(0)} ${getY(chartData[0].motivation)}`;
-
-    for (let i = 1; i < chartData.length; i++) {
-      const prev = chartData[i - 1];
-      const curr = chartData[i];
-      const prevX = getX(i - 1);
-      const currX = getX(i);
-      
-      const tension = 0.3;
-      const cp1x = prevX + (currX - prevX) * tension;
-      const cp2x = currX - (currX - prevX) * tension;
-
-      moodPath += ` C ${cp1x} ${getY(prev.mood)}, ${cp2x} ${getY(curr.mood)}, ${currX} ${getY(curr.mood)}`;
-      motivationPath += ` C ${cp1x} ${getY(prev.motivation)}, ${cp2x} ${getY(curr.motivation)}, ${currX} ${getY(curr.motivation)}`;
+    const data: { day: number; mood: number; motivation: number }[] = [];
+    for (let day = 1; day <= currentDay; day++) {
+      data.push({
+        day,
+        mood: Math.max(1, Math.min(10, Math.round(5 + Math.sin(day / 3) * 3 + Math.random() * 2))),
+        motivation: Math.max(1, Math.min(10, Math.round(6 + Math.cos(day / 4) * 2 + Math.random() * 2))),
+      });
     }
+    // Override today with current selection
+    if (data.length > 0) {
+      data[data.length - 1] = { day: currentDay, mood, motivation };
+    }
+    return data;
+  }, [currentDay, mood, motivation, month, year]);
 
-    const lastX = getX(chartData.length - 1);
-    const firstX = getX(0);
-    const moodAreaPath = `${moodPath} L ${lastX} ${chartHeight} L ${firstX} ${chartHeight} Z`;
-    const motivationAreaPath = `${motivationPath} L ${lastX} ${chartHeight} L ${firstX} ${chartHeight} Z`;
+  // SVG Chart generation
+  const chartHeight = 100;
+  const chartWidth = 100; // percentage-based viewBox
 
-    return { moodPath, motivationPath, moodAreaPath, motivationAreaPath };
-  }, [chartData, chartHeight, maxValue]);
+  const { moodPath, motivationPath, moodArea, motivationArea, moodPoints, motivationPoints } = useMemo(() => {
+    if (chartData.length === 0) return { moodPath: '', motivationPath: '', moodArea: '', motivationArea: '', moodPoints: [], motivationPoints: [] };
+
+    const padding = 2;
+    const getX = (day: number) => padding + ((day - 1) / (daysInMonth - 1)) * (chartWidth - padding * 2);
+    const getY = (value: number) => chartHeight - 8 - ((value - 1) / 9) * (chartHeight - 16);
+
+    const moodPts: { x: number; y: number }[] = [];
+    const motivationPts: { x: number; y: number }[] = [];
+
+    chartData.forEach(d => {
+      moodPts.push({ x: getX(d.day), y: getY(d.mood) });
+      motivationPts.push({ x: getX(d.day), y: getY(d.motivation) });
+    });
+
+    const createPath = (points: { x: number; y: number }[]) => {
+      if (points.length === 0) return '';
+      let path = `M ${points[0].x} ${points[0].y}`;
+      for (let i = 1; i < points.length; i++) {
+        const prev = points[i - 1];
+        const curr = points[i];
+        const cpx1 = prev.x + (curr.x - prev.x) * 0.3;
+        const cpx2 = curr.x - (curr.x - prev.x) * 0.3;
+        path += ` C ${cpx1} ${prev.y}, ${cpx2} ${curr.y}, ${curr.x} ${curr.y}`;
+      }
+      return path;
+    };
+
+    const createArea = (points: { x: number; y: number }[]) => {
+      if (points.length === 0) return '';
+      const path = createPath(points);
+      const lastX = points[points.length - 1].x;
+      const firstX = points[0].x;
+      return `${path} L ${lastX} ${chartHeight - 4} L ${firstX} ${chartHeight - 4} Z`;
+    };
+
+    return {
+      moodPath: createPath(moodPts),
+      motivationPath: createPath(motivationPts),
+      moodArea: createArea(moodPts),
+      motivationArea: createArea(motivationPts),
+      moodPoints: moodPts,
+      motivationPoints: motivationPts,
+    };
+  }, [chartData, daysInMonth, chartHeight, chartWidth]);
+
+  const NumberSelector = ({ 
+    value, 
+    onChange, 
+    emoji,
+    color 
+  }: { 
+    value: number; 
+    onChange: (v: number) => void; 
+    emoji: string;
+    color: string;
+  }) => (
+    <div className="flex items-center gap-3">
+      <div className="flex gap-1">
+        {Array.from({ length: 10 }, (_, i) => i + 1).map((num) => (
+          <button
+            key={num}
+            onClick={() => onChange(num)}
+            className={`w-8 h-8 rounded-lg text-sm font-semibold transition-all font-['Inter',sans-serif] ${
+              value === num
+                ? "text-white shadow-lg scale-105"
+                : "bg-secondary/60 text-muted-foreground hover:bg-secondary"
+            }`}
+            style={{
+              backgroundColor: value === num ? color : undefined,
+              boxShadow: value === num ? `0 4px 14px ${color}40` : undefined,
+            }}
+          >
+            {num}
+          </button>
+        ))}
+      </div>
+      <span className="text-2xl">{emoji}</span>
+    </div>
+  );
 
   return (
-    <GlassCard className="p-4 sm:p-5 lg:p-6">
-      <div className="flex items-center gap-2 mb-5">
-        <AppleEmoji emoji="💭" size="lg" />
-        <h3 className="font-display text-lg font-semibold">Mood & Motivation</h3>
-      </div>
+    <GlassCard className="p-5 font-['Inter',sans-serif]">
+      <div className="space-y-5">
+        {/* Mood Selector */}
+        <div>
+          <p className="text-sm font-medium text-foreground/80 mb-3">How are you feeling today?</p>
+          <NumberSelector 
+            value={mood} 
+            onChange={setMood} 
+            emoji={getMoodEmoji(mood)}
+            color="#F97316"
+          />
+        </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Today's Selection */}
-        <div className="space-y-4">
-          <div>
-            <p className="text-sm font-medium mb-3 flex items-center gap-2">
-              <span>How are you feeling today?</span>
-            </p>
-            <div className="flex gap-2">
-              {MOOD_OPTIONS.map((mood) => (
-                <button
-                  key={mood.value}
-                  className={`flex flex-col items-center gap-1 p-2 rounded-xl transition-all ${
-                    moodData[currentDay] === mood.value
-                      ? "bg-primary/20 ring-2 ring-primary scale-105"
-                      : "bg-secondary/50 hover:bg-secondary"
-                  }`}
-                >
-                  <AppleEmoji emoji={mood.emoji} size="lg" />
-                  <span className="text-[10px] text-muted-foreground">{mood.label}</span>
-                </button>
-              ))}
-            </div>
-          </div>
-
-          <div>
-            <p className="text-sm font-medium mb-3 flex items-center gap-2">
-              <span>What's your motivation level?</span>
-            </p>
-            <div className="flex gap-2">
-              {MOTIVATION_OPTIONS.map((motivation) => (
-                <button
-                  key={motivation.value}
-                  className={`flex flex-col items-center gap-1 p-2 rounded-xl transition-all ${
-                    motivationData[currentDay] === motivation.value
-                      ? "bg-accent/20 ring-2 ring-accent scale-105"
-                      : "bg-secondary/50 hover:bg-secondary"
-                  }`}
-                >
-                  <AppleEmoji emoji={motivation.emoji} size="lg" />
-                  <span className="text-[10px] text-muted-foreground">{motivation.label}</span>
-                </button>
-              ))}
-            </div>
-          </div>
-
-          {/* Weekly Summary */}
-          <div className="flex gap-4 pt-3 border-t border-border/30">
-            <div className="flex-1 text-center">
-              <p className="text-xs text-muted-foreground mb-1">Avg Mood</p>
-              <div className="flex items-center justify-center gap-1">
-                <AppleEmoji emoji={getMoodEmoji(Math.round(Object.values(moodData).reduce((a, b) => a + b, 0) / currentDay))} size="md" />
-                <span className="font-semibold text-sm">
-                  {(Object.values(moodData).reduce((a, b) => a + b, 0) / currentDay).toFixed(1)}
-                </span>
-              </div>
-            </div>
-            <div className="flex-1 text-center">
-              <p className="text-xs text-muted-foreground mb-1">Avg Motivation</p>
-              <div className="flex items-center justify-center gap-1">
-                <AppleEmoji emoji={getMotivationEmoji(Math.round(Object.values(motivationData).reduce((a, b) => a + b, 0) / currentDay))} size="md" />
-                <span className="font-semibold text-sm">
-                  {(Object.values(motivationData).reduce((a, b) => a + b, 0) / currentDay).toFixed(1)}
-                </span>
-              </div>
-            </div>
-          </div>
+        {/* Motivation Selector */}
+        <div>
+          <p className="text-sm font-medium text-foreground/80 mb-3">Motivation level</p>
+          <NumberSelector 
+            value={motivation} 
+            onChange={setMotivation} 
+            emoji={getMotivationEmoji(motivation)}
+            color="#FBBF24"
+          />
         </div>
 
         {/* Trend Chart */}
-        <div>
-          <p className="text-sm font-medium mb-3">Monthly Trend</p>
-          <div className="bg-secondary/30 rounded-xl p-3 relative" style={{ height: `${chartHeight + 40}px` }}>
-            {/* Legend */}
-            <div className="flex gap-4 mb-2 text-xs">
+        <div className="pt-3 border-t border-border/30">
+          <p className="text-sm font-medium text-foreground/80 mb-3">Monthly Trend</p>
+          <div className="bg-secondary/30 rounded-xl p-3 relative">
+            {/* Legend inside chart */}
+            <div className="absolute top-2 left-3 flex gap-3 text-xs z-10">
               <div className="flex items-center gap-1.5">
-                <div className="w-3 h-3 rounded-full bg-primary/80"></div>
+                <div className="w-2 h-2 rounded-full" style={{ backgroundColor: "#F97316" }} />
                 <span className="text-muted-foreground">Mood</span>
               </div>
               <div className="flex items-center gap-1.5">
-                <div className="w-3 h-3 rounded-full bg-accent/80"></div>
+                <div className="w-2 h-2 rounded-full" style={{ backgroundColor: "#FBBF24" }} />
                 <span className="text-muted-foreground">Motivation</span>
               </div>
             </div>
-            
-            <svg 
-              viewBox={`0 0 100 ${chartHeight}`} 
-              className="w-full" 
-              style={{ height: `${chartHeight}px` }}
+
+            <svg
+              viewBox={`0 0 ${chartWidth} ${chartHeight}`}
+              className="w-full"
+              style={{ height: "100px" }}
               preserveAspectRatio="none"
             >
               <defs>
-                <linearGradient id="moodGradient" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stopColor="hsl(24, 95%, 53%)" stopOpacity={0.3} />
-                  <stop offset="100%" stopColor="hsl(24, 95%, 53%)" stopOpacity={0.02} />
+                <linearGradient id="moodFill" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stopColor="#F97316" stopOpacity={0.25} />
+                  <stop offset="100%" stopColor="#F97316" stopOpacity={0.02} />
                 </linearGradient>
-                <linearGradient id="motivationGradient" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stopColor="hsl(38, 100%, 60%)" stopOpacity={0.3} />
-                  <stop offset="100%" stopColor="hsl(38, 100%, 60%)" stopOpacity={0.02} />
+                <linearGradient id="motivationFill" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stopColor="#FBBF24" stopOpacity={0.2} />
+                  <stop offset="100%" stopColor="#FBBF24" stopOpacity={0.02} />
                 </linearGradient>
               </defs>
 
               {/* Grid lines */}
-              {[1, 2, 3, 4, 5].map(val => (
+              {[2.5, 5, 7.5].map((val) => (
                 <line
                   key={val}
                   x1="0"
-                  y1={chartHeight - (val / maxValue) * (chartHeight - 10) - 5}
-                  x2="100"
-                  y2={chartHeight - (val / maxValue) * (chartHeight - 10) - 5}
+                  y1={chartHeight - 8 - ((val - 1) / 9) * (chartHeight - 16)}
+                  x2={chartWidth}
+                  y2={chartHeight - 8 - ((val - 1) / 9) * (chartHeight - 16)}
                   stroke="currentColor"
-                  strokeOpacity={0.1}
+                  strokeOpacity={0.08}
                   strokeDasharray="2,2"
                 />
               ))}
 
               {/* Area fills */}
-              <path d={moodAreaPath} fill="url(#moodGradient)" />
-              <path d={motivationAreaPath} fill="url(#motivationGradient)" />
+              <path d={motivationArea} fill="url(#motivationFill)" />
+              <path d={moodArea} fill="url(#moodFill)" />
 
               {/* Lines */}
               <path
-                d={moodPath}
+                d={motivationPath}
                 fill="none"
-                stroke="hsl(24, 95%, 53%)"
-                strokeWidth={0.8}
+                stroke="#FBBF24"
+                strokeWidth={0.6}
                 strokeLinecap="round"
                 vectorEffect="non-scaling-stroke"
               />
               <path
-                d={motivationPath}
+                d={moodPath}
                 fill="none"
-                stroke="hsl(38, 100%, 60%)"
-                strokeWidth={0.8}
+                stroke="#F97316"
+                strokeWidth={0.6}
                 strokeLinecap="round"
                 vectorEffect="non-scaling-stroke"
               />
+
+              {/* Data points */}
+              {moodPoints.map((pt, i) => (
+                <circle
+                  key={`mood-${i}`}
+                  cx={pt.x}
+                  cy={pt.y}
+                  r={0.8}
+                  fill="#F97316"
+                  vectorEffect="non-scaling-stroke"
+                />
+              ))}
+              {motivationPoints.map((pt, i) => (
+                <circle
+                  key={`mot-${i}`}
+                  cx={pt.x}
+                  cy={pt.y}
+                  r={0.8}
+                  fill="#FBBF24"
+                  vectorEffect="non-scaling-stroke"
+                />
+              ))}
             </svg>
 
             {/* X-axis labels */}
-            <div className="flex justify-between mt-1 text-[10px] text-muted-foreground">
+            <div className="flex justify-between mt-1 text-[10px] text-muted-foreground px-0.5">
               <span>1</span>
-              <span>{Math.round(currentDay / 2)}</span>
-              <span>{currentDay}</span>
+              <span>{Math.round(daysInMonth / 2)}</span>
+              <span>{daysInMonth}</span>
             </div>
           </div>
         </div>
