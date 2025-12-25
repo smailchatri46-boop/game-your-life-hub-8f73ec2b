@@ -2,7 +2,7 @@ import { Navbar } from "@/components/Navbar";
 import { StatCard } from "@/components/StatCard";
 import { LevelProgress } from "@/components/LevelProgress";
 import { GlassCard } from "@/components/GlassCard";
-import { Emoji } from "@/components/Emoji";
+import { AppleEmoji } from "@/components/AppleEmoji";
 import { Target, Calendar, TrendingUp, Flame, Sparkles, Lock, ChevronLeft, ChevronRight, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
@@ -161,7 +161,7 @@ export default function Overview() {
           />
           <StatCard
             title="Current Streak"
-            subtitle={<span className="flex items-center gap-1">Keep it up! <Emoji emoji="🔥" size="sm" /></span>}
+            subtitle={<span className="flex items-center gap-1">Keep it up! <AppleEmoji emoji="🔥" size="sm" /></span>}
             value={12}
             suffix=" days"
             icon={Flame}
@@ -256,7 +256,7 @@ export default function Overview() {
                   <>
                     <div className="mb-6">
                       <p className="text-sm font-medium text-muted-foreground mb-2">Mood</p>
-                      <Emoji emoji={monthData[selectedDate].mood} size="3xl" />
+                      <AppleEmoji emoji={monthData[selectedDate].mood} size="3xl" />
                     </div>
                     
                     <div className="mb-6">
@@ -299,7 +299,7 @@ export default function Overview() {
               </GlassCard>
             ) : (
               <GlassCard className="p-6 text-center">
-                <span className="mb-4 block"><Emoji emoji="📅" size="4xl" /></span>
+                <span className="mb-4 block"><AppleEmoji emoji="📅" size="4xl" /></span>
                 <h3 className="font-display text-lg font-semibold mb-2">Select a day</h3>
                 <p className="text-sm text-muted-foreground">
                   Click on any day to see your habits, mood, and journal entry
@@ -327,7 +327,7 @@ export default function Overview() {
                 </Button>
                 <Button variant="secondary" className="justify-start h-auto py-4 px-5" asChild>
                   <Link to="/journal">
-                    <span className="mr-3"><Emoji emoji="📝" size="xl" /></span>
+                    <span className="mr-3"><AppleEmoji emoji="📝" size="xl" /></span>
                     <div className="text-left">
                       <p className="font-semibold">Write Journal</p>
                       <p className="text-xs text-muted-foreground">Reflect on your day</p>
@@ -336,7 +336,7 @@ export default function Overview() {
                 </Button>
                 <Button variant="secondary" className="justify-start h-auto py-4 px-5" asChild>
                   <Link to="/tutorials">
-                    <span className="mr-3"><Emoji emoji="🎥" size="xl" /></span>
+                    <span className="mr-3"><AppleEmoji emoji="🎥" size="xl" /></span>
                     <div className="text-left">
                       <p className="font-semibold">Tutorials</p>
                       <p className="text-xs text-muted-foreground">Learn how to use Locked</p>
@@ -345,7 +345,7 @@ export default function Overview() {
                 </Button>
                 <Button variant="secondary" className="justify-start h-auto py-4 px-5" asChild>
                   <Link to="/settings">
-                    <span className="mr-3"><Emoji emoji="⚙️" size="xl" /></span>
+                    <span className="mr-3"><AppleEmoji emoji="⚙️" size="xl" /></span>
                     <div className="text-left">
                       <p className="font-semibold">Settings</p>
                       <p className="text-xs text-muted-foreground">Customize your experience</p>
@@ -391,7 +391,7 @@ export default function Overview() {
                 { emoji: "📝", text: "Wrote journal entry", time: "2 days ago" },
               ].map((activity, i) => (
                 <div key={i} className="flex items-center gap-3 py-2 border-b border-border/50 last:border-0">
-                  <Emoji emoji={activity.emoji} size="xl" />
+                  <AppleEmoji emoji={activity.emoji} size="xl" />
                   <p className="flex-1 text-sm">{activity.text}</p>
                   <span className="text-xs text-muted-foreground">{activity.time}</span>
                 </div>

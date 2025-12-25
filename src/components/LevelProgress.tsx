@@ -1,5 +1,5 @@
 import { cn } from "@/lib/utils";
-import { Emoji } from "@/components/Emoji";
+import { AppleEmoji } from "@/components/AppleEmoji";
 
 interface LevelProgressProps {
   level: number;
@@ -20,7 +20,7 @@ export function LevelProgress({ level, currentXP, maxXP, className }: LevelProgr
           </div>
           <div>
             <h3 className="font-semibold text-foreground">Level {level}</h3>
-            <p className="text-xs text-muted-foreground flex items-center gap-1">Keep going! <Emoji emoji="🔥" size="sm" /></p>
+            <p className="text-xs text-muted-foreground flex items-center gap-1">Keep going! <AppleEmoji emoji="🔥" size="sm" /></p>
           </div>
         </div>
         <div className="text-right">

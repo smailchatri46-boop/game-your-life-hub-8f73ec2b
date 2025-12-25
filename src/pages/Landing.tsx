@@ -1,7 +1,7 @@
 import { LandingNavbar } from "@/components/LandingNavbar";
 import { Button } from "@/components/ui/button";
 import { GlassCard } from "@/components/GlassCard";
-import { Emoji } from "@/components/Emoji";
+import { AppleEmoji } from "@/components/AppleEmoji";
 import { Link } from "react-router-dom";
 import { Check, Sparkles, TrendingUp, BookOpen, Brain } from "lucide-react";
 
@@ -27,7 +27,7 @@ export default function Landing() {
           <div className="animate-fade-in delay-200">
             <Button variant="gradient" size="xl" asChild>
               <Link to="/signup" className="gap-3">
-                <Emoji emoji="👤" size="md" />
+                <AppleEmoji emoji="👤" size="md" />
                 Sign up with Google
               </Link>
             </Button>
@@ -138,7 +138,7 @@ export default function Landing() {
             
             <GlassCard className="p-6" hover>
               <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-accent/30 to-primary/30 flex items-center justify-center mb-4">
-                <Emoji emoji="🔥" size="2xl" />
+                <AppleEmoji emoji="🔥" size="2xl" />
               </div>
               <h3 className="font-display text-xl font-semibold mb-2">Streaks</h3>
               <p className="text-muted-foreground text-sm">
@@ -148,7 +148,7 @@ export default function Landing() {
             
             <GlassCard className="p-6" hover>
               <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-accent/30 to-primary/30 flex items-center justify-center mb-4">
-                <Emoji emoji="📊" size="2xl" />
+                <AppleEmoji emoji="📊" size="2xl" />
               </div>
               <h3 className="font-display text-xl font-semibold mb-2">Analytics</h3>
               <p className="text-muted-foreground text-sm">
