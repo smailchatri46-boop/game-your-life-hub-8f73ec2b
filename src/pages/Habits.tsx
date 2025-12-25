@@ -137,36 +137,36 @@ export default function Habits() {
         </div>
         
         {/* Habits Grid */}
-        <GlassCard className="p-4 mb-8 overflow-x-auto">
-          <table className="w-full min-w-[900px]">
+        <GlassCard className="p-3 mb-8">
+          <table className="w-full table-fixed">
             <thead>
               <tr>
-                <th className="text-left p-2 w-48">
-                  <span className="text-sm font-semibold text-foreground">Habit</span>
+                <th className="text-left p-1 w-32 min-w-[120px]">
+                  <span className="text-xs font-semibold text-foreground">Habit</span>
                 </th>
                 {Array.from({ length: daysInMonth }, (_, i) => (
-                  <th key={i} className="p-1 w-8">
-                    <span className={`text-xs font-medium ${i + 1 === currentDay ? 'text-primary' : 'text-muted-foreground'}`}>
+                  <th key={i} className="p-0.5 text-center">
+                    <span className={`text-[10px] font-medium ${i + 1 === currentDay ? 'text-primary' : 'text-muted-foreground'}`}>
                       {i + 1}
                     </span>
                   </th>
                 ))}
-                <th className="p-2 w-20 text-right">
-                  <span className="text-sm font-semibold text-foreground">%</span>
+                <th className="p-1 w-12 text-right">
+                  <span className="text-xs font-semibold text-foreground">%</span>
                 </th>
-                <th className="w-10"></th>
+                <th className="w-8"></th>
               </tr>
             </thead>
             <tbody>
               {habits.map((habit) => (
                 <tr key={habit.id} className="border-t border-border/30">
-                  <td className="p-2">
-                    <div className="flex items-center gap-2">
-                      <GripVertical className="w-4 h-4 text-muted-foreground/50 cursor-grab" />
-                      <AppleEmoji emoji={habit.icon} size="lg" />
-                      <div>
-                        <p className="text-sm font-medium">{habit.name}</p>
-                        <p className="text-xs text-muted-foreground">{habit.category}</p>
+                  <td className="p-1">
+                    <div className="flex items-center gap-1.5">
+                      <GripVertical className="w-3 h-3 text-muted-foreground/50 cursor-grab flex-shrink-0" />
+                      <AppleEmoji emoji={habit.icon} size="md" />
+                      <div className="min-w-0">
+                        <p className="text-xs font-medium truncate">{habit.name}</p>
+                        <p className="text-[10px] text-muted-foreground">{habit.category}</p>
                       </div>
                     </div>
                   </td>
@@ -180,9 +180,9 @@ export default function Habits() {
                     const isFuture = day > currentDay;
                     
                     return (
-                      <td key={i} className="p-1">
+                      <td key={i} className="p-0.5">
                         <div
-                          className={`w-7 h-7 rounded-lg flex items-center justify-center text-xs transition-all duration-200 ${
+                          className={`w-5 h-5 mx-auto rounded-md flex items-center justify-center text-[10px] transition-all duration-200 ${
                             isFuture 
                               ? 'bg-muted/30'
                               : isCompleted
@@ -191,7 +191,7 @@ export default function Habits() {
                           }`}
                         >
                           {!isFuture && habit.target === 1 && isCompleted && (
-                            <Check className="w-4 h-4" />
+                            <Check className="w-3 h-3" />
                           )}
                           {!isFuture && habit.target > 1 && typeof value === 'number' && (
                             <span className="font-medium">{value}</span>
@@ -200,12 +200,12 @@ export default function Habits() {
                       </td>
                     );
                   })}
-                  <td className="p-2 text-right">
-                    <span className="text-sm font-bold gradient-text">{getHabitProgress(habit)}%</span>
+                  <td className="p-1 text-right">
+                    <span className="text-xs font-bold gradient-text">{getHabitProgress(habit)}%</span>
                   </td>
-                  <td className="p-2">
-                    <button className="p-1.5 rounded-lg hover:bg-destructive/10 text-muted-foreground hover:text-destructive transition-colors">
-                      <Trash2 className="w-4 h-4" />
+                  <td className="p-1">
+                    <button className="p-1 rounded-lg hover:bg-destructive/10 text-muted-foreground hover:text-destructive transition-colors">
+                      <Trash2 className="w-3.5 h-3.5" />
                     </button>
                   </td>
                 </tr>
@@ -213,13 +213,13 @@ export default function Habits() {
               
               {/* Mood Row */}
               <tr className="border-t-2 border-border/50">
-                <td className="p-2">
-                  <div className="flex items-center gap-2">
-                    <GripVertical className="w-4 h-4 text-muted-foreground/50" />
-                    <AppleEmoji emoji="😊" size="lg" />
-                    <div>
-                      <p className="text-sm font-medium">Daily Mood</p>
-                      <p className="text-xs text-muted-foreground">How are you feeling?</p>
+                <td className="p-1">
+                  <div className="flex items-center gap-1.5">
+                    <GripVertical className="w-3 h-3 text-muted-foreground/50 flex-shrink-0" />
+                    <AppleEmoji emoji="😊" size="md" />
+                    <div className="min-w-0">
+                      <p className="text-xs font-medium">Daily Mood</p>
+                      <p className="text-[10px] text-muted-foreground">How are you?</p>
                     </div>
                   </div>
                 </td>
@@ -228,9 +228,9 @@ export default function Habits() {
                   const isFuture = day > currentDay;
                   
                   return (
-                    <td key={i} className="p-1">
+                    <td key={i} className="p-0.5">
                       <div
-                        className={`w-7 h-7 rounded-lg flex items-center justify-center ${
+                        className={`w-5 h-5 mx-auto rounded-md flex items-center justify-center ${
                           isFuture ? 'bg-muted/30' : 'bg-secondary'
                         }`}
                       >
