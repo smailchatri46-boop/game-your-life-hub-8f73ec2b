@@ -251,7 +251,7 @@ export default function Habits() {
         </GlassCard>
         
         {/* Progress Chart - perfectly aligned with table columns */}
-        <GlassCard className="p-2 sm:p-3 lg:p-4 overflow-x-auto lg:overflow-visible">
+        <GlassCard className="py-2 px-1 sm:py-3 sm:px-1.5 lg:py-4 lg:px-2 overflow-x-auto lg:overflow-visible">
           <div style={{ minWidth: '900px' }}>
             <AlignedProgressChart 
               data={chartData}
