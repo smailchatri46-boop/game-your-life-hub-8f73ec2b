@@ -2,8 +2,12 @@ import { Navbar } from "@/components/Navbar";
 import { GlassCard } from "@/components/GlassCard";
 import { AppleEmoji } from "@/components/AppleEmoji";
 import { Button } from "@/components/ui/button";
-import { Plus, Pencil, Trash2 } from "lucide-react";
+import { Textarea } from "@/components/ui/textarea";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Plus, Pencil, Trash2, Mic, MicOff } from "lucide-react";
 import { useState } from "react";
+import { useSpeechRecognition } from "@/hooks/use-speech-recognition";
+import { useToast } from "@/hooks/use-toast";
 
 interface JournalEntry {
   id: string;
@@ -21,6 +25,8 @@ const bgColors = [
   "bg-journal-purple",
   "bg-journal-pink",
 ];
+
+const EMOJI_OPTIONS = ["🥳", "😌", "💡", "🤔", "💪", "😊", "🙏", "🔥", "✨", "❤️"];
 
 const initialEntries: JournalEntry[] = [
   {
@@ -67,9 +73,47 @@ const initialEntries: JournalEntry[] = [
 
 export default function Journal() {
   const [entries, setEntries] = useState<JournalEntry[]>(initialEntries);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [newContent, setNewContent] = useState("");
+  const [selectedEmoji, setSelectedEmoji] = useState("😊");
+  const { toast } = useToast();
+
+  const { isListening, isSupported, toggleListening } = useSpeechRecognition({
+    onResult: (transcript) => {
+      setNewContent((prev) => prev + (prev ? " " : "") + transcript);
+    },
+    onError: (error) => {
+      toast({
+        title: "Voice input error",
+        description: error === "not-allowed" 
+          ? "Please allow microphone access" 
+          : `Error: ${error}`,
+        variant: "destructive",
+      });
+    },
+  });
 
   const deleteEntry = (id: string) => {
     setEntries(entries.filter(e => e.id !== id));
+  };
+
+  const handleSave = () => {
+    if (!newContent.trim()) return;
+    
+    const now = new Date();
+    const newEntry: JournalEntry = {
+      id: Date.now().toString(),
+      content: newContent.trim(),
+      date: now.toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" }),
+      time: now.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" }),
+      emoji: selectedEmoji,
+      bgColor: bgColors[Math.floor(Math.random() * bgColors.length)],
+    };
+    
+    setEntries([newEntry, ...entries]);
+    setNewContent("");
+    setSelectedEmoji("😊");
+    setIsModalOpen(false);
   };
 
   return (
@@ -82,7 +126,7 @@ export default function Journal() {
             <h1 className="font-display text-3xl font-semibold">Journal</h1>
             <p className="text-muted-foreground mt-1">Reflect on your journey</p>
           </div>
-          <Button variant="gradient" size="lg">
+          <Button variant="gradient" size="lg" onClick={() => setIsModalOpen(true)}>
             <Plus className="w-5 h-5 mr-2" />
             New Entry
           </Button>
@@ -133,13 +177,87 @@ export default function Journal() {
             <p className="text-muted-foreground mb-6">
               Start journaling to track your thoughts and progress
             </p>
-            <Button variant="gradient">
+            <Button variant="gradient" onClick={() => setIsModalOpen(true)}>
               <Plus className="w-5 h-5 mr-2" />
               Write your first entry
             </Button>
           </GlassCard>
         )}
       </main>
+
+      {/* New Entry Modal */}
+      <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
+        <DialogContent className="sm:max-w-lg">
+          <DialogHeader>
+            <DialogTitle className="font-display text-xl">New Journal Entry</DialogTitle>
+          </DialogHeader>
+          
+          <div className="space-y-4 pt-4">
+            {/* Emoji Picker */}
+            <div>
+              <label className="block text-sm font-medium text-muted-foreground mb-2">
+                How are you feeling?
+              </label>
+              <div className="flex gap-2 flex-wrap">
+                {EMOJI_OPTIONS.map((emoji) => (
+                  <button
+                    key={emoji}
+                    type="button"
+                    onClick={() => setSelectedEmoji(emoji)}
+                    className={`p-2 rounded-xl transition-all ${
+                      selectedEmoji === emoji
+                        ? "bg-primary/20 ring-2 ring-primary scale-110"
+                        : "hover:bg-secondary"
+                    }`}
+                  >
+                    <AppleEmoji emoji={emoji} size="lg" />
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Content */}
+            <div className="relative">
+              <Textarea
+                value={newContent}
+                onChange={(e) => setNewContent(e.target.value)}
+                placeholder="What's on your mind today?"
+                className="min-h-[200px] resize-none pr-12"
+              />
+              {isSupported && (
+                <button
+                  type="button"
+                  onClick={toggleListening}
+                  className={`absolute bottom-3 right-3 p-2 rounded-full transition-all ${
+                    isListening 
+                      ? "bg-destructive text-white animate-pulse" 
+                      : "text-muted-foreground hover:text-primary hover:bg-primary/10"
+                  }`}
+                  title={isListening ? "Stop recording" : "Voice input"}
+                >
+                  {isListening ? <MicOff className="w-4 h-4" /> : <Mic className="w-4 h-4" />}
+                </button>
+              )}
+            </div>
+
+            {isListening && (
+              <p className="text-xs text-muted-foreground animate-pulse flex items-center gap-1">
+                <span className="w-1.5 h-1.5 bg-destructive rounded-full" />
+                Listening... Speak now
+              </p>
+            )}
+
+            <div className="flex justify-end gap-3">
+              <Button variant="outline" onClick={() => setIsModalOpen(false)}>
+                Cancel
+              </Button>
+              <Button variant="gradient" onClick={handleSave} disabled={!newContent.trim()}>
+                Save Entry
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

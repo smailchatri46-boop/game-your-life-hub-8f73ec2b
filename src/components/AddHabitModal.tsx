@@ -4,7 +4,9 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Slider } from "@/components/ui/slider";
 import { AppleEmoji } from "@/components/AppleEmoji";
-import { Check, X } from "lucide-react";
+import { Check, X, Mic, MicOff } from "lucide-react";
+import { useSpeechRecognition } from "@/hooks/use-speech-recognition";
+import { useToast } from "@/hooks/use-toast";
 
 const CATEGORIES = [
   { value: "work", label: "Work", color: "#3B82F6" },
@@ -68,6 +70,23 @@ export function AddHabitModal({ open, onOpenChange, onSave }: AddHabitModalProps
   const [goalPeriod, setGoalPeriod] = useState<"week" | "month">("week");
   const [importance, setImportance] = useState(50);
   const [error, setError] = useState("");
+  const { toast } = useToast();
+
+  const { isListening, isSupported, toggleListening } = useSpeechRecognition({
+    onResult: (transcript) => {
+      setName((prev) => prev + (prev ? " " : "") + transcript);
+      if (error) setError("");
+    },
+    onError: (err) => {
+      toast({
+        title: "Voice input error",
+        description: err === "not-allowed" 
+          ? "Please allow microphone access" 
+          : `Error: ${err}`,
+        variant: "destructive",
+      });
+    },
+  });
 
   const selectedCategory = CATEGORIES.find(c => c.value === category);
 
@@ -176,15 +195,37 @@ export function AddHabitModal({ open, onOpenChange, onSave }: AddHabitModalProps
                 <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-2">
                   Habit Name
                 </label>
-                <Input
-                  placeholder="e.g., Morning Meditation"
-                  value={name}
-                  onChange={(e) => {
-                    setName(e.target.value);
-                    if (error) setError("");
-                  }}
-                  className="h-12 px-4 bg-zinc-50 dark:bg-zinc-800 border-zinc-200 dark:border-zinc-700 rounded-xl text-base placeholder:text-zinc-400 focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
-                />
+                <div className="relative">
+                  <Input
+                    placeholder="e.g., Morning Meditation"
+                    value={name}
+                    onChange={(e) => {
+                      setName(e.target.value);
+                      if (error) setError("");
+                    }}
+                    className="h-12 px-4 pr-12 bg-zinc-50 dark:bg-zinc-800 border-zinc-200 dark:border-zinc-700 rounded-xl text-base placeholder:text-zinc-400 focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
+                  />
+                  {isSupported && (
+                    <button
+                      type="button"
+                      onClick={toggleListening}
+                      className={`absolute right-3 top-1/2 -translate-y-1/2 p-1.5 rounded-full transition-all ${
+                        isListening 
+                          ? "bg-destructive text-white animate-pulse" 
+                          : "text-zinc-400 hover:text-primary hover:bg-primary/10"
+                      }`}
+                      title={isListening ? "Stop recording" : "Voice input"}
+                    >
+                      {isListening ? <MicOff className="w-4 h-4" /> : <Mic className="w-4 h-4" />}
+                    </button>
+                  )}
+                </div>
+                {isListening && (
+                  <p className="mt-1 text-xs text-muted-foreground animate-pulse flex items-center gap-1">
+                    <span className="w-1.5 h-1.5 bg-destructive rounded-full" />
+                    Listening...
+                  </p>
+                )}
                 {error && (
                   <p className="mt-2 text-sm text-red-500">{error}</p>
                 )}
@@ -424,29 +465,21 @@ export function AddHabitModal({ open, onOpenChange, onSave }: AddHabitModalProps
               {/* Importance */}
               <div>
                 <div className="flex items-center justify-between mb-3">
-                  <label className="text-sm font-medium text-zinc-700 dark:text-zinc-300">
+                  <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300">
                     Importance Weight
                   </label>
-                  <span 
-                    className="text-sm font-semibold px-2 py-0.5 rounded-md"
-                    style={{ 
-                      backgroundColor: `${selectedCategory?.color}15`,
-                      color: selectedCategory?.color 
-                    }}
-                  >
-                    {importance}%
-                  </span>
+                  <span className="text-sm font-semibold text-primary">{importance}%</span>
                 </div>
                 <Slider
                   value={[importance]}
-                  onValueChange={(v) => setImportance(v[0])}
+                  onValueChange={(val) => setImportance(val[0])}
                   min={10}
                   max={100}
-                  step={10}
-                  className="w-full"
+                  step={5}
+                  className="py-2"
                 />
                 <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-2">
-                  Higher weight = more impact on your overall progress
+                  Higher importance = more impact on daily score
                 </p>
               </div>
             </div>
@@ -454,20 +487,20 @@ export function AddHabitModal({ open, onOpenChange, onSave }: AddHabitModalProps
         </div>
 
         {/* Footer */}
-        <div className="px-6 py-4 bg-zinc-50 dark:bg-zinc-800/50 border-t border-zinc-100 dark:border-zinc-800 flex gap-3">
+        <div className="px-6 py-4 border-t border-zinc-100 dark:border-zinc-800 flex justify-end gap-3">
           <Button
             variant="outline"
             onClick={handleClose}
-            className="flex-1 h-11 rounded-xl border-zinc-200 dark:border-zinc-700 hover:bg-zinc-100 dark:hover:bg-zinc-700 font-medium"
+            className="px-6 rounded-xl"
           >
             Cancel
           </Button>
           <Button
+            variant="gradient"
             onClick={handleSave}
-            disabled={!name.trim()}
-            className="flex-1 h-11 rounded-xl bg-primary hover:bg-primary/90 text-white font-medium shadow-lg shadow-primary/25 disabled:opacity-50 disabled:shadow-none"
+            className="px-6 rounded-xl"
           >
-            Add Habit
+            Create Habit
           </Button>
         </div>
       </DialogContent>
