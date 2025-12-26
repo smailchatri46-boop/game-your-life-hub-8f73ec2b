@@ -2,6 +2,9 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { useState, useEffect } from "react";
+import { Mic, MicOff } from "lucide-react";
+import { useSpeechRecognition } from "@/hooks/use-speech-recognition";
+import { useToast } from "@/hooks/use-toast";
 
 interface DailyReflectionModalProps {
   open: boolean;
@@ -32,6 +35,22 @@ export function DailyReflectionModal({
 }: DailyReflectionModalProps) {
   const [text, setText] = useState(existingReflection || "");
   const [placeholderIndex] = useState(() => Math.floor(Math.random() * PLACEHOLDER_PROMPTS.length));
+  const { toast } = useToast();
+
+  const { isListening, isSupported, toggleListening } = useSpeechRecognition({
+    onResult: (transcript) => {
+      setText((prev) => prev + (prev ? " " : "") + transcript);
+    },
+    onError: (error) => {
+      toast({
+        title: "Voice input error",
+        description: error === "not-allowed" 
+          ? "Please allow microphone access to use voice input" 
+          : `Error: ${error}`,
+        variant: "destructive",
+      });
+    },
+  });
 
   useEffect(() => {
     if (open) {
@@ -61,12 +80,45 @@ export function DailyReflectionModal({
         </DialogHeader>
 
         <div className="space-y-4 pt-4">
-          <Textarea
-            value={text}
-            onChange={(e) => setText(e.target.value)}
-            placeholder={PLACEHOLDER_PROMPTS[placeholderIndex]}
-            className="min-h-[150px] resize-none"
-          />
+          <div className="relative">
+            <Textarea
+              value={text}
+              onChange={(e) => setText(e.target.value)}
+              placeholder={PLACEHOLDER_PROMPTS[placeholderIndex]}
+              className="min-h-[150px] resize-none pr-12"
+            />
+            {isSupported && (
+              <Button
+                type="button"
+                variant={isListening ? "destructive" : "ghost"}
+                size="icon"
+                className={`absolute bottom-2 right-2 h-8 w-8 rounded-full transition-all ${
+                  isListening ? "animate-pulse bg-destructive" : "hover:bg-primary/10"
+                }`}
+                onClick={toggleListening}
+                title={isListening ? "Stop recording" : "Start voice input"}
+              >
+                {isListening ? (
+                  <MicOff className="h-4 w-4" />
+                ) : (
+                  <Mic className="h-4 w-4" />
+                )}
+              </Button>
+            )}
+          </div>
+
+          {isListening && (
+            <p className="text-xs text-muted-foreground animate-pulse flex items-center gap-2">
+              <span className="w-2 h-2 bg-destructive rounded-full" />
+              Listening... Speak now
+            </p>
+          )}
+
+          {!isSupported && (
+            <p className="text-xs text-muted-foreground">
+              Voice input not supported in this browser. Try Chrome or Edge.
+            </p>
+          )}
 
           <div className="flex justify-end gap-3">
             <Button variant="outline" onClick={() => onOpenChange(false)}>
