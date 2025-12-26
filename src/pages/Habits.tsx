@@ -3,9 +3,10 @@ import { GlassCard } from "@/components/GlassCard";
 import { AppleEmoji } from "@/components/AppleEmoji";
 import { AlignedProgressChart } from "@/components/AlignedProgressChart";
 import { AddHabitModal, NewHabit } from "@/components/AddHabitModal";
+import { StatCard } from "@/components/StatCard";
 
 import { Button } from "@/components/ui/button";
-import { Plus, Trash2, GripVertical, Check, ChevronLeft, ChevronRight } from "lucide-react";
+import { Plus, Trash2, GripVertical, Check, ChevronLeft, ChevronRight, Target, Calendar, TrendingUp, Flame } from "lucide-react";
 import { useMemo, useState } from "react";
 import { useSelectedMonth } from "@/hooks/use-selected-month";
 
@@ -198,44 +199,137 @@ export default function Habits() {
     }));
   };
 
+  // Calculate stats from habit data
+  const stats = useMemo(() => {
+    const today = new Date();
+    const isCurrentMonth = today.getFullYear() === year && today.getMonth() === month;
+    
+    // Today's completion
+    const todayKey = getDateKey(currentDay);
+    let todayTotal = 0;
+    let todayWeight = 0;
+    displayHabits.forEach(habit => {
+      const weight = habit.importance || 50;
+      todayWeight += weight;
+      const value = habit.completions[todayKey];
+      if (habit.target === 1) {
+        if (value === true) todayTotal += weight;
+      } else if (typeof value === 'number') {
+        todayTotal += (Math.min(value, habit.target) / habit.target) * weight;
+      }
+    });
+    const todayPercent = todayWeight > 0 ? Math.round((todayTotal / todayWeight) * 100) : 0;
+
+    // Week average (last 7 days)
+    let weekTotal = 0;
+    let weekDays = 0;
+    for (let i = Math.max(1, currentDay - 6); i <= currentDay; i++) {
+      const dateKey = getDateKey(i);
+      let dayWeight = 0;
+      let dayTotal = 0;
+      displayHabits.forEach(habit => {
+        const weight = habit.importance || 50;
+        dayWeight += weight;
+        const value = habit.completions[dateKey];
+        if (habit.target === 1) {
+          if (value === true) dayTotal += weight;
+        } else if (typeof value === 'number') {
+          dayTotal += (Math.min(value, habit.target) / habit.target) * weight;
+        }
+      });
+      if (dayWeight > 0) {
+        weekTotal += (dayTotal / dayWeight) * 100;
+        weekDays++;
+      }
+    }
+    const weekAvg = weekDays > 0 ? Math.round(weekTotal / weekDays) : 0;
+
+    // Month average
+    let monthTotal = 0;
+    let monthDays = 0;
+    for (let i = 1; i <= currentDay; i++) {
+      const dateKey = getDateKey(i);
+      let dayWeight = 0;
+      let dayTotal = 0;
+      displayHabits.forEach(habit => {
+        const weight = habit.importance || 50;
+        dayWeight += weight;
+        const value = habit.completions[dateKey];
+        if (habit.target === 1) {
+          if (value === true) dayTotal += weight;
+        } else if (typeof value === 'number') {
+          dayTotal += (Math.min(value, habit.target) / habit.target) * weight;
+        }
+      });
+      if (dayWeight > 0) {
+        monthTotal += (dayTotal / dayWeight) * 100;
+        monthDays++;
+      }
+    }
+    const monthPercent = monthDays > 0 ? Math.round(monthTotal / monthDays) : 0;
+
+    return { todayPercent, weekAvg, monthPercent, isCurrentMonth };
+  }, [displayHabits, currentDay, year, month]);
+
   return (
     <div className="min-h-screen gradient-bg">
       <Navbar />
       
-      <main className="pt-28 pb-12 px-3 sm:px-4 lg:px-6 xl:px-8">
-        <div className="flex items-center justify-between mb-6 flex-wrap gap-4">
-          <div>
-            <h1 className="font-display text-2xl sm:text-3xl font-semibold">Dashboard</h1>
-            <p className="text-muted-foreground mt-1 text-sm">Track your habits</p>
-          </div>
-          
-          {/* Month Navigation */}
-          <div className="flex items-center gap-2 sm:gap-4">
-            <button 
-              onClick={goToPreviousMonth}
-              className="p-2 rounded-full hover:bg-secondary transition-colors"
-            >
-              <ChevronLeft className="w-5 h-5 text-muted-foreground" />
-            </button>
-            <h2 className="font-display text-base sm:text-lg min-w-[130px] sm:min-w-[150px] text-center">
-              <span className="text-primary font-semibold">{monthName}</span>
-              <span className="text-foreground ml-2">{year}</span>
-            </h2>
-            <button 
-              onClick={goToNextMonth}
-              className="p-2 rounded-full hover:bg-secondary transition-colors"
-            >
-              <ChevronRight className="w-5 h-5 text-muted-foreground" />
-            </button>
-            
-            <Button variant="gradient" size="lg" className="ml-2 sm:ml-4 hidden sm:flex" onClick={() => setIsModalOpen(true)}>
-              <Plus className="w-5 h-5 mr-2" />
-              Add Habit
-            </Button>
-            <Button variant="gradient" size="icon" className="ml-2 sm:hidden" onClick={() => setIsModalOpen(true)}>
-              <Plus className="w-5 h-5" />
-            </Button>
-          </div>
+      <main className="pt-28 pb-24 px-3 sm:px-4 lg:px-6 xl:px-8">
+        {/* Month Navigation - Centered above stats */}
+        <div className="flex items-center justify-center gap-4 mb-6">
+          <button 
+            onClick={goToPreviousMonth}
+            className="p-2 rounded-full hover:bg-secondary transition-colors"
+          >
+            <ChevronLeft className="w-5 h-5 text-muted-foreground" />
+          </button>
+          <h2 className="font-display text-xl min-w-[180px] text-center">
+            <span className="text-primary font-semibold">{monthName}</span>
+            <span className="text-foreground ml-2">{year}</span>
+          </h2>
+          <button 
+            onClick={goToNextMonth}
+            className="p-2 rounded-full hover:bg-secondary transition-colors"
+          >
+            <ChevronRight className="w-5 h-5 text-muted-foreground" />
+          </button>
+        </div>
+
+        {/* Stats Row */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+          <StatCard
+            title="Today"
+            subtitle={stats.isCurrentMonth ? `View current month` : "View current month"}
+            value={stats.isCurrentMonth ? stats.todayPercent : 0}
+            icon={Target}
+            iconColor="text-primary"
+            progress={stats.isCurrentMonth ? stats.todayPercent : 0}
+          />
+          <StatCard
+            title="This Week Average"
+            subtitle="Last 7 days"
+            value={stats.weekAvg}
+            icon={Calendar}
+            iconColor="text-accent"
+            progress={stats.weekAvg}
+          />
+          <StatCard
+            title="This Month"
+            subtitle={monthName}
+            value={stats.monthPercent}
+            icon={TrendingUp}
+            iconColor="text-primary"
+            progress={stats.monthPercent}
+          />
+          <StatCard
+            title="Current Streak"
+            subtitle={<span className="flex items-center gap-1">Keep it up! <AppleEmoji emoji="🔥" size="sm" /></span>}
+            value={12}
+            suffix=" days"
+            icon={Flame}
+            iconColor="text-accent"
+          />
         </div>
         
         {/* Habits Grid - fits all days on desktop without scroll */}
@@ -338,6 +432,16 @@ export default function Habits() {
           </div>
         </GlassCard>
       </main>
+
+      {/* Floating Add Habit Button */}
+      <Button 
+        variant="gradient" 
+        size="icon" 
+        className="fixed bottom-6 right-6 w-14 h-14 rounded-full shadow-large z-50"
+        onClick={() => setIsModalOpen(true)}
+      >
+        <Plus className="w-6 h-6" />
+      </Button>
 
       <AddHabitModal
         open={isModalOpen}
