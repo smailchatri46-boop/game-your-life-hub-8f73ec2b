@@ -1,12 +1,30 @@
 import { Navbar } from "@/components/Navbar";
 import { GlassCard } from "@/components/GlassCard";
 import { Button } from "@/components/ui/button";
-import { Sparkles, Lock, Send } from "lucide-react";
+import { Sparkles, Lock, Send, Mic, MicOff } from "lucide-react";
 import { useState } from "react";
+import { useSpeechRecognition } from "@/hooks/use-speech-recognition";
+import { useToast } from "@/hooks/use-toast";
 
 export default function AIChat() {
   const [showPaywall, setShowPaywall] = useState(true);
   const [message, setMessage] = useState("");
+  const { toast } = useToast();
+
+  const { isListening, isSupported, toggleListening } = useSpeechRecognition({
+    onResult: (transcript) => {
+      setMessage((prev) => prev + (prev ? " " : "") + transcript);
+    },
+    onError: (error) => {
+      toast({
+        title: "Voice input error",
+        description: error === "not-allowed" 
+          ? "Please allow microphone access" 
+          : `Error: ${error}`,
+        variant: "destructive",
+      });
+    },
+  });
 
   return (
     <div className="min-h-screen gradient-bg">
@@ -56,17 +74,39 @@ export default function AIChat() {
           {/* Input Area */}
           <div className="p-4 border-t border-border/50">
             <div className="flex gap-3">
-              <input
-                type="text"
-                value={message}
-                onChange={(e) => setMessage(e.target.value)}
-                placeholder="Ask your AI coach..."
-                className="flex-1 px-4 py-3 rounded-2xl bg-secondary border-0 focus:outline-none focus:ring-2 focus:ring-primary/30 text-sm"
-              />
+              <div className="flex-1 relative">
+                <input
+                  type="text"
+                  value={message}
+                  onChange={(e) => setMessage(e.target.value)}
+                  placeholder="Ask your AI coach..."
+                  className="w-full px-4 py-3 pr-12 rounded-2xl bg-secondary border-0 focus:outline-none focus:ring-2 focus:ring-primary/30 text-sm"
+                />
+                {isSupported && (
+                  <button
+                    type="button"
+                    onClick={toggleListening}
+                    className={`absolute right-3 top-1/2 -translate-y-1/2 p-1.5 rounded-full transition-all ${
+                      isListening 
+                        ? "bg-destructive text-white animate-pulse" 
+                        : "text-muted-foreground hover:text-primary hover:bg-primary/10"
+                    }`}
+                    title={isListening ? "Stop recording" : "Voice input"}
+                  >
+                    {isListening ? <MicOff className="w-4 h-4" /> : <Mic className="w-4 h-4" />}
+                  </button>
+                )}
+              </div>
               <Button variant="gradient" size="icon" className="w-12 h-12 rounded-2xl">
                 <Send className="w-5 h-5" />
               </Button>
             </div>
+            {isListening && (
+              <p className="mt-2 text-xs text-muted-foreground animate-pulse flex items-center gap-1">
+                <span className="w-1.5 h-1.5 bg-destructive rounded-full" />
+                Listening... Speak now
+              </p>
+            )}
           </div>
           
           {/* Paywall Overlay */}
