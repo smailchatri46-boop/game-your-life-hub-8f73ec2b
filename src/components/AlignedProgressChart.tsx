@@ -146,12 +146,12 @@ export function AlignedProgressChart({ data, daysInMonth, currentDay, monthName 
   ];
 
   return (
-    <div>
+    <div className="py-2 lg:py-3">
       {/* Chart container with same structure as habit table */}
       <div className="flex">
         {/* Left column matching habit name column - contains Y axis */}
         <div 
-          className="flex-shrink-0 flex flex-col justify-between text-right pr-3"
+          className="flex-shrink-0 flex flex-col justify-between text-right pr-3 p-1.5 lg:p-2"
           style={{ width: '140px', height: `${chartHeight}px` }}
         >
           {yAxisLabels.map(({ label }) => (
@@ -161,7 +161,7 @@ export function AlignedProgressChart({ data, daysInMonth, currentDay, monthName 
           ))}
         </div>
         
-        {/* Day columns - chart area (same flex-1 as table day columns) */}
+        {/* Day columns - chart area */}
         <div 
           ref={containerRef}
           className="flex-1 relative"
@@ -250,7 +250,7 @@ export function AlignedProgressChart({ data, daysInMonth, currentDay, monthName 
           )}
         </div>
         
-        {/* Right columns matching % and delete columns */}
+        {/* Right columns matching % and delete columns (48px + 36px = 84px) */}
         <div style={{ width: '84px' }} className="flex-shrink-0"></div>
       </div>
     </div>
