@@ -48,9 +48,8 @@ export function AlignedProgressChart({ data, daysInMonth, currentDay, monthName 
     return map;
   }, [data]);
 
-  // Calculate cell width based on container width - minimal padding
+  // Calculate cell width based on container width
   const cellWidth = containerWidth / daysInMonth;
-  const edgePadding = 0; // No edge padding - points at exact edges
 
   // Generate smooth SVG path for area chart
   const { linePath, areaPath, points } = useMemo(() => {
@@ -60,11 +59,12 @@ export function AlignedProgressChart({ data, daysInMonth, currentDay, monthName 
 
     const pts: { x: number; y: number; day: number; progress: number }[] = [];
     
-    // Generate points for each day with data - very close to edges
+    // Position each point at the CENTER of its corresponding day column
+    // This ensures pixel-perfect alignment with the table columns above
     for (let i = 0; i < data.length; i++) {
       const d = data[i];
-      // Position points with minimal edge padding
-      const x = edgePadding + (d.day - 1) * ((containerWidth - edgePadding * 2) / (daysInMonth - 1));
+      // Center of the day's column: (day - 1) * cellWidth + cellWidth / 2
+      const x = (d.day - 1) * cellWidth + cellWidth / 2;
       const y = chartHeight - (d.progress / maxProgress) * (chartHeight - 10);
       pts.push({ x, y, day: d.day, progress: d.progress });
     }
@@ -96,7 +96,7 @@ export function AlignedProgressChart({ data, daysInMonth, currentDay, monthName 
     const areaPath = `${path} L ${lastPoint.x} ${chartHeight} L ${firstPoint.x} ${chartHeight} Z`;
 
     return { linePath, areaPath, points: pts };
-  }, [data, cellWidth, containerWidth, chartHeight, maxProgress, daysInMonth, edgePadding]);
+  }, [data, cellWidth, containerWidth, chartHeight, maxProgress, daysInMonth]);
 
   // Find nearest point to mouse position for easier hover
   const handleChartMouseMove = (e: React.MouseEvent<SVGSVGElement>) => {
