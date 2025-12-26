@@ -447,78 +447,66 @@ export default function Habits() {
                   </td>
                 </tr>
               ))}
+              {/* Daily Reflection Row - inside habits table */}
+              <tr className="border-t border-border/30">
+                <td className="p-1.5 lg:p-2">
+                  <div className="flex items-center gap-1.5">
+                    <div className="w-3 h-3 hidden lg:block" /> {/* Spacer for grip icon alignment */}
+                    <AppleEmoji emoji="✍️" size="lg" />
+                    <div className="min-w-0 flex-1">
+                      <p className="text-xs lg:text-sm font-medium truncate">Daily Reflection</p>
+                      <p className="text-[10px] lg:text-xs text-muted-foreground">Why did today go this way?</p>
+                    </div>
+                  </div>
+                </td>
+                {Array.from({ length: daysInMonth }, (_, i) => {
+                  const day = i + 1;
+                  const dateKey = getDateKey(day);
+                  const hasReflection = !!reflections[dateKey];
+                  const isFuture = day > currentDay;
+                  
+                  return (
+                    <td key={i} className="p-0.5 lg:p-1">
+                      <button
+                        disabled={isFuture}
+                        onClick={() => {
+                          if (!isFuture) {
+                            setSelectedReflectionDay(day);
+                            setReflectionModalOpen(true);
+                          }
+                        }}
+                        className={`w-5 h-5 lg:w-6 lg:h-6 xl:w-7 xl:h-7 mx-auto rounded-md flex items-center justify-center text-xs ${
+                          isFuture 
+                            ? 'bg-muted/30 cursor-not-allowed'
+                            : hasReflection
+                              ? 'bg-gradient-to-br from-accent to-primary text-primary-foreground shadow-sm hover:scale-105'
+                              : 'bg-secondary hover:bg-secondary/80 cursor-pointer'
+                        }`}
+                      >
+                        {!isFuture && (
+                          hasReflection 
+                            ? <FileText className="w-3 h-3 lg:w-3.5 lg:h-3.5 text-white" />
+                            : <Plus className="w-3 h-3 lg:w-3.5 lg:h-3.5 text-muted-foreground" />
+                        )}
+                      </button>
+                    </td>
+                  );
+                })}
+                <td className="p-1 lg:p-2 text-right">
+                  <span className="text-xs lg:text-sm font-bold gradient-text">
+                    {currentDay > 0 ? Math.round((Object.keys(reflections).filter(key => {
+                      const [y, m] = key.split('-').map(Number);
+                      return y === year && m === month + 1;
+                    }).length / currentDay) * 100) : 0}%
+                  </span>
+                </td>
+                <td className="p-1 lg:p-2">
+                  {/* No delete button for reflection row */}
+                </td>
+              </tr>
             </tbody>
           </table>
         </GlassCard>
-        
-        {/* Daily Reflection Card - Separate system feature card */}
-        <div className="mt-6 mb-6 rounded-3xl border border-primary/10 bg-gradient-to-br from-primary/5 to-accent/5 shadow-glass overflow-x-auto lg:overflow-visible">
-          <div className="py-2 px-1 sm:py-3 sm:px-1.5 lg:py-3 lg:px-2" style={{ minWidth: '900px' }}>
-            <table className="w-full table-fixed">
-              <tbody>
-                <tr>
-                  <td className="p-1.5 lg:p-2" style={{ width: '140px' }}>
-                    <div className="flex items-center gap-1.5">
-                      <div className="w-3 h-3 hidden lg:block" /> {/* Spacer for grip icon alignment */}
-                      <AppleEmoji emoji="✍️" size="lg" />
-                      <div className="min-w-0 flex-1">
-                        <p className="text-xs lg:text-sm font-medium truncate">Daily Reflection</p>
-                        <p className="text-[10px] lg:text-xs text-muted-foreground">Why did today go this way?</p>
-                      </div>
-                    </div>
-                  </td>
-                  {Array.from({ length: daysInMonth }, (_, i) => {
-                    const day = i + 1;
-                    const dateKey = getDateKey(day);
-                    const hasReflection = !!reflections[dateKey];
-                    const isFuture = day > currentDay;
-                    
-                    return (
-                      <td key={i} className="p-0.5 lg:p-1">
-                        <button
-                          disabled={isFuture}
-                          onClick={() => {
-                            if (!isFuture) {
-                              setSelectedReflectionDay(day);
-                              setReflectionModalOpen(true);
-                            }
-                          }}
-                          className={`w-5 h-5 lg:w-6 lg:h-6 xl:w-7 xl:h-7 mx-auto rounded-md flex items-center justify-center text-xs ${
-                            isFuture 
-                              ? 'bg-muted/30 cursor-not-allowed'
-                              : hasReflection
-                                ? 'bg-gradient-to-br from-accent to-primary text-primary-foreground shadow-sm hover:scale-105'
-                                : 'bg-secondary hover:bg-secondary/80 cursor-pointer'
-                          }`}
-                        >
-                          {!isFuture && (
-                            hasReflection 
-                              ? <FileText className="w-3 h-3 lg:w-3.5 lg:h-3.5 text-white" />
-                              : <Plus className="w-3 h-3 lg:w-3.5 lg:h-3.5 text-muted-foreground" />
-                          )}
-                        </button>
-                      </td>
-                    );
-                  })}
-                  <td className="p-1 lg:p-2 text-right" style={{ width: '48px' }}>
-                    <div className="flex flex-col items-end">
-                      <span className="text-xs lg:text-sm font-bold gradient-text">
-                        {currentDay > 0 ? Math.round((Object.keys(reflections).filter(key => {
-                          const [y, m] = key.split('-').map(Number);
-                          return y === year && m === month + 1;
-                        }).length / currentDay) * 100) : 0}%
-                      </span>
-                      <span className="text-[8px] lg:text-[10px] text-muted-foreground whitespace-nowrap">Reflection</span>
-                    </div>
-                  </td>
-                  <td style={{ width: '36px' }}>
-                    {/* No delete button for reflection row */}
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
         
         {/* Progress Chart - perfectly aligned with table columns */}
         <GlassCard className="py-2 px-1 sm:py-3 sm:px-1.5 lg:py-4 lg:px-2 overflow-x-auto lg:overflow-visible">
