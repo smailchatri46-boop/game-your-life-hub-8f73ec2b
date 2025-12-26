@@ -452,12 +452,12 @@ export default function Habits() {
         </GlassCard>
         
         {/* Daily Reflection Card - Separate system feature card */}
-        <GlassCard className="py-2 px-1 sm:py-3 sm:px-1.5 lg:py-4 lg:px-2 overflow-x-auto lg:overflow-visible">
-          <div style={{ minWidth: '900px' }}>
+        <div className="mt-6 mb-6 rounded-3xl border border-primary/10 bg-gradient-to-br from-primary/5 to-accent/5 shadow-glass overflow-x-auto lg:overflow-visible">
+          <div className="py-2 px-1 sm:py-3 sm:px-1.5 lg:py-3 lg:px-2" style={{ minWidth: '900px' }}>
             <table className="w-full table-fixed">
               <tbody>
                 <tr>
-                  <td className="p-1.5 lg:p-2" style={{ width: '120px' }}>
+                  <td className="p-1.5 lg:p-2" style={{ width: '140px' }}>
                     <div className="flex items-center gap-1.5">
                       <div className="w-3 h-3 hidden lg:block" /> {/* Spacer for grip icon alignment */}
                       <AppleEmoji emoji="✍️" size="lg" />
@@ -474,7 +474,7 @@ export default function Habits() {
                     const isFuture = day > currentDay;
                     
                     return (
-                      <td key={i} className="p-0.5 lg:p-1" style={{ width: `${100 / (daysInMonth + 2)}%` }}>
+                      <td key={i} className="p-0.5 lg:p-1">
                         <button
                           disabled={isFuture}
                           onClick={() => {
@@ -483,24 +483,24 @@ export default function Habits() {
                               setReflectionModalOpen(true);
                             }
                           }}
-                          className={`w-5 h-5 lg:w-6 lg:h-6 xl:w-7 xl:h-7 mx-auto rounded-full flex items-center justify-center text-xs transition-all duration-200 ${
+                          className={`w-5 h-5 lg:w-6 lg:h-6 xl:w-7 xl:h-7 mx-auto rounded-md flex items-center justify-center text-xs ${
                             isFuture 
                               ? 'bg-muted/30 cursor-not-allowed'
                               : hasReflection
-                                ? 'bg-gradient-to-br from-accent to-primary text-primary-foreground shadow-sm hover:scale-110 active:scale-95'
-                                : 'bg-gradient-to-br from-accent to-primary text-white shadow-sm cursor-pointer hover:scale-110 active:scale-95'
+                                ? 'bg-gradient-to-br from-accent to-primary text-primary-foreground shadow-sm hover:scale-105'
+                                : 'bg-secondary hover:bg-secondary/80 cursor-pointer'
                           }`}
                         >
                           {!isFuture && (
                             hasReflection 
                               ? <FileText className="w-3 h-3 lg:w-3.5 lg:h-3.5 text-white" />
-                              : <Plus className="w-3 h-3 lg:w-3.5 lg:h-3.5 text-white" />
+                              : <Plus className="w-3 h-3 lg:w-3.5 lg:h-3.5 text-muted-foreground" />
                           )}
                         </button>
                       </td>
                     );
                   })}
-                  <td className="p-1 lg:p-2 text-right" style={{ width: '60px' }}>
+                  <td className="p-1 lg:p-2 text-right" style={{ width: '48px' }}>
                     <div className="flex flex-col items-end">
                       <span className="text-xs lg:text-sm font-bold gradient-text">
                         {currentDay > 0 ? Math.round((Object.keys(reflections).filter(key => {
@@ -508,17 +508,17 @@ export default function Habits() {
                           return y === year && m === month + 1;
                         }).length / currentDay) * 100) : 0}%
                       </span>
-                      <span className="text-[8px] lg:text-[10px] text-muted-foreground">Reflection rate</span>
+                      <span className="text-[8px] lg:text-[10px] text-muted-foreground whitespace-nowrap">Reflection</span>
                     </div>
                   </td>
-                  <td className="p-1 lg:p-2" style={{ width: '40px' }}>
+                  <td style={{ width: '36px' }}>
                     {/* No delete button for reflection row */}
                   </td>
                 </tr>
               </tbody>
             </table>
           </div>
-        </GlassCard>
+        </div>
         
         {/* Progress Chart - perfectly aligned with table columns */}
         <GlassCard className="py-2 px-1 sm:py-3 sm:px-1.5 lg:py-4 lg:px-2 overflow-x-auto lg:overflow-visible">
