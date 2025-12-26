@@ -506,19 +506,20 @@ export default function Habits() {
                   {/* No delete button for reflection row */}
                 </td>
               </tr>
-              {/* Chart Row - integrated within the table */}
-              <tr className="border-t border-border/30">
-                <td colSpan={daysInMonth + 3} className="p-0">
-                  <AlignedProgressChart 
-                    data={chartData}
-                    daysInMonth={daysInMonth}
-                    currentDay={currentDay}
-                    monthName={monthName}
-                  />
-                </td>
-              </tr>
             </tbody>
           </table>
+        </GlassCard>
+        
+        {/* Progress Chart - perfectly aligned with table columns */}
+        <GlassCard className="py-2 px-1 sm:py-3 sm:px-1.5 lg:py-4 lg:px-2 overflow-x-auto lg:overflow-visible">
+          <div style={{ minWidth: '900px' }}>
+            <AlignedProgressChart 
+              data={chartData}
+              daysInMonth={daysInMonth}
+              currentDay={currentDay}
+              monthName={monthName}
+            />
+          </div>
         </GlassCard>
       </main>
 
