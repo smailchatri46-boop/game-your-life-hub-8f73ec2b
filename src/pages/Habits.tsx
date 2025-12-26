@@ -447,19 +447,23 @@ export default function Habits() {
                   </td>
                 </tr>
               ))}
-              {/* Daily Reflection Row - Always last, special styling */}
-              <tr className="border-t-2 border-primary/20 bg-primary/5">
+              {/* Daily Reflection Row - Always last, visually consistent but special */}
+              <tr className="border-t border-border/30">
                 <td className="p-1.5 lg:p-2">
                   <div className="flex items-center gap-1.5">
                     <div className="w-3 h-3 hidden lg:block" /> {/* Spacer for grip icon alignment */}
-                    <AppleEmoji emoji="✍️" size="lg" />
+                    <div className="relative">
+                      <AppleEmoji emoji="✍️" size="lg" />
+                      <span className="absolute -top-0.5 -right-0.5 w-2 h-2 bg-primary/40 rounded-full" />
+                    </div>
                     <div className="min-w-0 flex-1">
                       <p className="text-xs lg:text-sm font-medium truncate">Daily Reflection</p>
                       <div className="flex items-center gap-1.5">
                         <span 
-                          className="w-2 h-2 rounded-full flex-shrink-0 bg-primary/60"
+                          className="w-2 h-2 rounded-full flex-shrink-0"
+                          style={{ backgroundColor: "#F59E0B" }}
                         />
-                        <p className="text-[10px] lg:text-xs text-muted-foreground italic">Why did today go this way?</p>
+                        <p className="text-[10px] lg:text-xs text-muted-foreground">Why did today go this way?</p>
                       </div>
                     </div>
                   </div>
@@ -480,25 +484,30 @@ export default function Habits() {
                             setReflectionModalOpen(true);
                           }
                         }}
-                        className={`w-5 h-5 lg:w-6 lg:h-6 xl:w-7 xl:h-7 mx-auto rounded-full flex items-center justify-center text-xs transition-all duration-200 ${
+                        className={`w-5 h-5 lg:w-6 lg:h-6 xl:w-7 xl:h-7 mx-auto rounded-md flex items-center justify-center text-xs transition-all duration-200 ${
                           isFuture 
                             ? 'bg-muted/30 cursor-not-allowed'
                             : hasReflection
-                              ? 'bg-primary/20 text-primary hover:bg-primary/30 hover:scale-105'
-                              : 'bg-secondary hover:bg-primary/20 cursor-pointer border border-dashed border-primary/40 hover:border-primary'
+                              ? 'bg-gradient-to-br from-accent to-primary text-primary-foreground shadow-sm hover:scale-105'
+                              : 'bg-secondary hover:bg-secondary/80 cursor-pointer hover:scale-105'
                         }`}
                       >
                         {!isFuture && (
                           hasReflection 
-                            ? <FileText className="w-3 h-3 lg:w-3.5 lg:h-3.5" />
-                            : <Plus className="w-3 h-3 lg:w-3.5 lg:h-3.5" />
+                            ? <FileText className="w-3 h-3 lg:w-4 lg:h-4 text-white" />
+                            : <Plus className="w-3 h-3 lg:w-4 lg:h-4 text-muted-foreground" />
                         )}
                       </button>
                     </td>
                   );
                 })}
                 <td className="p-1 lg:p-2 text-right">
-                  <span className="text-[10px] lg:text-xs text-muted-foreground">—</span>
+                  <span className="text-xs lg:text-sm font-bold gradient-text">
+                    {currentDay > 0 ? Math.round((Object.keys(reflections).filter(key => {
+                      const [y, m] = key.split('-').map(Number);
+                      return y === year && m === month + 1;
+                    }).length / currentDay) * 100) : 0}%
+                  </span>
                 </td>
                 <td className="p-1 lg:p-2">
                   {/* No delete button for reflection row */}
