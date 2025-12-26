@@ -4,11 +4,13 @@ import { AppleEmoji } from "@/components/AppleEmoji";
 import { AlignedProgressChart } from "@/components/AlignedProgressChart";
 import { AddHabitModal, NewHabit } from "@/components/AddHabitModal";
 import { StatCard } from "@/components/StatCard";
+import { DailyReflectionModal } from "@/components/DailyReflectionModal";
 
 import { Button } from "@/components/ui/button";
-import { Plus, Trash2, GripVertical, Check, ChevronLeft, ChevronRight, Target, Calendar, TrendingUp } from "lucide-react";
+import { Plus, Trash2, GripVertical, Check, ChevronLeft, ChevronRight, Target, Calendar, TrendingUp, FileText } from "lucide-react";
 import { useMemo, useState } from "react";
 import { useSelectedMonth } from "@/hooks/use-selected-month";
+import { format } from "date-fns";
 
 interface Habit {
   id: string;
@@ -86,6 +88,9 @@ const generateChartData = (habits: Habit[], daysInMonth: number, currentDay: num
 
 export default function Habits() {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [reflections, setReflections] = useState<Record<string, string>>({});
+  const [reflectionModalOpen, setReflectionModalOpen] = useState(false);
+  const [selectedReflectionDay, setSelectedReflectionDay] = useState<number | null>(null);
   
   const {
     monthName,
@@ -197,6 +202,40 @@ export default function Habits() {
         },
       };
     }));
+  };
+
+  // Handle saving a daily reflection
+  const handleSaveReflection = (dateKey: string, text: string) => {
+    setReflections(prev => ({
+      ...prev,
+      [dateKey]: text,
+    }));
+  };
+
+  // Get completion percentage for a specific day
+  const getDayCompletionPercent = (day: number) => {
+    const dateKey = getDateKey(day);
+    let totalWeight = 0;
+    let weightedProgress = 0;
+    
+    displayHabits.forEach(habit => {
+      const weight = habit.importance || 50;
+      totalWeight += weight;
+      const value = habit.completions[dateKey];
+      if (habit.target === 1) {
+        if (value === true) weightedProgress += weight;
+      } else if (typeof value === 'number') {
+        weightedProgress += (Math.min(value, habit.target) / habit.target) * weight;
+      }
+    });
+    
+    return totalWeight > 0 ? Math.round((weightedProgress / totalWeight) * 100) : 0;
+  };
+
+  // Format date for display
+  const formatReflectionDate = (day: number) => {
+    const date = new Date(year, month, day);
+    return format(date, "EEEE, MMMM d, yyyy");
   };
 
   // Calculate stats from habit data
@@ -408,6 +447,63 @@ export default function Habits() {
                   </td>
                 </tr>
               ))}
+              {/* Daily Reflection Row - Always last, special styling */}
+              <tr className="border-t-2 border-primary/20 bg-primary/5">
+                <td className="p-1.5 lg:p-2">
+                  <div className="flex items-center gap-1.5">
+                    <div className="w-3 h-3 hidden lg:block" /> {/* Spacer for grip icon alignment */}
+                    <AppleEmoji emoji="✍️" size="lg" />
+                    <div className="min-w-0 flex-1">
+                      <p className="text-xs lg:text-sm font-medium truncate">Daily Reflection</p>
+                      <div className="flex items-center gap-1.5">
+                        <span 
+                          className="w-2 h-2 rounded-full flex-shrink-0 bg-primary/60"
+                        />
+                        <p className="text-[10px] lg:text-xs text-muted-foreground italic">Why did today go this way?</p>
+                      </div>
+                    </div>
+                  </div>
+                </td>
+                {Array.from({ length: daysInMonth }, (_, i) => {
+                  const day = i + 1;
+                  const dateKey = getDateKey(day);
+                  const hasReflection = !!reflections[dateKey];
+                  const isFuture = day > currentDay;
+                  
+                  return (
+                    <td key={i} className="p-0.5 lg:p-1">
+                      <button
+                        disabled={isFuture}
+                        onClick={() => {
+                          if (!isFuture) {
+                            setSelectedReflectionDay(day);
+                            setReflectionModalOpen(true);
+                          }
+                        }}
+                        className={`w-5 h-5 lg:w-6 lg:h-6 xl:w-7 xl:h-7 mx-auto rounded-full flex items-center justify-center text-xs transition-all duration-200 ${
+                          isFuture 
+                            ? 'bg-muted/30 cursor-not-allowed'
+                            : hasReflection
+                              ? 'bg-primary/20 text-primary hover:bg-primary/30 hover:scale-105'
+                              : 'bg-secondary hover:bg-primary/20 cursor-pointer border border-dashed border-primary/40 hover:border-primary'
+                        }`}
+                      >
+                        {!isFuture && (
+                          hasReflection 
+                            ? <FileText className="w-3 h-3 lg:w-3.5 lg:h-3.5" />
+                            : <Plus className="w-3 h-3 lg:w-3.5 lg:h-3.5" />
+                        )}
+                      </button>
+                    </td>
+                  );
+                })}
+                <td className="p-1 lg:p-2 text-right">
+                  <span className="text-[10px] lg:text-xs text-muted-foreground">—</span>
+                </td>
+                <td className="p-1 lg:p-2">
+                  {/* No delete button for reflection row */}
+                </td>
+              </tr>
             </tbody>
           </table>
         </GlassCard>
@@ -440,6 +536,18 @@ export default function Habits() {
         onOpenChange={setIsModalOpen}
         onSave={handleAddHabit}
       />
+
+      {selectedReflectionDay && (
+        <DailyReflectionModal
+          open={reflectionModalOpen}
+          onOpenChange={setReflectionModalOpen}
+          date={formatReflectionDate(selectedReflectionDay)}
+          dateKey={getDateKey(selectedReflectionDay)}
+          completionPercent={getDayCompletionPercent(selectedReflectionDay)}
+          existingReflection={reflections[getDateKey(selectedReflectionDay)]}
+          onSave={handleSaveReflection}
+        />
+      )}
     </div>
   );
 }
