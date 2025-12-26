@@ -27,31 +27,32 @@ export function AICoachingSection({ onUpgrade, onDismiss }: AICoachingSectionPro
       </h3>
 
       {/* Description */}
-      <p className="text-muted-foreground max-w-md mx-auto mb-6">
+      <p className="text-muted-foreground max-w-md mx-auto mb-8">
         AI coaching is part of Locked Pro. Unlock personalized insights, motivation, and progress reflection.
       </p>
 
-      {/* Upgrade Button */}
-      <Button 
-        variant="gradient" 
-        size="lg"
-        className="w-full max-w-xs mx-auto mb-4"
-        onClick={onUpgrade}
-      >
-        <Sparkles className="w-5 h-5 mr-2" />
-        Upgrade to Pro
-      </Button>
+      {/* Upgrade Button and Maybe Later - Stacked Vertically */}
+      <div className="flex flex-col items-center gap-4 mb-8">
+        <Button 
+          variant="gradient" 
+          size="lg"
+          className="w-full max-w-xs"
+          onClick={onUpgrade}
+        >
+          <Sparkles className="w-5 h-5 mr-2" />
+          Upgrade to Pro
+        </Button>
 
-      {/* Maybe Later Link */}
-      <button 
-        onClick={onDismiss}
-        className="text-muted-foreground hover:text-foreground transition-colors text-sm"
-      >
-        Maybe later
-      </button>
+        <button 
+          onClick={onDismiss}
+          className="text-muted-foreground hover:text-foreground transition-colors text-sm"
+        >
+          Maybe later
+        </button>
+      </div>
 
       {/* Pricing */}
-      <div className="mt-8 pt-6 border-t border-border/50">
+      <div className="pt-6 border-t border-border/50">
         <div className="flex justify-center items-center gap-8">
           <div className="text-center">
             <div className="text-xl font-bold text-foreground">$14<span className="text-sm font-normal text-muted-foreground">/mo</span></div>
