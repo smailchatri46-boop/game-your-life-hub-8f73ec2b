@@ -452,9 +452,8 @@ export default function Habits() {
                 <td className="p-1.5 lg:p-2">
                   <div className="flex items-center gap-1.5">
                     <div className="w-3 h-3 hidden lg:block" /> {/* Spacer for grip icon alignment */}
-                    <AppleEmoji emoji="📓" size="lg" />
                     <div className="min-w-0 flex-1">
-                      <p className="text-xs lg:text-sm font-medium truncate">Daily Reflection</p>
+                      <p className="text-xs lg:text-sm font-medium">Daily Reflection</p>
                       <div className="flex items-center gap-1.5">
                         <span className="w-2 h-2 rounded-full flex-shrink-0 bg-gradient-to-br from-accent to-primary" />
                         <p className="text-[10px] lg:text-xs text-muted-foreground">Journal</p>
