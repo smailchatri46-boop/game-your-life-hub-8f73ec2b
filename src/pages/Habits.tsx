@@ -6,7 +6,7 @@ import { AddHabitModal, NewHabit } from "@/components/AddHabitModal";
 import { StatCard } from "@/components/StatCard";
 
 import { Button } from "@/components/ui/button";
-import { Plus, Trash2, GripVertical, Check, ChevronLeft, ChevronRight, Target, Calendar, TrendingUp, Flame } from "lucide-react";
+import { Plus, Trash2, GripVertical, Check, ChevronLeft, ChevronRight, Target, Calendar, TrendingUp } from "lucide-react";
 import { useMemo, useState } from "react";
 import { useSelectedMonth } from "@/hooks/use-selected-month";
 
@@ -297,7 +297,7 @@ export default function Habits() {
         </div>
 
         {/* Stats Row */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
           <StatCard
             title="Today"
             subtitle={stats.isCurrentMonth ? `View current month` : "View current month"}
@@ -321,14 +321,6 @@ export default function Habits() {
             icon={TrendingUp}
             iconColor="text-primary"
             progress={stats.monthPercent}
-          />
-          <StatCard
-            title="Current Streak"
-            subtitle={<span className="flex items-center gap-1">Keep it up! <AppleEmoji emoji="🔥" size="sm" /></span>}
-            value={12}
-            suffix=" days"
-            icon={Flame}
-            iconColor="text-accent"
           />
         </div>
         
