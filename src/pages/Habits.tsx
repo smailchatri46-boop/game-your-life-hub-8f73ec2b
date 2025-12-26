@@ -3,6 +3,7 @@ import { GlassCard } from "@/components/GlassCard";
 import { AppleEmoji } from "@/components/AppleEmoji";
 import { AlignedProgressChart } from "@/components/AlignedProgressChart";
 import { MoodMotivationChart } from "@/components/MoodMotivationChart";
+import { AICoachingSection } from "@/components/AICoachingSection";
 import { AddHabitModal, NewHabit } from "@/components/AddHabitModal";
 import { StatCard } from "@/components/StatCard";
 import { DailyReflectionModal } from "@/components/DailyReflectionModal";
@@ -699,7 +700,7 @@ export default function Habits() {
         </GlassCard>
 
         {/* Mood & Motivation Chart */}
-        <GlassCard className="py-2 px-0 sm:py-3 sm:px-0 lg:py-4 lg:px-0 overflow-x-auto lg:overflow-visible">
+        <GlassCard className="py-2 px-0 sm:py-3 sm:px-0 lg:py-4 lg:px-0 overflow-x-auto lg:overflow-visible mb-8">
           <div style={{ minWidth: '900px' }}>
             <MoodMotivationChart 
               data={moodMotivationChartData}
@@ -708,6 +709,9 @@ export default function Habits() {
             />
           </div>
         </GlassCard>
+
+        {/* AI Coaching Section */}
+        <AICoachingSection />
       </main>
 
       {/* Floating Add Habit Button */}
