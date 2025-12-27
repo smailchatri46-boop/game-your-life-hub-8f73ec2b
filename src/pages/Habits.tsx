@@ -562,17 +562,18 @@ export default function Habits() {
           <table className="w-full table-fixed" style={{ minWidth: '900px' }}>
             <thead>
               <tr>
-                <th className="text-left p-1.5 lg:p-2" style={{ width: '140px' }}>
+                <th className="text-left p-0.5 lg:p-1" style={{ width: '140px' }}>
                   <span className="text-xs lg:text-sm font-semibold text-foreground">Emotions Area</span>
+                  <p className="text-[10px] lg:text-xs text-muted-foreground/70 mt-0.5">Track your mood and motivation here</p>
                 </th>
                 {Array.from({ length: daysInMonth }, (_, i) => (
-                  <th key={i} className="p-0.5 lg:p-1 text-center">
+                  <th key={i} className="p-0.5 text-center">
                     <span className={`text-xs lg:text-sm font-medium ${i + 1 === currentDay ? 'text-primary font-bold' : 'text-muted-foreground'}`}>
                       {i + 1}
                     </span>
                   </th>
                 ))}
-                <th className="p-1 lg:p-2 text-right" style={{ width: '48px' }}>
+                <th className="p-0.5 lg:p-1 text-right" style={{ width: '48px' }}>
                   <span className="text-xs lg:text-sm font-semibold text-foreground">%</span>
                 </th>
                 <th style={{ width: '36px' }}></th>
@@ -580,10 +581,8 @@ export default function Habits() {
             </thead>
             <tbody>
               {/* Unified Entry Row */}
-              <tr className="border-t border-border/30">
-                <td className="p-1.5 lg:p-2" style={{ width: '140px' }}>
-                  <p className="text-[10px] lg:text-xs text-muted-foreground/70">Track your mood and motivation here</p>
-                </td>
+              <tr>
+                <td className="p-0.5 lg:p-1" style={{ width: '140px' }}></td>
                 {Array.from({ length: daysInMonth }, (_, i) => {
                   const day = i + 1;
                   const dateKey = getDateKey(day);
