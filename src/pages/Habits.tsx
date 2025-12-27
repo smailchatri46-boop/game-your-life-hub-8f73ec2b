@@ -7,7 +7,8 @@ import { AICoachingSection } from "@/components/AICoachingSection";
 import { AddHabitModal, NewHabit } from "@/components/AddHabitModal";
 import { StatCard } from "@/components/StatCard";
 import { DailyReflectionModal } from "@/components/DailyReflectionModal";
-import { MoodMotivationModal } from "@/components/MoodMotivationModal";
+import { UnifiedMoodMotivationModal } from "@/components/UnifiedMoodMotivationModal";
+import { AppleEmoji as MoodEmoji } from "@/components/AppleEmoji";
 
 import { Button } from "@/components/ui/button";
 import { Plus, Trash2, GripVertical, Check, ChevronLeft, ChevronRight, Target, Calendar, TrendingUp, FileText } from "lucide-react";
@@ -95,13 +96,11 @@ export default function Habits() {
   const [reflectionModalOpen, setReflectionModalOpen] = useState(false);
   const [selectedReflectionDay, setSelectedReflectionDay] = useState<number | null>(null);
   
-  // Mood & Motivation state
+  // Mood & Motivation state (unified)
   const [moodData, setMoodData] = useState<Record<string, number>>({});
   const [motivationData, setMotivationData] = useState<Record<string, number>>({});
-  const [moodModalOpen, setMoodModalOpen] = useState(false);
-  const [motivationModalOpen, setMotivationModalOpen] = useState(false);
-  const [selectedMoodDay, setSelectedMoodDay] = useState<number | null>(null);
-  const [selectedMotivationDay, setSelectedMotivationDay] = useState<number | null>(null);
+  const [moodMotivationModalOpen, setMoodMotivationModalOpen] = useState(false);
+  const [selectedMoodMotivationDay, setSelectedMoodMotivationDay] = useState<number | null>(null);
   
   const {
     monthName,
@@ -249,13 +248,10 @@ export default function Habits() {
     return format(date, "EEEE, MMMM d, yyyy");
   };
 
-  // Handle saving mood and motivation
-  const handleSaveMood = (dateKey: string, value: number) => {
-    setMoodData(prev => ({ ...prev, [dateKey]: value }));
-  };
-
-  const handleSaveMotivation = (dateKey: string, value: number) => {
-    setMotivationData(prev => ({ ...prev, [dateKey]: value }));
+  // Handle saving mood and motivation (unified)
+  const handleSaveMoodMotivation = (dateKey: string, mood: number, motivation: number) => {
+    setMoodData(prev => ({ ...prev, [dateKey]: mood }));
+    setMotivationData(prev => ({ ...prev, [dateKey]: motivation }));
   };
 
   // Generate mood/motivation chart data
@@ -556,7 +552,7 @@ export default function Habits() {
         </GlassCard>
 
         {/* Mood & Motivation Section */}
-        <h3 className="text-lg font-display font-semibold text-foreground mt-8 mb-4">Mood & Motivation</h3>
+        <h3 className="text-lg font-semibold text-foreground mt-8 mb-4">Mood <span className="text-muted-foreground font-normal">&</span> Motivation</h3>
         
         {/* Mood & Motivation Row - same style as Daily Reflection */}
         <GlassCard className="p-2 sm:p-3 lg:p-4 mb-8 overflow-x-auto lg:overflow-visible">
@@ -580,16 +576,22 @@ export default function Habits() {
               </tr>
             </thead>
             <tbody>
-              {/* Add Mood Row */}
+              {/* Unified Entry Row */}
               <tr className="border-t border-border/30">
                 <td className="p-1.5 lg:p-2">
                   <div className="flex items-center gap-1.5">
                     <div className="w-3 h-3 hidden lg:block" />
                     <div className="min-w-0 flex-1">
-                      <p className="text-xs lg:text-sm font-medium">Add Mood</p>
-                      <div className="flex items-center gap-1.5">
-                        <span className="w-2 h-2 rounded-full flex-shrink-0" style={{ backgroundColor: 'hsl(24, 95%, 53%)' }} />
-                        <p className="text-[10px] lg:text-xs text-muted-foreground">Daily</p>
+                      <p className="text-xs lg:text-sm font-medium">Daily Entry</p>
+                      <div className="flex items-center gap-3">
+                        <div className="flex items-center gap-1">
+                          <span className="w-2 h-2 rounded-full flex-shrink-0" style={{ backgroundColor: 'hsl(24, 95%, 53%)' }} />
+                          <p className="text-[10px] lg:text-xs text-muted-foreground">Mood</p>
+                        </div>
+                        <div className="flex items-center gap-1">
+                          <span className="w-2 h-2 rounded-full flex-shrink-0" style={{ backgroundColor: 'hsl(280, 70%, 55%)' }} />
+                          <p className="text-[10px] lg:text-xs text-muted-foreground">Motivation</p>
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -598,7 +600,17 @@ export default function Habits() {
                   const day = i + 1;
                   const dateKey = getDateKey(day);
                   const hasMood = moodData[dateKey] !== undefined;
+                  const hasMotivation = motivationData[dateKey] !== undefined;
+                  const hasEntry = hasMood || hasMotivation;
                   const isFuture = day > currentDay;
+                  
+                  // Get mood emoji for display
+                  const moodValue = moodData[dateKey];
+                  const MOOD_EMOJIS: Record<number, string> = {
+                    1: "😢", 2: "😞", 3: "😔", 4: "😕", 5: "😐",
+                    6: "🙂", 7: "😊", 8: "😄", 9: "🥳", 10: "🔥",
+                  };
+                  const moodEmoji = moodValue ? MOOD_EMOJIS[moodValue] : null;
                   
                   return (
                     <td key={i} className="p-0.5 lg:p-1">
@@ -606,21 +618,21 @@ export default function Habits() {
                         disabled={isFuture}
                         onClick={() => {
                           if (!isFuture) {
-                            setSelectedMoodDay(day);
-                            setMoodModalOpen(true);
+                            setSelectedMoodMotivationDay(day);
+                            setMoodMotivationModalOpen(true);
                           }
                         }}
                         className={`w-5 h-5 lg:w-6 lg:h-6 xl:w-7 xl:h-7 mx-auto rounded-md flex items-center justify-center text-xs transition-all duration-200 ${
                           isFuture 
                             ? 'bg-muted/30 cursor-not-allowed'
-                            : hasMood
-                              ? 'bg-gradient-to-br from-accent to-primary text-primary-foreground shadow-sm hover:scale-105'
+                            : hasEntry
+                              ? 'bg-secondary/80 shadow-sm hover:scale-105'
                               : 'bg-secondary hover:bg-secondary/80 cursor-pointer'
                         }`}
                       >
                         {!isFuture && (
-                          hasMood 
-                            ? <Check className="w-3 h-3 lg:w-3.5 lg:h-3.5 text-white" />
+                          hasEntry && moodEmoji
+                            ? <MoodEmoji emoji={moodEmoji} size="sm" />
                             : <Plus className="w-3 h-3 lg:w-3.5 lg:h-3.5 text-muted-foreground" />
                         )}
                       </button>
@@ -630,64 +642,6 @@ export default function Habits() {
                 <td className="p-1 lg:p-2 text-right">
                   <span className="text-xs lg:text-sm font-bold gradient-text">
                     {currentDay > 0 ? Math.round((Object.keys(moodData).filter(key => {
-                      const [y, m] = key.split('-').map(Number);
-                      return y === year && m === month + 1;
-                    }).length / currentDay) * 100) : 0}%
-                  </span>
-                </td>
-                <td className="p-1 lg:p-2"></td>
-              </tr>
-              
-              {/* Add Motivation Row */}
-              <tr className="border-t border-border/30">
-                <td className="p-1.5 lg:p-2">
-                  <div className="flex items-center gap-1.5">
-                    <div className="w-3 h-3 hidden lg:block" />
-                    <div className="min-w-0 flex-1">
-                      <p className="text-xs lg:text-sm font-medium">Add Motivation</p>
-                      <div className="flex items-center gap-1.5">
-                        <span className="w-2 h-2 rounded-full flex-shrink-0" style={{ backgroundColor: 'hsl(280, 70%, 55%)' }} />
-                        <p className="text-[10px] lg:text-xs text-muted-foreground">Daily</p>
-                      </div>
-                    </div>
-                  </div>
-                </td>
-                {Array.from({ length: daysInMonth }, (_, i) => {
-                  const day = i + 1;
-                  const dateKey = getDateKey(day);
-                  const hasMotivation = motivationData[dateKey] !== undefined;
-                  const isFuture = day > currentDay;
-                  
-                  return (
-                    <td key={i} className="p-0.5 lg:p-1">
-                      <button
-                        disabled={isFuture}
-                        onClick={() => {
-                          if (!isFuture) {
-                            setSelectedMotivationDay(day);
-                            setMotivationModalOpen(true);
-                          }
-                        }}
-                        className={`w-5 h-5 lg:w-6 lg:h-6 xl:w-7 xl:h-7 mx-auto rounded-md flex items-center justify-center text-xs transition-all duration-200 ${
-                          isFuture 
-                            ? 'bg-muted/30 cursor-not-allowed'
-                            : hasMotivation
-                              ? 'bg-gradient-to-br from-purple-500 to-violet-600 text-primary-foreground shadow-sm hover:scale-105'
-                              : 'bg-secondary hover:bg-secondary/80 cursor-pointer'
-                        }`}
-                      >
-                        {!isFuture && (
-                          hasMotivation 
-                            ? <Check className="w-3 h-3 lg:w-3.5 lg:h-3.5 text-white" />
-                            : <Plus className="w-3 h-3 lg:w-3.5 lg:h-3.5 text-muted-foreground" />
-                        )}
-                      </button>
-                    </td>
-                  );
-                })}
-                <td className="p-1 lg:p-2 text-right">
-                  <span className="text-xs lg:text-sm font-bold gradient-text">
-                    {currentDay > 0 ? Math.round((Object.keys(motivationData).filter(key => {
                       const [y, m] = key.split('-').map(Number);
                       return y === year && m === month + 1;
                     }).length / currentDay) * 100) : 0}%
@@ -742,27 +696,16 @@ export default function Habits() {
         />
       )}
 
-      {selectedMoodDay && (
-        <MoodMotivationModal
-          open={moodModalOpen}
-          onOpenChange={setMoodModalOpen}
-          date={formatReflectionDate(selectedMoodDay)}
-          dateKey={getDateKey(selectedMoodDay)}
-          type="mood"
-          existingValue={moodData[getDateKey(selectedMoodDay)]}
-          onSave={handleSaveMood}
-        />
-      )}
-
-      {selectedMotivationDay && (
-        <MoodMotivationModal
-          open={motivationModalOpen}
-          onOpenChange={setMotivationModalOpen}
-          date={formatReflectionDate(selectedMotivationDay)}
-          dateKey={getDateKey(selectedMotivationDay)}
-          type="motivation"
-          existingValue={motivationData[getDateKey(selectedMotivationDay)]}
-          onSave={handleSaveMotivation}
+      {selectedMoodMotivationDay && (
+        <UnifiedMoodMotivationModal
+          open={moodMotivationModalOpen}
+          onOpenChange={setMoodMotivationModalOpen}
+          date={new Date(year, month, selectedMoodMotivationDay)}
+          dateKey={getDateKey(selectedMoodMotivationDay)}
+          completionPercent={getDayCompletionPercent(selectedMoodMotivationDay)}
+          existingMood={moodData[getDateKey(selectedMoodMotivationDay)]}
+          existingMotivation={motivationData[getDateKey(selectedMoodMotivationDay)]}
+          onSave={handleSaveMoodMotivation}
         />
       )}
     </div>
