@@ -81,10 +81,10 @@ export function UnifiedMoodMotivationModal({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-md bg-gradient-to-br from-purple-50 to-white dark:from-zinc-900 dark:to-zinc-800 border-purple-100 dark:border-zinc-700">
+      <DialogContent className="sm:max-w-md bg-gradient-to-br from-orange-50 to-white dark:from-zinc-900 dark:to-zinc-800 border-orange-100 dark:border-zinc-700">
         <DialogHeader>
           <div className="flex items-center gap-3">
-            <div className="w-12 h-12 rounded-xl bg-purple-100 dark:bg-purple-900/30 flex items-center justify-center">
+            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-accent to-primary flex items-center justify-center">
               <AppleEmoji emoji="📅" size="lg" />
             </div>
             <div>
@@ -96,10 +96,10 @@ export function UnifiedMoodMotivationModal({
 
         <div className="space-y-6 pt-4">
           {/* Completion Stats */}
-          <div className="bg-white/60 dark:bg-zinc-800/60 rounded-xl p-4 border border-purple-100 dark:border-zinc-700">
+          <div className="bg-white/60 dark:bg-zinc-800/60 rounded-xl p-4 border border-orange-100 dark:border-zinc-700">
             <div className="flex items-center justify-between">
               <span className="text-sm text-muted-foreground">Completion</span>
-              <div className="w-5 h-5 rounded-full bg-purple-500 flex items-center justify-center">
+              <div className="w-5 h-5 rounded-full bg-gradient-to-br from-accent to-primary flex items-center justify-center">
                 <svg className="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                 </svg>
@@ -126,7 +126,7 @@ export function UnifiedMoodMotivationModal({
                   onClick={() => setMood(num)}
                   className={`flex-1 h-10 rounded-lg text-sm font-medium transition-all ${
                     mood === num
-                      ? "bg-purple-200 dark:bg-purple-800 ring-2 ring-purple-400 dark:ring-purple-500 text-purple-800 dark:text-purple-100 scale-105"
+                      ? "bg-gradient-to-br from-accent to-primary text-white ring-2 ring-primary/50 scale-105"
                       : "bg-secondary/60 dark:bg-zinc-700/60 text-muted-foreground hover:bg-secondary dark:hover:bg-zinc-600"
                   }`}
                 >
@@ -146,8 +146,8 @@ export function UnifiedMoodMotivationModal({
               <div className="flex items-center gap-2">
                 <span className={`text-xs font-medium px-2 py-1 rounded-full ${
                   motivation >= 8 
-                    ? "bg-purple-500 text-white" 
-                    : "bg-purple-100 dark:bg-purple-900/50 text-purple-700 dark:text-purple-300"
+                    ? "bg-gradient-to-br from-accent to-primary text-white" 
+                    : "bg-orange-100 dark:bg-orange-900/30 text-orange-700 dark:text-orange-300"
                 }`}>
                   {getMotivationLabel(motivation)}
                 </span>
@@ -160,7 +160,7 @@ export function UnifiedMoodMotivationModal({
                   onClick={() => setMotivation(num)}
                   className={`flex-1 h-10 rounded-lg text-sm font-medium transition-all ${
                     motivation === num
-                      ? "bg-purple-500 text-white ring-2 ring-purple-400 scale-105"
+                      ? "bg-gradient-to-br from-accent to-primary text-white ring-2 ring-primary/50 scale-105"
                       : "bg-secondary/60 dark:bg-zinc-700/60 text-muted-foreground hover:bg-secondary dark:hover:bg-zinc-600"
                   }`}
                 >

@@ -254,15 +254,18 @@ export default function Habits() {
     setMotivationData(prev => ({ ...prev, [dateKey]: motivation }));
   };
 
-  // Generate mood/motivation chart data
+  // Generate mood/motivation chart data - convert 1-10 scale to 10%-100%
   const moodMotivationChartData = useMemo(() => {
     return Array.from({ length: currentDay }, (_, i) => {
       const day = i + 1;
       const dateKey = getDateKey(day);
+      const moodValue = moodData[dateKey];
+      const motivationValue = motivationData[dateKey];
       return {
         day,
-        mood: moodData[dateKey],
-        motivation: motivationData[dateKey],
+        // Convert 1-10 to 10%-100% (1→10%, 10→100%)
+        mood: moodValue !== undefined ? moodValue * 10 : undefined,
+        motivation: motivationValue !== undefined ? motivationValue * 10 : undefined,
       };
     });
   }, [moodData, motivationData, currentDay, year, month]);
@@ -552,7 +555,7 @@ export default function Habits() {
         </GlassCard>
 
         {/* Mood & Motivation Section */}
-        <h3 className="text-lg font-semibold text-foreground mt-8 mb-4">Mood <span className="text-muted-foreground font-normal">&</span> Motivation</h3>
+        <h3 className="text-lg font-display font-semibold text-foreground mt-8 mb-4">Mood & Motivation</h3>
         
         {/* Mood & Motivation Row - same style as Daily Reflection */}
         <GlassCard className="p-2 sm:p-3 lg:p-4 mb-8 overflow-x-auto lg:overflow-visible">
@@ -582,8 +585,7 @@ export default function Habits() {
                   <div className="flex items-center gap-1.5">
                     <div className="w-3 h-3 hidden lg:block" />
                     <div className="min-w-0 flex-1">
-                      <p className="text-xs lg:text-sm font-medium">Daily Entry</p>
-                      <div className="flex items-center gap-3">
+                      <div className="flex items-center gap-3 mt-0.5">
                         <div className="flex items-center gap-1">
                           <span className="w-2 h-2 rounded-full flex-shrink-0" style={{ backgroundColor: 'hsl(24, 95%, 53%)' }} />
                           <p className="text-[10px] lg:text-xs text-muted-foreground">Mood</p>
