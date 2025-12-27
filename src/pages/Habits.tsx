@@ -582,19 +582,7 @@ export default function Habits() {
               {/* Unified Entry Row */}
               <tr className="border-t border-border/30">
                 <td className="p-1.5 lg:p-2" style={{ width: '140px' }}>
-                  <div className="flex items-center gap-1.5">
-                    <div className="w-3 h-3 hidden lg:block" />
-                    <div className="flex flex-col gap-0.5">
-                      <div className="flex items-center gap-1">
-                        <span className="w-2 h-2 rounded-full flex-shrink-0" style={{ backgroundColor: 'hsl(24, 95%, 53%)' }} />
-                        <p className="text-[10px] lg:text-xs text-muted-foreground">Mood</p>
-                      </div>
-                      <div className="flex items-center gap-1">
-                        <span className="w-2 h-2 rounded-full flex-shrink-0" style={{ backgroundColor: 'hsl(280, 70%, 55%)' }} />
-                        <p className="text-[10px] lg:text-xs text-muted-foreground">Motivation</p>
-                      </div>
-                    </div>
-                  </div>
+                  <p className="text-[10px] lg:text-xs text-muted-foreground/70">Track your mood and motivation here</p>
                 </td>
                 {Array.from({ length: daysInMonth }, (_, i) => {
                   const day = i + 1;
