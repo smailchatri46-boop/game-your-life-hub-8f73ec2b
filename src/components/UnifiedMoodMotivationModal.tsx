@@ -44,11 +44,16 @@ const MOTIVATION_EMOJIS: Record<number, string> = {
 };
 
 const getMotivationLabel = (value: number) => {
-  if (value <= 3) return "Low";
   if (value <= 5) return "Medium";
   if (value <= 7) return "High";
   if (value <= 9) return "Very High";
   return "Peak";
+};
+
+const getMotivationLabelColor = (value: number) => {
+  if (value <= 5) return "bg-orange-100 dark:bg-orange-900/30 text-orange-700 dark:text-orange-300";
+  if (value <= 7) return "bg-orange-200 dark:bg-orange-800/40 text-orange-800 dark:text-orange-200";
+  return "bg-gradient-to-br from-accent to-primary text-white";
 };
 
 export function UnifiedMoodMotivationModal({
@@ -130,11 +135,7 @@ export function UnifiedMoodMotivationModal({
                 <span className="text-sm font-medium text-foreground">Motivation Level</span>
               </div>
               <div className="flex items-center gap-2">
-                <span className={`text-xs font-medium px-2 py-1 rounded-full ${
-                  motivation >= 8 
-                    ? "bg-gradient-to-br from-accent to-primary text-white" 
-                    : "bg-orange-100 dark:bg-orange-900/30 text-orange-700 dark:text-orange-300"
-                }`}>
+                <span className={`text-xs font-medium px-2 py-1 rounded-full ${getMotivationLabelColor(motivation)}`}>
                   {getMotivationLabel(motivation)}
                 </span>
               </div>
@@ -157,16 +158,16 @@ export function UnifiedMoodMotivationModal({
           </div>
 
           {/* Action Buttons */}
-          <div className="flex justify-center gap-3 pt-2">
+          <div className="flex justify-end gap-3 pt-2">
             <Button 
               variant="outline" 
               onClick={() => onOpenChange(false)}
-              className="hover:bg-secondary hover:text-foreground hover:border-border"
+              className="rounded-xl hover:bg-secondary hover:text-foreground hover:border-border"
             >
               Cancel
             </Button>
-            <Button variant="gradient" onClick={handleSave}>
-              Save Entry
+            <Button variant="gradient" onClick={handleSave} className="rounded-xl">
+              Save
             </Button>
           </div>
         </div>
