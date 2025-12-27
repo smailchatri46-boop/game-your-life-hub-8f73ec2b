@@ -555,7 +555,7 @@ export default function Habits() {
         </GlassCard>
 
         {/* Mood & Motivation Section */}
-        <h3 className="text-lg font-display font-semibold text-foreground mt-8 mb-4">Mood & Motivation</h3>
+        <h3 className="text-lg font-semibold text-foreground mt-8 mb-4">Mood and Motivation</h3>
         
         {/* Mood & Motivation Row - same style as Daily Reflection */}
         <GlassCard className="p-2 sm:p-3 lg:p-4 mb-8 overflow-x-auto lg:overflow-visible">
@@ -584,8 +584,8 @@ export default function Habits() {
                 <td className="p-1.5 lg:p-2">
                   <div className="flex items-center gap-1.5">
                     <div className="w-3 h-3 hidden lg:block" />
-                    <div className="min-w-0 flex-1">
-                      <div className="flex items-center gap-3 mt-0.5">
+                    <div className="min-w-0">
+                      <div className="flex items-center gap-2 mt-0.5">
                         <div className="flex items-center gap-1">
                           <span className="w-2 h-2 rounded-full flex-shrink-0" style={{ backgroundColor: 'hsl(24, 95%, 53%)' }} />
                           <p className="text-[10px] lg:text-xs text-muted-foreground">Mood</p>
