@@ -34,6 +34,15 @@ const WEEKDAYS = [
   { value: 6, label: "S" },
 ];
 
+export interface ProgressiveBuildUp {
+  enabled: boolean;
+  startGoal: number;
+  targetGoal: number;
+  rampDuration: "1-week" | "2-weeks" | "1-month" | "custom";
+  customWeeks: number;
+  startDate: string;
+}
+
 export interface NewHabit {
   id: string;
   name: string;
@@ -42,12 +51,13 @@ export interface NewHabit {
   categoryColor: string;
   habitType: "boolean" | "numeric";
   target: number;
-  frequency: "daily" | "weekdays" | "monthly";
+  frequency: "daily" | "weekdays" | "monthly" | "progressive";
   selectedWeekdays: number[];
   selectedDays: number[];
   goalValue: number;
   goalPeriod: "week" | "month";
   importance: number;
+  progressiveBuildUp?: ProgressiveBuildUp;
   completions: Record<string, boolean | number>;
 }
 
@@ -57,19 +67,33 @@ interface AddHabitModalProps {
   onSave: (habit: NewHabit) => void;
 }
 
+const RAMP_DURATION_OPTIONS = [
+  { value: "1-week", label: "1 week" },
+  { value: "2-weeks", label: "2 weeks" },
+  { value: "1-month", label: "1 month" },
+  { value: "custom", label: "Custom" },
+];
+
 export function AddHabitModal({ open, onOpenChange, onSave }: AddHabitModalProps) {
   const [name, setName] = useState("");
   const [category, setCategory] = useState("health");
   const [icon, setIcon] = useState("🎯");
   const [habitType, setHabitType] = useState<"boolean" | "numeric">("boolean");
   const [numericTarget, setNumericTarget] = useState(8);
-  const [frequency, setFrequency] = useState<"daily" | "weekdays" | "monthly">("daily");
+  const [frequency, setFrequency] = useState<"daily" | "weekdays" | "monthly" | "progressive">("daily");
   const [selectedWeekdays, setSelectedWeekdays] = useState<number[]>([1, 2, 3, 4, 5]);
   const [selectedDays, setSelectedDays] = useState<number[]>([1, 15]);
   const [goalValue, setGoalValue] = useState(5);
   const [goalPeriod, setGoalPeriod] = useState<"week" | "month">("week");
   const [importance, setImportance] = useState(50);
   const [error, setError] = useState("");
+  
+  // Progressive build-up state
+  const [progressiveStartGoal, setProgressiveStartGoal] = useState(1);
+  const [progressiveTargetGoal, setProgressiveTargetGoal] = useState(5);
+  const [progressiveRampDuration, setProgressiveRampDuration] = useState<"1-week" | "2-weeks" | "1-month" | "custom">("2-weeks");
+  const [progressiveCustomWeeks, setProgressiveCustomWeeks] = useState(3);
+  
   const { toast } = useToast();
 
   const { isListening, isSupported, toggleListening } = useSpeechRecognition({
@@ -89,6 +113,13 @@ export function AddHabitModal({ open, onOpenChange, onSave }: AddHabitModalProps
   });
 
   const selectedCategory = CATEGORIES.find(c => c.value === category);
+
+  const getRampDurationLabel = () => {
+    if (progressiveRampDuration === "custom") {
+      return `${progressiveCustomWeeks} week${progressiveCustomWeeks > 1 ? 's' : ''}`;
+    }
+    return RAMP_DURATION_OPTIONS.find(opt => opt.value === progressiveRampDuration)?.label || "2 weeks";
+  };
 
   const handleSave = () => {
     if (!name.trim()) {
@@ -111,6 +142,14 @@ export function AddHabitModal({ open, onOpenChange, onSave }: AddHabitModalProps
       goalValue,
       goalPeriod,
       importance,
+      progressiveBuildUp: frequency === "progressive" ? {
+        enabled: true,
+        startGoal: progressiveStartGoal,
+        targetGoal: progressiveTargetGoal,
+        rampDuration: progressiveRampDuration,
+        customWeeks: progressiveCustomWeeks,
+        startDate: new Date().toISOString(),
+      } : undefined,
       completions: {},
     };
 
@@ -131,6 +170,10 @@ export function AddHabitModal({ open, onOpenChange, onSave }: AddHabitModalProps
     setGoalValue(5);
     setGoalPeriod("week");
     setImportance(50);
+    setProgressiveStartGoal(1);
+    setProgressiveTargetGoal(5);
+    setProgressiveRampDuration("2-weeks");
+    setProgressiveCustomWeeks(3);
     setError("");
   };
 
@@ -355,11 +398,12 @@ export function AddHabitModal({ open, onOpenChange, onSave }: AddHabitModalProps
                     { value: "daily", label: "Every day", desc: "Track daily" },
                     { value: "weekdays", label: "Specific days", desc: "Choose days" },
                     { value: "monthly", label: "Monthly dates", desc: "Pick dates" },
+                    { value: "progressive", label: "Progressive build-up", desc: "Start small and increase your target over time" },
                   ].map((freq) => (
                     <button
                       key={freq.value}
                       type="button"
-                      onClick={() => setFrequency(freq.value as "daily" | "weekdays" | "monthly")}
+                      onClick={() => setFrequency(freq.value as "daily" | "weekdays" | "monthly" | "progressive")}
                       className={`w-full p-3 rounded-xl border-2 text-left flex items-center justify-between transition-all ${
                         frequency === freq.value
                           ? "border-primary bg-primary/5"
@@ -378,6 +422,81 @@ export function AddHabitModal({ open, onOpenChange, onSave }: AddHabitModalProps
                     </button>
                   ))}
                 </div>
+
+                {/* Progressive Build-up Configuration */}
+                {frequency === "progressive" && (
+                  <div className="mt-3 p-4 bg-zinc-50 dark:bg-zinc-800/50 rounded-xl space-y-4">
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-xs font-medium text-zinc-600 dark:text-zinc-400 mb-1.5">
+                          Starting goal per day
+                        </label>
+                        <Input
+                          type="number"
+                          min={1}
+                          max={progressiveTargetGoal - 1}
+                          value={progressiveStartGoal}
+                          onChange={(e) => setProgressiveStartGoal(Math.max(1, Math.min(progressiveTargetGoal - 1, parseInt(e.target.value) || 1)))}
+                          className="h-9 text-center bg-white dark:bg-zinc-700 border-zinc-200 dark:border-zinc-600 rounded-lg"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-xs font-medium text-zinc-600 dark:text-zinc-400 mb-1.5">
+                          Target goal per day
+                        </label>
+                        <Input
+                          type="number"
+                          min={progressiveStartGoal + 1}
+                          max={100}
+                          value={progressiveTargetGoal}
+                          onChange={(e) => setProgressiveTargetGoal(Math.max(progressiveStartGoal + 1, parseInt(e.target.value) || 2))}
+                          className="h-9 text-center bg-white dark:bg-zinc-700 border-zinc-200 dark:border-zinc-600 rounded-lg"
+                        />
+                      </div>
+                    </div>
+                    
+                    <div>
+                      <label className="block text-xs font-medium text-zinc-600 dark:text-zinc-400 mb-1.5">
+                        Ramp duration
+                      </label>
+                      <div className="flex flex-wrap gap-2">
+                        {RAMP_DURATION_OPTIONS.map((option) => (
+                          <button
+                            key={option.value}
+                            type="button"
+                            onClick={() => setProgressiveRampDuration(option.value as typeof progressiveRampDuration)}
+                            className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-all ${
+                              progressiveRampDuration === option.value
+                                ? "bg-primary text-white"
+                                : "bg-white dark:bg-zinc-700 text-zinc-600 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-600 border border-zinc-200 dark:border-zinc-600"
+                            }`}
+                          >
+                            {option.label}
+                          </button>
+                        ))}
+                      </div>
+                      {progressiveRampDuration === "custom" && (
+                        <div className="mt-2 flex items-center gap-2">
+                          <Input
+                            type="number"
+                            min={1}
+                            max={52}
+                            value={progressiveCustomWeeks}
+                            onChange={(e) => setProgressiveCustomWeeks(Math.max(1, Math.min(52, parseInt(e.target.value) || 1)))}
+                            className="w-20 h-9 text-center bg-white dark:bg-zinc-700 border-zinc-200 dark:border-zinc-600 rounded-lg"
+                          />
+                          <span className="text-sm text-zinc-600 dark:text-zinc-400">weeks</span>
+                        </div>
+                      )}
+                    </div>
+                    
+                    <div className="p-3 bg-primary/10 dark:bg-primary/20 rounded-lg">
+                      <p className="text-sm text-primary dark:text-primary/90">
+                        You will start at {progressiveStartGoal}× per day and gradually increase to {progressiveTargetGoal}× per day over {getRampDurationLabel()}.
+                      </p>
+                    </div>
+                  </div>
+                )}
 
                 {frequency === "weekdays" && (
                   <div className="mt-3 flex justify-between gap-1.5 p-3 bg-zinc-50 dark:bg-zinc-800/50 rounded-xl">
