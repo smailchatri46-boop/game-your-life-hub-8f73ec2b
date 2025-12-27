@@ -357,7 +357,7 @@ export default function Habits() {
           </button>
           <h2 className="font-display text-2xl min-w-[200px] text-center">
             <span className="text-primary font-semibold">{monthName}</span>
-            <span className="text-foreground ml-2 font-sans font-medium">{year}</span>
+            <span className="text-foreground ml-2 font-sans font-black italic">{year}</span>
           </h2>
           <button 
             onClick={goToNextMonth}
