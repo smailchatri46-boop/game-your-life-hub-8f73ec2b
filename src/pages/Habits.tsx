@@ -563,7 +563,7 @@ export default function Habits() {
             <thead>
               <tr>
                 <th className="text-left p-1.5 lg:p-2" style={{ width: '140px' }}>
-                  <span className="text-xs lg:text-sm font-semibold text-foreground">Entry</span>
+                  <span className="text-xs lg:text-sm font-semibold text-foreground">Emotions Area</span>
                 </th>
                 {Array.from({ length: daysInMonth }, (_, i) => (
                   <th key={i} className="p-0.5 lg:p-1 text-center">
