@@ -594,7 +594,7 @@ export default function Habits() {
                             setMoodMotivationModalOpen(true);
                           }
                         }}
-                        className={`w-5 h-5 lg:w-6 lg:h-6 xl:w-7 xl:h-7 mx-auto mt-0.5 rounded-md flex items-center justify-center text-xs transition-all duration-200 ${
+                        className={`w-5 h-5 lg:w-6 lg:h-6 xl:w-7 xl:h-7 mx-auto mt-1 rounded-md flex items-center justify-center text-xs transition-all duration-200 ${
                           isFuture 
                             ? 'bg-muted/30 cursor-not-allowed'
                             : hasEntry
