@@ -561,28 +561,11 @@ export default function Habits() {
         <GlassCard className="p-2 sm:p-3 lg:p-4 mb-8 overflow-x-auto lg:overflow-visible">
           <table className="w-full table-fixed" style={{ minWidth: '900px' }}>
             <thead>
-              <tr>
-                <th className="text-left p-0.5 lg:p-1" style={{ width: '140px' }}>
-                  <span className="text-xs lg:text-sm font-semibold text-foreground">Emotions Area</span>
-                  <p className="text-[10px] lg:text-xs text-muted-foreground/70 mt-0.5">Track your mood and motivation here</p>
+              <tr className="align-top">
+                <th className="text-left p-0.5 lg:p-1 align-top" style={{ width: '140px' }}>
+                  <span className="text-xs lg:text-sm font-semibold text-foreground leading-tight">Emotions Area</span>
+                  <p className="text-[10px] lg:text-xs text-muted-foreground/70 leading-tight">Track your mood and motivation here</p>
                 </th>
-                {Array.from({ length: daysInMonth }, (_, i) => (
-                  <th key={i} className="p-0.5 text-center">
-                    <span className={`text-xs lg:text-sm font-medium ${i + 1 === currentDay ? 'text-primary font-bold' : 'text-muted-foreground'}`}>
-                      {i + 1}
-                    </span>
-                  </th>
-                ))}
-                <th className="p-0.5 lg:p-1 text-right" style={{ width: '48px' }}>
-                  <span className="text-xs lg:text-sm font-semibold text-foreground">%</span>
-                </th>
-                <th style={{ width: '36px' }}></th>
-              </tr>
-            </thead>
-            <tbody>
-              {/* Unified Entry Row */}
-              <tr>
-                <td className="p-0.5 lg:p-1" style={{ width: '140px' }}></td>
                 {Array.from({ length: daysInMonth }, (_, i) => {
                   const day = i + 1;
                   const dateKey = getDateKey(day);
@@ -591,16 +574,18 @@ export default function Habits() {
                   const hasEntry = hasMood || hasMotivation;
                   const isFuture = day > currentDay;
                   
-                  // Get mood emoji for display
                   const moodValue = moodData[dateKey];
                   const MOOD_EMOJIS: Record<number, string> = {
                     1: "😢", 2: "😞", 3: "😔", 4: "😕", 5: "😐",
                     6: "🙂", 7: "😊", 8: "😄", 9: "🥳", 10: "🔥",
                   };
                   const moodEmoji = moodValue ? MOOD_EMOJIS[moodValue] : null;
-                  
+
                   return (
-                    <td key={i} className="p-0.5 lg:p-1">
+                    <th key={i} className="p-0.5 text-center align-top">
+                      <span className={`text-xs lg:text-sm font-medium leading-tight ${i + 1 === currentDay ? 'text-primary font-bold' : 'text-muted-foreground'}`}>
+                        {i + 1}
+                      </span>
                       <button
                         disabled={isFuture}
                         onClick={() => {
@@ -609,7 +594,7 @@ export default function Habits() {
                             setMoodMotivationModalOpen(true);
                           }
                         }}
-                        className={`w-5 h-5 lg:w-6 lg:h-6 xl:w-7 xl:h-7 mx-auto rounded-md flex items-center justify-center text-xs transition-all duration-200 ${
+                        className={`w-5 h-5 lg:w-6 lg:h-6 xl:w-7 xl:h-7 mx-auto mt-0.5 rounded-md flex items-center justify-center text-xs transition-all duration-200 ${
                           isFuture 
                             ? 'bg-muted/30 cursor-not-allowed'
                             : hasEntry
@@ -623,20 +608,23 @@ export default function Habits() {
                             : <Plus className="w-3 h-3 lg:w-3.5 lg:h-3.5 text-muted-foreground" />
                         )}
                       </button>
-                    </td>
+                    </th>
                   );
                 })}
-                <td className="p-1 lg:p-2 text-right">
-                  <span className="text-xs lg:text-sm font-bold gradient-text">
-                    {currentDay > 0 ? Math.round((Object.keys(moodData).filter(key => {
-                      const [y, m] = key.split('-').map(Number);
-                      return y === year && m === month + 1;
-                    }).length / currentDay) * 100) : 0}%
-                  </span>
-                </td>
-                <td className="p-1 lg:p-2"></td>
+                <th className="p-0.5 lg:p-1 text-right align-top" style={{ width: '48px' }}>
+                  <span className="text-xs lg:text-sm font-semibold text-foreground leading-tight">%</span>
+                  <div className="mt-0.5">
+                    <span className="text-xs lg:text-sm font-bold gradient-text">
+                      {currentDay > 0 ? Math.round((Object.keys(moodData).filter(key => {
+                        const [y, m] = key.split('-').map(Number);
+                        return y === year && m === month + 1;
+                      }).length / currentDay) * 100) : 0}%
+                    </span>
+                  </div>
+                </th>
+                <th style={{ width: '36px' }}></th>
               </tr>
-            </tbody>
+            </thead>
           </table>
         </GlassCard>
 
