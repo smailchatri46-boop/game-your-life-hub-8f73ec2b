@@ -611,9 +611,9 @@ export default function Habits() {
                     </th>
                   );
                 })}
-                <th className="p-0.5 lg:p-1 text-right align-top" style={{ width: '72px' }}>
-                  <span className="text-[9px] lg:text-[10px] text-muted-foreground leading-tight whitespace-nowrap">(Mood Score)</span>
-                  <div className="mt-0.5 flex items-center justify-end gap-0.5">
+                <th className="p-0.5 lg:p-1 text-center align-top" style={{ width: '72px' }}>
+                  <span className="text-[9px] lg:text-[10px] text-muted-foreground leading-tight whitespace-nowrap">Mood Score</span>
+                  <div className="mt-0.5 flex items-center justify-center gap-0.5">
                     {(() => {
                       // Calculate average of all mood + motivation entries
                       const monthEntries = Object.entries(moodData)
