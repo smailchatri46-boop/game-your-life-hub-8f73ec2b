@@ -611,8 +611,8 @@ export default function Habits() {
                     </th>
                   );
                 })}
-                <th className="p-1 lg:p-2" style={{ width: '48px' }}>
-                  <div className="flex flex-col items-center justify-center mt-1">
+                <th className="p-1 lg:p-2" style={{ width: '84px' }}>
+                  <div className="flex flex-col items-center justify-center pt-2">
                     <span className="text-[9px] lg:text-[10px] text-muted-foreground leading-tight whitespace-nowrap">Mood Score</span>
                     <div className="mt-0.5 flex items-center justify-center gap-0.5">
                       {(() => {
@@ -666,7 +666,6 @@ export default function Habits() {
                     </div>
                   </div>
                 </th>
-                <th style={{ width: '36px' }}></th>
               </tr>
             </thead>
           </table>
