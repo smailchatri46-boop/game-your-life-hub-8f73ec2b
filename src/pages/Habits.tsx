@@ -611,15 +611,57 @@ export default function Habits() {
                     </th>
                   );
                 })}
-                <th className="p-0.5 lg:p-1 text-right align-top" style={{ width: '48px' }}>
-                  <span className="text-xs lg:text-sm font-semibold text-foreground leading-tight">%</span>
-                  <div className="mt-0.5">
-                    <span className="text-xs lg:text-sm font-bold gradient-text">
-                      {currentDay > 0 ? Math.round((Object.keys(moodData).filter(key => {
-                        const [y, m] = key.split('-').map(Number);
-                        return y === year && m === month + 1;
-                      }).length / currentDay) * 100) : 0}%
-                    </span>
+                <th className="p-0.5 lg:p-1 text-right align-top" style={{ width: '72px' }}>
+                  <span className="text-[9px] lg:text-[10px] text-muted-foreground leading-tight whitespace-nowrap">Well-Being Index</span>
+                  <div className="mt-0.5 flex items-center justify-end gap-0.5">
+                    {(() => {
+                      // Calculate average of all mood + motivation entries
+                      const monthEntries = Object.entries(moodData)
+                        .filter(([key]) => {
+                          const [y, m] = key.split('-').map(Number);
+                          return y === year && m === month + 1;
+                        })
+                        .map(([key, mood]) => ({
+                          key,
+                          mood: mood as number,
+                          motivation: (motivationData[key] as number) || 0
+                        }))
+                        .filter(e => e.mood > 0 || e.motivation > 0);
+                      
+                      const avgScore = monthEntries.length > 0
+                        ? Math.round(monthEntries.reduce((sum, e) => {
+                            const count = (e.mood > 0 ? 1 : 0) + (e.motivation > 0 ? 1 : 0);
+                            const total = (e.mood || 0) + (e.motivation || 0);
+                            return sum + (count > 0 ? total / count : 0);
+                          }, 0) / monthEntries.length)
+                        : 0;
+                      
+                      // Calculate trend from last 3 entries
+                      const sortedEntries = monthEntries
+                        .sort((a, b) => a.key.localeCompare(b.key))
+                        .slice(-3);
+                      
+                      let trend: 'up' | 'down' | 'neutral' = 'neutral';
+                      if (sortedEntries.length >= 2) {
+                        const getAvg = (e: typeof sortedEntries[0]) => {
+                          const count = (e.mood > 0 ? 1 : 0) + (e.motivation > 0 ? 1 : 0);
+                          return count > 0 ? ((e.mood || 0) + (e.motivation || 0)) / count : 0;
+                        };
+                        const first = getAvg(sortedEntries[0]);
+                        const last = getAvg(sortedEntries[sortedEntries.length - 1]);
+                        if (last > first + 0.5) trend = 'up';
+                        else if (last < first - 0.5) trend = 'down';
+                      }
+                      
+                      return (
+                        <>
+                          <span className="text-xs lg:text-sm font-bold gradient-text">{avgScore || '–'}</span>
+                          <span className="text-[10px] lg:text-xs text-muted-foreground">
+                            {trend === 'up' ? '↑' : trend === 'down' ? '↓' : '–'}
+                          </span>
+                        </>
+                      );
+                    })()}
                   </div>
                 </th>
                 <th style={{ width: '36px' }}></th>
