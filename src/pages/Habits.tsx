@@ -355,9 +355,9 @@ export default function Habits() {
           >
             <ChevronLeft className="w-5 h-5 text-muted-foreground" />
           </button>
-          <h2 className="font-display text-xl min-w-[180px] text-center">
+          <h2 className="font-display text-2xl min-w-[200px] text-center">
             <span className="text-primary font-semibold">{monthName}</span>
-            <span className="text-foreground ml-2">{year}</span>
+            <span className="text-foreground ml-2 font-sans font-medium">{year}</span>
           </h2>
           <button 
             onClick={goToNextMonth}
@@ -370,12 +370,12 @@ export default function Habits() {
         {/* Stats Row */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
           <StatCard
-            title="Today"
-            subtitle={stats.isCurrentMonth ? `View current month` : "View current month"}
-            value={stats.isCurrentMonth ? stats.todayPercent : 0}
-            icon={Target}
+            title="This Month"
+            subtitle={`${monthName} progress so far`}
+            value={stats.monthPercent}
+            icon={TrendingUp}
             iconColor="text-primary"
-            progress={stats.isCurrentMonth ? stats.todayPercent : 0}
+            progress={stats.monthPercent}
           />
           <StatCard
             title="This Week Average"
@@ -386,12 +386,12 @@ export default function Habits() {
             progress={stats.weekAvg}
           />
           <StatCard
-            title="This Month"
-            subtitle={monthName}
-            value={stats.monthPercent}
-            icon={TrendingUp}
+            title="Today"
+            subtitle="Today's progress"
+            value={stats.isCurrentMonth ? stats.todayPercent : 0}
+            icon={Target}
             iconColor="text-primary"
-            progress={stats.monthPercent}
+            progress={stats.isCurrentMonth ? stats.todayPercent : 0}
           />
         </div>
         
