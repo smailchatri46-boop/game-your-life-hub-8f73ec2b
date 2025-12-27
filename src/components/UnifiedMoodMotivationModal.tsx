@@ -82,29 +82,15 @@ export function UnifiedMoodMotivationModal({
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-md bg-gradient-to-br from-orange-50 to-white dark:from-zinc-900 dark:to-zinc-800 border-orange-100 dark:border-zinc-700">
-        <DialogHeader>
-          <div className="flex items-center gap-3">
-            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-accent to-primary flex items-center justify-center">
-              <AppleEmoji emoji="📅" size="lg" />
-            </div>
-            <div>
-              <DialogTitle className="font-display text-xl">{dayName}</DialogTitle>
-              <p className="text-sm text-muted-foreground">{fullDate}</p>
-            </div>
-          </div>
+        <DialogHeader className="text-center">
+          <DialogTitle className="font-display text-xl">{dayName}</DialogTitle>
+          <p className="text-sm text-muted-foreground">{fullDate}</p>
         </DialogHeader>
 
         <div className="space-y-6 pt-4">
           {/* Completion Stats */}
-          <div className="bg-white/60 dark:bg-zinc-800/60 rounded-xl p-4 border border-orange-100 dark:border-zinc-700">
-            <div className="flex items-center justify-between">
-              <span className="text-sm text-muted-foreground">Completion</span>
-              <div className="w-5 h-5 rounded-full bg-gradient-to-br from-accent to-primary flex items-center justify-center">
-                <svg className="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                </svg>
-              </div>
-            </div>
+          <div className="bg-orange-100/50 dark:bg-orange-900/20 rounded-xl p-4">
+            <span className="text-sm text-muted-foreground">Completion</span>
             <p className="text-2xl font-bold text-foreground mt-1">
               {completionPercent}%
             </p>
@@ -171,8 +157,12 @@ export function UnifiedMoodMotivationModal({
           </div>
 
           {/* Action Buttons */}
-          <div className="flex justify-end gap-3 pt-2">
-            <Button variant="outline" onClick={() => onOpenChange(false)}>
+          <div className="flex justify-center gap-3 pt-2">
+            <Button 
+              variant="outline" 
+              onClick={() => onOpenChange(false)}
+              className="hover:bg-secondary hover:text-foreground hover:border-border"
+            >
               Cancel
             </Button>
             <Button variant="gradient" onClick={handleSave}>
