@@ -3,6 +3,8 @@ import { StatCard } from "@/components/StatCard";
 import { LevelProgress } from "@/components/LevelProgress";
 import { GlassCard } from "@/components/GlassCard";
 import { AppleEmoji } from "@/components/AppleEmoji";
+import { ProfileChecklist } from "@/components/ProfileChecklist";
+import { OnboardingQuestionsModal } from "@/components/OnboardingQuestionsModal";
 import { Target, Calendar, TrendingUp, Flame, Sparkles, Lock, ChevronLeft, ChevronRight, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
@@ -39,6 +41,7 @@ const generateMonthData = (daysInMonth: number, currentDay: number): Record<numb
 
 export default function Overview() {
   const [selectedDate, setSelectedDate] = useState<number | null>(null);
+  const [showOnboarding, setShowOnboarding] = useState(false);
   const {
     monthName,
     year,
@@ -168,6 +171,9 @@ export default function Overview() {
             iconColor="text-accent"
           />
         </div>
+        
+        {/* Profile Checklist */}
+        <ProfileChecklist onOpenOnboarding={() => setShowOnboarding(true)} />
         
         {/* Level Progress */}
         <div className="mb-8">
@@ -397,8 +403,14 @@ export default function Overview() {
                 </div>
               ))}
             </div>
-          </GlassCard>
+        </GlassCard>
         </div>
+        
+        {/* Onboarding Questions Modal */}
+        <OnboardingQuestionsModal 
+          open={showOnboarding} 
+          onOpenChange={setShowOnboarding} 
+        />
       </main>
     </div>
   );
