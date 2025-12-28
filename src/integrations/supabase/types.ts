@@ -14,6 +14,164 @@ export type Database = {
   }
   public: {
     Tables: {
+      chat_messages: {
+        Row: {
+          content: string
+          created_at: string
+          id: string
+          role: string
+          user_id: string
+        }
+        Insert: {
+          content: string
+          created_at?: string
+          id?: string
+          role: string
+          user_id: string
+        }
+        Update: {
+          content?: string
+          created_at?: string
+          id?: string
+          role?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      habit_completions: {
+        Row: {
+          created_at: string
+          date: string
+          habit_id: string
+          id: string
+          user_id: string
+          value: number
+        }
+        Insert: {
+          created_at?: string
+          date: string
+          habit_id: string
+          id?: string
+          user_id: string
+          value?: number
+        }
+        Update: {
+          created_at?: string
+          date?: string
+          habit_id?: string
+          id?: string
+          user_id?: string
+          value?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "habit_completions_habit_id_fkey"
+            columns: ["habit_id"]
+            isOneToOne: false
+            referencedRelation: "habits"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      habits: {
+        Row: {
+          category: string
+          category_color: string | null
+          created_at: string
+          icon: string
+          id: string
+          importance: number | null
+          name: string
+          target: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          category?: string
+          category_color?: string | null
+          created_at?: string
+          icon?: string
+          id?: string
+          importance?: number | null
+          name: string
+          target?: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          category?: string
+          category_color?: string | null
+          created_at?: string
+          icon?: string
+          id?: string
+          importance?: number | null
+          name?: string
+          target?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      journal_entries: {
+        Row: {
+          bg_color: string | null
+          content: string
+          created_at: string
+          emoji: string | null
+          id: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          bg_color?: string | null
+          content: string
+          created_at?: string
+          emoji?: string | null
+          id?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          bg_color?: string | null
+          content?: string
+          created_at?: string
+          emoji?: string | null
+          id?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      mood_logs: {
+        Row: {
+          created_at: string
+          date: string
+          id: string
+          mood: number | null
+          motivation: number | null
+          reflection: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          date: string
+          id?: string
+          mood?: number | null
+          motivation?: number | null
+          reflection?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          date?: string
+          id?: string
+          mood?: number | null
+          motivation?: number | null
+          reflection?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           avatar_url: string | null
