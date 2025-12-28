@@ -109,41 +109,47 @@ export default {
           "0%, 100%": { opacity: "0.35", transform: "scale(1)" },
           "50%": { opacity: "0.55", transform: "scale(1.08)" },
         },
-        "breathe": {
-          "0%, 100%": { transform: "scale(1) rotate(0deg)", opacity: "0.85" },
-          "50%": { transform: "scale(1.05) rotate(2deg)", opacity: "1" },
+        "breatheGlow": {
+          "0%, 100%": { transform: "scale(1)", opacity: "0.8" },
+          "50%": { transform: "scale(1.1)", opacity: "1" },
         },
-        "morph1": {
-          "0%, 100%": { transform: "translate(0, 0) scale(1) rotate(0deg)" },
-          "25%": { transform: "translate(5%, -3%) scale(1.02) rotate(3deg)" },
-          "50%": { transform: "translate(-3%, 5%) scale(0.98) rotate(-2deg)" },
-          "75%": { transform: "translate(3%, 2%) scale(1.01) rotate(1deg)" },
+        "morphBlob1": {
+          "0%": { borderRadius: "60% 40% 30% 70% / 60% 30% 70% 40%" },
+          "25%": { borderRadius: "30% 60% 70% 40% / 50% 60% 30% 60%" },
+          "50%": { borderRadius: "50% 50% 40% 60% / 40% 50% 60% 50%" },
+          "75%": { borderRadius: "40% 60% 50% 50% / 60% 40% 50% 60%" },
+          "100%": { borderRadius: "70% 30% 50% 50% / 30% 60% 40% 70%" },
         },
-        "morph2": {
-          "0%, 100%": { transform: "translate(0, 0) scale(1) rotate(0deg)" },
-          "33%": { transform: "translate(-4%, 4%) scale(1.03) rotate(-3deg)" },
-          "66%": { transform: "translate(4%, -2%) scale(0.97) rotate(2deg)" },
+        "morphBlob2": {
+          "0%": { borderRadius: "40% 60% 60% 40% / 70% 30% 70% 30%" },
+          "33%": { borderRadius: "60% 40% 40% 60% / 40% 60% 40% 60%" },
+          "66%": { borderRadius: "50% 50% 50% 50% / 50% 50% 50% 50%" },
+          "100%": { borderRadius: "30% 70% 60% 40% / 60% 40% 60% 40%" },
         },
-        "morph3": {
-          "0%, 100%": { transform: "translate(0, 0) scale(1)" },
-          "40%": { transform: "translate(3%, -4%) scale(1.04)" },
-          "80%": { transform: "translate(-5%, 3%) scale(0.96)" },
+        "morphBlob3": {
+          "0%": { borderRadius: "50% 50% 40% 60% / 40% 60% 40% 60%", transform: "translate(0, 0)" },
+          "50%": { borderRadius: "40% 60% 60% 40% / 60% 40% 60% 40%", transform: "translate(5%, -5%)" },
+          "100%": { borderRadius: "60% 40% 50% 50% / 50% 50% 50% 50%", transform: "translate(-3%, 3%)" },
         },
-        "morph4": {
-          "0%, 100%": { transform: "translate(0, 0) scale(1) rotate(0deg)" },
-          "50%": { transform: "translate(-3%, -3%) scale(1.02) rotate(-4deg)" },
+        "morphCore": {
+          "0%": { borderRadius: "70% 30% 50% 50% / 50% 50% 50% 50%", transform: "translate(0, 0) scale(1)" },
+          "50%": { borderRadius: "50% 50% 60% 40% / 40% 60% 40% 60%", transform: "translate(8%, 5%) scale(1.05)" },
+          "100%": { borderRadius: "40% 60% 50% 50% / 60% 40% 50% 60%", transform: "translate(-5%, -3%) scale(0.95)" },
         },
-        "drift1": {
-          "0%, 100%": { transform: "translate(0, 0)", opacity: "0.5" },
-          "50%": { transform: "translate(8%, 5%)", opacity: "0.35" },
+        "driftPink1": {
+          "0%": { transform: "translate(0, 0) scale(1)", opacity: "0.6" },
+          "50%": { transform: "translate(15%, 10%) scale(1.1)", opacity: "0.4" },
+          "100%": { transform: "translate(5%, 20%) scale(0.9)", opacity: "0.55" },
         },
-        "drift2": {
-          "0%, 100%": { transform: "translate(0, 0)", opacity: "0.45" },
-          "50%": { transform: "translate(-6%, -8%)", opacity: "0.55" },
+        "driftPink2": {
+          "0%": { transform: "translate(0, 0) scale(1)", opacity: "0.5" },
+          "50%": { transform: "translate(-10%, -15%) scale(1.15)", opacity: "0.6" },
+          "100%": { transform: "translate(10%, -5%) scale(0.95)", opacity: "0.45" },
         },
-        "pulse": {
-          "0%, 100%": { opacity: "0.7", transform: "scale(1)" },
-          "50%": { opacity: "0.5", transform: "scale(0.95)" },
+        "morphAccent": {
+          "0%": { borderRadius: "45% 55% 50% 50% / 55% 45% 55% 45%", transform: "translate(0, 0)" },
+          "50%": { borderRadius: "55% 45% 45% 55% / 45% 55% 45% 55%", transform: "translate(-10%, 8%)" },
+          "100%": { borderRadius: "50% 50% 55% 45% / 50% 50% 50% 50%", transform: "translate(5%, -5%)" },
         },
       },
       animation: {
