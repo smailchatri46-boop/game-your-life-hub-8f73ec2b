@@ -186,11 +186,12 @@ export function AIBuddyChat() {
               className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}
             >
               <div
-                className={`max-w-[80%] rounded-2xl px-4 py-3 ${
-                  msg.role === "user"
-                    ? "bg-primary/10 text-foreground"
-                    : "bg-secondary/80 text-foreground"
-                }`}
+                className="max-w-[80%] rounded-2xl px-4 py-3 text-foreground"
+                style={{
+                  background: msg.role === "user"
+                    ? "linear-gradient(135deg, hsl(30 70% 90%) 0%, hsl(25 80% 85%) 100%)"
+                    : "linear-gradient(135deg, hsl(40 60% 96%) 0%, hsl(35 50% 94%) 100%)"
+                }}
               >
                 <p className="text-sm whitespace-pre-wrap leading-relaxed">
                   {msg.content}
@@ -215,7 +216,7 @@ export function AIBuddyChat() {
       {/* Input Area - elevated with soft gradient */}
       <div className="p-4">
         <form onSubmit={handleSubmit}>
-          <div className="flex items-center gap-3 bg-gradient-to-r from-[hsl(35,80%,96%)] via-[hsl(30,70%,95%)] to-[hsl(25,75%,94%)] rounded-[1.5rem] px-5 py-3.5 shadow-[0_2px_12px_rgba(0,0,0,0.06),0_1px_4px_rgba(0,0,0,0.04)] transition-all">
+          <div className="flex items-center gap-3 rounded-[1.5rem] px-5 py-3.5 transition-all" style={{ background: 'linear-gradient(135deg, hsl(38 85% 95%) 0%, hsl(30 80% 92%) 50%, hsl(25 75% 90%) 100%)' }}>
             <input
               type="text"
               value={message}
