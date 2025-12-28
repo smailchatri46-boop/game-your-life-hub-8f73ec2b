@@ -1,4 +1,4 @@
-import { useState, useCallback, useRef } from "react";
+import { useCallback, useRef, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 
@@ -16,23 +16,33 @@ export type Conversation = {
   updatedAt: Date;
 };
 
+// Dev/test mode: allow chat without login.
+// IMPORTANT: This uses a fixed UUID so the backend can apply usage limits.
+const DEV_USER_ID = "00000000-0000-0000-0000-000000000001";
+
 export function useAIChat() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [conversations, setConversations] = useState<Conversation[]>([]);
   const [currentConversationId, setCurrentConversationId] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const { user } = useAuth();
-  
-  // Use ref to track current conversation ID to avoid stale closures
+
+  // Avoid stale closures when creating/selecting conversations.
   const currentConvIdRef = useRef<string | null>(null);
 
+  const isAuthed = !!user;
+  const effectiveUserId = user?.id ?? DEV_USER_ID;
+
   const loadConversations = useCallback(async () => {
-    if (!user) return;
+    if (!isAuthed) {
+      setConversations([]);
+      return;
+    }
 
     const { data, error } = await supabase
       .from("chat_conversations")
       .select("*")
-      .eq("user_id", user.id)
+      .eq("user_id", user!.id)
       .order("updated_at", { ascending: false });
 
     if (error) {
@@ -40,60 +50,71 @@ export function useAIChat() {
       return;
     }
 
-    if (data) {
-      setConversations(
-        data.map((c) => ({
-          id: c.id,
-          title: c.title,
-          createdAt: new Date(c.created_at),
-          updatedAt: new Date(c.updated_at),
-        }))
-      );
-    }
-  }, [user]);
+    setConversations(
+      (data ?? []).map((c) => ({
+        id: c.id,
+        title: c.title,
+        createdAt: new Date(c.created_at),
+        updatedAt: new Date(c.updated_at),
+      }))
+    );
+  }, [isAuthed, user]);
 
-  const loadConversation = useCallback(async (conversationId: string) => {
-    if (!user) return;
+  const loadConversation = useCallback(
+    async (conversationId: string) => {
+      setCurrentConversationId(conversationId);
+      currentConvIdRef.current = conversationId;
 
-    setCurrentConversationId(conversationId);
-    currentConvIdRef.current = conversationId;
+      if (!isAuthed) {
+        // Dev mode: messages are local-only.
+        return;
+      }
 
-    const { data, error } = await supabase
-      .from("chat_messages")
-      .select("*")
-      .eq("user_id", user.id)
-      .eq("conversation_id", conversationId)
-      .order("created_at", { ascending: true });
+      const { data, error } = await supabase
+        .from("chat_messages")
+        .select("*")
+        .eq("user_id", user!.id)
+        .eq("conversation_id", conversationId)
+        .order("created_at", { ascending: true });
 
-    if (error) {
-      console.error("Failed to load conversation messages:", error);
-      return;
-    }
+      if (error) {
+        console.error("Failed to load conversation messages:", error);
+        return;
+      }
 
-    if (data) {
       setMessages(
-        data.map((m) => ({
+        (data ?? []).map((m) => ({
           id: m.id,
           role: m.role as "user" | "assistant",
           content: m.content,
           timestamp: new Date(m.created_at),
         }))
       );
-    }
-  }, [user]);
+    },
+    [isAuthed, user]
+  );
 
   const startNewConversation = useCallback(async (): Promise<string | null> => {
-    if (!user) {
-      console.error("No user found for creating conversation");
-      return null;
+    const now = new Date();
+
+    if (!isAuthed) {
+      const id = crypto.randomUUID();
+      const newConv: Conversation = {
+        id,
+        title: "New chat",
+        createdAt: now,
+        updatedAt: now,
+      };
+      setConversations((prev) => [newConv, ...prev]);
+      setCurrentConversationId(id);
+      currentConvIdRef.current = id;
+      setMessages([]);
+      return id;
     }
 
     const { data, error } = await supabase
       .from("chat_conversations")
-      .insert({
-        user_id: user.id,
-        title: "New conversation",
-      })
+      .insert({ user_id: user!.id, title: "New conversation" })
       .select()
       .single();
 
@@ -115,218 +136,224 @@ export function useAIChat() {
     setMessages([]);
 
     return data.id;
-  }, [user]);
+  }, [isAuthed, user]);
 
-  const updateConversationTitle = useCallback(async (conversationId: string, title: string) => {
-    if (!user) return;
+  const updateConversationTitle = useCallback(
+    async (conversationId: string, title: string) => {
+      if (!title.trim()) return;
 
-    const { error } = await supabase
-      .from("chat_conversations")
-      .update({ title })
-      .eq("id", conversationId)
-      .eq("user_id", user.id);
-
-    if (error) {
-      console.error("Failed to update conversation title:", error);
-      return;
-    }
-
-    setConversations((prev) =>
-      prev.map((c) => (c.id === conversationId ? { ...c, title } : c))
-    );
-  }, [user]);
-
-  const deleteConversation = useCallback(async (conversationId: string) => {
-    if (!user) return;
-
-    const { error } = await supabase
-      .from("chat_conversations")
-      .delete()
-      .eq("id", conversationId)
-      .eq("user_id", user.id);
-
-    if (error) {
-      console.error("Failed to delete conversation:", error);
-      return;
-    }
-
-    setConversations((prev) => prev.filter((c) => c.id !== conversationId));
-
-    if (currentConvIdRef.current === conversationId) {
-      setCurrentConversationId(null);
-      currentConvIdRef.current = null;
-      setMessages([]);
-    }
-  }, [user]);
-
-  const sendMessage = useCallback(async (content: string) => {
-    if (!user) {
-      console.error("No user found, cannot send message");
-      return;
-    }
-
-    let convId = currentConvIdRef.current;
-
-    // Create new conversation if none exists
-    if (!convId) {
-      console.log("Creating new conversation...");
-      convId = await startNewConversation();
-      if (!convId) {
-        console.error("Failed to create conversation");
+      if (!isAuthed) {
+        setConversations((prev) =>
+          prev.map((c) => (c.id === conversationId ? { ...c, title: title.trim(), updatedAt: new Date() } : c))
+        );
         return;
       }
-      console.log("Created conversation:", convId);
-    }
 
-    const userMessage: Message = {
-      id: crypto.randomUUID(),
-      role: "user",
-      content,
-      timestamp: new Date(),
-    };
+      const { error } = await supabase
+        .from("chat_conversations")
+        .update({ title: title.trim() })
+        .eq("id", conversationId)
+        .eq("user_id", user!.id);
 
-    // Add message to UI immediately
-    setMessages((prev) => [...prev, userMessage]);
-    setIsLoading(true);
+      if (error) {
+        console.error("Failed to update conversation title:", error);
+        return;
+      }
 
-    // Save user message to database
-    const { error: insertError } = await supabase.from("chat_messages").insert({
-      user_id: user.id,
-      role: "user",
-      content,
-      conversation_id: convId,
-    });
+      setConversations((prev) =>
+        prev.map((c) => (c.id === conversationId ? { ...c, title: title.trim() } : c))
+      );
+    },
+    [isAuthed, user]
+  );
 
-    if (insertError) {
-      console.error("Failed to save user message:", insertError);
-    }
-
-    // Auto-generate title from first message
-    const currentMessages = messages;
-    if (currentMessages.length === 0) {
-      const shortTitle = content.slice(0, 40) + (content.length > 40 ? "..." : "");
-      await updateConversationTitle(convId, shortTitle);
-    }
-
-    try {
-      const CHAT_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/ai-coach`;
-
-      console.log("Sending message to AI...");
-      const response = await fetch(CHAT_URL, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
-        },
-        body: JSON.stringify({
-          messages: [...currentMessages, userMessage].map((m) => ({
-            role: m.role,
-            content: m.content,
-          })),
-          userId: user.id,
-        }),
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        console.error("AI response error:", errorData);
-
-        if (response.status === 429 && (errorData.error === "limit_reached" || errorData.error === "daily_limit_reached")) {
-          setMessages((prev) => [
-            ...prev,
-            {
-              id: crypto.randomUUID(),
-              role: "assistant",
-              content: errorData.message,
-              timestamp: new Date(),
-            },
-          ]);
-          return;
+  const deleteConversation = useCallback(
+    async (conversationId: string) => {
+      if (!isAuthed) {
+        setConversations((prev) => prev.filter((c) => c.id !== conversationId));
+        if (currentConvIdRef.current === conversationId) {
+          setCurrentConversationId(null);
+          currentConvIdRef.current = null;
+          setMessages([]);
         }
-
-        throw new Error(errorData.error || errorData.message || "Failed to get response");
+        return;
       }
 
-      if (!response.body) {
-        throw new Error("No response body");
+      const { error } = await supabase
+        .from("chat_conversations")
+        .delete()
+        .eq("id", conversationId)
+        .eq("user_id", user!.id);
+
+      if (error) {
+        console.error("Failed to delete conversation:", error);
+        return;
       }
 
-      const reader = response.body.getReader();
-      const decoder = new TextDecoder();
-      let assistantContent = "";
-      const assistantId = crypto.randomUUID();
+      setConversations((prev) => prev.filter((c) => c.id !== conversationId));
+      if (currentConvIdRef.current === conversationId) {
+        setCurrentConversationId(null);
+        currentConvIdRef.current = null;
+        setMessages([]);
+      }
+    },
+    [isAuthed, user]
+  );
 
-      setMessages((prev) => [
-        ...prev,
-        { id: assistantId, role: "assistant", content: "", timestamp: new Date() },
-      ]);
+  const sendMessage = useCallback(
+    async (content: string) => {
+      const trimmed = content.trim();
+      if (!trimmed || isLoading) return;
 
-      let buffer = "";
-
-      while (true) {
-        const { done, value } = await reader.read();
-        if (done) break;
-
-        buffer += decoder.decode(value, { stream: true });
-
-        let newlineIndex: number;
-        while ((newlineIndex = buffer.indexOf("\n")) !== -1) {
-          let line = buffer.slice(0, newlineIndex);
-          buffer = buffer.slice(newlineIndex + 1);
-
-          if (line.endsWith("\r")) line = line.slice(0, -1);
-          if (line.startsWith(":") || line.trim() === "") continue;
-          if (!line.startsWith("data: ")) continue;
-
-          const jsonStr = line.slice(6).trim();
-          if (jsonStr === "[DONE]") break;
-
-          try {
-            const parsed = JSON.parse(jsonStr);
-            const delta = parsed.choices?.[0]?.delta?.content;
-            if (delta) {
-              assistantContent += delta;
-              setMessages((prev) =>
-                prev.map((m) =>
-                  m.id === assistantId ? { ...m, content: assistantContent } : m
-                )
-              );
-            }
-          } catch {
-            buffer = line + "\n" + buffer;
-            break;
-          }
-        }
+      let convId = currentConvIdRef.current;
+      if (!convId) {
+        convId = await startNewConversation();
+        if (!convId) return;
       }
 
-      // Save assistant message
-      if (assistantContent) {
-        const { error: assistantInsertError } = await supabase.from("chat_messages").insert({
-          user_id: user.id,
-          role: "assistant",
-          content: assistantContent,
+      const userMessage: Message = {
+        id: crypto.randomUUID(),
+        role: "user",
+        content: trimmed,
+        timestamp: new Date(),
+      };
+
+      // Immediately render user message
+      setMessages((prev) => [...prev, userMessage]);
+      setIsLoading(true);
+
+      // Persist only when authed
+      if (isAuthed) {
+        await supabase.from("chat_messages").insert({
+          user_id: user!.id,
+          role: "user",
+          content: trimmed,
           conversation_id: convId,
         });
 
-        if (assistantInsertError) {
-          console.error("Failed to save assistant message:", assistantInsertError);
+        // Auto-title from first message
+        if (messages.length === 0) {
+          const shortTitle = trimmed.slice(0, 40) + (trimmed.length > 40 ? "..." : "");
+          await updateConversationTitle(convId, shortTitle);
+        }
+      } else {
+        // Dev mode: local title only
+        if (messages.length === 0) {
+          const shortTitle = trimmed.slice(0, 40) + (trimmed.length > 40 ? "..." : "");
+          await updateConversationTitle(convId, shortTitle);
         }
       }
-    } catch (error) {
-      console.error("Chat error:", error);
-      setMessages((prev) => [
-        ...prev,
-        {
-          id: crypto.randomUUID(),
-          role: "assistant",
-          content: `I'm sorry, I encountered an error: ${error instanceof Error ? error.message : "Unknown error"}. Please try again.`,
-          timestamp: new Date(),
-        },
-      ]);
-    } finally {
-      setIsLoading(false);
-    }
-  }, [messages, user, startNewConversation, updateConversationTitle]);
+
+      try {
+        const CHAT_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/ai-coach`;
+
+        const response = await fetch(CHAT_URL, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
+          },
+          body: JSON.stringify({
+            messages: [...messages, userMessage].map((m) => ({ role: m.role, content: m.content })),
+            userId: effectiveUserId,
+          }),
+        });
+
+        if (!response.ok) {
+          const errorData = await response.json().catch(() => ({}));
+
+          if (
+            response.status === 429 &&
+            (errorData.error === "limit_reached" || errorData.error === "daily_limit_reached")
+          ) {
+            setMessages((prev) => [
+              ...prev,
+              {
+                id: crypto.randomUUID(),
+                role: "assistant",
+                content: errorData.message || "Usage limit reached.",
+                timestamp: new Date(),
+              },
+            ]);
+            return;
+          }
+
+          throw new Error(errorData.error || errorData.message || `Request failed (${response.status})`);
+        }
+
+        if (!response.body) throw new Error("No response body");
+
+        const reader = response.body.getReader();
+        const decoder = new TextDecoder();
+        let assistantContent = "";
+        const assistantId = crypto.randomUUID();
+
+        setMessages((prev) => [
+          ...prev,
+          { id: assistantId, role: "assistant", content: "", timestamp: new Date() },
+        ]);
+
+        let buffer = "";
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) break;
+
+          buffer += decoder.decode(value, { stream: true });
+
+          let newlineIndex: number;
+          while ((newlineIndex = buffer.indexOf("\n")) !== -1) {
+            let line = buffer.slice(0, newlineIndex);
+            buffer = buffer.slice(newlineIndex + 1);
+
+            if (line.endsWith("\r")) line = line.slice(0, -1);
+            if (line.startsWith(":") || line.trim() === "") continue;
+            if (!line.startsWith("data: ")) continue;
+
+            const jsonStr = line.slice(6).trim();
+            if (jsonStr === "[DONE]") break;
+
+            try {
+              const parsed = JSON.parse(jsonStr);
+              const delta = parsed.choices?.[0]?.delta?.content;
+              if (delta) {
+                assistantContent += delta;
+                setMessages((prev) =>
+                  prev.map((m) => (m.id === assistantId ? { ...m, content: assistantContent } : m))
+                );
+              }
+            } catch {
+              buffer = line + "\n" + buffer;
+              break;
+            }
+          }
+        }
+
+        // Persist assistant only when authed
+        if (assistantContent && isAuthed) {
+          await supabase.from("chat_messages").insert({
+            user_id: user!.id,
+            role: "assistant",
+            content: assistantContent,
+            conversation_id: convId,
+          });
+        }
+      } catch (error) {
+        console.error("Chat error:", error);
+        setMessages((prev) => [
+          ...prev,
+          {
+            id: crypto.randomUUID(),
+            role: "assistant",
+            content: `Sorry — I ran into an error: ${error instanceof Error ? error.message : "Unknown error"}.`,
+            timestamp: new Date(),
+          },
+        ]);
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    [effectiveUserId, isAuthed, messages, startNewConversation, updateConversationTitle, user, isLoading]
+  );
 
   const clearMessages = useCallback(() => {
     setMessages([]);
@@ -346,5 +373,7 @@ export function useAIChat() {
     updateConversationTitle,
     deleteConversation,
     clearMessages,
+    // Expose for UI decisions
+    isAuthed,
   };
 }
