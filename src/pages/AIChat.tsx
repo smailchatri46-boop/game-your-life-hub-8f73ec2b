@@ -3,7 +3,7 @@ import { GlassCard } from "@/components/GlassCard";
 import { Button } from "@/components/ui/button";
 import { Sparkles, Send, Mic, MicOff, Trash2, Loader2 } from "lucide-react";
 import { useState, useEffect, useRef } from "react";
-import { useSpeechRecognition } from "@/hooks/use-speech-recognition";
+import { useWhisperSpeech } from "@/hooks/use-whisper-speech";
 import { useToast } from "@/hooks/use-toast";
 import { useAIChat } from "@/hooks/use-ai-chat";
 import { useAuth } from "@/contexts/AuthContext";
@@ -18,9 +18,13 @@ export default function AIChat() {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const { messages, isLoading, sendMessage, loadHistory, clearHistory } = useAIChat();
 
-  const { isListening, isSupported, toggleListening } = useSpeechRecognition({
+  const { isListening, isProcessing, isSupported, toggleListening } = useWhisperSpeech({
     onResult: (transcript) => {
       setMessage((prev) => prev + (prev ? " " : "") + transcript);
+      toast({
+        title: "Transcription complete",
+        description: "Your voice has been converted to text.",
+      });
     },
     onError: (error) => {
       toast({
@@ -209,10 +213,10 @@ export default function AIChat() {
                 )}
               </Button>
             </div>
-            {isListening && (
+            {(isListening || isProcessing) && (
               <p className="mt-2 text-xs text-muted-foreground animate-pulse flex items-center gap-1">
                 <span className="w-1.5 h-1.5 bg-destructive rounded-full" />
-                Listening... Speak now
+                {isProcessing ? "Processing audio with Whisper..." : "Recording... Click mic to stop"}
               </p>
             )}
           </form>
