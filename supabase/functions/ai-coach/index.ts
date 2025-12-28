@@ -6,12 +6,10 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
-// Usage limits: $2/month budget
-// Chat is negligible cost, voice is main cost driver
-// 30 msgs/day × 30 days = 900/month (generous for chat)
-// Daily limit ensures spread usage
-const MONTHLY_MESSAGE_LIMIT = 300;
-const DAILY_MESSAGE_LIMIT = 30;
+// Usage limits: ~$0.30/month budget (text only, ~$0.0003/msg)
+// 60 msgs/day, 1000/month cap
+const MONTHLY_MESSAGE_LIMIT = 1000;
+const DAILY_MESSAGE_LIMIT = 60;
 
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
