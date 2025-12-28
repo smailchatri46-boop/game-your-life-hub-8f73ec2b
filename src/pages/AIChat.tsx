@@ -1,6 +1,6 @@
 import { Navbar } from "@/components/Navbar";
 import { Button } from "@/components/ui/button";
-import { Send, Download, Loader2, Menu } from "lucide-react";
+import { ArrowUp, Download, Loader2, Menu } from "lucide-react";
 import { useState, useEffect, useRef } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { useAIChat } from "@/hooks/use-ai-chat";
@@ -228,13 +228,13 @@ export default function AIChat() {
                 <Button
                   type="submit"
                   size="icon"
-                  className="w-10 h-10 rounded-full bg-primary hover:bg-primary/90 text-primary-foreground flex-shrink-0 shadow-[0_0_12px_hsl(var(--primary)/0.35)] flex items-center justify-center"
+                  className="w-9 h-9 rounded-full bg-primary hover:bg-primary/90 text-primary-foreground flex-shrink-0 shadow-md flex items-center justify-center p-0"
                   disabled={isLoading || !message.trim()}
                 >
                   {isLoading ? (
-                    <Loader2 className="w-4 h-4 animate-spin" />
+                    <Loader2 className="w-5 h-5 animate-spin" />
                   ) : (
-                    <Send className="w-4 h-4 translate-x-[1px]" />
+                    <ArrowUp className="w-5 h-5 stroke-[2.5]" />
                   )}
                 </Button>
               </div>
