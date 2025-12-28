@@ -188,11 +188,15 @@ export function AIBuddyChat() {
             >
               <div
                 className="max-w-[80%] rounded-2xl px-4 py-3 text-foreground"
-                style={{
-                  background: msg.role === "user"
-                    ? "linear-gradient(135deg, hsl(30 70% 90%) 0%, hsl(25 80% 85%) 100%)"
-                    : "linear-gradient(135deg, hsl(40 60% 96%) 0%, hsl(35 50% 94%) 100%)"
-                }}
+                style={msg.role === "user" 
+                  ? {
+                      background: 'linear-gradient(180deg, rgba(255, 190, 120, 0.35), rgba(255, 160, 80, 0.35))',
+                      boxShadow: 'inset 0 6px 20px rgba(255, 150, 60, 0.18), inset 0 -6px 20px rgba(255, 120, 40, 0.12)'
+                    }
+                  : {
+                      background: 'linear-gradient(135deg, hsl(40 60% 96%) 0%, hsl(35 50% 94%) 100%)'
+                    }
+                }
               >
                 <p className="text-sm whitespace-pre-wrap leading-relaxed">
                   {parseTextWithEmojis(msg.content)}
@@ -217,7 +221,13 @@ export function AIBuddyChat() {
       {/* Input Area - elevated with soft gradient */}
       <div className="p-4">
         <form onSubmit={handleSubmit}>
-          <div className="flex items-center gap-3 rounded-[1.5rem] px-5 py-3.5 transition-all" style={{ background: 'linear-gradient(135deg, hsl(38 85% 95%) 0%, hsl(30 80% 92%) 50%, hsl(25 75% 90%) 100%)' }}>
+          <div 
+            className="flex items-center gap-3 rounded-[1.5rem] px-5 py-3.5 transition-all" 
+            style={{ 
+              background: 'linear-gradient(180deg, rgba(255, 190, 120, 0.35), rgba(255, 160, 80, 0.35))',
+              boxShadow: 'inset 0 6px 20px rgba(255, 150, 60, 0.18), inset 0 -6px 20px rgba(255, 120, 40, 0.12)'
+            }}
+          >
             <input
               type="text"
               value={message}
