@@ -105,73 +105,167 @@ export default {
           from: { opacity: "0", transform: "translateY(20px)" },
           to: { opacity: "1", transform: "translateY(0)" },
         },
-        "glow-pulse": {
-          "0%, 100%": { opacity: "0.35", transform: "scale(1)" },
-          "50%": { opacity: "0.55", transform: "scale(1.08)" },
+        // Glow pulse for ambient background
+        "glowPulse": {
+          "0%, 100%": { transform: "scale(1)", opacity: "0.8" },
+          "50%": { transform: "scale(1.12)", opacity: "1" },
         },
-        "auraPulse": {
-          "0%, 100%": { transform: "scale(1)", opacity: "0.85" },
-          "50%": { transform: "scale(1.15)", opacity: "1" },
+        // Main organic blob morph - dramatic border-radius changes
+        "organicMorph1": {
+          "0%": { 
+            borderRadius: "60% 40% 30% 70% / 60% 30% 70% 40%",
+            transform: "rotate(0deg) scale(1)"
+          },
+          "14%": { 
+            borderRadius: "40% 60% 70% 30% / 40% 50% 60% 50%",
+            transform: "rotate(5deg) scale(1.02)"
+          },
+          "28%": { 
+            borderRadius: "70% 30% 50% 50% / 30% 30% 70% 70%",
+            transform: "rotate(-3deg) scale(0.98)"
+          },
+          "42%": { 
+            borderRadius: "30% 70% 40% 60% / 50% 60% 30% 60%",
+            transform: "rotate(8deg) scale(1.03)"
+          },
+          "56%": { 
+            borderRadius: "55% 45% 65% 35% / 35% 55% 45% 55%",
+            transform: "rotate(-5deg) scale(0.97)"
+          },
+          "70%": { 
+            borderRadius: "35% 65% 35% 65% / 65% 35% 65% 35%",
+            transform: "rotate(4deg) scale(1.01)"
+          },
+          "84%": { 
+            borderRadius: "50% 50% 25% 75% / 45% 65% 45% 55%",
+            transform: "rotate(-6deg) scale(0.99)"
+          },
+          "100%": { 
+            borderRadius: "60% 40% 30% 70% / 60% 30% 70% 40%",
+            transform: "rotate(0deg) scale(1)"
+          },
         },
-        "blobMorph1": {
-          "0%": { borderRadius: "60% 40% 30% 70% / 60% 30% 70% 40%" },
-          "20%": { borderRadius: "30% 60% 70% 40% / 50% 60% 30% 60%" },
-          "40%": { borderRadius: "55% 45% 35% 65% / 35% 55% 65% 45%" },
-          "60%": { borderRadius: "40% 60% 55% 45% / 65% 35% 45% 55%" },
-          "80%": { borderRadius: "70% 30% 45% 55% / 45% 65% 55% 35%" },
-          "100%": { borderRadius: "35% 65% 60% 40% / 55% 45% 40% 60%" },
+        // Secondary blob morph - offset timing
+        "organicMorph2": {
+          "0%": { 
+            borderRadius: "40% 60% 55% 45% / 55% 45% 50% 50%",
+            transform: "rotate(5deg) scale(1)"
+          },
+          "16%": { 
+            borderRadius: "65% 35% 40% 60% / 35% 65% 40% 60%",
+            transform: "rotate(-4deg) scale(1.04)"
+          },
+          "33%": { 
+            borderRadius: "50% 50% 60% 40% / 60% 40% 50% 50%",
+            transform: "rotate(7deg) scale(0.96)"
+          },
+          "50%": { 
+            borderRadius: "35% 65% 35% 65% / 45% 55% 65% 35%",
+            transform: "rotate(-6deg) scale(1.02)"
+          },
+          "66%": { 
+            borderRadius: "60% 40% 45% 55% / 50% 60% 35% 65%",
+            transform: "rotate(3deg) scale(0.98)"
+          },
+          "83%": { 
+            borderRadius: "45% 55% 55% 45% / 40% 50% 55% 45%",
+            transform: "rotate(-8deg) scale(1.03)"
+          },
+          "100%": { 
+            borderRadius: "40% 60% 55% 45% / 55% 45% 50% 50%",
+            transform: "rotate(5deg) scale(1)"
+          },
         },
-        "blobMorph2": {
-          "0%": { borderRadius: "40% 60% 65% 35% / 70% 30% 65% 35%" },
-          "25%": { borderRadius: "65% 35% 40% 60% / 35% 65% 40% 60%" },
-          "50%": { borderRadius: "50% 50% 55% 45% / 55% 45% 50% 50%" },
-          "75%": { borderRadius: "35% 65% 35% 65% / 45% 55% 65% 35%" },
-          "100%": { borderRadius: "55% 45% 60% 40% / 60% 40% 35% 65%" },
-        },
-        "blobMorph3": {
+        // Inner core morph
+        "organicMorph3": {
           "0%": { 
             borderRadius: "50% 50% 40% 60% / 40% 60% 45% 55%",
             transform: "translate(0, 0) rotate(0deg)"
           },
-          "33%": { 
+          "25%": { 
             borderRadius: "60% 40% 55% 45% / 55% 45% 60% 40%",
-            transform: "translate(8%, -6%) rotate(5deg)"
+            transform: "translate(5%, -3%) rotate(6deg)"
           },
-          "66%": { 
+          "50%": { 
             borderRadius: "45% 55% 45% 55% / 45% 55% 40% 60%",
-            transform: "translate(-5%, 8%) rotate(-3deg)"
+            transform: "translate(-4%, 5%) rotate(-4deg)"
+          },
+          "75%": { 
+            borderRadius: "55% 45% 60% 40% / 60% 40% 55% 45%",
+            transform: "translate(3%, -4%) rotate(5deg)"
           },
           "100%": { 
-            borderRadius: "55% 45% 60% 40% / 60% 40% 55% 45%",
-            transform: "translate(3%, -3%) rotate(2deg)"
+            borderRadius: "50% 50% 40% 60% / 40% 60% 45% 55%",
+            transform: "translate(0, 0) rotate(0deg)"
           },
         },
-        "highlightDrift": {
+        // Highlight spot morph and drift
+        "highlightMorph": {
           "0%": { 
+            borderRadius: "60% 40% 50% 50% / 50% 50% 40% 60%",
             transform: "translate(0, 0) scale(1)",
             opacity: "0.95"
           },
-          "50%": { 
-            transform: "translate(12%, 8%) scale(1.1)",
-            opacity: "0.8"
-          },
-          "100%": { 
-            transform: "translate(-8%, -5%) scale(0.95)",
-            opacity: "0.9"
-          },
-        },
-        "accentFloat": {
-          "0%": { 
-            transform: "translate(0, 0) rotate(0deg)",
-            opacity: "0.7"
-          },
-          "50%": { 
-            transform: "translate(-15%, 10%) rotate(-8deg)",
+          "33%": { 
+            borderRadius: "40% 60% 60% 40% / 40% 60% 50% 50%",
+            transform: "translate(15%, 10%) scale(1.1)",
             opacity: "0.85"
           },
+          "66%": { 
+            borderRadius: "55% 45% 40% 60% / 60% 40% 55% 45%",
+            transform: "translate(-10%, -5%) scale(0.9)",
+            opacity: "0.9"
+          },
           "100%": { 
-            transform: "translate(10%, -8%) rotate(5deg)",
+            borderRadius: "60% 40% 50% 50% / 50% 50% 40% 60%",
+            transform: "translate(0, 0) scale(1)",
+            opacity: "0.95"
+          },
+        },
+        // Accent wash morph and float
+        "accentMorph": {
+          "0%": { 
+            borderRadius: "50% 50% 55% 45% / 45% 55% 50% 50%",
+            transform: "translate(0, 0) rotate(0deg)",
             opacity: "0.75"
+          },
+          "33%": { 
+            borderRadius: "60% 40% 45% 55% / 55% 45% 60% 40%",
+            transform: "translate(-12%, 8%) rotate(-10deg)",
+            opacity: "0.85"
+          },
+          "66%": { 
+            borderRadius: "45% 55% 60% 40% / 40% 60% 45% 55%",
+            transform: "translate(8%, -6%) rotate(8deg)",
+            opacity: "0.7"
+          },
+          "100%": { 
+            borderRadius: "50% 50% 55% 45% / 45% 55% 50% 50%",
+            transform: "translate(0, 0) rotate(0deg)",
+            opacity: "0.75"
+          },
+        },
+        // Edge glow morph
+        "edgeMorph": {
+          "0%": { 
+            borderRadius: "55% 45% 50% 50% / 50% 50% 45% 55%",
+            transform: "rotate(0deg)"
+          },
+          "25%": { 
+            borderRadius: "45% 55% 55% 45% / 45% 55% 50% 50%",
+            transform: "rotate(90deg)"
+          },
+          "50%": { 
+            borderRadius: "50% 50% 45% 55% / 55% 45% 55% 45%",
+            transform: "rotate(180deg)"
+          },
+          "75%": { 
+            borderRadius: "55% 45% 50% 50% / 50% 50% 45% 55%",
+            transform: "rotate(270deg)"
+          },
+          "100%": { 
+            borderRadius: "55% 45% 50% 50% / 50% 50% 45% 55%",
+            transform: "rotate(360deg)"
           },
         },
       },
@@ -181,7 +275,6 @@ export default {
         "fade-in": "fade-in 0.5s ease-out forwards",
         "scale-in": "scale-in 0.3s ease-out forwards",
         "slide-up": "slide-up 0.6s ease-out forwards",
-        "glow-pulse": "glow-pulse 7s ease-in-out infinite",
       },
     },
   },
