@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Pencil, Trash2, Check, X, MessageSquare, Plus } from "lucide-react";
+import { Pencil, Trash2, Check, X, Plus, X as CloseIcon } from "lucide-react";
 import { Conversation } from "@/hooks/use-ai-chat";
 import { isToday, isYesterday, isThisWeek } from "date-fns";
 
@@ -67,16 +67,24 @@ export function ChatSidebar({
   const groupOrder = ["Today", "Yesterday", "This week", "Older"];
 
   return (
-    <div className="w-64 h-full bg-card/95 backdrop-blur-sm border-r border-border/20 flex flex-col shadow-lg">
+    <div className="w-64 h-full bg-card/98 backdrop-blur-sm border-r border-border/20 flex flex-col shadow-lg">
       {/* Header */}
-      <div className="p-3 border-b border-border/10">
+      <div className="p-3 border-b border-border/10 flex items-center justify-between">
         <button
           onClick={onNewChat}
-          className="w-full flex items-center justify-center gap-2 px-3 py-2.5 rounded-xl bg-primary/10 hover:bg-primary/15 text-foreground text-sm font-medium transition-colors"
+          className="flex-1 flex items-center justify-center gap-2 px-3 py-2.5 rounded-xl bg-muted/50 hover:bg-muted/70 text-foreground text-sm font-medium transition-colors"
         >
           <Plus className="w-4 h-4" />
           New chat
         </button>
+        {onClose && (
+          <button
+            onClick={onClose}
+            className="ml-2 p-2 rounded-lg hover:bg-muted/50 text-muted-foreground transition-colors"
+          >
+            <CloseIcon className="w-4 h-4" />
+          </button>
+        )}
       </div>
 
       {/* Conversations List */}
@@ -96,8 +104,8 @@ export function ChatSidebar({
                     key={conv.id}
                     className={`group relative flex items-center rounded-lg transition-colors cursor-pointer ${
                       currentConversationId === conv.id
-                        ? "bg-secondary"
-                        : "hover:bg-secondary/50"
+                        ? "bg-muted/60"
+                        : "bg-muted/20 hover:bg-muted/40"
                     }`}
                     onClick={() => onSelectConversation(conv.id)}
                   >
@@ -122,7 +130,7 @@ export function ChatSidebar({
                         </button>
                         <button
                           onClick={cancelEdit}
-                          className="p-1 text-muted-foreground hover:bg-secondary rounded"
+                          className="p-1 text-muted-foreground hover:bg-muted rounded"
                         >
                           <X className="w-3.5 h-3.5" />
                         </button>
@@ -135,7 +143,7 @@ export function ChatSidebar({
                         <div className="hidden group-hover:flex items-center gap-0.5 pr-2">
                           <button
                             onClick={(e) => startEditing(conv, e)}
-                            className="p-1.5 text-muted-foreground hover:text-foreground hover:bg-secondary rounded"
+                            className="p-1.5 text-muted-foreground hover:text-foreground hover:bg-muted rounded"
                           >
                             <Pencil className="w-3.5 h-3.5" />
                           </button>
