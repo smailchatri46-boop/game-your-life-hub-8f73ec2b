@@ -94,7 +94,7 @@ export function AIBuddyChat() {
   };
 
   return (
-    <div className="w-full bg-card/40 backdrop-blur-xl rounded-3xl shadow-soft overflow-hidden flex flex-col relative border border-border/10" style={{ height: "min(670px, 78vh)", maxWidth: "100%" }}>
+    <div className="w-full bg-card/40 backdrop-blur-xl rounded-3xl shadow-soft overflow-hidden flex flex-col relative border border-border/10" style={{ height: "min(600px, 70vh)", maxWidth: "100%" }}>
       {/* Chat Header */}
       <div className="flex items-center justify-between px-5 py-3 border-b border-border/10">
         <div className="flex items-center gap-3">
