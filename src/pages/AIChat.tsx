@@ -141,11 +141,11 @@ export default function AIChat() {
             </Button>
           </div>
 
-          {/* Sidebar Overlay */}
+          {/* Sidebar Overlay - no blur, just dim */}
           {sidebarOpen && (
             <>
               <div 
-                className="absolute inset-0 bg-foreground/20 backdrop-blur-sm z-10"
+                className="absolute inset-0 bg-foreground/15 z-10"
                 onClick={() => setSidebarOpen(false)}
               />
               <div className="absolute left-0 top-0 bottom-0 z-20">
@@ -216,7 +216,7 @@ export default function AIChat() {
           {/* Input Area */}
           <div className="p-4 border-t border-border/10">
             <form onSubmit={handleSubmit}>
-              <div className="flex items-center gap-3 bg-muted/30 rounded-xl px-4 py-2.5 border border-border/10 focus-within:border-primary/20 transition-colors">
+              <div className="flex items-center gap-3 bg-muted/20 rounded-2xl px-4 py-3 shadow-[inset_0_1px_3px_rgba(0,0,0,0.04)] transition-colors">
                 <input
                   type="text"
                   value={message}
@@ -228,13 +228,13 @@ export default function AIChat() {
                 <Button
                   type="submit"
                   size="icon"
-                  className="w-9 h-9 rounded-lg bg-primary hover:bg-primary/90 text-primary-foreground flex-shrink-0"
+                  className="w-10 h-10 rounded-full bg-primary hover:bg-primary/90 text-primary-foreground flex-shrink-0 shadow-[0_0_12px_hsl(var(--primary)/0.35)] flex items-center justify-center"
                   disabled={isLoading || !message.trim()}
                 >
                   {isLoading ? (
                     <Loader2 className="w-4 h-4 animate-spin" />
                   ) : (
-                    <Send className="w-4 h-4" />
+                    <Send className="w-4 h-4 translate-x-[1px]" />
                   )}
                 </Button>
               </div>
