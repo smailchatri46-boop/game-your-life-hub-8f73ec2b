@@ -10,7 +10,7 @@ import { exportUserData, downloadTextFile } from "@/utils/exportChatData";
 import { format } from "date-fns";
 import { AppleEmoji } from "@/components/AppleEmoji";
 import { parseTextWithEmojis } from "@/utils/parseTextWithEmojis";
-import mascotImage from "@/assets/mascot.png";
+import mascotVideo from "@/assets/mascot.mp4";
 
 export function AIBuddyChat() {
   const [message, setMessage] = useState("");
@@ -162,9 +162,12 @@ export function AIBuddyChat() {
               />
               {/* Circular mask container */}
               <div className="relative w-24 h-24 md:w-28 md:h-28 rounded-full overflow-hidden shadow-[0_6px_24px_hsl(var(--primary)/0.2)] border-[3px] border-background/70 flex-shrink-0">
-                <img 
-                  src={mascotImage}
-                  alt="Friendly orange mascot waving"
+                <video 
+                  src={mascotVideo}
+                  autoPlay
+                  loop
+                  muted
+                  playsInline
                   className="w-full h-full object-cover object-center"
                 />
               </div>
