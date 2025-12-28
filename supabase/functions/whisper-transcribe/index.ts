@@ -69,6 +69,7 @@ serve(async (req) => {
     const blob = new Blob([binaryAudio], { type: mimeType || 'audio/webm' });
     formData.append('file', blob, `audio.${extension}`);
     formData.append('model', 'whisper-1');
+    formData.append('language', 'en'); // English only
 
     console.log('Sending to OpenAI Whisper API...');
 
