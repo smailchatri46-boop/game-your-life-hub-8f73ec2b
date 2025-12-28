@@ -3,77 +3,90 @@ import { memo } from "react";
 const GlowOrb = memo(function GlowOrb() {
   return (
     <div className="relative w-full h-full flex items-center justify-center overflow-visible">
-      {/* Outermost soft glow aura */}
+      {/* Outermost soft ambient glow */}
       <div 
-        className="absolute w-[180%] h-[180%] animate-[auraPulse_6s_ease-in-out_infinite]"
+        className="absolute w-[200%] h-[200%] animate-[glowPulse_8s_ease-in-out_infinite]"
         style={{
-          background: 'radial-gradient(circle, hsla(35, 100%, 65%, 0.35) 0%, hsla(30, 90%, 60%, 0.15) 35%, transparent 65%)',
-          filter: 'blur(25px)',
+          background: 'radial-gradient(circle, hsla(35, 100%, 65%, 0.4) 0%, hsla(30, 90%, 60%, 0.15) 40%, transparent 70%)',
+          filter: 'blur(30px)',
           borderRadius: '50%',
         }}
       />
 
-      {/* Secondary glow with peach tint */}
+      {/* Main organic blob - uses border-radius morphing */}
       <div 
-        className="absolute w-[150%] h-[150%] animate-[auraPulse_8s_ease-in-out_infinite_reverse]"
+        className="absolute w-[90%] h-[90%] animate-[organicMorph1_12s_ease-in-out_infinite]"
         style={{
-          background: 'radial-gradient(ellipse 70% 80% at 40% 45%, hsla(25, 85%, 70%, 0.4) 0%, hsla(35, 80%, 65%, 0.2) 40%, transparent 70%)',
-          filter: 'blur(18px)',
-          borderRadius: '50%',
-        }}
-      />
-
-      {/* Main morphing blob - Layer 1 (back) */}
-      <div 
-        className="absolute w-[95%] h-[95%] animate-[blobMorph1_8s_ease-in-out_infinite_alternate]"
-        style={{
-          background: 'linear-gradient(145deg, hsla(40, 100%, 68%, 1) 0%, hsla(30, 100%, 58%, 0.95) 50%, hsla(20, 95%, 52%, 0.9) 100%)',
+          background: `
+            radial-gradient(ellipse 120% 80% at 30% 30%, hsla(45, 100%, 72%, 0.9) 0%, transparent 50%),
+            radial-gradient(ellipse 100% 120% at 70% 70%, hsla(25, 90%, 58%, 0.8) 0%, transparent 50%),
+            linear-gradient(135deg, hsla(40, 100%, 65%, 1) 0%, hsla(30, 100%, 55%, 1) 50%, hsla(20, 95%, 50%, 1) 100%)
+          `,
           filter: 'blur(1px)',
         }}
       />
 
-      {/* Main morphing blob - Layer 2 (middle) */}
+      {/* Secondary blob layer - offset timing for organic feel */}
       <div 
-        className="absolute w-[88%] h-[88%] animate-[blobMorph2_10s_ease-in-out_infinite_alternate]"
+        className="absolute w-[85%] h-[85%] animate-[organicMorph2_10s_ease-in-out_infinite]"
         style={{
-          background: 'linear-gradient(200deg, hsla(45, 100%, 70%, 0.95) 0%, hsla(35, 100%, 62%, 0.9) 40%, hsla(25, 100%, 55%, 0.85) 100%)',
+          background: `
+            radial-gradient(ellipse 90% 110% at 60% 40%, hsla(48, 100%, 70%, 0.85) 0%, transparent 55%),
+            radial-gradient(ellipse 110% 90% at 40% 60%, hsla(30, 95%, 60%, 0.7) 0%, transparent 55%),
+            linear-gradient(200deg, hsla(42, 100%, 68%, 0.95) 0%, hsla(32, 100%, 58%, 0.9) 100%)
+          `,
           filter: 'blur(2px)',
         }}
       />
 
-      {/* Inner warm core - Layer 3 */}
+      {/* Inner warm core with its own morph */}
       <div 
-        className="absolute w-[70%] h-[75%] animate-[blobMorph3_7s_ease-in-out_infinite_alternate]"
+        className="absolute w-[70%] h-[70%] animate-[organicMorph3_8s_ease-in-out_infinite]"
         style={{
-          background: 'radial-gradient(ellipse 80% 70% at 45% 45%, hsla(48, 100%, 72%, 1) 0%, hsla(40, 100%, 65%, 0.8) 50%, transparent 85%)',
-          filter: 'blur(4px)',
+          background: `
+            radial-gradient(ellipse 80% 100% at 50% 45%, hsla(50, 100%, 75%, 1) 0%, transparent 60%),
+            radial-gradient(ellipse 100% 80% at 50% 55%, hsla(40, 100%, 68%, 0.9) 0%, transparent 60%)
+          `,
+          filter: 'blur(3px)',
         }}
       />
 
-      {/* Bright yellow highlight spot */}
+      {/* Bright highlight that drifts with position + morph */}
       <div 
-        className="absolute w-[45%] h-[50%] animate-[highlightDrift_9s_ease-in-out_infinite_alternate]"
+        className="absolute w-[50%] h-[50%] animate-[highlightMorph_9s_ease-in-out_infinite]"
         style={{
-          background: 'radial-gradient(ellipse at 50% 40%, hsla(50, 100%, 75%, 0.95) 0%, hsla(45, 100%, 68%, 0.5) 40%, transparent 70%)',
+          background: 'radial-gradient(circle, hsla(52, 100%, 78%, 0.95) 0%, hsla(48, 100%, 70%, 0.5) 40%, transparent 70%)',
+          filter: 'blur(5px)',
+          top: '15%',
+          left: '20%',
+        }}
+      />
+
+      {/* Peach accent wash with subtle morph */}
+      <div 
+        className="absolute w-[55%] h-[55%] animate-[accentMorph_11s_ease-in-out_infinite]"
+        style={{
+          background: 'radial-gradient(ellipse, hsla(28, 85%, 70%, 0.75) 0%, hsla(22, 80%, 62%, 0.3) 50%, transparent 70%)',
           filter: 'blur(6px)',
+          bottom: '10%',
+          right: '15%',
         }}
       />
 
-      {/* Peach accent wash */}
+      {/* Soft outer edge glow that morphs */}
       <div 
-        className="absolute w-[60%] h-[55%] animate-[accentFloat_11s_ease-in-out_infinite_alternate]"
+        className="absolute w-[105%] h-[105%] animate-[edgeMorph_14s_ease-in-out_infinite]"
         style={{
-          background: 'radial-gradient(ellipse at 60% 55%, hsla(28, 90%, 72%, 0.7) 0%, transparent 60%)',
-          filter: 'blur(8px)',
-        }}
-      />
-
-      {/* Subtle warm edge glow */}
-      <div 
-        className="absolute w-[100%] h-[100%] animate-[blobMorph1_12s_ease-in-out_infinite_alternate-reverse]"
-        style={{
-          background: 'conic-gradient(from 0deg, hsla(40, 100%, 70%, 0.3), hsla(30, 95%, 60%, 0.4), hsla(45, 100%, 72%, 0.3), hsla(25, 90%, 58%, 0.35), hsla(40, 100%, 70%, 0.3))',
-          filter: 'blur(10px)',
+          background: `
+            conic-gradient(from 45deg, 
+              hsla(40, 100%, 70%, 0.25), 
+              hsla(35, 95%, 62%, 0.35), 
+              hsla(48, 100%, 72%, 0.25), 
+              hsla(28, 90%, 58%, 0.3), 
+              hsla(40, 100%, 70%, 0.25)
+            )
+          `,
+          filter: 'blur(12px)',
         }}
       />
     </div>
