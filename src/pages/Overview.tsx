@@ -5,7 +5,8 @@ import { GlassCard } from "@/components/GlassCard";
 import { AppleEmoji } from "@/components/AppleEmoji";
 import { ProfileChecklist } from "@/components/ProfileChecklist";
 import { OnboardingQuestionsModal } from "@/components/OnboardingQuestionsModal";
-import { Target, Calendar, TrendingUp, Flame, Sparkles, Lock, ChevronLeft, ChevronRight, X } from "lucide-react";
+import { AIBuddyChat } from "@/components/AIBuddyChat";
+import { Target, Calendar, TrendingUp, Flame, Sparkles, ChevronLeft, ChevronRight, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { useState, useMemo } from "react";
@@ -170,6 +171,11 @@ export default function Overview() {
             icon={Flame}
             iconColor="text-accent"
           />
+        </div>
+        
+        {/* AI Buddy Chat */}
+        <div className="mb-8">
+          <AIBuddyChat />
         </div>
         
         {/* Profile Checklist */}
@@ -362,24 +368,23 @@ export default function Overview() {
             </GlassCard>
           </div>
           
-          {/* AI Coach Teaser */}
+          {/* Goals Teaser */}
           <GlassCard className="p-6 relative overflow-hidden" glow>
             <div className="absolute top-3 right-3">
               <span className="px-2 py-1 bg-primary/10 text-primary text-xs font-semibold rounded-full">
-                PRO
+                NEW
               </span>
             </div>
             <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-accent/30 to-primary/30 flex items-center justify-center mb-4">
               <Sparkles className="w-7 h-7 text-primary" />
             </div>
-            <h3 className="font-display text-xl font-semibold mb-2">AI Coach</h3>
+            <h3 className="font-display text-xl font-semibold mb-2">Goals</h3>
             <p className="text-sm text-muted-foreground mb-4">
-              Get personalized insights, motivation, and progress reflection from your AI life coach.
+              Set yearly and quarterly goals, break them into milestones, and track your progress.
             </p>
             <Button variant="gradient" size="sm" className="w-full" asChild>
-              <Link to="/ai-chat">
-                <Lock className="w-4 h-4 mr-2" />
-                Unlock AI Coach
+              <Link to="/goals">
+                Explore Goals
               </Link>
             </Button>
           </GlassCard>
