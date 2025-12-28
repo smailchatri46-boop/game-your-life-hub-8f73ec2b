@@ -35,6 +35,12 @@ export default function AIChat() {
         variant: "destructive",
       });
     },
+    onLimitReached: (limitMessage) => {
+      toast({
+        title: "Voice limit reached",
+        description: limitMessage,
+      });
+    },
   });
 
   // Temporarily disabled for testing
