@@ -57,7 +57,22 @@ export function useAIChat() {
 
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.error || "Failed to get response");
+        
+        // Handle usage limit messages specially - show as assistant message
+        if (response.status === 429 && (errorData.error === "limit_reached" || errorData.error === "daily_limit_reached")) {
+          setMessages(prev => [
+            ...prev,
+            {
+              id: crypto.randomUUID(),
+              role: "assistant",
+              content: errorData.message,
+              timestamp: new Date(),
+            },
+          ]);
+          return;
+        }
+        
+        throw new Error(errorData.error || errorData.message || "Failed to get response");
       }
 
       if (!response.body) {
