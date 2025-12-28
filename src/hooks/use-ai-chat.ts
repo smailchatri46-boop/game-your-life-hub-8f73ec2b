@@ -1,4 +1,4 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useRef } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 
@@ -22,15 +22,23 @@ export function useAIChat() {
   const [currentConversationId, setCurrentConversationId] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const { user } = useAuth();
+  
+  // Use ref to track current conversation ID to avoid stale closures
+  const currentConvIdRef = useRef<string | null>(null);
 
   const loadConversations = useCallback(async () => {
     if (!user) return;
 
-    const { data } = await supabase
+    const { data, error } = await supabase
       .from("chat_conversations")
       .select("*")
       .eq("user_id", user.id)
       .order("updated_at", { ascending: false });
+
+    if (error) {
+      console.error("Failed to load conversations:", error);
+      return;
+    }
 
     if (data) {
       setConversations(
@@ -48,13 +56,19 @@ export function useAIChat() {
     if (!user) return;
 
     setCurrentConversationId(conversationId);
+    currentConvIdRef.current = conversationId;
 
-    const { data } = await supabase
+    const { data, error } = await supabase
       .from("chat_messages")
       .select("*")
       .eq("user_id", user.id)
       .eq("conversation_id", conversationId)
       .order("created_at", { ascending: true });
+
+    if (error) {
+      console.error("Failed to load conversation messages:", error);
+      return;
+    }
 
     if (data) {
       setMessages(
@@ -68,8 +82,11 @@ export function useAIChat() {
     }
   }, [user]);
 
-  const startNewConversation = useCallback(async () => {
-    if (!user) return null;
+  const startNewConversation = useCallback(async (): Promise<string | null> => {
+    if (!user) {
+      console.error("No user found for creating conversation");
+      return null;
+    }
 
     const { data, error } = await supabase
       .from("chat_conversations")
@@ -94,6 +111,7 @@ export function useAIChat() {
 
     setConversations((prev) => [newConv, ...prev]);
     setCurrentConversationId(data.id);
+    currentConvIdRef.current = data.id;
     setMessages([]);
 
     return data.id;
@@ -102,11 +120,16 @@ export function useAIChat() {
   const updateConversationTitle = useCallback(async (conversationId: string, title: string) => {
     if (!user) return;
 
-    await supabase
+    const { error } = await supabase
       .from("chat_conversations")
       .update({ title })
       .eq("id", conversationId)
       .eq("user_id", user.id);
+
+    if (error) {
+      console.error("Failed to update conversation title:", error);
+      return;
+    }
 
     setConversations((prev) =>
       prev.map((c) => (c.id === conversationId ? { ...c, title } : c))
@@ -116,29 +139,43 @@ export function useAIChat() {
   const deleteConversation = useCallback(async (conversationId: string) => {
     if (!user) return;
 
-    await supabase
+    const { error } = await supabase
       .from("chat_conversations")
       .delete()
       .eq("id", conversationId)
       .eq("user_id", user.id);
 
+    if (error) {
+      console.error("Failed to delete conversation:", error);
+      return;
+    }
+
     setConversations((prev) => prev.filter((c) => c.id !== conversationId));
 
-    if (currentConversationId === conversationId) {
+    if (currentConvIdRef.current === conversationId) {
       setCurrentConversationId(null);
+      currentConvIdRef.current = null;
       setMessages([]);
     }
-  }, [user, currentConversationId]);
+  }, [user]);
 
   const sendMessage = useCallback(async (content: string) => {
-    if (!user) return;
+    if (!user) {
+      console.error("No user found, cannot send message");
+      return;
+    }
 
-    let convId = currentConversationId;
+    let convId = currentConvIdRef.current;
 
     // Create new conversation if none exists
     if (!convId) {
+      console.log("Creating new conversation...");
       convId = await startNewConversation();
-      if (!convId) return;
+      if (!convId) {
+        console.error("Failed to create conversation");
+        return;
+      }
+      console.log("Created conversation:", convId);
     }
 
     const userMessage: Message = {
@@ -148,20 +185,25 @@ export function useAIChat() {
       timestamp: new Date(),
     };
 
+    // Add message to UI immediately
     setMessages((prev) => [...prev, userMessage]);
     setIsLoading(true);
 
     // Save user message to database
-    await supabase.from("chat_messages").insert({
+    const { error: insertError } = await supabase.from("chat_messages").insert({
       user_id: user.id,
       role: "user",
       content,
       conversation_id: convId,
     });
 
+    if (insertError) {
+      console.error("Failed to save user message:", insertError);
+    }
+
     // Auto-generate title from first message
-    const currentConv = conversations.find((c) => c.id === convId);
-    if (currentConv?.title === "New conversation" && messages.length === 0) {
+    const currentMessages = messages;
+    if (currentMessages.length === 0) {
       const shortTitle = content.slice(0, 40) + (content.length > 40 ? "..." : "");
       await updateConversationTitle(convId, shortTitle);
     }
@@ -169,6 +211,7 @@ export function useAIChat() {
     try {
       const CHAT_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/ai-coach`;
 
+      console.log("Sending message to AI...");
       const response = await fetch(CHAT_URL, {
         method: "POST",
         headers: {
@@ -176,7 +219,7 @@ export function useAIChat() {
           Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
         },
         body: JSON.stringify({
-          messages: [...messages, userMessage].map((m) => ({
+          messages: [...currentMessages, userMessage].map((m) => ({
             role: m.role,
             content: m.content,
           })),
@@ -186,6 +229,7 @@ export function useAIChat() {
 
       if (!response.ok) {
         const errorData = await response.json();
+        console.error("AI response error:", errorData);
 
         if (response.status === 429 && (errorData.error === "limit_reached" || errorData.error === "daily_limit_reached")) {
           setMessages((prev) => [
@@ -257,12 +301,16 @@ export function useAIChat() {
 
       // Save assistant message
       if (assistantContent) {
-        await supabase.from("chat_messages").insert({
+        const { error: assistantInsertError } = await supabase.from("chat_messages").insert({
           user_id: user.id,
           role: "assistant",
           content: assistantContent,
           conversation_id: convId,
         });
+
+        if (assistantInsertError) {
+          console.error("Failed to save assistant message:", assistantInsertError);
+        }
       }
     } catch (error) {
       console.error("Chat error:", error);
@@ -278,11 +326,12 @@ export function useAIChat() {
     } finally {
       setIsLoading(false);
     }
-  }, [messages, user, currentConversationId, conversations, startNewConversation, updateConversationTitle]);
+  }, [messages, user, startNewConversation, updateConversationTitle]);
 
   const clearMessages = useCallback(() => {
     setMessages([]);
     setCurrentConversationId(null);
+    currentConvIdRef.current = null;
   }, []);
 
   return {
