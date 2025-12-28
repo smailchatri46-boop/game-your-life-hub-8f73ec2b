@@ -55,15 +55,6 @@ export default function AIChat() {
     e.preventDefault();
     if (!message.trim() || isLoading) return;
 
-    if (!user) {
-      toast({
-        title: "Sign in required",
-        description: "Please sign in to send messages to your AI Coach.",
-        variant: "destructive",
-      });
-      return;
-    }
-
     const currentMessage = message;
     setMessage("");
     await sendMessage(currentMessage);
@@ -125,7 +116,7 @@ export default function AIChat() {
         {/* Main Chat Container */}
         <div className="flex-1 bg-card/60 backdrop-blur-sm rounded-2xl shadow-soft overflow-hidden flex min-h-0">
           {/* Sidebar */}
-          {sidebarOpen && (
+          {sidebarOpen && user && (
             <ChatSidebar
               conversations={conversations}
               currentConversationId={currentConversationId}
@@ -234,15 +225,15 @@ export default function AIChat() {
                     type="text"
                     value={message}
                     onChange={(e) => setMessage(e.target.value)}
-                    placeholder={user ? "Message AI Coach..." : "Sign in to chat..."}
+                    placeholder="Message AI Coach..."
                     className="flex-1 bg-transparent border-0 focus:outline-none text-sm text-foreground placeholder:text-muted-foreground"
-                    disabled={isLoading || !user}
+                    disabled={isLoading}
                   />
                   <Button
                     type="submit"
                     size="icon"
                     className="w-9 h-9 rounded-lg bg-primary hover:bg-primary/90 text-primary-foreground flex-shrink-0"
-                    disabled={isLoading || !message.trim() || !user}
+                    disabled={isLoading || !message.trim()}
                   >
                     {isLoading ? (
                       <Loader2 className="w-4 h-4 animate-spin" />
