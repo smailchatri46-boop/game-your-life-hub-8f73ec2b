@@ -153,23 +153,20 @@ export function AIBuddyChat() {
         {/* Welcome state with mascot */}
         {messages.length === 0 && (
           <div className="h-full flex flex-col items-center justify-center text-center px-4">
-            {/* Mascot with animated glow */}
-            <div className="relative mb-6">
-              {/* Animated glow behind mascot */}
+            {/* Mascot with animated glow - perfectly centered */}
+            <div className="relative flex items-center justify-center mb-4">
+              {/* Animated gradient glow behind mascot - centered */}
               <div 
-                className="absolute inset-0 rounded-full bg-primary/30 blur-xl animate-glow-pulse"
+                className="absolute w-44 h-44 md:w-52 md:h-52 rounded-full blur-2xl animate-glow-pulse"
                 style={{ 
-                  width: 'calc(100% + 24px)', 
-                  height: 'calc(100% + 24px)',
-                  left: '-12px',
-                  top: '-12px',
+                  background: 'radial-gradient(circle, hsl(var(--primary) / 0.4) 0%, hsl(35 80% 70% / 0.25) 50%, transparent 70%)',
                 }}
               />
               {/* Circular mask container */}
-              <div className="relative w-36 h-36 md:w-44 md:h-44 rounded-full overflow-hidden shadow-[0_8px_32px_hsl(var(--primary)/0.25)] border-4 border-background/80">
+              <div className="relative w-24 h-24 md:w-28 md:h-28 rounded-full overflow-hidden shadow-[0_6px_24px_hsl(var(--primary)/0.2)] border-[3px] border-background/70 flex-shrink-0">
                 <img 
                   src={mascotImage}
-                  alt="Friendly orange AI Buddy mascot waving"
+                  alt="Friendly orange mascot waving"
                   className="w-full h-full object-cover object-center"
                 />
               </div>
