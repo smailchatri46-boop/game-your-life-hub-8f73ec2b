@@ -7,6 +7,8 @@ import { AppleEmoji } from "@/components/AppleEmoji";
 import { Check, X, Mic, MicOff } from "lucide-react";
 import { useSpeechRecognition } from "@/hooks/use-speech-recognition";
 import { useToast } from "@/hooks/use-toast";
+import { useFirstTimeTips } from "@/hooks/use-first-time-tips";
+import { FirstTimeTip } from "@/components/FirstTimeTip";
 
 const CATEGORIES = [
   { value: "work", label: "Work", color: "#3B82F6" },
@@ -93,8 +95,8 @@ export function AddHabitModal({ open, onOpenChange, onSave }: AddHabitModalProps
   const [progressiveTargetGoal, setProgressiveTargetGoal] = useState(5);
   const [progressiveRampDuration, setProgressiveRampDuration] = useState<"1-week" | "2-weeks" | "1-month" | "custom">("2-weeks");
   const [progressiveCustomWeeks, setProgressiveCustomWeeks] = useState(3);
-  
   const { toast } = useToast();
+  const { activeTip, tipMessage, triggerTip, dismissTip, shouldShowTip } = useFirstTimeTips();
 
   const { isListening, isSupported, toggleListening } = useSpeechRecognition({
     onResult: (transcript) => {
@@ -156,6 +158,11 @@ export function AddHabitModal({ open, onOpenChange, onSave }: AddHabitModalProps
     onSave(newHabit);
     resetForm();
     onOpenChange(false);
+    
+    // Trigger first-time tip after saving
+    if (shouldShowTip("habit")) {
+      setTimeout(() => triggerTip("habit"), 300);
+    }
   };
 
   const resetForm = () => {
@@ -195,6 +202,7 @@ export function AddHabitModal({ open, onOpenChange, onSave }: AddHabitModalProps
   };
 
   return (
+    <>
     <Dialog open={open} onOpenChange={handleClose}>
       <DialogContent 
         className="sm:max-w-[680px] p-0 gap-0 bg-white dark:bg-zinc-900 border-0 shadow-2xl rounded-2xl overflow-hidden font-['Inter',sans-serif]"
@@ -624,5 +632,14 @@ export function AddHabitModal({ open, onOpenChange, onSave }: AddHabitModalProps
         </div>
       </DialogContent>
     </Dialog>
+    
+    {/* First-time tip */}
+    <FirstTimeTip
+      open={activeTip === "habit"}
+      title={tipMessage?.title || ""}
+      message={tipMessage?.message || ""}
+      onDismiss={dismissTip}
+    />
+  </>
   );
 }

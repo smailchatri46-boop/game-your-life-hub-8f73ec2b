@@ -8,6 +8,8 @@ import { Plus, Pencil, Trash2, Mic, MicOff } from "lucide-react";
 import { useState } from "react";
 import { useSpeechRecognition } from "@/hooks/use-speech-recognition";
 import { useToast } from "@/hooks/use-toast";
+import { useFirstTimeTips } from "@/hooks/use-first-time-tips";
+import { FirstTimeTip } from "@/components/FirstTimeTip";
 
 interface JournalEntry {
   id: string;
@@ -77,6 +79,7 @@ export default function Journal() {
   const [newContent, setNewContent] = useState("");
   const [selectedEmoji, setSelectedEmoji] = useState("😊");
   const { toast } = useToast();
+  const { activeTip, tipMessage, triggerTip, dismissTip, shouldShowTip } = useFirstTimeTips();
 
   const { isListening, isSupported, toggleListening } = useSpeechRecognition({
     onResult: (transcript) => {
@@ -114,6 +117,11 @@ export default function Journal() {
     setNewContent("");
     setSelectedEmoji("😊");
     setIsModalOpen(false);
+    
+    // Trigger first-time tip after saving
+    if (shouldShowTip("journal")) {
+      setTimeout(() => triggerTip("journal"), 300);
+    }
   };
 
   return (
@@ -258,6 +266,14 @@ export default function Journal() {
           </div>
         </DialogContent>
       </Dialog>
+      
+      {/* First-time tip */}
+      <FirstTimeTip
+        open={activeTip === "journal"}
+        title={tipMessage?.title || ""}
+        message={tipMessage?.message || ""}
+        onDismiss={dismissTip}
+      />
     </div>
   );
 }
