@@ -106,17 +106,17 @@ export default function AIChat() {
       <Navbar />
 
       {/* Main content - centered vertically with equal spacing */}
-      <main className="flex-1 flex flex-col items-center justify-center px-4 py-8">
-        {/* Header */}
-        <div className="text-center mb-6">
+      <main className="flex-1 flex flex-col items-center justify-center px-4 py-12">
+        {/* Header with increased spacing */}
+        <div className="text-center mb-10">
           <h1 className="font-display text-3xl font-semibold text-foreground">AI Buddy</h1>
-          <p className="text-muted-foreground text-sm mt-1">Your supportive motivation buddy</p>
+          <p className="text-muted-foreground text-sm mt-2">Your supportive motivation buddy</p>
         </div>
 
-        {/* Main Chat Container */}
-        <div className="w-full max-w-2xl bg-card/60 backdrop-blur-sm rounded-2xl shadow-soft overflow-hidden flex flex-col relative" style={{ height: "min(600px, calc(100vh - 240px))" }}>
+        {/* Main Chat Container - wider, shorter, stronger blur, larger radius */}
+        <div className="w-full max-w-3xl bg-card/40 backdrop-blur-xl rounded-3xl shadow-soft overflow-hidden flex flex-col relative border border-border/10" style={{ height: "min(520px, calc(100vh - 280px))" }}>
           {/* Chat Header */}
-          <div className="flex items-center justify-between px-4 py-3 border-b border-border/10">
+          <div className="flex items-center justify-between px-5 py-3 border-b border-border/10">
             <button
               onClick={() => setSidebarOpen(!sidebarOpen)}
               className="p-2 rounded-lg hover:bg-muted/50 text-muted-foreground transition-colors"
@@ -145,7 +145,7 @@ export default function AIChat() {
           {sidebarOpen && (
             <>
               <div 
-                className="absolute inset-0 bg-foreground/10 z-10"
+                className="absolute inset-0 bg-foreground/20 backdrop-blur-sm z-10"
                 onClick={() => setSidebarOpen(false)}
               />
               <div className="absolute left-0 top-0 bottom-0 z-20">
