@@ -40,7 +40,10 @@ export function AIBuddyChat() {
   }, [user, loadConversations]);
 
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    // Only scroll within the chat when there are actual messages (not on initial mount)
+    if (messages.length > 0) {
+      messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    }
   }, [messages]);
 
   const handleSubmit = async (e: React.FormEvent) => {
