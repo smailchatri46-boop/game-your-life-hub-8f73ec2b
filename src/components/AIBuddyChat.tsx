@@ -9,6 +9,7 @@ import { ChatSidebar } from "@/components/ChatSidebar";
 import { exportUserData, downloadTextFile } from "@/utils/exportChatData";
 import { format } from "date-fns";
 import { AppleEmoji } from "@/components/AppleEmoji";
+import { parseTextWithEmojis } from "@/utils/parseTextWithEmojis";
 import mascotImage from "@/assets/mascot.png";
 
 export function AIBuddyChat() {
@@ -194,7 +195,7 @@ export function AIBuddyChat() {
                 }}
               >
                 <p className="text-sm whitespace-pre-wrap leading-relaxed">
-                  {msg.content}
+                  {parseTextWithEmojis(msg.content)}
                 </p>
               </div>
             </div>
