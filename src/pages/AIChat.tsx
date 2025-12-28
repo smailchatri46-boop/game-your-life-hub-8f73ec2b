@@ -33,11 +33,12 @@ export default function AIChat() {
     },
   });
 
-  useEffect(() => {
-    if (!authLoading && !user) {
-      navigate("/auth");
-    }
-  }, [user, authLoading, navigate]);
+  // Temporarily disabled for testing
+  // useEffect(() => {
+  //   if (!authLoading && !user) {
+  //     navigate("/auth");
+  //   }
+  // }, [user, authLoading, navigate]);
 
   useEffect(() => {
     if (user) {
