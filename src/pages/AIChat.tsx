@@ -1,36 +1,60 @@
 import { Navbar } from "@/components/Navbar";
 import { Button } from "@/components/ui/button";
-import { Send, Download, Loader2 } from "lucide-react";
+import { Send, Download, Loader2, Menu } from "lucide-react";
 import { useState, useEffect, useRef } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { useAIChat } from "@/hooks/use-ai-chat";
 import { useAuth } from "@/contexts/AuthContext";
 import { TypingIndicator } from "@/components/TypingIndicator";
+import { ChatSidebar } from "@/components/ChatSidebar";
 import { exportUserData, downloadTextFile } from "@/utils/exportChatData";
 import { format } from "date-fns";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 export default function AIChat() {
   const [message, setMessage] = useState("");
   const [isExporting, setIsExporting] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(true);
   const { toast } = useToast();
   const { user, loading: authLoading } = useAuth();
   const messagesEndRef = useRef<HTMLDivElement>(null);
-  const { messages, isLoading, sendMessage, loadHistory, clearHistory } = useAIChat();
+  const isMobile = useIsMobile();
+
+  const {
+    messages,
+    conversations,
+    currentConversationId,
+    isLoading,
+    sendMessage,
+    loadConversations,
+    loadConversation,
+    startNewConversation,
+    updateConversationTitle,
+    deleteConversation,
+    clearMessages,
+  } = useAIChat();
 
   useEffect(() => {
     if (user) {
-      loadHistory();
+      loadConversations();
     }
-  }, [user, loadHistory]);
+  }, [user, loadConversations]);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
+  // Close sidebar on mobile by default
+  useEffect(() => {
+    if (isMobile) {
+      setSidebarOpen(false);
+    }
+  }, [isMobile]);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!message.trim() || isLoading) return;
-    
+
     const currentMessage = message;
     setMessage("");
     await sendMessage(currentMessage);
@@ -38,7 +62,7 @@ export default function AIChat() {
 
   const handleExport = async () => {
     if (!user) return;
-    
+
     setIsExporting(true);
     try {
       const content = await exportUserData(user.id);
@@ -46,7 +70,7 @@ export default function AIChat() {
       downloadTextFile(content, filename);
       toast({
         title: "Export complete",
-        description: "Your data has been downloaded. You can upload it to ChatGPT or Gemini to continue your coaching conversation.",
+        description: "Your data has been downloaded. Upload it to ChatGPT or Gemini to continue your coaching conversation.",
       });
     } catch (error) {
       toast({
@@ -59,12 +83,15 @@ export default function AIChat() {
     }
   };
 
-  const handleClearHistory = async () => {
-    await clearHistory();
-    toast({
-      title: "Chat cleared",
-      description: "Your conversation history has been deleted.",
-    });
+  const handleNewChat = async () => {
+    clearMessages();
+    await startNewConversation();
+    if (isMobile) setSidebarOpen(false);
+  };
+
+  const handleSelectConversation = async (id: string) => {
+    await loadConversation(id);
+    if (isMobile) setSidebarOpen(false);
   };
 
   if (authLoading) {
@@ -78,133 +105,145 @@ export default function AIChat() {
   return (
     <div className="min-h-screen gradient-bg">
       <Navbar />
-      
-      <main className="pt-24 pb-6 px-4 max-w-2xl mx-auto h-[calc(100vh-0px)] flex flex-col">
+
+      <main className="pt-20 pb-4 px-4 max-w-5xl mx-auto h-[calc(100vh-0px)] flex flex-col">
         {/* Header */}
-        <div className="text-center mb-6">
+        <div className="text-center mb-4">
           <h1 className="font-display text-2xl font-semibold text-foreground">AI Coach</h1>
-          <p className="text-muted-foreground text-sm mt-1">Your personal motivation assistant</p>
+          <p className="text-muted-foreground text-sm">Your personal motivation assistant</p>
         </div>
-        
-        {/* Chat Container */}
-        <div className="flex-1 bg-card/80 backdrop-blur-sm rounded-3xl shadow-soft overflow-hidden flex flex-col min-h-0">
-          {/* Messages Area */}
-          <div className="flex-1 px-4 py-6 overflow-y-auto space-y-4">
-            {/* Welcome message */}
-            {messages.length === 0 && (
-              <div className="flex items-start gap-3">
-                <div className="w-8 h-8 rounded-full bg-secondary flex items-center justify-center flex-shrink-0">
-                  <span className="text-base">🌟</span>
-                </div>
-                <div className="bg-secondary/80 rounded-3xl rounded-tl-lg px-4 py-3 max-w-[85%]">
-                  <p className="text-sm text-foreground leading-relaxed">
-                    Hey there! 👋 I'm your wellness coach. I help with habits, routines, motivation, 
-                    and avoiding burnout. I can see your habits, journal, and mood data to give 
-                    personalized guidance. What's on your mind? 🌱
-                  </p>
-                </div>
-              </div>
-            )}
-            
-            {/* Message list */}
-            {messages.map((msg) => (
-              <div
-                key={msg.id}
-                className={`flex items-end gap-3 ${msg.role === "user" ? "flex-row-reverse" : ""}`}
+
+        {/* Main Chat Container */}
+        <div className="flex-1 bg-card/60 backdrop-blur-sm rounded-2xl shadow-soft overflow-hidden flex min-h-0">
+          {/* Sidebar */}
+          {sidebarOpen && (
+            <ChatSidebar
+              conversations={conversations}
+              currentConversationId={currentConversationId}
+              onNewChat={handleNewChat}
+              onSelectConversation={handleSelectConversation}
+              onRenameConversation={updateConversationTitle}
+              onDeleteConversation={deleteConversation}
+            />
+          )}
+
+          {/* Chat Area */}
+          <div className="flex-1 flex flex-col min-w-0">
+            {/* Chat Header */}
+            <div className="flex items-center justify-between px-4 py-3 border-b border-border/20">
+              <button
+                onClick={() => setSidebarOpen(!sidebarOpen)}
+                className="p-2 rounded-lg hover:bg-secondary/60 text-muted-foreground hover:text-foreground transition-colors"
               >
-                {/* Avatar */}
-                <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${
-                  msg.role === "user" 
-                    ? "bg-primary/20" 
-                    : "bg-secondary"
-                }`}>
-                  <span className="text-base">{msg.role === "user" ? "😊" : "🌟"}</span>
-                </div>
-                
-                {/* Message bubble */}
-                <div
-                  className={`px-4 py-3 max-w-[80%] ${
-                    msg.role === "user"
-                      ? "bg-primary/15 rounded-3xl rounded-tr-lg"
-                      : "bg-secondary/80 rounded-3xl rounded-tl-lg"
-                  }`}
-                >
-                  <p className="text-sm text-foreground whitespace-pre-wrap leading-relaxed">
-                    {msg.content}
-                  </p>
-                </div>
-              </div>
-            ))}
-            
-            {/* Typing indicator */}
-            {isLoading && messages[messages.length - 1]?.role === "user" && (
-              <div className="flex items-end gap-3">
-                <div className="w-8 h-8 rounded-full bg-secondary flex items-center justify-center flex-shrink-0">
-                  <span className="text-base">🌟</span>
-                </div>
-                <div className="bg-secondary/80 rounded-3xl rounded-tl-lg">
-                  <TypingIndicator />
-                </div>
-              </div>
-            )}
-            
-            <div ref={messagesEndRef} />
-          </div>
-          
-          {/* Bottom composer */}
-          <div className="p-4 border-t border-border/30 bg-card/50">
-            <form onSubmit={handleSubmit} className="flex items-center gap-3">
-              {/* Export button */}
+                <Menu className="w-5 h-5" />
+              </button>
+
               <Button
-                type="button"
                 variant="ghost"
-                size="icon"
+                size="sm"
                 onClick={handleExport}
                 disabled={isExporting}
-                className="w-10 h-10 rounded-full text-muted-foreground hover:text-foreground hover:bg-secondary/80 flex-shrink-0"
-                title="Export your data"
+                className="text-muted-foreground hover:text-foreground"
               >
                 {isExporting ? (
-                  <Loader2 className="w-5 h-5 animate-spin" />
+                  <Loader2 className="w-4 h-4 animate-spin mr-2" />
                 ) : (
-                  <Download className="w-5 h-5" />
+                  <Download className="w-4 h-4 mr-2" />
                 )}
+                Download data
               </Button>
-              
-              {/* Text input */}
-              <input
-                type="text"
-                value={message}
-                onChange={(e) => setMessage(e.target.value)}
-                placeholder="Ask your AI coach…"
-                className="flex-1 px-4 py-3 rounded-full bg-secondary/60 border-0 focus:outline-none focus:ring-2 focus:ring-primary/20 text-sm placeholder:text-muted-foreground"
-                disabled={isLoading}
-              />
-              
-              {/* Send button */}
-              <Button 
-                type="submit" 
-                size="icon" 
-                className="w-10 h-10 rounded-full bg-primary hover:bg-primary/90 text-primary-foreground flex-shrink-0 shadow-sm"
-                disabled={isLoading || !message.trim()}
-              >
-                {isLoading ? (
-                  <Loader2 className="w-4 h-4 animate-spin" />
-                ) : (
-                  <Send className="w-4 h-4" />
+            </div>
+
+            {/* Messages Area */}
+            <div className="flex-1 overflow-y-auto px-4 md:px-8 py-6">
+              {/* Welcome state */}
+              {messages.length === 0 && (
+                <div className="max-w-2xl mx-auto text-center py-12">
+                  <div className="w-16 h-16 rounded-2xl bg-primary/10 flex items-center justify-center mx-auto mb-4">
+                    <span className="text-3xl">🌱</span>
+                  </div>
+                  <h2 className="font-display text-xl font-medium text-foreground mb-2">
+                    Start a conversation
+                  </h2>
+                  <p className="text-muted-foreground text-sm max-w-md mx-auto">
+                    I'm your wellness coach. Ask me about habits, routines, motivation, or anything to help you stay on track.
+                  </p>
+                </div>
+              )}
+
+              {/* Messages */}
+              <div className="max-w-2xl mx-auto space-y-6">
+                {messages.map((msg, index) => (
+                  <div
+                    key={msg.id}
+                    className={`animate-fade-in ${msg.role === "user" ? "" : ""}`}
+                    style={{ animationDelay: `${index * 30}ms` }}
+                  >
+                    {/* Role label */}
+                    <p className={`text-xs font-medium mb-1.5 ${
+                      msg.role === "user" ? "text-primary" : "text-muted-foreground"
+                    }`}>
+                      {msg.role === "user" ? "You" : "AI Coach"}
+                    </p>
+
+                    {/* Message content */}
+                    <div
+                      className={`rounded-xl px-4 py-3 ${
+                        msg.role === "user"
+                          ? "bg-primary/8 border border-primary/10"
+                          : "bg-secondary/50"
+                      }`}
+                    >
+                      <p className="text-sm text-foreground whitespace-pre-wrap leading-relaxed">
+                        {msg.content}
+                      </p>
+                    </div>
+                  </div>
+                ))}
+
+                {/* Typing indicator */}
+                {isLoading && messages[messages.length - 1]?.role === "user" && (
+                  <div className="animate-fade-in">
+                    <p className="text-xs font-medium mb-1.5 text-muted-foreground">
+                      AI Coach
+                    </p>
+                    <div className="bg-secondary/50 rounded-xl px-4 py-3 inline-block">
+                      <TypingIndicator />
+                    </div>
+                  </div>
                 )}
-              </Button>
-            </form>
-            
-            {/* Clear chat link */}
-            {messages.length > 0 && (
-              <button
-                onClick={handleClearHistory}
-                className="w-full text-center text-xs text-muted-foreground hover:text-foreground mt-3 transition-colors"
-              >
-                Clear conversation
-              </button>
-            )}
+
+                <div ref={messagesEndRef} />
+              </div>
+            </div>
+
+            {/* Input Area */}
+            <div className="p-4 border-t border-border/20">
+              <form onSubmit={handleSubmit} className="max-w-2xl mx-auto">
+                <div className="flex items-center gap-3 bg-secondary/40 rounded-xl px-4 py-2 border border-border/20 focus-within:border-primary/30 focus-within:ring-2 focus-within:ring-primary/10 transition-all">
+                  <input
+                    type="text"
+                    value={message}
+                    onChange={(e) => setMessage(e.target.value)}
+                    placeholder="Message AI Coach..."
+                    className="flex-1 bg-transparent border-0 focus:outline-none text-sm text-foreground placeholder:text-muted-foreground"
+                    disabled={isLoading}
+                  />
+                  <Button
+                    type="submit"
+                    size="icon"
+                    className="w-9 h-9 rounded-lg bg-primary hover:bg-primary/90 text-primary-foreground flex-shrink-0"
+                    disabled={isLoading || !message.trim()}
+                  >
+                    {isLoading ? (
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                    ) : (
+                      <Send className="w-4 h-4" />
+                    )}
+                  </Button>
+                </div>
+              </form>
+            </div>
           </div>
         </div>
       </main>

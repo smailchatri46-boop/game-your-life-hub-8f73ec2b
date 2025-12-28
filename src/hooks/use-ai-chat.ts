@@ -9,14 +9,137 @@ export type Message = {
   timestamp: Date;
 };
 
+export type Conversation = {
+  id: string;
+  title: string;
+  createdAt: Date;
+  updatedAt: Date;
+};
+
 export function useAIChat() {
   const [messages, setMessages] = useState<Message[]>([]);
+  const [conversations, setConversations] = useState<Conversation[]>([]);
+  const [currentConversationId, setCurrentConversationId] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const { user } = useAuth();
 
+  const loadConversations = useCallback(async () => {
+    if (!user) return;
+
+    const { data } = await supabase
+      .from("chat_conversations")
+      .select("*")
+      .eq("user_id", user.id)
+      .order("updated_at", { ascending: false });
+
+    if (data) {
+      setConversations(
+        data.map((c) => ({
+          id: c.id,
+          title: c.title,
+          createdAt: new Date(c.created_at),
+          updatedAt: new Date(c.updated_at),
+        }))
+      );
+    }
+  }, [user]);
+
+  const loadConversation = useCallback(async (conversationId: string) => {
+    if (!user) return;
+
+    setCurrentConversationId(conversationId);
+
+    const { data } = await supabase
+      .from("chat_messages")
+      .select("*")
+      .eq("user_id", user.id)
+      .eq("conversation_id", conversationId)
+      .order("created_at", { ascending: true });
+
+    if (data) {
+      setMessages(
+        data.map((m) => ({
+          id: m.id,
+          role: m.role as "user" | "assistant",
+          content: m.content,
+          timestamp: new Date(m.created_at),
+        }))
+      );
+    }
+  }, [user]);
+
+  const startNewConversation = useCallback(async () => {
+    if (!user) return null;
+
+    const { data, error } = await supabase
+      .from("chat_conversations")
+      .insert({
+        user_id: user.id,
+        title: "New conversation",
+      })
+      .select()
+      .single();
+
+    if (error || !data) {
+      console.error("Failed to create conversation:", error);
+      return null;
+    }
+
+    const newConv: Conversation = {
+      id: data.id,
+      title: data.title,
+      createdAt: new Date(data.created_at),
+      updatedAt: new Date(data.updated_at),
+    };
+
+    setConversations((prev) => [newConv, ...prev]);
+    setCurrentConversationId(data.id);
+    setMessages([]);
+
+    return data.id;
+  }, [user]);
+
+  const updateConversationTitle = useCallback(async (conversationId: string, title: string) => {
+    if (!user) return;
+
+    await supabase
+      .from("chat_conversations")
+      .update({ title })
+      .eq("id", conversationId)
+      .eq("user_id", user.id);
+
+    setConversations((prev) =>
+      prev.map((c) => (c.id === conversationId ? { ...c, title } : c))
+    );
+  }, [user]);
+
+  const deleteConversation = useCallback(async (conversationId: string) => {
+    if (!user) return;
+
+    await supabase
+      .from("chat_conversations")
+      .delete()
+      .eq("id", conversationId)
+      .eq("user_id", user.id);
+
+    setConversations((prev) => prev.filter((c) => c.id !== conversationId));
+
+    if (currentConversationId === conversationId) {
+      setCurrentConversationId(null);
+      setMessages([]);
+    }
+  }, [user, currentConversationId]);
+
   const sendMessage = useCallback(async (content: string) => {
-    // Allow testing without user (temporarily)
-    const testUserId = user?.id || "test-user-id";
+    if (!user) return;
+
+    let convId = currentConversationId;
+
+    // Create new conversation if none exists
+    if (!convId) {
+      convId = await startNewConversation();
+      if (!convId) return;
+    }
 
     const userMessage: Message = {
       id: crypto.randomUUID(),
@@ -25,21 +148,27 @@ export function useAIChat() {
       timestamp: new Date(),
     };
 
-    setMessages(prev => [...prev, userMessage]);
+    setMessages((prev) => [...prev, userMessage]);
     setIsLoading(true);
 
-    // Save user message to database (skip if testing without auth)
-    if (user) {
-      await supabase.from("chat_messages").insert({
-        user_id: user.id,
-        role: "user",
-        content,
-      });
+    // Save user message to database
+    await supabase.from("chat_messages").insert({
+      user_id: user.id,
+      role: "user",
+      content,
+      conversation_id: convId,
+    });
+
+    // Auto-generate title from first message
+    const currentConv = conversations.find((c) => c.id === convId);
+    if (currentConv?.title === "New conversation" && messages.length === 0) {
+      const shortTitle = content.slice(0, 40) + (content.length > 40 ? "..." : "");
+      await updateConversationTitle(convId, shortTitle);
     }
 
     try {
       const CHAT_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/ai-coach`;
-      
+
       const response = await fetch(CHAT_URL, {
         method: "POST",
         headers: {
@@ -47,20 +176,19 @@ export function useAIChat() {
           Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
         },
         body: JSON.stringify({
-          messages: [...messages, userMessage].map(m => ({
+          messages: [...messages, userMessage].map((m) => ({
             role: m.role,
             content: m.content,
           })),
-          userId: testUserId,
+          userId: user.id,
         }),
       });
 
       if (!response.ok) {
         const errorData = await response.json();
-        
-        // Handle usage limit messages specially - show as assistant message
+
         if (response.status === 429 && (errorData.error === "limit_reached" || errorData.error === "daily_limit_reached")) {
-          setMessages(prev => [
+          setMessages((prev) => [
             ...prev,
             {
               id: crypto.randomUUID(),
@@ -71,7 +199,7 @@ export function useAIChat() {
           ]);
           return;
         }
-        
+
         throw new Error(errorData.error || errorData.message || "Failed to get response");
       }
 
@@ -79,27 +207,24 @@ export function useAIChat() {
         throw new Error("No response body");
       }
 
-      // Stream the response
       const reader = response.body.getReader();
       const decoder = new TextDecoder();
       let assistantContent = "";
       const assistantId = crypto.randomUUID();
 
-      // Add empty assistant message
-      setMessages(prev => [
+      setMessages((prev) => [
         ...prev,
         { id: assistantId, role: "assistant", content: "", timestamp: new Date() },
       ]);
 
       let buffer = "";
-      
+
       while (true) {
         const { done, value } = await reader.read();
         if (done) break;
 
         buffer += decoder.decode(value, { stream: true });
 
-        // Process line by line
         let newlineIndex: number;
         while ((newlineIndex = buffer.indexOf("\n")) !== -1) {
           let line = buffer.slice(0, newlineIndex);
@@ -117,31 +242,31 @@ export function useAIChat() {
             const delta = parsed.choices?.[0]?.delta?.content;
             if (delta) {
               assistantContent += delta;
-              setMessages(prev =>
-                prev.map(m =>
+              setMessages((prev) =>
+                prev.map((m) =>
                   m.id === assistantId ? { ...m, content: assistantContent } : m
                 )
               );
             }
           } catch {
-            // Incomplete JSON, put it back
             buffer = line + "\n" + buffer;
             break;
           }
         }
       }
 
-      // Save assistant message to database (skip if testing without auth)
-      if (assistantContent && user) {
+      // Save assistant message
+      if (assistantContent) {
         await supabase.from("chat_messages").insert({
           user_id: user.id,
           role: "assistant",
           content: assistantContent,
+          conversation_id: convId,
         });
       }
     } catch (error) {
       console.error("Chat error:", error);
-      setMessages(prev => [
+      setMessages((prev) => [
         ...prev,
         {
           id: crypto.randomUUID(),
@@ -153,46 +278,24 @@ export function useAIChat() {
     } finally {
       setIsLoading(false);
     }
-  }, [messages, user]);
+  }, [messages, user, currentConversationId, conversations, startNewConversation, updateConversationTitle]);
 
-  const loadHistory = useCallback(async () => {
-    if (!user) return;
-
-    const { data } = await supabase
-      .from("chat_messages")
-      .select("*")
-      .eq("user_id", user.id)
-      .order("created_at", { ascending: true })
-      .limit(50);
-
-    if (data) {
-      setMessages(
-        data.map(m => ({
-          id: m.id,
-          role: m.role as "user" | "assistant",
-          content: m.content,
-          timestamp: new Date(m.created_at),
-        }))
-      );
-    }
-  }, [user]);
-
-  const clearHistory = useCallback(async () => {
-    if (!user) return;
-    
-    await supabase
-      .from("chat_messages")
-      .delete()
-      .eq("user_id", user.id);
-    
+  const clearMessages = useCallback(() => {
     setMessages([]);
-  }, [user]);
+    setCurrentConversationId(null);
+  }, []);
 
   return {
     messages,
+    conversations,
+    currentConversationId,
     isLoading,
     sendMessage,
-    loadHistory,
-    clearHistory,
+    loadConversations,
+    loadConversation,
+    startNewConversation,
+    updateConversationTitle,
+    deleteConversation,
+    clearMessages,
   };
 }
