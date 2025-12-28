@@ -9,6 +9,8 @@ import { StatCard } from "@/components/StatCard";
 import { DailyReflectionModal } from "@/components/DailyReflectionModal";
 import { UnifiedMoodMotivationModal } from "@/components/UnifiedMoodMotivationModal";
 import { AppleEmoji as MoodEmoji } from "@/components/AppleEmoji";
+import { useFirstTimeTips } from "@/hooks/use-first-time-tips";
+import { FirstTimeTip } from "@/components/FirstTimeTip";
 
 import { Button } from "@/components/ui/button";
 import { Plus, Trash2, GripVertical, Check, ChevronLeft, ChevronRight, Target, Calendar, TrendingUp, FileText } from "lucide-react";
@@ -102,6 +104,8 @@ export default function Habits() {
   const [moodMotivationModalOpen, setMoodMotivationModalOpen] = useState(false);
   const [selectedMoodMotivationDay, setSelectedMoodMotivationDay] = useState<number | null>(null);
   
+  // First-time tips
+  const { activeTip, tipMessage, triggerTip, dismissTip, shouldShowTip } = useFirstTimeTips();
   const {
     monthName,
     year,
@@ -179,6 +183,11 @@ export default function Habits() {
       completions: {},
     };
     setAllHabits(prev => [...prev, habit]);
+    
+    // Trigger first-time tip after adding habit
+    if (shouldShowTip("habit")) {
+      setTimeout(() => triggerTip("habit"), 300);
+    }
   };
 
   const handleDeleteHabit = (habitId: string) => {
@@ -726,6 +735,14 @@ export default function Habits() {
           onSave={handleSaveMoodMotivation}
         />
       )}
+      
+      {/* First-time habit tip */}
+      <FirstTimeTip
+        open={activeTip === "habit"}
+        title={tipMessage?.title || ""}
+        message={tipMessage?.message || ""}
+        onDismiss={dismissTip}
+      />
     </div>
   );
 }
