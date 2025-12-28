@@ -9,6 +9,7 @@ import { ChatSidebar } from "@/components/ChatSidebar";
 import { exportUserData, downloadTextFile } from "@/utils/exportChatData";
 import { format } from "date-fns";
 import { AppleEmoji } from "@/components/AppleEmoji";
+import mascotImage from "@/assets/mascot.png";
 
 export function AIBuddyChat() {
   const [message, setMessage] = useState("");
@@ -149,11 +150,30 @@ export function AIBuddyChat() {
 
       {/* Messages Area */}
       <div className="flex-1 overflow-y-auto px-4 md:px-6 py-6">
-        {/* Welcome state with placeholder for future image */}
+        {/* Welcome state with mascot */}
         {messages.length === 0 && (
-          <div className="h-full flex flex-col items-center justify-center text-center">
-            {/* Placeholder area for future illustration */}
-            <div className="w-24 h-24 mb-4" />
+          <div className="h-full flex flex-col items-center justify-center text-center px-4">
+            {/* Mascot with animated glow */}
+            <div className="relative mb-6">
+              {/* Animated glow behind mascot */}
+              <div 
+                className="absolute inset-0 rounded-full bg-primary/30 blur-xl animate-glow-pulse"
+                style={{ 
+                  width: 'calc(100% + 24px)', 
+                  height: 'calc(100% + 24px)',
+                  left: '-12px',
+                  top: '-12px',
+                }}
+              />
+              {/* Circular mask container */}
+              <div className="relative w-36 h-36 md:w-44 md:h-44 rounded-full overflow-hidden shadow-[0_8px_32px_hsl(var(--primary)/0.25)] border-4 border-background/80">
+                <img 
+                  src={mascotImage}
+                  alt="Friendly orange AI Buddy mascot waving"
+                  className="w-full h-full object-cover object-center"
+                />
+              </div>
+            </div>
             
             <h2 className="font-display text-lg font-medium text-foreground mb-2">
               Start a conversation
