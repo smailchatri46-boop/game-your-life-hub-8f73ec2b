@@ -6,7 +6,8 @@ import { AppleEmoji } from "@/components/AppleEmoji";
 import { ProfileChecklist } from "@/components/ProfileChecklist";
 import { OnboardingQuestionsModal } from "@/components/OnboardingQuestionsModal";
 import { AIBuddyChat } from "@/components/AIBuddyChat";
-import { Target, Calendar, TrendingUp, Flame, Sparkles, ChevronLeft, ChevronRight, X } from "lucide-react";
+import { useHabitStats } from "@/hooks/use-habit-stats";
+import { Target, Calendar, TrendingUp, Flame, Sparkles, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { useState, useMemo } from "react";
@@ -43,15 +44,13 @@ const generateMonthData = (daysInMonth: number, currentDay: number): Record<numb
 export default function Overview() {
   const [selectedDate, setSelectedDate] = useState<number | null>(null);
   const [showOnboarding, setShowOnboarding] = useState(false);
+  const habitStats = useHabitStats();
   const {
     monthName,
     year,
     month,
-    goToPreviousMonth,
-    goToNextMonth,
     getDaysInMonth,
     getFirstDayOfMonth,
-    isCurrentMonth,
     getCurrentDay,
   } = useSelectedMonth();
 
@@ -65,34 +64,6 @@ export default function Overview() {
   const monthData = useMemo(() => {
     return generateMonthData(daysInMonth, currentDay);
   }, [month, year, daysInMonth, currentDay]);
-
-  // Calculate stats from month data
-  const stats = useMemo(() => {
-    const entries = Object.values(monthData);
-    if (entries.length === 0) return { todayPercent: 0, weekAvg: 0, monthPercent: 0 };
-
-    const todayData = monthData[currentDay];
-    const todayPercent = todayData 
-      ? Math.round((todayData.habits.filter(h => h.completed).length / todayData.habits.length) * 100)
-      : 0;
-
-    const last7Days = entries.slice(-7);
-    const weekAvg = Math.round(
-      last7Days.reduce((sum, day) => {
-        const completed = day.habits.filter(h => h.completed).length;
-        return sum + (completed / day.habits.length) * 100;
-      }, 0) / last7Days.length
-    );
-
-    const monthPercent = Math.round(
-      entries.reduce((sum, day) => {
-        const completed = day.habits.filter(h => h.completed).length;
-        return sum + (completed / day.habits.length) * 100;
-      }, 0) / entries.length
-    );
-
-    return { todayPercent, weekAvg, monthPercent };
-  }, [monthData, currentDay]);
   
   const getCompletionRate = (day: number) => {
     const data = monthData[day];
@@ -101,81 +72,50 @@ export default function Overview() {
     return Math.round((completed / data.habits.length) * 100);
   };
 
-  // Reset selected date when month changes
-  const handlePreviousMonth = () => {
-    setSelectedDate(null);
-    goToPreviousMonth();
-  };
-
-  const handleNextMonth = () => {
-    setSelectedDate(null);
-    goToNextMonth();
-  };
-
   return (
     <div className="min-h-screen gradient-bg">
       <Navbar />
       
-      <main className="pt-28 pb-12 px-4 max-w-6xl mx-auto">
-        {/* Month Navigation */}
-        <div className="flex items-center justify-center gap-4 mb-8">
-          <button 
-            onClick={handlePreviousMonth}
-            className="p-2 rounded-full hover:bg-secondary transition-colors"
-          >
-            <ChevronLeft className="w-5 h-5 text-muted-foreground" />
-          </button>
-          <h2 className="font-display text-xl min-w-[180px] text-center">
-            <span className="text-primary font-semibold">{monthName}</span>
-            <span className="text-foreground ml-2">{year}</span>
-          </h2>
-          <button 
-            onClick={handleNextMonth}
-            className="p-2 rounded-full hover:bg-secondary transition-colors"
-          >
-            <ChevronRight className="w-5 h-5 text-muted-foreground" />
-          </button>
+      <main className="pt-28 pb-12 px-4 max-w-7xl mx-auto">
+        {/* AI Buddy Chat - First Section */}
+        <div className="mb-8">
+          <AIBuddyChat />
         </div>
-        
+
         {/* Stats Row */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
           <StatCard
             title="Today"
-            subtitle={isCurrentMonth() ? `${Math.round(stats.todayPercent / 100 * 6)}/6 completed` : "View current month"}
-            value={isCurrentMonth() ? stats.todayPercent : 0}
+            subtitle={habitStats.todayTotal > 0 ? `${habitStats.todayCompleted}/${habitStats.todayTotal} completed` : "No habits yet"}
+            value={habitStats.todayPercent}
             icon={Target}
             iconColor="text-primary"
-            progress={isCurrentMonth() ? stats.todayPercent : 0}
+            progress={habitStats.todayPercent}
           />
           <StatCard
             title="This Week Average"
             subtitle="Last 7 days"
-            value={stats.weekAvg}
+            value={habitStats.weekAvg}
             icon={Calendar}
             iconColor="text-accent"
-            progress={stats.weekAvg}
+            progress={habitStats.weekAvg}
           />
           <StatCard
             title="This Month"
-            subtitle={monthName}
-            value={stats.monthPercent}
+            subtitle={new Date().toLocaleString('default', { month: 'long' })}
+            value={habitStats.monthPercent}
             icon={TrendingUp}
             iconColor="text-primary"
-            progress={stats.monthPercent}
+            progress={habitStats.monthPercent}
           />
           <StatCard
             title="Current Streak"
             subtitle={<span className="flex items-center gap-1">Keep it up! <AppleEmoji emoji="🔥" size="sm" /></span>}
-            value={12}
+            value={habitStats.currentStreak}
             suffix=" days"
             icon={Flame}
             iconColor="text-accent"
           />
-        </div>
-        
-        {/* AI Buddy Chat */}
-        <div className="mb-8">
-          <AIBuddyChat />
         </div>
         
         {/* Profile Checklist */}
@@ -397,7 +337,7 @@ export default function Overview() {
             <div className="space-y-3">
               {[
                 { emoji: "✅", text: "Completed 'Morning Meditation'", time: "2 hours ago" },
-                { emoji: "🔥", text: "12 day streak achieved!", time: "Yesterday" },
+                { emoji: "🔥", text: `${habitStats.currentStreak} day streak achieved!`, time: "Yesterday" },
                 { emoji: "⬆️", text: "Leveled up to Level 7", time: "2 days ago" },
                 { emoji: "📝", text: "Wrote journal entry", time: "2 days ago" },
               ].map((activity, i) => (
