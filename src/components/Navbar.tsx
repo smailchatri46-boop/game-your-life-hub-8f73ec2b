@@ -6,7 +6,7 @@ const navItems = [
   { name: "Dashboard", path: "/dashboard" },
   { name: "Overview", path: "/overview" },
   { name: "Journal", path: "/journal" },
-  { name: "AI Buddy", path: "/ai-chat" },
+  { name: "Goals", path: "/goals" },
   { name: "Tutorials", path: "/tutorials" },
 ];
 

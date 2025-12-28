@@ -9,7 +9,7 @@ import Auth from "./pages/Auth";
 import Habits from "./pages/Habits";
 import Journal from "./pages/Journal";
 import Overview from "./pages/Overview";
-import AIChat from "./pages/AIChat";
+import Goals from "./pages/Goals";
 import Tutorials from "./pages/Tutorials";
 import Settings from "./pages/Settings";
 import NotFound from "./pages/NotFound";
@@ -31,7 +31,7 @@ const App = () => (
             <Route path="/dashboard" element={<Habits />} />
             <Route path="/journal" element={<Journal />} />
             <Route path="/overview" element={<Overview />} />
-            <Route path="/ai-chat" element={<AIChat />} />
+            <Route path="/goals" element={<Goals />} />
             <Route path="/tutorials" element={<Tutorials />} />
             <Route path="/settings" element={<Settings />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
