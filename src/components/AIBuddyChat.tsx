@@ -227,7 +227,8 @@ export function AIBuddyChat() {
             <Button
               type="submit"
               size="icon"
-              className="w-10 h-10 min-w-[2.5rem] min-h-[2.5rem] rounded-full bg-primary hover:bg-primary/85 text-primary-foreground flex-shrink-0 shadow-[0_2px_8px_hsl(var(--primary)/0.3)] flex items-center justify-center p-0"
+              className="w-10 h-10 min-w-[2.5rem] min-h-[2.5rem] rounded-full text-primary-foreground flex-shrink-0 shadow-[0_2px_8px_hsl(var(--primary)/0.3)] flex items-center justify-center p-0 hover:opacity-90 active:opacity-80 transition-opacity"
+              style={{ background: 'linear-gradient(135deg, hsl(38 100% 70%) 0%, hsl(24 95% 53%) 100%)' }}
               disabled={isLoading || !message.trim()}
             >
               {isLoading ? (
