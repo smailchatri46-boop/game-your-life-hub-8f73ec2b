@@ -4,10 +4,8 @@ import { AppleEmoji } from "@/components/AppleEmoji";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Plus, Pencil, Trash2, Mic, MicOff } from "lucide-react";
+import { Plus, Pencil, Trash2 } from "lucide-react";
 import { useState } from "react";
-import { useSpeechRecognition } from "@/hooks/use-speech-recognition";
-import { useToast } from "@/hooks/use-toast";
 import { useFirstTimeTips } from "@/hooks/use-first-time-tips";
 import { FirstTimeTip } from "@/components/FirstTimeTip";
 
@@ -78,23 +76,7 @@ export default function Journal() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [newContent, setNewContent] = useState("");
   const [selectedEmoji, setSelectedEmoji] = useState("😊");
-  const { toast } = useToast();
   const { activeTip, tipMessage, triggerTip, dismissTip, shouldShowTip } = useFirstTimeTips();
-
-  const { isListening, isSupported, toggleListening } = useSpeechRecognition({
-    onResult: (transcript) => {
-      setNewContent((prev) => prev + (prev ? " " : "") + transcript);
-    },
-    onError: (error) => {
-      toast({
-        title: "Voice input error",
-        description: error === "not-allowed" 
-          ? "Please allow microphone access" 
-          : `Error: ${error}`,
-        variant: "destructive",
-      });
-    },
-  });
 
   const deleteEntry = (id: string) => {
     setEntries(entries.filter(e => e.id !== id));
@@ -225,35 +207,12 @@ export default function Journal() {
             </div>
 
             {/* Content */}
-            <div className="relative">
-              <Textarea
-                value={newContent}
-                onChange={(e) => setNewContent(e.target.value)}
-                placeholder="What's on your mind today?"
-                className="min-h-[200px] resize-none pr-12"
-              />
-              {isSupported && (
-                <button
-                  type="button"
-                  onClick={toggleListening}
-                  className={`absolute bottom-3 right-3 p-2 rounded-full transition-all ${
-                    isListening 
-                      ? "bg-destructive text-white animate-pulse" 
-                      : "text-muted-foreground hover:text-primary hover:bg-primary/10"
-                  }`}
-                  title={isListening ? "Stop recording" : "Voice input"}
-                >
-                  {isListening ? <MicOff className="w-4 h-4" /> : <Mic className="w-4 h-4" />}
-                </button>
-              )}
-            </div>
-
-            {isListening && (
-              <p className="text-xs text-muted-foreground animate-pulse flex items-center gap-1">
-                <span className="w-1.5 h-1.5 bg-destructive rounded-full" />
-                Listening... Speak now
-              </p>
-            )}
+            <Textarea
+              value={newContent}
+              onChange={(e) => setNewContent(e.target.value)}
+              placeholder="What's on your mind today?"
+              className="min-h-[200px] resize-none"
+            />
 
             <div className="flex justify-end gap-3">
               <Button variant="outline" onClick={() => setIsModalOpen(false)}>
