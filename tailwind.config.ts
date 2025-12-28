@@ -109,6 +109,42 @@ export default {
           "0%, 100%": { opacity: "0.35", transform: "scale(1)" },
           "50%": { opacity: "0.55", transform: "scale(1.08)" },
         },
+        "breathe": {
+          "0%, 100%": { transform: "scale(1) rotate(0deg)", opacity: "0.85" },
+          "50%": { transform: "scale(1.05) rotate(2deg)", opacity: "1" },
+        },
+        "morph1": {
+          "0%, 100%": { transform: "translate(0, 0) scale(1) rotate(0deg)" },
+          "25%": { transform: "translate(5%, -3%) scale(1.02) rotate(3deg)" },
+          "50%": { transform: "translate(-3%, 5%) scale(0.98) rotate(-2deg)" },
+          "75%": { transform: "translate(3%, 2%) scale(1.01) rotate(1deg)" },
+        },
+        "morph2": {
+          "0%, 100%": { transform: "translate(0, 0) scale(1) rotate(0deg)" },
+          "33%": { transform: "translate(-4%, 4%) scale(1.03) rotate(-3deg)" },
+          "66%": { transform: "translate(4%, -2%) scale(0.97) rotate(2deg)" },
+        },
+        "morph3": {
+          "0%, 100%": { transform: "translate(0, 0) scale(1)" },
+          "40%": { transform: "translate(3%, -4%) scale(1.04)" },
+          "80%": { transform: "translate(-5%, 3%) scale(0.96)" },
+        },
+        "morph4": {
+          "0%, 100%": { transform: "translate(0, 0) scale(1) rotate(0deg)" },
+          "50%": { transform: "translate(-3%, -3%) scale(1.02) rotate(-4deg)" },
+        },
+        "drift1": {
+          "0%, 100%": { transform: "translate(0, 0)", opacity: "0.5" },
+          "50%": { transform: "translate(8%, 5%)", opacity: "0.35" },
+        },
+        "drift2": {
+          "0%, 100%": { transform: "translate(0, 0)", opacity: "0.45" },
+          "50%": { transform: "translate(-6%, -8%)", opacity: "0.55" },
+        },
+        "pulse": {
+          "0%, 100%": { opacity: "0.7", transform: "scale(1)" },
+          "50%": { opacity: "0.5", transform: "scale(0.95)" },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",

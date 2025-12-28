@@ -10,7 +10,7 @@ import { exportUserData, downloadTextFile } from "@/utils/exportChatData";
 import { format } from "date-fns";
 import { AppleEmoji } from "@/components/AppleEmoji";
 import { parseTextWithEmojis } from "@/utils/parseTextWithEmojis";
-import mascotVideo from "@/assets/mascot.mp4";
+import GlowOrb from "@/components/GlowOrb";
 
 export function AIBuddyChat() {
   const [message, setMessage] = useState("");
@@ -151,25 +151,11 @@ export function AIBuddyChat() {
         {/* Welcome state with mascot */}
         {messages.length === 0 && (
           <div className="h-full flex flex-col items-center justify-center text-center px-4">
-            {/* Mascot with animated glow - perfectly centered */}
+            {/* Animated Glow Orb - perfectly centered */}
             <div className="relative flex items-center justify-center mb-4">
-              {/* Animated gradient glow behind mascot - centered */}
-              <div 
-                className="absolute w-44 h-44 md:w-52 md:h-52 rounded-full blur-2xl animate-glow-pulse"
-                style={{ 
-                  background: 'radial-gradient(circle, hsl(var(--primary) / 0.4) 0%, hsl(35 80% 70% / 0.25) 50%, transparent 70%)',
-                }}
-              />
-              {/* Circular mask container */}
-              <div className="relative w-24 h-24 md:w-28 md:h-28 rounded-full overflow-hidden shadow-[0_6px_24px_hsl(var(--primary)/0.2)] border-[3px] border-background/70 flex-shrink-0">
-                <video 
-                  src={mascotVideo}
-                  autoPlay
-                  loop
-                  muted
-                  playsInline
-                  className="w-full h-full object-cover object-center"
-                />
+              {/* Circular mask container for the glow orb */}
+              <div className="relative w-24 h-24 md:w-28 md:h-28 rounded-full overflow-hidden flex-shrink-0">
+                <GlowOrb />
               </div>
             </div>
             
