@@ -1,7 +1,7 @@
 import { useState } from "react";
-import { Pencil, Trash2, Check, X, MessageSquare } from "lucide-react";
+import { Pencil, Trash2, Check, X, MessageSquare, Plus } from "lucide-react";
 import { Conversation } from "@/hooks/use-ai-chat";
-import { format, isToday, isYesterday, isThisWeek } from "date-fns";
+import { isToday, isYesterday, isThisWeek } from "date-fns";
 
 interface ChatSidebarProps {
   conversations: Conversation[];
@@ -10,6 +10,7 @@ interface ChatSidebarProps {
   onSelectConversation: (id: string) => void;
   onRenameConversation: (id: string, title: string) => void;
   onDeleteConversation: (id: string) => void;
+  onClose?: () => void;
 }
 
 export function ChatSidebar({
@@ -19,11 +20,13 @@ export function ChatSidebar({
   onSelectConversation,
   onRenameConversation,
   onDeleteConversation,
+  onClose,
 }: ChatSidebarProps) {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editTitle, setEditTitle] = useState("");
 
-  const startEditing = (conv: Conversation) => {
+  const startEditing = (conv: Conversation, e: React.MouseEvent) => {
+    e.stopPropagation();
     setEditingId(conv.id);
     setEditTitle(conv.title);
   };
@@ -39,6 +42,11 @@ export function ChatSidebar({
   const cancelEdit = () => {
     setEditingId(null);
     setEditTitle("");
+  };
+
+  const handleDelete = (id: string, e: React.MouseEvent) => {
+    e.stopPropagation();
+    onDeleteConversation(id);
   };
 
   // Group conversations by date
@@ -59,41 +67,42 @@ export function ChatSidebar({
   const groupOrder = ["Today", "Yesterday", "This week", "Older"];
 
   return (
-    <div className="w-64 h-full bg-secondary/30 border-r border-border/30 flex flex-col">
-      {/* New Chat Button */}
-      <div className="p-3">
+    <div className="w-64 h-full bg-card/95 backdrop-blur-sm border-r border-border/20 flex flex-col shadow-lg">
+      {/* Header */}
+      <div className="p-3 border-b border-border/10">
         <button
           onClick={onNewChat}
-          className="w-full flex items-center gap-2 px-3 py-2.5 rounded-xl bg-primary/10 hover:bg-primary/20 text-foreground text-sm font-medium transition-colors"
+          className="w-full flex items-center justify-center gap-2 px-3 py-2.5 rounded-xl bg-primary/10 hover:bg-primary/15 text-foreground text-sm font-medium transition-colors"
         >
-          <MessageSquare className="w-4 h-4" />
-          New Chat
+          <Plus className="w-4 h-4" />
+          New chat
         </button>
       </div>
 
       {/* Conversations List */}
-      <div className="flex-1 overflow-y-auto px-2 pb-4">
+      <div className="flex-1 overflow-y-auto px-2 py-3">
         {groupOrder.map((group) => {
           const convs = groupedConversations[group];
           if (!convs || convs.length === 0) return null;
 
           return (
             <div key={group} className="mb-4">
-              <p className="px-2 py-1 text-xs font-medium text-muted-foreground uppercase tracking-wide">
+              <p className="px-2 py-1.5 text-xs font-medium text-muted-foreground uppercase tracking-wide">
                 {group}
               </p>
-              <div className="space-y-1">
+              <div className="space-y-0.5">
                 {convs.map((conv) => (
                   <div
                     key={conv.id}
-                    className={`group relative flex items-center rounded-lg transition-colors ${
+                    className={`group relative flex items-center rounded-lg transition-colors cursor-pointer ${
                       currentConversationId === conv.id
-                        ? "bg-primary/15"
-                        : "hover:bg-secondary/60"
+                        ? "bg-secondary"
+                        : "hover:bg-secondary/50"
                     }`}
+                    onClick={() => onSelectConversation(conv.id)}
                   >
                     {editingId === conv.id ? (
-                      <div className="flex-1 flex items-center gap-1 p-2">
+                      <div className="flex-1 flex items-center gap-1 p-2" onClick={(e) => e.stopPropagation()}>
                         <input
                           type="text"
                           value={editTitle}
@@ -120,22 +129,19 @@ export function ChatSidebar({
                       </div>
                     ) : (
                       <>
-                        <button
-                          onClick={() => onSelectConversation(conv.id)}
-                          className="flex-1 text-left px-3 py-2 text-sm text-foreground truncate"
-                        >
+                        <span className="flex-1 text-left px-3 py-2.5 text-sm text-foreground truncate">
                           {conv.title}
-                        </button>
+                        </span>
                         <div className="hidden group-hover:flex items-center gap-0.5 pr-2">
                           <button
-                            onClick={() => startEditing(conv)}
-                            className="p-1 text-muted-foreground hover:text-foreground hover:bg-secondary rounded"
+                            onClick={(e) => startEditing(conv, e)}
+                            className="p-1.5 text-muted-foreground hover:text-foreground hover:bg-secondary rounded"
                           >
                             <Pencil className="w-3.5 h-3.5" />
                           </button>
                           <button
-                            onClick={() => onDeleteConversation(conv.id)}
-                            className="p-1 text-muted-foreground hover:text-destructive hover:bg-destructive/10 rounded"
+                            onClick={(e) => handleDelete(conv.id, e)}
+                            className="p-1.5 text-muted-foreground hover:text-destructive hover:bg-destructive/10 rounded"
                           >
                             <Trash2 className="w-3.5 h-3.5" />
                           </button>
