@@ -1,19 +1,19 @@
 import { Navbar } from "@/components/Navbar";
-import { GlassCard } from "@/components/GlassCard";
 import { Button } from "@/components/ui/button";
-import { Sparkles, Send, Trash2, Loader2 } from "lucide-react";
+import { Send, Download, Loader2 } from "lucide-react";
 import { useState, useEffect, useRef } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { useAIChat } from "@/hooks/use-ai-chat";
 import { useAuth } from "@/contexts/AuthContext";
-import { useNavigate } from "react-router-dom";
+import { TypingIndicator } from "@/components/TypingIndicator";
+import { exportUserData, downloadTextFile } from "@/utils/exportChatData";
 import { format } from "date-fns";
 
 export default function AIChat() {
   const [message, setMessage] = useState("");
+  const [isExporting, setIsExporting] = useState(false);
   const { toast } = useToast();
   const { user, loading: authLoading } = useAuth();
-  const navigate = useNavigate();
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const { messages, isLoading, sendMessage, loadHistory, clearHistory } = useAIChat();
 
@@ -36,6 +36,29 @@ export default function AIChat() {
     await sendMessage(currentMessage);
   };
 
+  const handleExport = async () => {
+    if (!user) return;
+    
+    setIsExporting(true);
+    try {
+      const content = await exportUserData(user.id);
+      const filename = `wellness-export-${format(new Date(), "yyyy-MM-dd")}.txt`;
+      downloadTextFile(content, filename);
+      toast({
+        title: "Export complete",
+        description: "Your data has been downloaded. You can upload it to ChatGPT or Gemini to continue your coaching conversation.",
+      });
+    } catch (error) {
+      toast({
+        title: "Export failed",
+        description: "Could not export your data. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsExporting(false);
+    }
+  };
+
   const handleClearHistory = async () => {
     await clearHistory();
     toast({
@@ -56,88 +79,71 @@ export default function AIChat() {
     <div className="min-h-screen gradient-bg">
       <Navbar />
       
-      <main className="pt-28 pb-12 px-4 max-w-3xl mx-auto">
-        <div className="flex items-center justify-between mb-8">
-          <div>
-            <h1 className="font-display text-3xl font-semibold">AI Coach</h1>
-            <p className="text-muted-foreground mt-1">Your personal motivation assistant</p>
-          </div>
-          {messages.length > 0 && (
-            <Button variant="ghost" size="sm" onClick={handleClearHistory}>
-              <Trash2 className="w-4 h-4 mr-2" />
-              Clear chat
-            </Button>
-          )}
+      <main className="pt-24 pb-6 px-4 max-w-2xl mx-auto h-[calc(100vh-0px)] flex flex-col">
+        {/* Header */}
+        <div className="text-center mb-6">
+          <h1 className="font-display text-2xl font-semibold text-foreground">AI Coach</h1>
+          <p className="text-muted-foreground text-sm mt-1">Your personal motivation assistant</p>
         </div>
         
         {/* Chat Container */}
-        <GlassCard className="h-[600px] flex flex-col overflow-hidden">
-          {/* Chat Messages Area */}
-          <div className="flex-1 p-6 overflow-y-auto space-y-6">
+        <div className="flex-1 bg-card/80 backdrop-blur-sm rounded-3xl shadow-soft overflow-hidden flex flex-col min-h-0">
+          {/* Messages Area */}
+          <div className="flex-1 px-4 py-6 overflow-y-auto space-y-4">
+            {/* Welcome message */}
             {messages.length === 0 && (
-              <div className="flex gap-3">
-                <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-accent to-primary flex items-center justify-center flex-shrink-0">
-                  <Sparkles className="w-5 h-5 text-primary-foreground" />
+              <div className="flex items-start gap-3">
+                <div className="w-8 h-8 rounded-full bg-secondary flex items-center justify-center flex-shrink-0">
+                  <span className="text-base">🌟</span>
                 </div>
-                <div className="flex-1">
-                  <div className="bg-secondary rounded-2xl rounded-tl-md p-4 max-w-[80%]">
-                    <p className="text-sm text-foreground">
-                      Hey there! 👋 I'm your wellness coach. I help with habits, routines, motivation, 
-                      and avoiding burnout. I can see your habits, journal, and mood data to give 
-                      personalized guidance. What's on your mind? 🌱
-                    </p>
-                  </div>
-                  <p className="text-xs text-muted-foreground mt-1 ml-1">Just now</p>
+                <div className="bg-secondary/80 rounded-3xl rounded-tl-lg px-4 py-3 max-w-[85%]">
+                  <p className="text-sm text-foreground leading-relaxed">
+                    Hey there! 👋 I'm your wellness coach. I help with habits, routines, motivation, 
+                    and avoiding burnout. I can see your habits, journal, and mood data to give 
+                    personalized guidance. What's on your mind? 🌱
+                  </p>
                 </div>
               </div>
             )}
             
+            {/* Message list */}
             {messages.map((msg) => (
               <div
                 key={msg.id}
-                className={`flex gap-3 ${msg.role === "user" ? "justify-end" : ""}`}
+                className={`flex items-end gap-3 ${msg.role === "user" ? "flex-row-reverse" : ""}`}
               >
-                {msg.role === "assistant" && (
-                  <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-accent to-primary flex items-center justify-center flex-shrink-0">
-                    <Sparkles className="w-5 h-5 text-primary-foreground" />
-                  </div>
-                )}
-                
-                <div className={`flex-1 ${msg.role === "user" ? "flex justify-end" : ""}`}>
-                  <div
-                    className={`rounded-2xl p-4 max-w-[80%] ${
-                      msg.role === "user"
-                        ? "bg-primary text-primary-foreground rounded-tr-md"
-                        : "bg-secondary rounded-tl-md"
-                    }`}
-                  >
-                    <p className="text-sm whitespace-pre-wrap">{msg.content}</p>
-                  </div>
-                  <p className="text-xs text-muted-foreground mt-1 ml-1">
-                    {format(msg.timestamp, "h:mm a")}
-                  </p>
+                {/* Avatar */}
+                <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${
+                  msg.role === "user" 
+                    ? "bg-primary/20" 
+                    : "bg-secondary"
+                }`}>
+                  <span className="text-base">{msg.role === "user" ? "😊" : "🌟"}</span>
                 </div>
                 
-                {msg.role === "user" && (
-                  <div className="w-10 h-10 rounded-2xl bg-secondary flex items-center justify-center flex-shrink-0">
-                    <span className="text-lg">👤</span>
-                  </div>
-                )}
+                {/* Message bubble */}
+                <div
+                  className={`px-4 py-3 max-w-[80%] ${
+                    msg.role === "user"
+                      ? "bg-primary/15 rounded-3xl rounded-tr-lg"
+                      : "bg-secondary/80 rounded-3xl rounded-tl-lg"
+                  }`}
+                >
+                  <p className="text-sm text-foreground whitespace-pre-wrap leading-relaxed">
+                    {msg.content}
+                  </p>
+                </div>
               </div>
             ))}
             
+            {/* Typing indicator */}
             {isLoading && messages[messages.length - 1]?.role === "user" && (
-              <div className="flex gap-3">
-                <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-accent to-primary flex items-center justify-center flex-shrink-0">
-                  <Sparkles className="w-5 h-5 text-primary-foreground" />
+              <div className="flex items-end gap-3">
+                <div className="w-8 h-8 rounded-full bg-secondary flex items-center justify-center flex-shrink-0">
+                  <span className="text-base">🌟</span>
                 </div>
-                <div className="flex-1">
-                  <div className="bg-secondary rounded-2xl rounded-tl-md p-4 max-w-[80%]">
-                    <div className="flex items-center gap-2">
-                      <Loader2 className="w-4 h-4 animate-spin" />
-                      <span className="text-sm text-muted-foreground">Thinking...</span>
-                    </div>
-                  </div>
+                <div className="bg-secondary/80 rounded-3xl rounded-tl-lg">
+                  <TypingIndicator />
                 </div>
               </div>
             )}
@@ -145,33 +151,62 @@ export default function AIChat() {
             <div ref={messagesEndRef} />
           </div>
           
-          {/* Input Area */}
-          <form onSubmit={handleSubmit} className="p-4 border-t border-border/50">
-            <div className="flex gap-3">
+          {/* Bottom composer */}
+          <div className="p-4 border-t border-border/30 bg-card/50">
+            <form onSubmit={handleSubmit} className="flex items-center gap-3">
+              {/* Export button */}
+              <Button
+                type="button"
+                variant="ghost"
+                size="icon"
+                onClick={handleExport}
+                disabled={isExporting}
+                className="w-10 h-10 rounded-full text-muted-foreground hover:text-foreground hover:bg-secondary/80 flex-shrink-0"
+                title="Export your data"
+              >
+                {isExporting ? (
+                  <Loader2 className="w-5 h-5 animate-spin" />
+                ) : (
+                  <Download className="w-5 h-5" />
+                )}
+              </Button>
+              
+              {/* Text input */}
               <input
                 type="text"
                 value={message}
                 onChange={(e) => setMessage(e.target.value)}
-                placeholder="Ask your AI coach..."
-                className="flex-1 px-4 py-3 rounded-2xl bg-secondary border-0 focus:outline-none focus:ring-2 focus:ring-primary/30 text-sm"
+                placeholder="Ask your AI coach…"
+                className="flex-1 px-4 py-3 rounded-full bg-secondary/60 border-0 focus:outline-none focus:ring-2 focus:ring-primary/20 text-sm placeholder:text-muted-foreground"
                 disabled={isLoading}
               />
+              
+              {/* Send button */}
               <Button 
                 type="submit" 
-                variant="gradient" 
                 size="icon" 
-                className="w-12 h-12 rounded-2xl"
+                className="w-10 h-10 rounded-full bg-primary hover:bg-primary/90 text-primary-foreground flex-shrink-0 shadow-sm"
                 disabled={isLoading || !message.trim()}
               >
                 {isLoading ? (
-                  <Loader2 className="w-5 h-5 animate-spin" />
+                  <Loader2 className="w-4 h-4 animate-spin" />
                 ) : (
-                  <Send className="w-5 h-5" />
+                  <Send className="w-4 h-4" />
                 )}
               </Button>
-            </div>
-          </form>
-        </GlassCard>
+            </form>
+            
+            {/* Clear chat link */}
+            {messages.length > 0 && (
+              <button
+                onClick={handleClearHistory}
+                className="w-full text-center text-xs text-muted-foreground hover:text-foreground mt-3 transition-colors"
+              >
+                Clear conversation
+              </button>
+            )}
+          </div>
+        </div>
       </main>
     </div>
   );
