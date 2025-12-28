@@ -67,7 +67,7 @@ export function ChatSidebar({
   const groupOrder = ["Today", "Yesterday", "This week", "Older"];
 
   return (
-    <div className="w-64 h-full bg-card/60 backdrop-blur-2xl border-r border-border/10 flex flex-col shadow-xl rounded-r-2xl">
+    <div className="w-64 h-full bg-gradient-to-b from-[hsl(30,70%,97%)] to-[hsl(35,60%,92%)] border-r border-border/10 flex flex-col shadow-xl rounded-r-2xl">
       {/* Header */}
       <div className="p-3 border-b border-border/10 flex items-center justify-between">
         <button
