@@ -224,8 +224,8 @@ export function AIBuddyChat() {
           <div 
             className="flex items-center gap-3 rounded-[1.5rem] px-5 py-3.5 transition-all" 
             style={{ 
-              background: 'linear-gradient(180deg, rgba(255, 190, 120, 0.35), rgba(255, 160, 80, 0.35))',
-              boxShadow: 'inset 0 6px 20px rgba(255, 150, 60, 0.18), inset 0 -6px 20px rgba(255, 120, 40, 0.12)'
+              background: 'linear-gradient(180deg, rgba(255, 230, 200, 0.75), rgba(255, 205, 160, 0.75))',
+              boxShadow: 'inset 0 4px 16px rgba(255, 140, 60, 0.15), inset 0 -4px 16px rgba(255, 120, 40, 0.10)'
             }}
           >
             <input
