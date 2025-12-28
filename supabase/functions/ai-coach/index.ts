@@ -6,10 +6,10 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
-// Usage limits: ~$0.30/month budget (text only, ~$0.0003/msg)
-// 60 msgs/day, 1000/month cap
-const MONTHLY_MESSAGE_LIMIT = 1000;
-const DAILY_MESSAGE_LIMIT = 60;
+// Usage limits: ~$0.90/month budget (text only, ~$0.0003/msg)
+// 180 msgs/day, 3000/month cap
+const MONTHLY_MESSAGE_LIMIT = 3000;
+const DAILY_MESSAGE_LIMIT = 180;
 
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
