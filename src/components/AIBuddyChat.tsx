@@ -222,10 +222,9 @@ export function AIBuddyChat() {
       <div className="p-4">
         <form onSubmit={handleSubmit}>
           <div 
-            className="flex items-center gap-3 rounded-[1.5rem] px-5 py-3.5 transition-all" 
+            className="flex items-center gap-3 rounded-full px-5 py-3 transition-all border border-orange-100/60" 
             style={{ 
-              background: 'linear-gradient(180deg, rgba(255, 252, 248, 0.95), rgba(255, 240, 220, 0.9))',
-              boxShadow: 'inset 0 4px 14px rgba(255, 180, 100, 0.1), inset 0 -4px 14px rgba(255, 160, 80, 0.06)'
+              background: 'hsl(35 30% 97%)'
             }}
           >
             <input
