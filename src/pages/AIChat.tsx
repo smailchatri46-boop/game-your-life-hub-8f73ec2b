@@ -109,9 +109,9 @@ export default function AIChat() {
                 <div className="flex-1">
                   <div className="bg-secondary rounded-2xl rounded-tl-md p-4 max-w-[80%]">
                     <p className="text-sm text-foreground">
-                      Hey there! 👋 I'm your AI coach. I have access to your habits, journal entries, 
-                      and mood data, so I can give you personalized insights and motivation. 
-                      What would you like to talk about?
+                      Hey there! 👋 I'm your wellness coach. I help with habits, routines, motivation, 
+                      and avoiding burnout. I can see your habits, journal, and mood data to give 
+                      personalized guidance. What's on your mind? 🌱
                     </p>
                   </div>
                   <p className="text-xs text-muted-foreground mt-1 ml-1">Just now</p>
