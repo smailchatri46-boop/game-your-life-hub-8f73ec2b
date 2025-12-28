@@ -9,6 +9,7 @@ import { TypingIndicator } from "@/components/TypingIndicator";
 import { ChatSidebar } from "@/components/ChatSidebar";
 import { exportUserData, downloadTextFile } from "@/utils/exportChatData";
 import { format } from "date-fns";
+import { AppleEmoji } from "@/components/AppleEmoji";
 
 export default function AIChat() {
   const [message, setMessage] = useState("");
@@ -174,7 +175,7 @@ export default function AIChat() {
                   Start a conversation
                 </h2>
                 <p className="text-muted-foreground text-sm max-w-sm">
-                  I'm your wellness buddy 😊 Ask me about habits, routines, motivation, or anything to help you stay on track!
+                  I'm your wellness buddy <AppleEmoji emoji="😊" size="sm" className="inline align-middle mx-0.5" /> Ask me about habits, routines, motivation, or anything to help you stay on track!
                 </p>
               </div>
             )}
@@ -213,10 +214,10 @@ export default function AIChat() {
             </div>
           </div>
 
-          {/* Input Area */}
-          <div className="p-4 border-t border-border/10">
+          {/* Input Area - elevated with soft gradient */}
+          <div className="p-4">
             <form onSubmit={handleSubmit}>
-              <div className="flex items-center gap-3 bg-muted/20 rounded-2xl px-4 py-3 shadow-[inset_0_1px_3px_rgba(0,0,0,0.04)] transition-colors">
+              <div className="flex items-center gap-3 bg-gradient-to-r from-[hsl(35,80%,96%)] via-[hsl(30,70%,95%)] to-[hsl(25,75%,94%)] rounded-[1.5rem] px-5 py-3.5 shadow-[0_2px_12px_rgba(0,0,0,0.06),0_1px_4px_rgba(0,0,0,0.04)] transition-all">
                 <input
                   type="text"
                   value={message}
@@ -228,7 +229,7 @@ export default function AIChat() {
                 <Button
                   type="submit"
                   size="icon"
-                  className="w-9 h-9 rounded-full bg-primary hover:bg-primary/90 text-primary-foreground flex-shrink-0 shadow-md flex items-center justify-center p-0"
+                  className="w-10 h-10 min-w-[2.5rem] min-h-[2.5rem] rounded-full bg-primary hover:bg-primary/85 text-primary-foreground flex-shrink-0 shadow-[0_2px_8px_hsl(var(--primary)/0.3)] flex items-center justify-center p-0"
                   disabled={isLoading || !message.trim()}
                 >
                   {isLoading ? (
