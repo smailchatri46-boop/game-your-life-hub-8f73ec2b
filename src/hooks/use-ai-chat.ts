@@ -15,7 +15,8 @@ export function useAIChat() {
   const { user } = useAuth();
 
   const sendMessage = useCallback(async (content: string) => {
-    if (!user) return;
+    // Allow testing without user (temporarily)
+    const testUserId = user?.id || "test-user-id";
 
     const userMessage: Message = {
       id: crypto.randomUUID(),
@@ -27,12 +28,14 @@ export function useAIChat() {
     setMessages(prev => [...prev, userMessage]);
     setIsLoading(true);
 
-    // Save user message to database
-    await supabase.from("chat_messages").insert({
-      user_id: user.id,
-      role: "user",
-      content,
-    });
+    // Save user message to database (skip if testing without auth)
+    if (user) {
+      await supabase.from("chat_messages").insert({
+        user_id: user.id,
+        role: "user",
+        content,
+      });
+    }
 
     try {
       const CHAT_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/ai-coach`;
@@ -48,7 +51,7 @@ export function useAIChat() {
             role: m.role,
             content: m.content,
           })),
-          userId: user.id,
+          userId: testUserId,
         }),
       });
 
@@ -113,8 +116,8 @@ export function useAIChat() {
         }
       }
 
-      // Save assistant message to database
-      if (assistantContent) {
+      // Save assistant message to database (skip if testing without auth)
+      if (assistantContent && user) {
         await supabase.from("chat_messages").insert({
           user_id: user.id,
           role: "assistant",
