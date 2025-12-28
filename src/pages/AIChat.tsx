@@ -1,9 +1,8 @@
 import { Navbar } from "@/components/Navbar";
 import { GlassCard } from "@/components/GlassCard";
 import { Button } from "@/components/ui/button";
-import { Sparkles, Send, Mic, MicOff, Trash2, Loader2 } from "lucide-react";
+import { Sparkles, Send, Trash2, Loader2 } from "lucide-react";
 import { useState, useEffect, useRef } from "react";
-import { useWhisperSpeech } from "@/hooks/use-whisper-speech";
 import { useToast } from "@/hooks/use-toast";
 import { useAIChat } from "@/hooks/use-ai-chat";
 import { useAuth } from "@/contexts/AuthContext";
@@ -17,38 +16,6 @@ export default function AIChat() {
   const navigate = useNavigate();
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const { messages, isLoading, sendMessage, loadHistory, clearHistory } = useAIChat();
-
-  const { isListening, isProcessing, isSupported, toggleListening } = useWhisperSpeech({
-    onResult: (transcript) => {
-      setMessage((prev) => prev + (prev ? " " : "") + transcript);
-      toast({
-        title: "Transcription complete",
-        description: "Your voice has been converted to text.",
-      });
-    },
-    onError: (error) => {
-      toast({
-        title: "Voice input error",
-        description: error === "not-allowed" 
-          ? "Please allow microphone access" 
-          : `Error: ${error}`,
-        variant: "destructive",
-      });
-    },
-    onLimitReached: (limitMessage) => {
-      toast({
-        title: "Voice limit reached",
-        description: limitMessage,
-      });
-    },
-  });
-
-  // Temporarily disabled for testing
-  // useEffect(() => {
-  //   if (!authLoading && !user) {
-  //     navigate("/auth");
-  //   }
-  // }, [user, authLoading, navigate]);
 
   useEffect(() => {
     if (user) {
@@ -181,30 +148,14 @@ export default function AIChat() {
           {/* Input Area */}
           <form onSubmit={handleSubmit} className="p-4 border-t border-border/50">
             <div className="flex gap-3">
-              <div className="flex-1 relative">
-                <input
-                  type="text"
-                  value={message}
-                  onChange={(e) => setMessage(e.target.value)}
-                  placeholder="Ask your AI coach..."
-                  className="w-full px-4 py-3 pr-12 rounded-2xl bg-secondary border-0 focus:outline-none focus:ring-2 focus:ring-primary/30 text-sm"
-                  disabled={isLoading}
-                />
-                {isSupported && (
-                  <button
-                    type="button"
-                    onClick={toggleListening}
-                    className={`absolute right-3 top-1/2 -translate-y-1/2 p-1.5 rounded-full transition-all ${
-                      isListening 
-                        ? "bg-destructive text-white animate-pulse" 
-                        : "text-muted-foreground hover:text-primary hover:bg-primary/10"
-                    }`}
-                    title={isListening ? "Stop recording" : "Voice input"}
-                  >
-                    {isListening ? <MicOff className="w-4 h-4" /> : <Mic className="w-4 h-4" />}
-                  </button>
-                )}
-              </div>
+              <input
+                type="text"
+                value={message}
+                onChange={(e) => setMessage(e.target.value)}
+                placeholder="Ask your AI coach..."
+                className="flex-1 px-4 py-3 rounded-2xl bg-secondary border-0 focus:outline-none focus:ring-2 focus:ring-primary/30 text-sm"
+                disabled={isLoading}
+              />
               <Button 
                 type="submit" 
                 variant="gradient" 
@@ -219,12 +170,6 @@ export default function AIChat() {
                 )}
               </Button>
             </div>
-            {(isListening || isProcessing) && (
-              <p className="mt-2 text-xs text-muted-foreground animate-pulse flex items-center gap-1">
-                <span className="w-1.5 h-1.5 bg-destructive rounded-full" />
-                {isProcessing ? "Processing audio with Whisper..." : "Recording... Click mic to stop"}
-              </p>
-            )}
           </form>
         </GlassCard>
       </main>

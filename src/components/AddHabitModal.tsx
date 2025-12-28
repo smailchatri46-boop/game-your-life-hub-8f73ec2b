@@ -4,9 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Slider } from "@/components/ui/slider";
 import { AppleEmoji } from "@/components/AppleEmoji";
-import { Check, X, Mic, MicOff } from "lucide-react";
-import { useSpeechRecognition } from "@/hooks/use-speech-recognition";
-import { useToast } from "@/hooks/use-toast";
+import { Check, X } from "lucide-react";
 import { useFirstTimeTips } from "@/hooks/use-first-time-tips";
 import { FirstTimeTip } from "@/components/FirstTimeTip";
 
@@ -95,24 +93,7 @@ export function AddHabitModal({ open, onOpenChange, onSave }: AddHabitModalProps
   const [progressiveTargetGoal, setProgressiveTargetGoal] = useState(5);
   const [progressiveRampDuration, setProgressiveRampDuration] = useState<"1-week" | "2-weeks" | "1-month" | "custom">("2-weeks");
   const [progressiveCustomWeeks, setProgressiveCustomWeeks] = useState(3);
-  const { toast } = useToast();
   const { activeTip, tipMessage, triggerTip, dismissTip, shouldShowTip } = useFirstTimeTips();
-
-  const { isListening, isSupported, toggleListening } = useSpeechRecognition({
-    onResult: (transcript) => {
-      setName((prev) => prev + (prev ? " " : "") + transcript);
-      if (error) setError("");
-    },
-    onError: (err) => {
-      toast({
-        title: "Voice input error",
-        description: err === "not-allowed" 
-          ? "Please allow microphone access" 
-          : `Error: ${err}`,
-        variant: "destructive",
-      });
-    },
-  });
 
   const selectedCategory = CATEGORIES.find(c => c.value === category);
 
@@ -246,37 +227,15 @@ export function AddHabitModal({ open, onOpenChange, onSave }: AddHabitModalProps
                 <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-2">
                   Habit Name
                 </label>
-                <div className="relative">
-                  <Input
-                    placeholder="e.g., Morning Meditation"
-                    value={name}
-                    onChange={(e) => {
-                      setName(e.target.value);
-                      if (error) setError("");
-                    }}
-                    className="h-12 px-4 pr-12 bg-zinc-50 dark:bg-zinc-800 border-zinc-200 dark:border-zinc-700 rounded-xl text-base placeholder:text-zinc-400 focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
-                  />
-                  {isSupported && (
-                    <button
-                      type="button"
-                      onClick={toggleListening}
-                      className={`absolute right-3 top-1/2 -translate-y-1/2 p-1.5 rounded-full transition-all ${
-                        isListening 
-                          ? "bg-destructive text-white animate-pulse" 
-                          : "text-zinc-400 hover:text-primary hover:bg-primary/10"
-                      }`}
-                      title={isListening ? "Stop recording" : "Voice input"}
-                    >
-                      {isListening ? <MicOff className="w-4 h-4" /> : <Mic className="w-4 h-4" />}
-                    </button>
-                  )}
-                </div>
-                {isListening && (
-                  <p className="mt-1 text-xs text-muted-foreground animate-pulse flex items-center gap-1">
-                    <span className="w-1.5 h-1.5 bg-destructive rounded-full" />
-                    Listening...
-                  </p>
-                )}
+                <Input
+                  placeholder="e.g., Morning Meditation"
+                  value={name}
+                  onChange={(e) => {
+                    setName(e.target.value);
+                    if (error) setError("");
+                  }}
+                  className="h-12 px-4 bg-zinc-50 dark:bg-zinc-800 border-zinc-200 dark:border-zinc-700 rounded-xl text-base placeholder:text-zinc-400 focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
+                />
                 {error && (
                   <p className="mt-2 text-sm text-red-500">{error}</p>
                 )}
