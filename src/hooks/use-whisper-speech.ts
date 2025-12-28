@@ -1,13 +1,16 @@
 import { useState, useCallback, useRef } from 'react';
 import { supabase } from '@/integrations/supabase/client';
+import { useAuth } from '@/contexts/AuthContext';
 
 interface UseWhisperSpeechOptions {
   onResult?: (transcript: string) => void;
   onError?: (error: string) => void;
+  onLimitReached?: (message: string) => void;
 }
 
 export function useWhisperSpeech(options: UseWhisperSpeechOptions = {}) {
-  const { onResult, onError } = options;
+  const { onResult, onError, onLimitReached } = options;
+  const { user } = useAuth();
   const [isListening, setIsListening] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
   const [transcript, setTranscript] = useState('');
@@ -63,12 +66,19 @@ export function useWhisperSpeech(options: UseWhisperSpeechOptions = {}) {
           const { data, error } = await supabase.functions.invoke('whisper-transcribe', {
             body: { 
               audio: base64Audio,
-              mimeType: mimeType
+              mimeType: mimeType,
+              userId: user?.id
             }
           });
 
           if (error) {
             throw new Error(error.message);
+          }
+
+          // Handle limit reached responses
+          if (data?.error === 'daily_limit_reached' || data?.error === 'monthly_limit_reached' || data?.error === 'audio_too_long') {
+            onLimitReached?.(data.message);
+            return;
           }
 
           if (data?.text) {

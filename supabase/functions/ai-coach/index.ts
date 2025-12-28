@@ -6,9 +6,12 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
-// Usage limits: ~60 messages per month ($2 budget spread across 30 days = ~2 msgs/day)
-const MONTHLY_MESSAGE_LIMIT = 60;
-const DAILY_MESSAGE_LIMIT = 5;
+// Usage limits: $2/month budget
+// Chat is negligible cost, voice is main cost driver
+// 30 msgs/day × 30 days = 900/month (generous for chat)
+// Daily limit ensures spread usage
+const MONTHLY_MESSAGE_LIMIT = 300;
+const DAILY_MESSAGE_LIMIT = 30;
 
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
@@ -47,7 +50,6 @@ serve(async (req) => {
     // Count messages sent today
     let todayCount = 0;
     if (lastMessageDate === today && usageData) {
-      // Estimate today's count from recent messages
       const { count } = await supabase
         .from('chat_messages')
         .select('*', { count: 'exact', head: true })
@@ -72,7 +74,7 @@ serve(async (req) => {
     if (todayCount >= DAILY_MESSAGE_LIMIT) {
       return new Response(JSON.stringify({ 
         error: "daily_limit_reached",
-        message: "You've reached your AI coaching limit for today 😊 To keep costs fair, usage resets tomorrow. You can also download your data as a PDF and continue chatting in any AI you like (ChatGPT, Gemini, etc.) 📄✨"
+        message: "You've reached your AI coaching limit for today 😊 To spread usage fairly across the month, come back tomorrow! You can also download your data as a PDF and continue chatting in any AI you like 📄✨"
       }), {
         status: 429,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
@@ -245,7 +247,7 @@ If users ask how to use the app or features, redirect them:
 # Response Length Rule
 
 ALWAYS keep replies SHORT. Avoid essays. Target: 1-2 short paragraphs maximum.
-${remainingDaily <= 1 ? "IMPORTANT: User is low on daily messages - keep this response extra brief!" : ""}
+${remainingDaily <= 3 ? "IMPORTANT: User is running low on daily messages - keep this response extra brief!" : ""}
 
 # Data Export
 
@@ -268,7 +270,7 @@ Remember: You have access to their REAL data, so be specific! Reference their ac
           ...messages,
         ],
         stream: true,
-        max_tokens: 300, // Keep responses concise
+        max_tokens: 300,
       }),
     });
 
