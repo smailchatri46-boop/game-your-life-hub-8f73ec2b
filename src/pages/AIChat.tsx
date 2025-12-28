@@ -1,6 +1,6 @@
 import { Navbar } from "@/components/Navbar";
 import { Button } from "@/components/ui/button";
-import { Send, Download, Loader2, Menu, Plus } from "lucide-react";
+import { Send, Download, Loader2, Menu } from "lucide-react";
 import { useState, useEffect, useRef } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { useAIChat } from "@/hooks/use-ai-chat";
@@ -9,7 +9,6 @@ import { TypingIndicator } from "@/components/TypingIndicator";
 import { ChatSidebar } from "@/components/ChatSidebar";
 import { exportUserData, downloadTextFile } from "@/utils/exportChatData";
 import { format } from "date-fns";
-import { useIsMobile } from "@/hooks/use-mobile";
 
 export default function AIChat() {
   const [message, setMessage] = useState("");
@@ -18,7 +17,6 @@ export default function AIChat() {
   const { toast } = useToast();
   const { user, loading: authLoading } = useAuth();
   const messagesEndRef = useRef<HTMLDivElement>(null);
-  const isMobile = useIsMobile();
 
   const {
     messages,
@@ -104,10 +102,11 @@ export default function AIChat() {
   }
 
   return (
-    <div className="min-h-screen gradient-bg">
+    <div className="min-h-screen gradient-bg flex flex-col">
       <Navbar />
 
-      <main className="pt-24 pb-6 px-4 max-w-4xl mx-auto h-[calc(100vh-0px)] flex flex-col">
+      {/* Main content - centered vertically with equal spacing */}
+      <main className="flex-1 flex flex-col items-center justify-center px-4 py-8">
         {/* Header */}
         <div className="text-center mb-6">
           <h1 className="font-display text-3xl font-semibold text-foreground">AI Buddy</h1>
@@ -115,12 +114,12 @@ export default function AIChat() {
         </div>
 
         {/* Main Chat Container */}
-        <div className="flex-1 bg-card/50 backdrop-blur-sm rounded-2xl shadow-soft overflow-hidden flex flex-col min-h-0 relative">
+        <div className="w-full max-w-2xl bg-card/60 backdrop-blur-sm rounded-2xl shadow-soft overflow-hidden flex flex-col relative" style={{ height: "min(600px, calc(100vh - 240px))" }}>
           {/* Chat Header */}
           <div className="flex items-center justify-between px-4 py-3 border-b border-border/10">
             <button
               onClick={() => setSidebarOpen(!sidebarOpen)}
-              className="p-2 rounded-lg hover:bg-secondary/50 text-muted-foreground transition-colors"
+              className="p-2 rounded-lg hover:bg-muted/50 text-muted-foreground transition-colors"
               aria-label="Toggle sidebar"
             >
               <Menu className="w-5 h-5" />
@@ -131,7 +130,7 @@ export default function AIChat() {
               size="sm"
               onClick={handleExport}
               disabled={isExporting}
-              className="text-muted-foreground hover:text-foreground hover:bg-secondary/50"
+              className="text-muted-foreground hover:text-foreground hover:bg-muted/50"
             >
               {isExporting ? (
                 <Loader2 className="w-4 h-4 animate-spin mr-2" />
@@ -164,34 +163,37 @@ export default function AIChat() {
           )}
 
           {/* Messages Area */}
-          <div className="flex-1 overflow-y-auto px-4 md:px-8 py-6">
-            {/* Welcome state */}
+          <div className="flex-1 overflow-y-auto px-4 md:px-6 py-6">
+            {/* Welcome state with placeholder for future image */}
             {messages.length === 0 && (
-              <div className="max-w-xl mx-auto text-center py-16">
-                <h2 className="font-display text-xl font-medium text-foreground mb-2">
+              <div className="h-full flex flex-col items-center justify-center text-center">
+                {/* Placeholder area for future illustration */}
+                <div className="w-32 h-32 mb-6" />
+                
+                <h2 className="font-display text-lg font-medium text-foreground mb-2">
                   Start a conversation
                 </h2>
-                <p className="text-muted-foreground text-sm max-w-md mx-auto">
-                  I'm your wellness buddy. Ask me about habits, routines, motivation, or anything to help you stay on track.
+                <p className="text-muted-foreground text-sm max-w-sm">
+                  I'm your wellness buddy 😊 Ask me about habits, routines, motivation, or anything to help you stay on track!
                 </p>
               </div>
             )}
 
             {/* Messages */}
-            <div className="max-w-xl mx-auto space-y-4">
-              {messages.map((msg, index) => (
+            <div className="space-y-4">
+              {messages.map((msg) => (
                 <div
                   key={msg.id}
                   className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}
                 >
                   <div
-                    className={`max-w-[85%] rounded-2xl px-4 py-3 ${
+                    className={`max-w-[80%] rounded-2xl px-4 py-3 ${
                       msg.role === "user"
-                        ? "bg-card border border-border/30"
-                        : "bg-secondary/70"
+                        ? "bg-primary/10 text-foreground"
+                        : "bg-secondary/80 text-foreground"
                     }`}
                   >
-                    <p className="text-sm text-foreground whitespace-pre-wrap leading-relaxed">
+                    <p className="text-sm whitespace-pre-wrap leading-relaxed">
                       {msg.content}
                     </p>
                   </div>
@@ -201,7 +203,7 @@ export default function AIChat() {
               {/* Typing indicator */}
               {isLoading && messages[messages.length - 1]?.role === "user" && (
                 <div className="flex justify-start">
-                  <div className="bg-secondary/70 rounded-2xl px-4 py-3">
+                  <div className="bg-secondary/80 rounded-2xl px-4 py-3">
                     <TypingIndicator />
                   </div>
                 </div>
@@ -213,8 +215,8 @@ export default function AIChat() {
 
           {/* Input Area */}
           <div className="p-4 border-t border-border/10">
-            <form onSubmit={handleSubmit} className="max-w-xl mx-auto">
-              <div className="flex items-center gap-3 bg-secondary/30 rounded-xl px-4 py-2.5 border border-border/10 focus-within:border-primary/20 transition-colors">
+            <form onSubmit={handleSubmit}>
+              <div className="flex items-center gap-3 bg-muted/30 rounded-xl px-4 py-2.5 border border-border/10 focus-within:border-primary/20 transition-colors">
                 <input
                   type="text"
                   value={message}
