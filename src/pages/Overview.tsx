@@ -417,7 +417,7 @@ export default function Overview() {
               <div className="grid sm:grid-cols-2 gap-4">
                 <Button variant="secondary" className="justify-start h-auto py-4 px-5" asChild>
                   <Link to="/dashboard">
-                    <Target className="w-5 h-5 mr-3 text-primary" />
+                    <span className="mr-3"><AppleEmoji emoji="🔥" size="xl" /></span>
                     <div className="text-left">
                       <p className="font-semibold">Track Habits</p>
                       <p className="text-xs text-muted-foreground">Log today's progress</p>
@@ -456,16 +456,16 @@ export default function Overview() {
           </div>
           
           {/* Goals Teaser */}
-          <GlassCard className="p-6 relative overflow-hidden" glow>
+          <GlassCard className="p-6 relative overflow-hidden bg-gradient-to-br from-[hsl(30,80%,95%)] to-[hsl(25,70%,90%)]" glow>
             <div className="absolute top-3 right-3">
               <span className="px-2 py-1 bg-primary/10 text-primary text-xs font-semibold rounded-full">
-                NEW
+                Most used feature
               </span>
             </div>
-            <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-accent/30 to-primary/30 flex items-center justify-center mb-4">
-              <AppleEmoji emoji="🎯" size="3xl" />
-            </div>
-            <h3 className="font-display text-xl font-semibold mb-2">Goals</h3>
+            <h3 className="font-display text-xl font-semibold mb-2 flex items-center gap-2">
+              <AppleEmoji emoji="🎯" size="2xl" />
+              Goals
+            </h3>
             <p className="text-sm text-muted-foreground mb-4">
               Set yearly and quarterly goals, break them into milestones, and track your progress.
             </p>
