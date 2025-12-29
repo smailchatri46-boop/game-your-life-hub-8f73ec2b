@@ -456,7 +456,7 @@ export default function Overview() {
           </div>
           
           {/* Goals Teaser */}
-          <GlassCard className="p-5 relative overflow-hidden bg-gradient-to-br from-[hsl(30,80%,95%)] to-[hsl(25,70%,90%)] flex flex-col" glow>
+          <GlassCard className="p-5 relative overflow-hidden bg-gradient-to-br from-[hsl(30,80%,95%)] to-[hsl(25,70%,90%)] flex flex-col h-[220px]" glow>
             <div className="absolute top-3 right-3">
               <span className="px-2 py-1 bg-primary/10 text-primary text-xs font-semibold rounded-full">
                 Most used feature
