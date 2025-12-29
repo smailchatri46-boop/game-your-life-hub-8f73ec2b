@@ -98,7 +98,7 @@ export default function Overview() {
         .order('created_at', { ascending: true });
       
       if (!error && data) {
-        setTodos(data.map(t => ({ id: t.id, text: t.text, completed: t.completed, emoji: t.emoji || "📝" })));
+        setTodos(data.map(t => ({ id: t.id, text: t.text, completed: t.completed, emoji: "📝" })));
       }
     };
     
@@ -295,7 +295,7 @@ export default function Overview() {
                         isFuture 
                           ? 'bg-muted/30 cursor-not-allowed'
                           : isSelected
-                            ? 'bg-[hsl(25,90%,55%)] text-primary-foreground shadow-medium'
+                            ? 'bg-gradient-to-br from-primary to-[hsl(25,90%,60%)] text-primary-foreground shadow-medium'
                             : completionRate >= 80
                               ? 'bg-primary/25 hover:bg-primary/35'
                               : completionRate >= 50
