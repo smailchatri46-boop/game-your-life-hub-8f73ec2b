@@ -85,7 +85,7 @@ export default function Overview() {
           <div className="glass-card p-5 min-w-[180px] hover:shadow-large transition-all duration-300">
             <div className="flex items-start justify-between mb-3">
               <div>
-                <h3 className="text-xl font-semibold text-foreground">Daily Progress</h3>
+                <h3 className="text-base font-semibold text-foreground">Daily Progress</h3>
               </div>
               <div className="p-2 rounded-xl bg-secondary text-primary">
                 <TrendingUp className="w-4 h-4" />
@@ -108,7 +108,7 @@ export default function Overview() {
           <div className="glass-card p-5 min-w-[180px] hover:shadow-large transition-all duration-300">
             <div className="flex items-start justify-between mb-3">
               <div>
-                <h3 className="text-xl font-semibold text-foreground">Perfect Days</h3>
+                <h3 className="text-base font-semibold text-foreground">Perfect Days</h3>
               </div>
               <div className="p-2 rounded-xl bg-secondary text-accent">
                 <Target className="w-4 h-4" />
@@ -131,7 +131,7 @@ export default function Overview() {
           <div className="glass-card p-5 min-w-[180px] hover:shadow-large transition-all duration-300">
             <div className="flex items-start justify-between mb-3">
               <div>
-                <h3 className="text-xl font-semibold text-foreground">Mood Average</h3>
+                <h3 className="text-base font-semibold text-foreground">Mood Average</h3>
               </div>
               <div className="p-2 rounded-xl bg-secondary text-primary">
                 <Heart className="w-4 h-4" />
@@ -148,7 +148,7 @@ export default function Overview() {
           <div className="glass-card p-5 min-w-[180px] hover:shadow-large transition-all duration-300">
             <div className="flex items-start justify-between mb-3">
               <div>
-                <h3 className="text-xl font-semibold text-foreground">Mood Stability</h3>
+                <h3 className="text-base font-semibold text-foreground">Mood Stability</h3>
               </div>
               <div className="p-2 rounded-xl bg-secondary text-accent">
                 <BarChart3 className="w-4 h-4" />
