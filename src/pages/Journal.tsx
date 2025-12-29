@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Plus, Pencil, Trash2 } from "lucide-react";
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 
 interface JournalEntry {
   id: string;
@@ -41,53 +41,13 @@ const emojiToColorMap: Record<string, { bg: string; tint: string; btnGradient: s
 const EMOJI_OPTIONS_ROW_1 = ["🥳", "😌", "💡", "🤔", "💪", "😊", "🙏", "🔥"];
 const EMOJI_OPTIONS_ROW_2 = ["😴", "🎯", "🌟", "🎉", "💭", "🌈", "☕", "📚"];
 
-// Initial entries with timestamps set to more than 24 hours ago (locked)
-const initialEntries: JournalEntry[] = [
-  {
-    id: "1",
-    content: "Today was incredibly productive! I managed to complete all my morning habits and even had time for a 30-minute walk. The meditation session really helped me focus throughout the day. I'm feeling grateful for the progress I've made this week.",
-    date: "December 25, 2025",
-    time: "8:45 PM",
-    emoji: "🥳",
-    bgColor: "bg-journal-orange",
-    createdAt: Date.now() - 48 * 60 * 60 * 1000, // 48 hours ago
-  },
-  {
-    id: "2",
-    content: "Had a slower start today but picked up momentum after lunch. Sometimes it's okay to take things easy. The important thing is that I showed up and did what I could. Tomorrow is a new opportunity.",
-    date: "December 24, 2025",
-    time: "9:30 PM",
-    emoji: "😌",
-    bgColor: "bg-journal-yellow",
-    createdAt: Date.now() - 72 * 60 * 60 * 1000, // 72 hours ago
-  },
-  {
-    id: "3",
-    content: "Feeling motivated after watching some tutorials on habit building. The concept of 'atomic habits' really resonates with me. Small changes compound over time. I'm excited to implement what I learned.",
-    date: "December 23, 2025",
-    time: "7:15 PM",
-    emoji: "💡",
-    bgColor: "bg-journal-yellow",
-    createdAt: Date.now() - 96 * 60 * 60 * 1000, // 96 hours ago
-  },
-  {
-    id: "4",
-    content: "Struggled with focus today. Too many distractions from social media. Need to be more intentional about screen time. Setting a goal to reduce usage to under 1 hour tomorrow.",
-    date: "December 22, 2025",
-    time: "10:00 PM",
-    emoji: "🤔",
-    bgColor: "bg-journal-purple",
-    createdAt: Date.now() - 120 * 60 * 60 * 1000, // 120 hours ago
-  },
-  {
-    id: "5",
-    content: "Amazing workout today! Hit a new personal record on my running distance. The consistency is paying off. My energy levels have improved significantly since I started tracking my habits.",
-    date: "December 21, 2025",
-    time: "6:30 PM",
-    emoji: "💪",
-    bgColor: "bg-journal-pink",
-    createdAt: Date.now() - 144 * 60 * 60 * 1000, // 144 hours ago
-  },
+// Rotating phrases for empty state
+const ROTATING_PHRASES = [
+  "make things clearer",
+  "help you stay accountable",
+  "motivate you on low days",
+  "capture your best memories",
+  "help you understand yourself",
 ];
 
 // Helper to check if entry is within 24 hours
@@ -118,12 +78,20 @@ const getGlowColor = (emoji: string): string => {
 };
 
 export default function Journal() {
-  const [entries, setEntries] = useState<JournalEntry[]>(initialEntries);
+  const [entries, setEntries] = useState<JournalEntry[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [newContent, setNewContent] = useState("");
   const [selectedEmoji, setSelectedEmoji] = useState("😊");
   const [editingEntry, setEditingEntry] = useState<JournalEntry | null>(null);
-  
+  const [currentPhraseIndex, setCurrentPhraseIndex] = useState(0);
+
+  // Rotate phrases every 2.5 seconds
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentPhraseIndex((prev) => (prev + 1) % ROTATING_PHRASES.length);
+    }, 2500);
+    return () => clearInterval(interval);
+  }, []);
 
   const modalBgClass = useMemo(() => getModalBgClass(selectedEmoji), [selectedEmoji]);
   const modalTintClass = useMemo(() => getModalTintClass(selectedEmoji), [selectedEmoji]);
@@ -190,13 +158,15 @@ export default function Journal() {
     <div className="min-h-screen gradient-bg">
       <Navbar />
       
-      <main className="pt-28 pb-24 px-4 max-w-6xl mx-auto">
-        <div className="flex items-center justify-between mb-8">
-          <div>
-            <h1 className="font-display text-3xl font-semibold">Journal</h1>
-            <p className="text-muted-foreground mt-1">Reflect on your journey</p>
+      <main className={`pt-28 pb-24 px-4 max-w-6xl mx-auto ${entries.length === 0 ? 'min-h-[calc(100vh-7rem)] flex flex-col' : ''}`}>
+        {entries.length > 0 && (
+          <div className="flex items-center justify-between mb-8">
+            <div>
+              <h1 className="font-display text-3xl font-semibold">Journal</h1>
+              <p className="text-muted-foreground mt-1">Reflect on your journey</p>
+            </div>
           </div>
-        </div>
+        )}
         
         {/* Journal Entries Grid */}
         {entries.length > 0 ? (
@@ -246,28 +216,48 @@ export default function Journal() {
             })}
           </div>
         ) : (
-          <GlassCard className="p-12 text-center">
-            <span className="mb-4 block"><AppleEmoji emoji="📝" size="5xl" /></span>
-            <h3 className="font-display text-xl font-semibold mb-2">No entries yet</h3>
-            <p className="text-muted-foreground mb-6">
-              Start journaling to track your thoughts and progress
+          /* Empty State */
+          <div className="flex-1 flex flex-col items-center justify-center text-center px-4 -mt-16">
+            <h1 className="font-display text-4xl md:text-5xl font-semibold text-foreground mb-3">
+              Start journaling
+            </h1>
+            <p className="text-lg text-muted-foreground mb-6">
+              Write what you feel today
             </p>
-            <Button variant="gradient" onClick={handleOpenNewEntry}>
-              <Plus className="w-5 h-5 mr-2" />
-              Write your first entry
-            </Button>
-          </GlassCard>
+            
+            {/* Animated rotating phrase */}
+            <div className="mb-10 h-8 flex items-center justify-center">
+              <span className="text-muted-foreground">Journaling will </span>
+              <span 
+                key={currentPhraseIndex}
+                className="text-primary font-medium ml-1 animate-fade-in"
+              >
+                {ROTATING_PHRASES[currentPhraseIndex]}
+              </span>
+            </div>
+            
+            {/* Big round add button */}
+            <button
+              onClick={handleOpenNewEntry}
+              className="w-20 h-20 rounded-full bg-gradient-to-br from-journal-yellow via-journal-green to-journal-purple shadow-large hover:shadow-xl hover:scale-110 transition-all duration-300 flex items-center justify-center"
+              aria-label="New journal entry"
+            >
+              <Plus className="w-10 h-10 text-foreground" />
+            </button>
+          </div>
         )}
       </main>
 
-      {/* Floating Add Button */}
-      <button
-        onClick={handleOpenNewEntry}
-        className="fixed bottom-8 right-8 w-14 h-14 rounded-full bg-gradient-to-br from-journal-yellow via-journal-green to-journal-purple shadow-large hover:shadow-xl hover:scale-105 transition-all duration-300 flex items-center justify-center z-50"
-        aria-label="New journal entry"
-      >
-        <Plus className="w-6 h-6 text-foreground" />
-      </button>
+      {/* Floating Add Button - only show when entries exist */}
+      {entries.length > 0 && (
+        <button
+          onClick={handleOpenNewEntry}
+          className="fixed bottom-8 right-8 w-14 h-14 rounded-full bg-gradient-to-br from-journal-yellow via-journal-green to-journal-purple shadow-large hover:shadow-xl hover:scale-105 transition-all duration-300 flex items-center justify-center z-50"
+          aria-label="New journal entry"
+        >
+          <Plus className="w-6 h-6 text-foreground" />
+        </button>
+      )}
 
       {/* New/Edit Entry Modal */}
       <Dialog open={isModalOpen} onOpenChange={(open) => { if (!open) resetModal(); else setIsModalOpen(true); }}>
