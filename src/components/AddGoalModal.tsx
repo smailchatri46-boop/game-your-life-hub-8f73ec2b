@@ -46,8 +46,17 @@ export function AddGoalModal({ open, onOpenChange }: AddGoalModalProps) {
   const [selectedHabits, setSelectedHabits] = useState<string[]>([]);
   const [targetCount, setTargetCount] = useState("");
 
-  // Fetch user's habits
-  const { data: habits = [] } = useQuery({
+  // Demo habits for when user is not logged in
+  const demoHabits = [
+    { id: "demo-1", name: "Morning Meditation", icon: "🧘" },
+    { id: "demo-2", name: "Exercise", icon: "💪" },
+    { id: "demo-3", name: "Read 30 mins", icon: "📚" },
+    { id: "demo-4", name: "Drink Water", icon: "💧" },
+    { id: "demo-5", name: "No Social Media", icon: "📵" },
+  ];
+
+  // Fetch user's habits (only when logged in)
+  const { data: fetchedHabits = [] } = useQuery({
     queryKey: ["habits", user?.id],
     queryFn: async () => {
       if (!user) return [];
@@ -61,6 +70,9 @@ export function AddGoalModal({ open, onOpenChange }: AddGoalModalProps) {
     },
     enabled: !!user,
   });
+
+  // Use fetched habits if logged in, otherwise use demo habits
+  const habits = user ? fetchedHabits : demoHabits;
 
   const totalSteps = 5;
 
