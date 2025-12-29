@@ -160,12 +160,12 @@ export function AIBuddyChat() {
           <Tooltip delayDuration={200}>
             <TooltipTrigger asChild>
               <button className="p-1.5 rounded-full hover:bg-muted/50 text-muted-foreground transition-colors">
-                <HelpCircle className="w-4 h-4" />
+                <HelpCircle className="w-3.5 h-3.5" />
               </button>
             </TooltipTrigger>
-            <TooltipContent side="bottom" className="max-w-[280px] text-center p-3 bg-card border border-border/20 shadow-lg">
-              <p className="text-sm">
-                Download your analytics to upload to ChatGPT, Gemini, Grok, or your favorite AI. Have a conversation about your data, get insights, or do whatever you want with it. Your data is yours and it's safe here.
+            <TooltipContent side="bottom" align="end" sideOffset={8} className="max-w-[240px] text-center p-2.5 bg-card border border-border/20 shadow-lg z-50">
+              <p className="text-xs leading-relaxed">
+                Download your analytics to upload to ChatGPT, Gemini, Grok, or your favorite AI. Your data is yours and safe here.
               </p>
             </TooltipContent>
           </Tooltip>
