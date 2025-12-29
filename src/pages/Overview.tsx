@@ -310,137 +310,87 @@ export default function Overview() {
             </GlassCard>
           </div>
           
-          {/* Day Details Panel */}
+          {/* To-Do List Panel */}
           <div>
             <GlassCard className="p-6 sticky top-28">
               <div className="flex items-center justify-between mb-4">
-                <h3 className="font-display text-xl font-semibold">
-                  {monthName} {selectedDate}
-                </h3>
+                <h3 className="font-display text-xl font-semibold">To-Do List</h3>
               </div>
               
-              {monthData[selectedDate!] ? (
-                <>
-                  <div className="mb-6">
-                    <p className="text-sm font-medium text-muted-foreground mb-2">Mood</p>
-                    <AppleEmoji emoji={monthData[selectedDate!].mood} size="3xl" />
+              <p className="text-sm text-muted-foreground mb-4">
+                {monthName} {selectedDate}
+              </p>
+              
+              <div className="space-y-2">
+                {todos.map((todo) => (
+                  <div 
+                    key={todo.id}
+                    className={`flex items-center gap-3 p-3 rounded-xl ${
+                      todo.completed ? 'bg-primary/10 opacity-60' : 'bg-secondary'
+                    }`}
+                  >
+                    <button
+                      onClick={() => handleToggleTodo(todo.id)}
+                      className={`w-5 h-5 rounded-md border-2 flex items-center justify-center transition-colors ${
+                        todo.completed 
+                          ? 'bg-primary border-primary text-primary-foreground' 
+                          : 'border-muted-foreground/30 hover:border-primary/50'
+                      }`}
+                    >
+                      {todo.completed && <Check className="w-3 h-3" />}
+                    </button>
+                    <span className={`text-sm flex-1 ${
+                      todo.completed 
+                        ? 'text-muted-foreground line-through' 
+                        : 'text-foreground'
+                    }`}>
+                      {todo.text}
+                    </span>
                   </div>
-                  
-                  <div className="mb-6">
-                    <p className="text-sm font-medium text-muted-foreground mb-3">Habits</p>
-                    <div className="space-y-2">
-                      {monthData[selectedDate!].habits.map((habit, i) => (
-                        <div 
-                          key={i}
-                          className={`flex items-center gap-3 p-3 rounded-xl ${
-                            habit.completed ? 'bg-primary/10' : 'bg-secondary'
-                          }`}
-                        >
-                          <span className={`w-5 h-5 rounded-full flex items-center justify-center text-xs ${
-                            habit.completed 
-                              ? 'bg-primary text-primary-foreground' 
-                              : 'bg-muted'
-                          }`}>
-                            {habit.completed ? '✓' : ''}
-                          </span>
-                          <span className={`text-sm ${habit.completed ? 'text-foreground' : 'text-muted-foreground'}`}>
-                            {habit.name}
-                          </span>
-                        </div>
-                      ))}
-                    </div>
+                ))}
+                
+                {isAddingTodo ? (
+                  <div className="flex items-center gap-2 p-2 rounded-xl bg-secondary">
+                    <Input
+                      value={newTodoText}
+                      onChange={(e) => setNewTodoText(e.target.value)}
+                      placeholder="Add a task..."
+                      className="flex-1 h-8 text-sm border-0 bg-transparent focus-visible:ring-0"
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter' && newTodoText.trim()) handleAddTodo();
+                        if (e.key === 'Escape') {
+                          setIsAddingTodo(false);
+                          setNewTodoText("");
+                        }
+                      }}
+                      autoFocus
+                    />
+                    <Button
+                      size="sm"
+                      variant="ghost"
+                      onClick={handleAddTodo}
+                      disabled={!newTodoText.trim()}
+                      className="h-8 px-2"
+                    >
+                      <Plus className="w-4 h-4" />
+                    </Button>
                   </div>
-                  
-                  {/* To-Do List Section */}
-                  <div className="mb-6">
-                    <div className="flex items-center justify-between mb-3">
-                      <p className="text-sm font-medium text-muted-foreground">To-Do List</p>
-                      {!isAddingTodo && (
-                        <button
-                          onClick={() => setIsAddingTodo(true)}
-                          className="p-1.5 rounded-lg hover:bg-secondary text-primary"
-                        >
-                          <Plus className="w-4 h-4" />
-                        </button>
-                      )}
-                    </div>
-                    
-                    <div className="space-y-2">
-                      {todos.map((todo) => (
-                        <div 
-                          key={todo.id}
-                          className={`flex items-center gap-3 p-3 rounded-xl ${
-                            todo.completed ? 'bg-primary/10' : 'bg-secondary'
-                          }`}
-                        >
-                          <button
-                            onClick={() => handleToggleTodo(todo.id)}
-                            className={`w-5 h-5 rounded-md border-2 flex items-center justify-center transition-colors ${
-                              todo.completed 
-                                ? 'bg-primary border-primary text-primary-foreground' 
-                                : 'border-muted-foreground/30 hover:border-primary/50'
-                            }`}
-                          >
-                            {todo.completed && <Check className="w-3 h-3" />}
-                          </button>
-                          <span className={`text-sm flex-1 ${
-                            todo.completed 
-                              ? 'text-muted-foreground line-through opacity-60' 
-                              : 'text-foreground'
-                          }`}>
-                            {todo.text}
-                          </span>
-                        </div>
-                      ))}
-                      
-                      {isAddingTodo && (
-                        <div className="flex items-center gap-2 p-2 rounded-xl bg-secondary">
-                          <Input
-                            value={newTodoText}
-                            onChange={(e) => setNewTodoText(e.target.value)}
-                            placeholder="Add a task..."
-                            className="flex-1 h-8 text-sm border-0 bg-transparent focus-visible:ring-0"
-                            onKeyDown={(e) => {
-                              if (e.key === 'Enter') handleAddTodo();
-                              if (e.key === 'Escape') {
-                                setIsAddingTodo(false);
-                                setNewTodoText("");
-                              }
-                            }}
-                            autoFocus
-                          />
-                          <Button
-                            size="sm"
-                            variant="ghost"
-                            onClick={handleAddTodo}
-                            disabled={!newTodoText.trim()}
-                            className="h-8 px-2"
-                          >
-                            <Plus className="w-4 h-4" />
-                          </Button>
-                        </div>
-                      )}
-                      
-                      {todos.length === 0 && !isAddingTodo && (
-                        <p className="text-xs text-muted-foreground text-center py-2">
-                          No tasks for this day
-                        </p>
-                      )}
-                    </div>
-                  </div>
-                  
-                  {monthData[selectedDate!].journal && (
-                    <div>
-                      <p className="text-sm font-medium text-muted-foreground mb-2">Journal</p>
-                      <p className="text-sm text-foreground bg-secondary/50 p-3 rounded-xl">
-                        {monthData[selectedDate!].journal}
-                      </p>
-                    </div>
-                  )}
-                </>
-              ) : (
-                <p className="text-muted-foreground text-center py-8">No data for this day</p>
-              )}
+                ) : (
+                  <button
+                    onClick={() => setIsAddingTodo(true)}
+                    className="w-full flex items-center gap-3 p-3 rounded-xl bg-secondary/50 hover:bg-secondary transition-colors text-muted-foreground"
+                  >
+                    <Plus className="w-4 h-4" />
+                    <span className="text-sm">Add a task...</span>
+                  </button>
+                )}
+                
+                {todos.length === 0 && !isAddingTodo && (
+                  <p className="text-xs text-muted-foreground text-center py-4">
+                    No tasks for this day
+                  </p>
+                )}
+              </div>
             </GlassCard>
           </div>
         </div>
