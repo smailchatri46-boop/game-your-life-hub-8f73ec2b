@@ -5,6 +5,7 @@ import { OnboardingQuestionsModal } from "@/components/OnboardingQuestionsModal"
 import { AIBuddyChat } from "@/components/AIBuddyChat";
 import { useHabitStats } from "@/hooks/use-habit-stats";
 import { Target, TrendingUp, Heart, BarChart3, X, Plus, Check } from "lucide-react";
+import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Link } from "react-router-dom";
@@ -106,7 +107,12 @@ export default function Overview() {
   }, [user, selectedDate, year, month]);
   
   const handleAddTodo = async () => {
-    if (!user || !newTodoText.trim() || selectedDate === null) return;
+    if (!newTodoText.trim()) return;
+    if (!user) {
+      toast.error("Please log in to add tasks");
+      return;
+    }
+    if (selectedDate === null) return;
     
     const dateString = `${year}-${String(month + 1).padStart(2, '0')}-${String(selectedDate).padStart(2, '0')}`;
     
@@ -390,7 +396,7 @@ export default function Overview() {
                         disabled={!newTodoText.trim()}
                         className="text-primary hover:opacity-80 transition-opacity disabled:opacity-30"
                       >
-                        <Check className="w-5 h-5" />
+                        <Plus className="w-5 h-5" />
                       </button>
                     </div>
                     
