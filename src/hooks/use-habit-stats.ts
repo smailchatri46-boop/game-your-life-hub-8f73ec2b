@@ -1,7 +1,7 @@
 import { useEffect, useState, useMemo } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
-import { startOfDay, subDays, startOfMonth, format } from "date-fns";
+import { startOfDay, subDays, startOfMonth, format, startOfWeek } from "date-fns";
 
 interface HabitStats {
   todayPercent: number;
@@ -10,13 +10,23 @@ interface HabitStats {
   weekAvg: number;
   monthPercent: number;
   currentStreak: number;
+  perfectDaysThisWeek: number;
+  averageMoodEmoji: string;
+  averageMoodLabel: string;
+  emotionalStability: number;
   isLoading: boolean;
+}
+
+interface MoodLog {
+  date: string;
+  mood: number | null;
 }
 
 export function useHabitStats(): HabitStats {
   const { user } = useAuth();
   const [habits, setHabits] = useState<{ id: string }[]>([]);
   const [completions, setCompletions] = useState<{ date: string; habit_id: string }[]>([]);
+  const [moodLogs, setMoodLogs] = useState<MoodLog[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -42,8 +52,17 @@ export function useHabitStats(): HabitStats {
         .eq("user_id", user.id)
         .gte("date", sixtyDaysAgo);
 
+      // Fetch mood logs for last 30 days
+      const thirtyDaysAgo = format(subDays(new Date(), 30), "yyyy-MM-dd");
+      const { data: moodData } = await supabase
+        .from("mood_logs")
+        .select("date, mood")
+        .eq("user_id", user.id)
+        .gte("date", thirtyDaysAgo);
+
       setHabits(habitsData || []);
       setCompletions(completionsData || []);
+      setMoodLogs(moodData || []);
       setIsLoading(false);
     };
 
@@ -60,6 +79,10 @@ export function useHabitStats(): HabitStats {
         weekAvg: 0,
         monthPercent: 0,
         currentStreak: 0,
+        perfectDaysThisWeek: 0,
+        averageMoodEmoji: "😊",
+        averageMoodLabel: "Happy",
+        emotionalStability: 7,
       };
     }
 
@@ -81,11 +104,29 @@ export function useHabitStats(): HabitStats {
     
     let weekTotal = 0;
     let daysWithData = 0;
+    let perfectDaysThisWeek = 0;
+    
+    // Get this week's days (Monday to today)
+    const weekStart = startOfWeek(new Date(), { weekStartsOn: 1 });
+    const thisWeekDays: string[] = [];
+    for (let i = 0; i < 7; i++) {
+      const dayDate = subDays(new Date(), i);
+      if (dayDate >= weekStart) {
+        thisWeekDays.push(format(dayDate, "yyyy-MM-dd"));
+      }
+    }
+    
     for (const day of last7Days) {
       const dayCompletions = completions.filter(
         c => c.date === day && habitIds.has(c.habit_id)
       );
       const uniqueCompleted = new Set(dayCompletions.map(c => c.habit_id)).size;
+      
+      // Count perfect days this week (100% completion)
+      if (thisWeekDays.includes(day) && uniqueCompleted === totalHabits) {
+        perfectDaysThisWeek++;
+      }
+      
       if (dayCompletions.length > 0 || day === today) {
         weekTotal += (uniqueCompleted / totalHabits) * 100;
         daysWithData++;
@@ -143,6 +184,35 @@ export function useHabitStats(): HabitStats {
       if (currentStreak > 365) break;
     }
 
+    // Calculate average mood from mood logs
+    const validMoods = moodLogs.filter(m => m.mood !== null).map(m => m.mood as number);
+    let averageMood = 3; // Default to middle
+    if (validMoods.length > 0) {
+      averageMood = Math.round(validMoods.reduce((a, b) => a + b, 0) / validMoods.length);
+    }
+    
+    // Map mood value to emoji and label (1-5 scale)
+    const moodMap: Record<number, { emoji: string; label: string }> = {
+      1: { emoji: "😢", label: "Sad" },
+      2: { emoji: "😔", label: "Down" },
+      3: { emoji: "😐", label: "Neutral" },
+      4: { emoji: "🙂", label: "Calm" },
+      5: { emoji: "😊", label: "Happy" },
+    };
+    
+    const moodInfo = moodMap[Math.min(5, Math.max(1, averageMood))] || moodMap[3];
+    
+    // Calculate emotional stability (variance-based, lower variance = higher stability)
+    let emotionalStability = 7; // Default
+    if (validMoods.length >= 2) {
+      const mean = validMoods.reduce((a, b) => a + b, 0) / validMoods.length;
+      const variance = validMoods.reduce((sum, m) => sum + Math.pow(m - mean, 2), 0) / validMoods.length;
+      // Convert variance to stability score (0-10 scale, lower variance = higher score)
+      // Max variance for 1-5 scale is 4 (all 1s or all 5s vs mean of 3)
+      emotionalStability = Math.round(10 - (variance / 4) * 10);
+      emotionalStability = Math.max(1, Math.min(10, emotionalStability));
+    }
+
     return {
       todayPercent,
       todayCompleted,
@@ -150,8 +220,12 @@ export function useHabitStats(): HabitStats {
       weekAvg,
       monthPercent,
       currentStreak,
+      perfectDaysThisWeek,
+      averageMoodEmoji: moodInfo.emoji,
+      averageMoodLabel: moodInfo.label,
+      emotionalStability,
     };
-  }, [habits, completions]);
+  }, [habits, completions, moodLogs]);
 
   return {
     ...stats,
