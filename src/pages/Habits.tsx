@@ -692,7 +692,9 @@ export default function Habits() {
         </GlassCard>
 
         {/* AI Buddy Chat */}
-        <AIBuddyChat />
+        <div className="max-w-7xl mx-auto">
+          <AIBuddyChat />
+        </div>
       </main>
 
       {/* Floating Add Habit Button */}
