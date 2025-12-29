@@ -18,10 +18,13 @@ const CATEGORIES = [
   { value: "other", label: "Other", color: "#6B7280" },
 ];
 
+// Expanded Apple emoji set
 const EMOJI_OPTIONS = [
   "🎯", "🧘", "💪", "📚", "💧", "🏃", "🍎", "😴", "✍️", "⭐",
   "🌅", "🧹", "💰", "🎸", "🌿", "🧠", "❤️", "🏋️", "🚴", "💻",
   "📝", "🎨", "🎵", "🍳", "☕", "🚶", "🙏", "💤", "🥗", "🔥",
+  "🍀", "🎮", "📖", "🌙", "🧊", "🥤", "🏠", "🌸", "🎧", "📱",
+  "🧃", "🥑", "🏊", "🎿", "⛳", "🎾", "🧘‍♀️", "🧘‍♂️", "🤸", "🚀",
 ];
 
 const WEEKDAYS = [
@@ -186,31 +189,23 @@ export function AddHabitModal({ open, onOpenChange, onSave }: AddHabitModalProps
     <>
     <Dialog open={open} onOpenChange={handleClose}>
       <DialogContent 
-        className="sm:max-w-[680px] p-0 gap-0 bg-white dark:bg-zinc-900 border-0 shadow-2xl rounded-2xl overflow-hidden font-['Inter',sans-serif]"
+        className="sm:max-w-[680px] p-0 gap-0 bg-card border-0 shadow-2xl rounded-3xl overflow-hidden font-['Plus_Jakarta_Sans',sans-serif]"
         onInteractOutside={(e) => e.preventDefault()}
       >
-        {/* Header */}
-        <div className="px-6 py-5 border-b border-zinc-100 dark:border-zinc-800">
+        {/* Header - Clean, no badge */}
+        <div className="px-6 py-5 border-b border-border/50">
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <div 
-                className="w-12 h-12 rounded-xl flex items-center justify-center"
-                style={{ backgroundColor: `${selectedCategory?.color}15` }}
-              >
-                <AppleEmoji emoji={icon} size="lg" />
-              </div>
-              <div>
-                <h2 className="text-xl font-semibold text-zinc-900 dark:text-zinc-100">
-                  Add New Habit
-                </h2>
-                <p className="text-sm text-zinc-500 dark:text-zinc-400">
-                  Build better routines, one habit at a time
-                </p>
-              </div>
+            <div>
+              <h2 className="text-xl font-semibold text-foreground font-display">
+                Add New Habit
+              </h2>
+              <p className="text-sm text-muted-foreground mt-0.5">
+                Build better routines, one habit at a time
+              </p>
             </div>
             <button
               onClick={handleClose}
-              className="w-8 h-8 rounded-lg flex items-center justify-center text-zinc-400 hover:text-zinc-600 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors"
+              className="w-9 h-9 rounded-xl flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-all"
             >
               <X className="w-5 h-5" />
             </button>
@@ -222,28 +217,52 @@ export function AddHabitModal({ open, onOpenChange, onSave }: AddHabitModalProps
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-x-8 gap-y-6">
             {/* Left Column */}
             <div className="space-y-6">
-              {/* Habit Name */}
+              {/* Habit Name with emoji preview */}
               <div>
-                <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-2">
+                <label className="block text-sm font-medium text-foreground mb-2">
                   Habit Name
                 </label>
-                <Input
-                  placeholder="e.g., Morning Meditation"
-                  value={name}
-                  onChange={(e) => {
-                    setName(e.target.value);
-                    if (error) setError("");
-                  }}
-                  className="h-12 px-4 bg-zinc-50 dark:bg-zinc-800 border-zinc-200 dark:border-zinc-700 rounded-xl text-base placeholder:text-zinc-400 focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
-                />
+                <div className="relative flex items-center">
+                  {/* Emoji preview inside input */}
+                  <div className="absolute left-3 z-10 flex items-center justify-center w-8 h-8 pointer-events-none">
+                    <AppleEmoji emoji={icon} size="2xl" />
+                  </div>
+                  <Input
+                    placeholder="e.g., Morning Meditation"
+                    value={name}
+                    onChange={(e) => {
+                      setName(e.target.value);
+                      if (error) setError("");
+                    }}
+                    className="h-14 pl-14 pr-4 bg-muted/30 border-border/50 rounded-2xl text-base placeholder:text-muted-foreground focus:ring-2 focus:ring-primary/20 focus:border-primary/50 transition-all"
+                  />
+                </div>
+                {/* Preview like habit list row */}
+                {name && (
+                  <div className="mt-3 flex items-center gap-3 p-3 bg-muted/30 rounded-2xl">
+                    <div className="w-10 h-10 flex items-center justify-center">
+                      <AppleEmoji emoji={icon} size="2xl" />
+                    </div>
+                    <div>
+                      <p className="font-medium text-foreground text-sm">{name || "Habit Name"}</p>
+                      <div className="flex items-center gap-1.5 mt-0.5">
+                        <span
+                          className="w-2 h-2 rounded-full"
+                          style={{ backgroundColor: selectedCategory?.color }}
+                        />
+                        <span className="text-xs text-muted-foreground">{selectedCategory?.label}</span>
+                      </div>
+                    </div>
+                  </div>
+                )}
                 {error && (
-                  <p className="mt-2 text-sm text-red-500">{error}</p>
+                  <p className="mt-2 text-sm text-destructive">{error}</p>
                 )}
               </div>
 
               {/* Category */}
               <div>
-                <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-3">
+                <label className="block text-sm font-medium text-foreground mb-3">
                   Category
                 </label>
                 <div className="flex flex-wrap gap-2">
@@ -252,10 +271,10 @@ export function AddHabitModal({ open, onOpenChange, onSave }: AddHabitModalProps
                       key={cat.value}
                       type="button"
                       onClick={() => setCategory(cat.value)}
-                      className={`inline-flex items-center gap-2 px-3.5 py-2 rounded-full text-sm font-medium transition-all ${
+                      className={`inline-flex items-center gap-2 px-4 py-2.5 rounded-full text-sm font-medium transition-all ${
                         category === cat.value
                           ? "shadow-md"
-                          : "text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800"
+                          : "text-muted-foreground hover:bg-muted/50"
                       }`}
                       style={{
                         backgroundColor: category === cat.value ? `${cat.color}15` : undefined,
@@ -273,24 +292,24 @@ export function AddHabitModal({ open, onOpenChange, onSave }: AddHabitModalProps
                 </div>
               </div>
 
-              {/* Icon Picker */}
+              {/* Icon Picker - Larger emojis, gradient pill selection */}
               <div>
-                <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-3">
+                <label className="block text-sm font-medium text-foreground mb-3">
                   Icon
                 </label>
-                <div className="grid grid-cols-10 gap-1 p-3 bg-zinc-50 dark:bg-zinc-800/50 rounded-xl">
+                <div className="grid grid-cols-10 gap-1.5 p-4 bg-muted/30 rounded-2xl">
                   {EMOJI_OPTIONS.map((emoji) => (
                     <button
                       key={emoji}
                       type="button"
                       onClick={() => setIcon(emoji)}
-                      className={`aspect-square rounded-lg flex items-center justify-center transition-all ${
+                      className={`aspect-square rounded-xl flex items-center justify-center transition-all p-1 ${
                         icon === emoji
-                          ? "bg-white dark:bg-zinc-700 shadow-sm ring-2 ring-primary/50 scale-110"
-                          : "hover:bg-white dark:hover:bg-zinc-700 hover:shadow-sm"
+                          ? "btn-primary-gradient shadow-md scale-110"
+                          : "hover:bg-card hover:shadow-sm"
                       }`}
                     >
-                      <AppleEmoji emoji={emoji} size="md" />
+                      <AppleEmoji emoji={emoji} size="xl" />
                     </button>
                   ))}
                 </div>
@@ -301,55 +320,55 @@ export function AddHabitModal({ open, onOpenChange, onSave }: AddHabitModalProps
             <div className="space-y-6">
               {/* Habit Type */}
               <div>
-                <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-3">
+                <label className="block text-sm font-medium text-foreground mb-3">
                   Habit Type
                 </label>
                 <div className="grid grid-cols-2 gap-3">
                   <button
                     type="button"
                     onClick={() => setHabitType("boolean")}
-                    className={`p-4 rounded-xl border-2 text-left transition-all ${
+                    className={`p-4 rounded-2xl border-2 text-left transition-all ${
                       habitType === "boolean"
-                        ? "border-primary bg-primary/5"
-                        : "border-zinc-200 dark:border-zinc-700 hover:border-zinc-300 dark:hover:border-zinc-600"
+                        ? "border-primary/50 bg-primary/5"
+                        : "border-border/50 hover:border-border"
                     }`}
                   >
                     <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center mb-2 ${
-                      habitType === "boolean" ? "border-primary bg-primary" : "border-zinc-300 dark:border-zinc-600"
+                      habitType === "boolean" ? "border-primary bg-primary" : "border-muted-foreground/30"
                     }`}>
-                      {habitType === "boolean" && <Check className="w-3 h-3 text-white" />}
+                      {habitType === "boolean" && <Check className="w-3 h-3 text-primary-foreground" />}
                     </div>
-                    <p className="font-medium text-sm text-zinc-900 dark:text-zinc-100">Done / Not Done</p>
-                    <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-0.5">Simple completion</p>
+                    <p className="font-medium text-sm text-foreground">Done / Not Done</p>
+                    <p className="text-xs text-muted-foreground mt-0.5">Simple completion</p>
                   </button>
                   <button
                     type="button"
                     onClick={() => setHabitType("numeric")}
-                    className={`p-4 rounded-xl border-2 text-left transition-all ${
+                    className={`p-4 rounded-2xl border-2 text-left transition-all ${
                       habitType === "numeric"
-                        ? "border-primary bg-primary/5"
-                        : "border-zinc-200 dark:border-zinc-700 hover:border-zinc-300 dark:hover:border-zinc-600"
+                        ? "border-primary/50 bg-primary/5"
+                        : "border-border/50 hover:border-border"
                     }`}
                   >
                     <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center mb-2 ${
-                      habitType === "numeric" ? "border-primary bg-primary" : "border-zinc-300 dark:border-zinc-600"
+                      habitType === "numeric" ? "border-primary bg-primary" : "border-muted-foreground/30"
                     }`}>
-                      {habitType === "numeric" && <Check className="w-3 h-3 text-white" />}
+                      {habitType === "numeric" && <Check className="w-3 h-3 text-primary-foreground" />}
                     </div>
-                    <p className="font-medium text-sm text-zinc-900 dark:text-zinc-100">Numeric Value</p>
-                    <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-0.5">Track a number</p>
+                    <p className="font-medium text-sm text-foreground">Numeric Value</p>
+                    <p className="text-xs text-muted-foreground mt-0.5">Track a number</p>
                   </button>
                 </div>
                 {habitType === "numeric" && (
-                  <div className="mt-3 flex items-center gap-3 p-3 bg-zinc-50 dark:bg-zinc-800/50 rounded-xl">
-                    <span className="text-sm text-zinc-600 dark:text-zinc-400">Daily target:</span>
+                  <div className="mt-3 flex items-center gap-3 p-4 bg-muted/30 rounded-2xl">
+                    <span className="text-sm text-muted-foreground">Daily target:</span>
                     <Input
                       type="number"
                       min={1}
                       max={100}
                       value={numericTarget}
                       onChange={(e) => setNumericTarget(Math.max(1, parseInt(e.target.value) || 1))}
-                      className="w-20 h-9 text-center bg-white dark:bg-zinc-700 border-zinc-200 dark:border-zinc-600 rounded-lg"
+                      className="w-20 h-10 text-center bg-card border-border/50 rounded-xl"
                     />
                   </div>
                 )}
@@ -357,7 +376,7 @@ export function AddHabitModal({ open, onOpenChange, onSave }: AddHabitModalProps
 
               {/* Frequency */}
               <div>
-                <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-3">
+                <label className="block text-sm font-medium text-foreground mb-3">
                   Frequency
                 </label>
                 <div className="space-y-2">
@@ -371,20 +390,20 @@ export function AddHabitModal({ open, onOpenChange, onSave }: AddHabitModalProps
                       key={freq.value}
                       type="button"
                       onClick={() => setFrequency(freq.value as "daily" | "weekdays" | "monthly" | "progressive")}
-                      className={`w-full p-3 rounded-xl border-2 text-left flex items-center justify-between transition-all ${
+                      className={`w-full p-3.5 rounded-2xl border-2 text-left flex items-center justify-between transition-all ${
                         frequency === freq.value
-                          ? "border-primary bg-primary/5"
-                          : "border-zinc-200 dark:border-zinc-700 hover:border-zinc-300 dark:hover:border-zinc-600"
+                          ? "border-primary/50 bg-primary/5"
+                          : "border-border/50 hover:border-border"
                       }`}
                     >
                       <div>
-                        <p className="font-medium text-sm text-zinc-900 dark:text-zinc-100">{freq.label}</p>
-                        <p className="text-xs text-zinc-500 dark:text-zinc-400">{freq.desc}</p>
+                        <p className="font-medium text-sm text-foreground">{freq.label}</p>
+                        <p className="text-xs text-muted-foreground">{freq.desc}</p>
                       </div>
-                      <div className={`w-4 h-4 rounded-full border-2 flex items-center justify-center ${
-                        frequency === freq.value ? "border-primary bg-primary" : "border-zinc-300 dark:border-zinc-600"
+                      <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${
+                        frequency === freq.value ? "border-primary bg-primary" : "border-muted-foreground/30"
                       }`}>
-                        {frequency === freq.value && <div className="w-1.5 h-1.5 bg-white rounded-full" />}
+                        {frequency === freq.value && <div className="w-2 h-2 bg-primary-foreground rounded-full" />}
                       </div>
                     </button>
                   ))}
@@ -392,10 +411,10 @@ export function AddHabitModal({ open, onOpenChange, onSave }: AddHabitModalProps
 
                 {/* Progressive Build-up Configuration */}
                 {frequency === "progressive" && (
-                  <div className="mt-3 p-4 bg-zinc-50 dark:bg-zinc-800/50 rounded-xl space-y-4">
+                  <div className="mt-3 p-4 bg-muted/30 rounded-2xl space-y-4">
                     <div className="grid grid-cols-2 gap-4">
                       <div>
-                        <label className="block text-xs font-medium text-zinc-600 dark:text-zinc-400 mb-1.5">
+                        <label className="block text-xs font-medium text-muted-foreground mb-1.5">
                           Starting goal per day
                         </label>
                         <Input
@@ -404,11 +423,11 @@ export function AddHabitModal({ open, onOpenChange, onSave }: AddHabitModalProps
                           max={progressiveTargetGoal - 1}
                           value={progressiveStartGoal}
                           onChange={(e) => setProgressiveStartGoal(Math.max(1, Math.min(progressiveTargetGoal - 1, parseInt(e.target.value) || 1)))}
-                          className="h-9 text-center bg-white dark:bg-zinc-700 border-zinc-200 dark:border-zinc-600 rounded-lg"
+                          className="h-10 text-center bg-card border-border/50 rounded-xl"
                         />
                       </div>
                       <div>
-                        <label className="block text-xs font-medium text-zinc-600 dark:text-zinc-400 mb-1.5">
+                        <label className="block text-xs font-medium text-muted-foreground mb-1.5">
                           Target goal per day
                         </label>
                         <Input
@@ -417,13 +436,13 @@ export function AddHabitModal({ open, onOpenChange, onSave }: AddHabitModalProps
                           max={100}
                           value={progressiveTargetGoal}
                           onChange={(e) => setProgressiveTargetGoal(Math.max(progressiveStartGoal + 1, parseInt(e.target.value) || 2))}
-                          className="h-9 text-center bg-white dark:bg-zinc-700 border-zinc-200 dark:border-zinc-600 rounded-lg"
+                          className="h-10 text-center bg-card border-border/50 rounded-xl"
                         />
                       </div>
                     </div>
                     
                     <div>
-                      <label className="block text-xs font-medium text-zinc-600 dark:text-zinc-400 mb-1.5">
+                      <label className="block text-xs font-medium text-muted-foreground mb-1.5">
                         Ramp duration
                       </label>
                       <div className="flex flex-wrap gap-2">
@@ -432,10 +451,10 @@ export function AddHabitModal({ open, onOpenChange, onSave }: AddHabitModalProps
                             key={option.value}
                             type="button"
                             onClick={() => setProgressiveRampDuration(option.value as typeof progressiveRampDuration)}
-                            className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-all ${
+                            className={`px-4 py-2 rounded-xl text-sm font-medium transition-all ${
                               progressiveRampDuration === option.value
-                                ? "bg-primary text-white"
-                                : "bg-white dark:bg-zinc-700 text-zinc-600 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-600 border border-zinc-200 dark:border-zinc-600"
+                                ? "btn-primary-gradient shadow-sm"
+                                : "bg-card text-muted-foreground hover:bg-muted/50 border border-border/50"
                             }`}
                           >
                             {option.label}
@@ -450,32 +469,33 @@ export function AddHabitModal({ open, onOpenChange, onSave }: AddHabitModalProps
                             max={52}
                             value={progressiveCustomWeeks}
                             onChange={(e) => setProgressiveCustomWeeks(Math.max(1, Math.min(52, parseInt(e.target.value) || 1)))}
-                            className="w-20 h-9 text-center bg-white dark:bg-zinc-700 border-zinc-200 dark:border-zinc-600 rounded-lg"
+                            className="w-20 h-10 text-center bg-card border-border/50 rounded-xl"
                           />
-                          <span className="text-sm text-zinc-600 dark:text-zinc-400">weeks</span>
+                          <span className="text-sm text-muted-foreground">weeks</span>
                         </div>
                       )}
                     </div>
                     
-                    <div className="p-3 bg-primary/10 dark:bg-primary/20 rounded-lg">
-                      <p className="text-sm text-primary dark:text-primary/90">
+                    <div className="p-3 bg-primary/10 rounded-xl">
+                      <p className="text-sm text-primary">
                         You will start at {progressiveStartGoal}× per day and gradually increase to {progressiveTargetGoal}× per day over {getRampDurationLabel()}.
                       </p>
                     </div>
                   </div>
                 )}
 
+                {/* Weekdays selector - Round gradient buttons */}
                 {frequency === "weekdays" && (
-                  <div className="mt-3 flex justify-between gap-1.5 p-3 bg-zinc-50 dark:bg-zinc-800/50 rounded-xl">
+                  <div className="mt-3 flex justify-between gap-2 p-4 bg-muted/30 rounded-2xl">
                     {WEEKDAYS.map((day) => (
                       <button
                         key={day.value}
                         type="button"
                         onClick={() => toggleWeekday(day.value)}
-                        className={`w-9 h-9 rounded-full text-sm font-medium transition-all ${
+                        className={`w-10 h-10 rounded-full text-sm font-semibold transition-all flex items-center justify-center ${
                           selectedWeekdays.includes(day.value)
-                            ? "bg-primary text-white"
-                            : "bg-white dark:bg-zinc-700 text-zinc-600 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-600"
+                            ? "btn-primary-gradient shadow-md"
+                            : "bg-card text-muted-foreground hover:bg-muted/50 border border-border/30"
                         }`}
                       >
                         {day.label}
@@ -484,17 +504,18 @@ export function AddHabitModal({ open, onOpenChange, onSave }: AddHabitModalProps
                   </div>
                 )}
 
+                {/* Monthly days selector - Round gradient buttons */}
                 {frequency === "monthly" && (
-                  <div className="mt-3 grid grid-cols-7 gap-1 p-3 bg-zinc-50 dark:bg-zinc-800/50 rounded-xl max-h-40 overflow-y-auto">
+                  <div className="mt-3 grid grid-cols-7 gap-2 p-4 bg-muted/30 rounded-2xl max-h-48 overflow-y-auto">
                     {Array.from({ length: 31 }, (_, i) => i + 1).map((day) => (
                       <button
                         key={day}
                         type="button"
                         onClick={() => toggleMonthDay(day)}
-                        className={`w-8 h-8 rounded-lg text-xs font-medium transition-all ${
+                        className={`w-9 h-9 rounded-full text-xs font-semibold transition-all flex items-center justify-center ${
                           selectedDays.includes(day)
-                            ? "bg-primary text-white"
-                            : "bg-white dark:bg-zinc-700 text-zinc-600 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-600"
+                            ? "btn-primary-gradient shadow-md"
+                            : "bg-card text-muted-foreground hover:bg-muted/50 border border-border/30"
                         }`}
                       >
                         {day}
@@ -506,29 +527,29 @@ export function AddHabitModal({ open, onOpenChange, onSave }: AddHabitModalProps
 
               {/* Goal */}
               <div>
-                <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-3">
+                <label className="block text-sm font-medium text-foreground mb-3">
                   Goal per Period
                 </label>
-                <div className="flex items-center gap-3 p-3 bg-zinc-50 dark:bg-zinc-800/50 rounded-xl">
+                <div className="flex items-center gap-3 p-4 bg-muted/30 rounded-2xl">
                   <Input
                     type="number"
                     min={1}
                     max={31}
                     value={goalValue}
                     onChange={(e) => setGoalValue(Math.max(1, parseInt(e.target.value) || 1))}
-                    className="w-16 h-9 text-center bg-white dark:bg-zinc-700 border-zinc-200 dark:border-zinc-600 rounded-lg"
+                    className="w-16 h-10 text-center bg-card border-border/50 rounded-xl"
                   />
-                  <span className="text-sm text-zinc-600 dark:text-zinc-400">
+                  <span className="text-sm text-muted-foreground">
                     {habitType === "numeric" ? "times" : "days"} per
                   </span>
-                  <div className="flex rounded-lg overflow-hidden border border-zinc-200 dark:border-zinc-600">
+                  <div className="flex rounded-xl overflow-hidden border border-border/30">
                     <button
                       type="button"
                       onClick={() => setGoalPeriod("week")}
-                      className={`px-3 py-1.5 text-sm font-medium transition-all ${
+                      className={`px-4 py-2 text-sm font-medium transition-all ${
                         goalPeriod === "week"
-                          ? "bg-primary text-white"
-                          : "bg-white dark:bg-zinc-700 text-zinc-600 dark:text-zinc-300"
+                          ? "btn-primary-gradient"
+                          : "bg-card text-muted-foreground hover:bg-muted/50"
                       }`}
                     >
                       Week
@@ -536,10 +557,10 @@ export function AddHabitModal({ open, onOpenChange, onSave }: AddHabitModalProps
                     <button
                       type="button"
                       onClick={() => setGoalPeriod("month")}
-                      className={`px-3 py-1.5 text-sm font-medium transition-all ${
+                      className={`px-4 py-2 text-sm font-medium transition-all ${
                         goalPeriod === "month"
-                          ? "bg-primary text-white"
-                          : "bg-white dark:bg-zinc-700 text-zinc-600 dark:text-zinc-300"
+                          ? "btn-primary-gradient"
+                          : "bg-card text-muted-foreground hover:bg-muted/50"
                       }`}
                     >
                       Month
@@ -551,7 +572,7 @@ export function AddHabitModal({ open, onOpenChange, onSave }: AddHabitModalProps
               {/* Importance */}
               <div>
                 <div className="flex items-center justify-between mb-3">
-                  <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300">
+                  <label className="block text-sm font-medium text-foreground">
                     Importance Weight
                   </label>
                   <span className="text-sm font-semibold text-primary">{importance}%</span>
@@ -564,7 +585,7 @@ export function AddHabitModal({ open, onOpenChange, onSave }: AddHabitModalProps
                   step={5}
                   className="py-2"
                 />
-                <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-2">
+                <p className="text-xs text-muted-foreground mt-2">
                   Higher importance = more impact on daily score
                 </p>
               </div>
@@ -572,19 +593,19 @@ export function AddHabitModal({ open, onOpenChange, onSave }: AddHabitModalProps
           </div>
         </div>
 
-        {/* Footer */}
-        <div className="px-6 py-4 border-t border-zinc-100 dark:border-zinc-800 flex justify-end gap-3">
+        {/* Footer - Soft button styling */}
+        <div className="px-6 py-4 border-t border-border/30 flex justify-end gap-3">
           <Button
-            variant="outline"
+            variant="ghost"
             onClick={handleClose}
-            className="px-6 rounded-xl"
+            className="px-6 rounded-xl hover:bg-muted/50 text-muted-foreground hover:text-foreground"
           >
             Cancel
           </Button>
           <Button
             variant="gradient"
             onClick={handleSave}
-            className="px-6 rounded-xl"
+            className="px-6 rounded-xl shadow-lg hover:shadow-xl hover:brightness-105 transition-all"
           >
             Create Habit
           </Button>
