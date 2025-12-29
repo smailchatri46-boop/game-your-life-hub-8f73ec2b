@@ -81,8 +81,8 @@ export default function Overview() {
   const [todos, setTodos] = useState<TodoItem[]>([]);
   const [newTodoText, setNewTodoText] = useState("");
   const [isAddingTodo, setIsAddingTodo] = useState(false);
-  const [selectedEmoji, setSelectedEmoji] = useState("🧠");
-  const [showEmojiPicker, setShowEmojiPicker] = useState(false);
+  const [selectedEmoji, setSelectedEmoji] = useState<string | null>(null);
+  const [hasSelectedEmoji, setHasSelectedEmoji] = useState(false);
   
   // Fetch todos for selected date
   useEffect(() => {
@@ -107,7 +107,7 @@ export default function Overview() {
   }, [user, selectedDate, year, month]);
   
   const handleAddTodo = () => {
-    if (!newTodoText.trim()) return;
+    if (!newTodoText.trim() || !selectedEmoji) return;
     
     const newTodo: TodoItem = {
       id: crypto.randomUUID(),
@@ -118,8 +118,8 @@ export default function Overview() {
     setTodos(prev => [...prev, newTodo]);
     setNewTodoText("");
     setIsAddingTodo(false);
-    setSelectedEmoji("🧠");
-    setShowEmojiPicker(false);
+    setSelectedEmoji(null);
+    setHasSelectedEmoji(false);
   };
   
   const handleToggleTodo = (todoId: string) => {
@@ -334,8 +334,8 @@ export default function Overview() {
                       onClick={() => handleToggleTodo(todo.id)}
                       className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-all ${
                         todo.completed 
-                          ? 'bg-[hsl(25,40%,75%)] border-[hsl(25,40%,75%)]' 
-                          : 'border-[hsl(25,30%,80%)] hover:border-[hsl(25,40%,70%)]'
+                          ? 'bg-[hsl(25,60%,70%)] border-[hsl(25,60%,70%)]' 
+                          : 'border-[hsl(25,40%,80%)] hover:border-[hsl(25,50%,65%)]'
                       }`}
                     >
                       {todo.completed && <Check className="w-4 h-4 text-white" />}
@@ -345,53 +345,51 @@ export default function Overview() {
                 
                 {isAddingTodo ? (
                   <div className="space-y-2">
-                    <div className="flex items-center gap-3 p-3 rounded-2xl bg-white/80 shadow-sm">
-                      <button 
-                        onClick={() => setShowEmojiPicker(!showEmojiPicker)}
-                        className="hover:scale-110 transition-transform"
-                      >
-                        <AppleEmoji emoji={selectedEmoji} size="lg" />
-                      </button>
-                      <Input
-                        value={newTodoText}
-                        onChange={(e) => setNewTodoText(e.target.value)}
-                        placeholder="Add a task..."
-                        className="flex-1 h-8 text-sm border-0 bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0"
-                        onKeyDown={(e) => {
-                          if (e.key === 'Enter' && newTodoText.trim()) handleAddTodo();
-                          if (e.key === 'Escape') {
-                            setIsAddingTodo(false);
-                            setNewTodoText("");
-                            setShowEmojiPicker(false);
-                          }
-                        }}
-                        autoFocus
-                      />
-                      <button
-                        onClick={handleAddTodo}
-                        disabled={!newTodoText.trim()}
-                        className="text-primary hover:opacity-80 transition-opacity disabled:opacity-30"
-                      >
-                        <Plus className="w-5 h-5" />
-                      </button>
-                    </div>
-                    
-                    {showEmojiPicker && (
+                    {!hasSelectedEmoji ? (
                       <div className="p-3 rounded-2xl bg-white/90 shadow-md grid grid-cols-5 gap-2">
                         {TODO_EMOJIS.map((emoji) => (
                           <button
                             key={emoji}
                             onClick={() => {
                               setSelectedEmoji(emoji);
-                              setShowEmojiPicker(false);
+                              setHasSelectedEmoji(true);
                             }}
-                            className={`p-2 rounded-xl ${
-                              selectedEmoji === emoji ? 'ring-2 ring-primary ring-offset-1' : ''
-                            }`}
+                            className="p-2 rounded-xl"
                           >
                             <AppleEmoji emoji={emoji} size="lg" />
                           </button>
                         ))}
+                      </div>
+                    ) : (
+                      <div className="flex items-center gap-3 p-3 rounded-2xl bg-white/80 shadow-sm">
+                        <button 
+                          onClick={() => setHasSelectedEmoji(false)}
+                        >
+                          <AppleEmoji emoji={selectedEmoji || "🧠"} size="lg" />
+                        </button>
+                        <Input
+                          value={newTodoText}
+                          onChange={(e) => setNewTodoText(e.target.value)}
+                          placeholder="Add a task..."
+                          className="flex-1 h-8 text-sm border-0 bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0"
+                          onKeyDown={(e) => {
+                            if (e.key === 'Enter' && newTodoText.trim()) handleAddTodo();
+                            if (e.key === 'Escape') {
+                              setIsAddingTodo(false);
+                              setNewTodoText("");
+                              setHasSelectedEmoji(false);
+                              setSelectedEmoji(null);
+                            }
+                          }}
+                          autoFocus
+                        />
+                        <button
+                          onClick={handleAddTodo}
+                          disabled={!newTodoText.trim()}
+                          className="text-primary hover:opacity-80 transition-opacity disabled:opacity-30"
+                        >
+                          <Plus className="w-5 h-5" />
+                        </button>
                       </div>
                     )}
                   </div>
