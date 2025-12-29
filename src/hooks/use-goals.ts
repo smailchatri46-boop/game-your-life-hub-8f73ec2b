@@ -40,13 +40,32 @@ export interface CreateGoalInput {
 const DEMO_GOALS_KEY = "demo_goals";
 const DEMO_GOAL_HABITS_KEY = "demo_goal_habits";
 
+// Default demo goal that's always present
+const getDefaultDemoGoal = (): Goal => ({
+  id: "demo-default-10k-mrr",
+  user_id: "demo",
+  name: "10K MRR",
+  category: "Finance",
+  category_emoji: "💰",
+  start_date: new Date().toISOString().split("T")[0],
+  end_date: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString().split("T")[0],
+  target_count: 90,
+  completed_count: 0,
+  status: "active",
+  created_at: new Date().toISOString(),
+  updated_at: new Date().toISOString(),
+});
+
 // Helper functions for local storage
 const getDemoGoals = (): Goal[] => {
   try {
     const stored = localStorage.getItem(DEMO_GOALS_KEY);
-    return stored ? JSON.parse(stored) : [];
+    const customGoals: Goal[] = stored ? JSON.parse(stored) : [];
+    // Always include the default goal
+    const hasDefault = customGoals.some((g) => g.id === "demo-default-10k-mrr");
+    return hasDefault ? customGoals : [getDefaultDemoGoal(), ...customGoals];
   } catch {
-    return [];
+    return [getDefaultDemoGoal()];
   }
 };
 
