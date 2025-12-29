@@ -189,19 +189,24 @@ export function AddHabitModal({ open, onOpenChange, onSave }: AddHabitModalProps
         <HabitGuidanceCarousel
           onComplete={() => {
             setShowGuidance(false);
+            // After the form dialog mounts, smoothly scroll to its top.
             requestAnimationFrame(() => {
-              formTopRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+              requestAnimationFrame(() => {
+                formTopRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+              });
             });
           }}
         />
       )}
-      
-      <Dialog open={open} onOpenChange={handleClose}>
-        <DialogContent 
-          hideCloseButton
-          className="sm:max-w-[720px] p-0 gap-0 bg-card border-0 shadow-2xl rounded-3xl overflow-hidden font-['Plus_Jakarta_Sans',sans-serif]"
-        onInteractOutside={(e) => e.preventDefault()}
-      >
+
+      {/* Only show the habit form AFTER guidance is completed */}
+      {open && !showGuidance && (
+        <Dialog open={open} onOpenChange={handleClose}>
+          <DialogContent
+            hideCloseButton
+            className="sm:max-w-[720px] p-0 gap-0 bg-card border-0 shadow-2xl rounded-3xl overflow-hidden font-['Plus_Jakarta_Sans',sans-serif]"
+            onInteractOutside={(e) => e.preventDefault()}
+          >
         {/* Header */}
         <div className="px-7 py-6 border-b border-border/20">
           <div className="flex items-center justify-between">
@@ -513,8 +518,9 @@ export function AddHabitModal({ open, onOpenChange, onSave }: AddHabitModalProps
             </Button>
           </div>
         </div>
-      </DialogContent>
-    </Dialog>
+          </DialogContent>
+        </Dialog>
+      )}
     </>
   );
 }

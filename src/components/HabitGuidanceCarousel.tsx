@@ -40,12 +40,12 @@ export function HabitGuidanceCarousel({ onComplete }: HabitGuidanceCarouselProps
   const isLastSlide = currentSlide === SLIDES.length - 1;
 
   return createPortal(
-    <div className="fixed inset-0 z-[9999] flex items-center justify-center animate-fade-in">
+    <div className="fixed inset-0 z-[9999] flex items-center justify-center animate-fade-in pointer-events-auto">
       {/* Blurred background overlay */}
-      <div className="absolute inset-0 bg-background/60 backdrop-blur-md" />
+      <div className="absolute inset-0 bg-background/60 backdrop-blur-md pointer-events-none" />
 
       {/* Card */}
-      <div className="relative z-10 w-full max-w-md mx-4 animate-scale-in">
+      <div className="relative z-10 w-full max-w-md mx-4 animate-scale-in pointer-events-auto">
         <div className="bg-card/95 backdrop-blur-sm rounded-3xl shadow-2xl border border-border/10 overflow-hidden">
           <div className="px-8 py-10 text-center">
             {/* Emoji */}
