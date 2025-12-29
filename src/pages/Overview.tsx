@@ -4,10 +4,9 @@ import { AppleEmoji } from "@/components/AppleEmoji";
 import { OnboardingQuestionsModal } from "@/components/OnboardingQuestionsModal";
 import { AIBuddyChat } from "@/components/AIBuddyChat";
 import { useHabitStats } from "@/hooks/use-habit-stats";
-import { Target, TrendingUp, Heart, BarChart3, Plus, Check } from "lucide-react";
+import { Target, TrendingUp, Heart, BarChart3, X, Plus, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Link } from "react-router-dom";
 import { useState, useMemo, useEffect } from "react";
 import { useSelectedMonth } from "@/hooks/use-selected-month";
@@ -18,7 +17,6 @@ interface TodoItem {
   id: string;
   text: string;
   completed: boolean;
-  emoji?: string;
 }
 
 interface DayData {
@@ -78,12 +76,7 @@ export default function Overview() {
   // To-Do List state
   const [todos, setTodos] = useState<TodoItem[]>([]);
   const [newTodoText, setNewTodoText] = useState("");
-  const [newTodoEmoji, setNewTodoEmoji] = useState("📝");
   const [isAddingTodo, setIsAddingTodo] = useState(false);
-  const [showEmojiPicker, setShowEmojiPicker] = useState(false);
-  
-  // Emoji options for todos (same style as habit creation)
-  const todoEmojis = ["📝", "⏰", "💼", "📚", "🏃", "🧠", "🎨", "💪", "🍎", "💧", "🧘", "📞", "✉️", "🛒", "🏠", "💡"];
   
   // Fetch todos for selected date
   useEffect(() => {
@@ -111,14 +104,13 @@ export default function Overview() {
     if (!user || !newTodoText.trim() || selectedDate === null) return;
     
     const dateString = `${year}-${String(month + 1).padStart(2, '0')}-${String(selectedDate).padStart(2, '0')}`;
-    const fullText = `${newTodoEmoji} ${newTodoText.trim()}`;
     
     const { data, error } = await supabase
       .from('daily_todos')
       .insert({
         user_id: user.id,
         date: dateString,
-        text: fullText,
+        text: newTodoText.trim(),
         completed: false
       })
       .select()
@@ -127,9 +119,7 @@ export default function Overview() {
     if (!error && data) {
       setTodos(prev => [...prev, { id: data.id, text: data.text, completed: data.completed }]);
       setNewTodoText("");
-      setNewTodoEmoji("📝");
       setIsAddingTodo(false);
-      setShowEmojiPicker(false);
     }
   };
   
@@ -262,24 +252,24 @@ export default function Overview() {
           </div>
         </div>
 
-        {/* Monthly Calendar + To-Do Panel */}
+        {/* Monthly Calendar */}
         <div className="grid lg:grid-cols-3 gap-6 mb-8">
           <div className="lg:col-span-2">
             <GlassCard className="p-6">
               <h3 className="font-display text-xl font-semibold mb-4">Monthly Calendar</h3>
               {/* Week days header */}
-              <div className="grid grid-cols-7 gap-1.5 mb-3">
+              <div className="grid grid-cols-7 gap-2 mb-4">
                 {weekDays.map(day => (
-                  <div key={day} className="text-center text-xs font-medium text-muted-foreground py-1.5">
+                  <div key={day} className="text-center text-sm font-medium text-muted-foreground py-2">
                     {day}
                   </div>
                 ))}
               </div>
               
-              {/* Calendar grid - smaller day boxes */}
-              <div className="grid grid-cols-7 gap-1.5">
+              {/* Calendar grid */}
+              <div className="grid grid-cols-7 gap-2">
                 {Array.from({ length: startDay }, (_, i) => (
-                  <div key={`empty-${i}`} className="aspect-square max-w-[48px]" />
+                  <div key={`empty-${i}`} className="aspect-square" />
                 ))}
                 
                 {Array.from({ length: daysInMonth }, (_, i) => {
@@ -293,11 +283,11 @@ export default function Overview() {
                       key={day}
                       onClick={() => !isFuture && setSelectedDate(day)}
                       disabled={isFuture}
-                      className={`aspect-square max-w-[48px] rounded-xl flex flex-col items-center justify-center transition-colors duration-200 ${
+                      className={`aspect-square rounded-2xl flex flex-col items-center justify-center transition-colors duration-200 ${
                         isFuture 
                           ? 'bg-muted/30 cursor-not-allowed'
                           : isSelected
-                            ? 'progress-bar-orange text-primary-foreground shadow-medium'
+                            ? 'bg-[hsl(25,90%,55%)] text-primary-foreground shadow-medium'
                             : completionRate >= 80
                               ? 'bg-primary/25 hover:bg-primary/35'
                               : completionRate >= 50
@@ -305,11 +295,11 @@ export default function Overview() {
                                 : 'bg-secondary hover:bg-secondary/80'
                       }`}
                     >
-                      <span className={`text-xs font-semibold ${isSelected ? 'text-primary-foreground' : ''}`}>
+                      <span className={`text-sm font-semibold ${isSelected ? 'text-primary-foreground' : ''}`}>
                         {day}
                       </span>
                       {!isFuture && (
-                        <span className={`text-[10px] ${isSelected ? 'text-primary-foreground/80' : 'text-muted-foreground'}`}>
+                        <span className={`text-xs ${isSelected ? 'text-primary-foreground/80' : 'text-muted-foreground'}`}>
                           {completionRate}%
                         </span>
                       )}
@@ -320,34 +310,28 @@ export default function Overview() {
             </GlassCard>
           </div>
           
-          {/* To-Do List Panel - matches calendar width */}
-          <div className="lg:col-span-1">
-            <GlassCard className="p-6 sticky top-28 h-fit">
-              {/* Date + Mood Header */}
+          {/* To-Do List Panel */}
+          <div>
+            <GlassCard className="p-6 sticky top-28">
               <div className="flex items-center justify-between mb-4">
-                <div>
-                  <h3 className="font-display text-xl font-semibold">To-Do List</h3>
-                  <p className="text-sm text-muted-foreground mt-1">
-                    {monthName} {selectedDate}, {year}
-                  </p>
-                </div>
-                <div className="flex items-center gap-2">
-                  <AppleEmoji emoji={monthData[selectedDate ?? 1]?.mood ?? "😊"} size="2xl" />
-                </div>
+                <h3 className="font-display text-xl font-semibold">To-Do List</h3>
               </div>
               
-              {/* Tasks List */}
+              <p className="text-sm text-muted-foreground mb-4">
+                {monthName} {selectedDate}
+              </p>
+              
               <div className="space-y-2">
                 {todos.map((todo) => (
                   <div 
                     key={todo.id}
-                    className={`flex items-center gap-3 p-3 rounded-xl transition-all ${
+                    className={`flex items-center gap-3 p-3 rounded-xl ${
                       todo.completed ? 'bg-primary/10 opacity-60' : 'bg-secondary'
                     }`}
                   >
                     <button
                       onClick={() => handleToggleTodo(todo.id)}
-                      className={`w-5 h-5 rounded-md border-2 flex items-center justify-center transition-colors shrink-0 ${
+                      className={`w-5 h-5 rounded-md border-2 flex items-center justify-center transition-colors ${
                         todo.completed 
                           ? 'bg-primary border-primary text-primary-foreground' 
                           : 'border-muted-foreground/30 hover:border-primary/50'
@@ -357,7 +341,7 @@ export default function Overview() {
                     </button>
                     <span className={`text-sm flex-1 ${
                       todo.completed 
-                        ? 'text-muted-foreground line-through decoration-2' 
+                        ? 'text-muted-foreground line-through' 
                         : 'text-foreground'
                     }`}>
                       {todo.text}
@@ -365,36 +349,8 @@ export default function Overview() {
                   </div>
                 ))}
                 
-                {/* Add Task Input */}
                 {isAddingTodo ? (
                   <div className="flex items-center gap-2 p-2 rounded-xl bg-secondary">
-                    {/* Emoji Picker */}
-                    <Popover open={showEmojiPicker} onOpenChange={setShowEmojiPicker}>
-                      <PopoverTrigger asChild>
-                        <button className="w-8 h-8 rounded-lg bg-background/50 flex items-center justify-center hover:bg-background transition-colors shrink-0">
-                          <AppleEmoji emoji={newTodoEmoji} size="lg" />
-                        </button>
-                      </PopoverTrigger>
-                      <PopoverContent className="w-auto p-2" align="start">
-                        <div className="grid grid-cols-4 gap-1">
-                          {todoEmojis.map((emoji) => (
-                            <button
-                              key={emoji}
-                              onClick={() => {
-                                setNewTodoEmoji(emoji);
-                                setShowEmojiPicker(false);
-                              }}
-                              className={`w-9 h-9 rounded-lg flex items-center justify-center hover:bg-secondary transition-colors ${
-                                newTodoEmoji === emoji ? 'bg-primary/20 ring-2 ring-primary' : ''
-                              }`}
-                            >
-                              <AppleEmoji emoji={emoji} size="xl" />
-                            </button>
-                          ))}
-                        </div>
-                      </PopoverContent>
-                    </Popover>
-                    
                     <Input
                       value={newTodoText}
                       onChange={(e) => setNewTodoText(e.target.value)}
@@ -405,7 +361,6 @@ export default function Overview() {
                         if (e.key === 'Escape') {
                           setIsAddingTodo(false);
                           setNewTodoText("");
-                          setNewTodoEmoji("📝");
                         }
                       }}
                       autoFocus
@@ -415,9 +370,9 @@ export default function Overview() {
                       variant="ghost"
                       onClick={handleAddTodo}
                       disabled={!newTodoText.trim()}
-                      className="h-8 w-8 p-0"
+                      className="h-8 px-2"
                     >
-                      <Check className="w-4 h-4 text-primary" />
+                      <Plus className="w-4 h-4" />
                     </Button>
                   </div>
                 ) : (
