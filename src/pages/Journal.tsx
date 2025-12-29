@@ -17,24 +17,24 @@ interface JournalEntry {
   createdAt: number; // timestamp for 24-hour logic
 }
 
-// Map emojis to specific background colors and modal tints
-const emojiToColorMap: Record<string, { bg: string; tint: string }> = {
-  "🥳": { bg: "bg-journal-orange", tint: "from-[hsl(30,90%,95%)/0.4]" },
-  "😌": { bg: "bg-journal-yellow", tint: "from-[hsl(45,90%,95%)/0.4]" },
-  "💡": { bg: "bg-journal-yellow", tint: "from-[hsl(45,90%,95%)/0.4]" },
-  "🤔": { bg: "bg-journal-purple", tint: "from-[hsl(270,60%,95%)/0.4]" },
-  "💪": { bg: "bg-journal-pink", tint: "from-[hsl(340,70%,95%)/0.4]" },
-  "😊": { bg: "bg-journal-green", tint: "from-[hsl(150,50%,95%)/0.4]" },
-  "🙏": { bg: "bg-journal-purple", tint: "from-[hsl(270,60%,95%)/0.4]" },
-  "🔥": { bg: "bg-journal-orange", tint: "from-[hsl(30,90%,95%)/0.4]" },
-  "😴": { bg: "bg-journal-purple", tint: "from-[hsl(270,60%,95%)/0.4]" },
-  "🎯": { bg: "bg-journal-orange", tint: "from-[hsl(30,90%,95%)/0.4]" },
-  "🌟": { bg: "bg-journal-yellow", tint: "from-[hsl(45,90%,95%)/0.4]" },
-  "🎉": { bg: "bg-journal-pink", tint: "from-[hsl(340,70%,95%)/0.4]" },
-  "💭": { bg: "bg-journal-purple", tint: "from-[hsl(270,60%,95%)/0.4]" },
-  "🌈": { bg: "bg-journal-green", tint: "from-[hsl(150,50%,95%)/0.4]" },
-  "☕": { bg: "bg-journal-orange", tint: "from-[hsl(30,90%,95%)/0.4]" },
-  "📚": { bg: "bg-journal-yellow", tint: "from-[hsl(45,90%,95%)/0.4]" },
+// Map emojis to specific background colors, modal tints, and button gradients
+const emojiToColorMap: Record<string, { bg: string; tint: string; btnGradient: string; glowColor: string }> = {
+  "🥳": { bg: "bg-journal-orange", tint: "from-[hsl(30,90%,95%)/0.4]", btnGradient: "from-[hsl(30,100%,85%)] via-[hsl(38,100%,80%)] to-[hsl(45,100%,75%)]", glowColor: "hsl(30,100%,90%)" },
+  "😌": { bg: "bg-journal-yellow", tint: "from-[hsl(45,90%,95%)/0.4]", btnGradient: "from-[hsl(45,100%,85%)] via-[hsl(50,100%,80%)] to-[hsl(55,100%,75%)]", glowColor: "hsl(45,100%,90%)" },
+  "💡": { bg: "bg-journal-yellow", tint: "from-[hsl(45,90%,95%)/0.4]", btnGradient: "from-[hsl(45,100%,85%)] via-[hsl(50,100%,80%)] to-[hsl(55,100%,75%)]", glowColor: "hsl(45,100%,90%)" },
+  "🤔": { bg: "bg-journal-purple", tint: "from-[hsl(270,60%,95%)/0.4]", btnGradient: "from-[hsl(270,60%,90%)] via-[hsl(280,50%,85%)] to-[hsl(290,45%,80%)]", glowColor: "hsl(270,60%,92%)" },
+  "💪": { bg: "bg-journal-pink", tint: "from-[hsl(340,70%,95%)/0.4]", btnGradient: "from-[hsl(340,70%,90%)] via-[hsl(350,60%,85%)] to-[hsl(0,50%,80%)]", glowColor: "hsl(340,70%,92%)" },
+  "😊": { bg: "bg-journal-green", tint: "from-[hsl(150,50%,95%)/0.4]", btnGradient: "from-[hsl(140,50%,85%)] via-[hsl(150,45%,80%)] to-[hsl(160,40%,75%)]", glowColor: "hsl(150,50%,90%)" },
+  "🙏": { bg: "bg-journal-purple", tint: "from-[hsl(270,60%,95%)/0.4]", btnGradient: "from-[hsl(270,60%,90%)] via-[hsl(280,50%,85%)] to-[hsl(290,45%,80%)]", glowColor: "hsl(270,60%,92%)" },
+  "🔥": { bg: "bg-journal-orange", tint: "from-[hsl(30,90%,95%)/0.4]", btnGradient: "from-[hsl(30,100%,85%)] via-[hsl(38,100%,80%)] to-[hsl(45,100%,75%)]", glowColor: "hsl(30,100%,90%)" },
+  "😴": { bg: "bg-journal-purple", tint: "from-[hsl(270,60%,95%)/0.4]", btnGradient: "from-[hsl(270,60%,90%)] via-[hsl(280,50%,85%)] to-[hsl(290,45%,80%)]", glowColor: "hsl(270,60%,92%)" },
+  "🎯": { bg: "bg-journal-orange", tint: "from-[hsl(30,90%,95%)/0.4]", btnGradient: "from-[hsl(30,100%,85%)] via-[hsl(38,100%,80%)] to-[hsl(45,100%,75%)]", glowColor: "hsl(30,100%,90%)" },
+  "🌟": { bg: "bg-journal-yellow", tint: "from-[hsl(45,90%,95%)/0.4]", btnGradient: "from-[hsl(45,100%,85%)] via-[hsl(50,100%,80%)] to-[hsl(55,100%,75%)]", glowColor: "hsl(45,100%,90%)" },
+  "🎉": { bg: "bg-journal-pink", tint: "from-[hsl(340,70%,95%)/0.4]", btnGradient: "from-[hsl(340,70%,90%)] via-[hsl(350,60%,85%)] to-[hsl(0,50%,80%)]", glowColor: "hsl(340,70%,92%)" },
+  "💭": { bg: "bg-journal-purple", tint: "from-[hsl(270,60%,95%)/0.4]", btnGradient: "from-[hsl(270,60%,90%)] via-[hsl(280,50%,85%)] to-[hsl(290,45%,80%)]", glowColor: "hsl(270,60%,92%)" },
+  "🌈": { bg: "bg-journal-green", tint: "from-[hsl(150,50%,95%)/0.4]", btnGradient: "from-[hsl(140,50%,85%)] via-[hsl(150,45%,80%)] to-[hsl(160,40%,75%)]", glowColor: "hsl(150,50%,90%)" },
+  "☕": { bg: "bg-journal-orange", tint: "from-[hsl(30,90%,95%)/0.4]", btnGradient: "from-[hsl(30,100%,85%)] via-[hsl(38,100%,80%)] to-[hsl(45,100%,75%)]", glowColor: "hsl(30,100%,90%)" },
+  "📚": { bg: "bg-journal-yellow", tint: "from-[hsl(45,90%,95%)/0.4]", btnGradient: "from-[hsl(45,100%,85%)] via-[hsl(50,100%,80%)] to-[hsl(55,100%,75%)]", glowColor: "hsl(45,100%,90%)" },
 };
 
 // Two rows of emojis (Apple style)
@@ -107,6 +107,16 @@ const getModalTintClass = (emoji: string): string => {
   return emojiToColorMap[emoji]?.tint || "from-[hsl(150,50%,95%)/0.4]";
 };
 
+// Helper to get button gradient based on emoji
+const getButtonGradient = (emoji: string): string => {
+  return emojiToColorMap[emoji]?.btnGradient || "from-[hsl(140,50%,85%)] via-[hsl(150,45%,80%)] to-[hsl(160,40%,75%)]";
+};
+
+// Helper to get glow color based on emoji
+const getGlowColor = (emoji: string): string => {
+  return emojiToColorMap[emoji]?.glowColor || "hsl(150,50%,90%)";
+};
+
 export default function Journal() {
   const [entries, setEntries] = useState<JournalEntry[]>(initialEntries);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -117,6 +127,8 @@ export default function Journal() {
 
   const modalBgClass = useMemo(() => getModalBgClass(selectedEmoji), [selectedEmoji]);
   const modalTintClass = useMemo(() => getModalTintClass(selectedEmoji), [selectedEmoji]);
+  const buttonGradient = useMemo(() => getButtonGradient(selectedEmoji), [selectedEmoji]);
+  const glowColor = useMemo(() => getGlowColor(selectedEmoji), [selectedEmoji]);
 
   const deleteEntry = (id: string) => {
     setEntries(entries.filter(e => e.id !== id));
@@ -259,7 +271,25 @@ export default function Journal() {
 
       {/* New/Edit Entry Modal */}
       <Dialog open={isModalOpen} onOpenChange={(open) => { if (!open) resetModal(); else setIsModalOpen(true); }}>
-        <DialogContent className={`sm:max-w-lg max-h-[85vh] overflow-y-auto bg-gradient-to-br ${modalTintClass} to-transparent to-30% transition-all duration-300`}>
+        <DialogContent className="sm:max-w-lg max-h-[85vh] overflow-y-auto transition-all duration-500">
+          {/* Animated ambient glow background */}
+          <div 
+            className="absolute inset-0 -z-10 opacity-60 transition-all duration-700 rounded-lg overflow-hidden"
+            style={{
+              background: `
+                radial-gradient(ellipse 80% 60% at 20% 30%, ${glowColor} 0%, transparent 50%),
+                radial-gradient(ellipse 70% 50% at 80% 70%, ${glowColor} 0%, transparent 45%),
+                radial-gradient(ellipse 50% 40% at 50% 50%, ${glowColor} 0%, transparent 40%)
+              `,
+              animation: 'ambientPulse 8s ease-in-out infinite',
+            }}
+          />
+          <style>{`
+            @keyframes ambientPulse {
+              0%, 100% { opacity: 0.4; transform: scale(1); }
+              50% { opacity: 0.6; transform: scale(1.02); }
+            }
+          `}</style>
           <DialogHeader>
             <DialogTitle className="font-display text-xl">
               {editingEntry ? "Edit Journal Entry" : "New Journal Entry"}
@@ -322,7 +352,7 @@ export default function Journal() {
               <button
                 onClick={handleSave}
                 disabled={!newContent.trim()}
-                className="px-6 py-2.5 rounded-full bg-gradient-to-br from-journal-yellow via-journal-green to-journal-purple shadow-medium hover:shadow-large hover:scale-105 transition-all duration-300 text-foreground font-medium disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
+                className={`px-6 py-2.5 rounded-full bg-gradient-to-br ${buttonGradient} shadow-medium hover:shadow-large hover:scale-105 transition-all duration-300 text-foreground font-medium disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100`}
               >
                 Save
               </button>
