@@ -82,29 +82,7 @@ export default function Overview() {
         {/* Stats Row - New Analytics Cards */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
           {/* Card 1 - Average Day Progress */}
-          <div className="glass-card p-5 min-w-[180px] hover:shadow-large transition-all duration-300">
-            <div className="flex items-start justify-between mb-3">
-              <div>
-                <h3 className="text-base font-semibold text-foreground">Daily Progress</h3>
-              </div>
-              <div className="p-2 rounded-xl bg-secondary text-primary">
-                <TrendingUp className="w-4 h-4" />
-              </div>
-            </div>
-            <div className="flex items-baseline gap-0.5 mb-2">
-              <span className="text-3xl font-bold gradient-text">{habitStats.monthPercent}</span>
-              <span className="text-lg font-medium text-primary/70">%</span>
-            </div>
-            <p className="text-xs text-muted-foreground">Average daily completion</p>
-            <div className="mt-3 h-1.5 bg-secondary rounded-full overflow-hidden">
-              <div 
-                className="h-full progress-bar-orange rounded-full transition-all duration-500"
-                style={{ width: `${habitStats.monthPercent}%` }}
-              />
-            </div>
-          </div>
-
-          {/* Card 2 - Perfect Days This Week */}
+          {/* Card 1 - Perfect Days */}
           <div className="glass-card p-5 min-w-[180px] hover:shadow-large transition-all duration-300">
             <div className="flex items-start justify-between mb-3">
               <div>
@@ -127,7 +105,7 @@ export default function Overview() {
             </div>
           </div>
 
-          {/* Card 3 - Average Mood */}
+          {/* Card 2 - Mood Average */}
           <div className="glass-card p-5 min-w-[180px] hover:shadow-large transition-all duration-300">
             <div className="flex items-start justify-between mb-3">
               <div>
@@ -139,12 +117,11 @@ export default function Overview() {
             </div>
             <div className="flex items-center gap-2 mb-2">
               <AppleEmoji emoji={habitStats.averageMoodEmoji ?? "😊"} size="3xl" />
-              <span className="text-lg font-semibold text-foreground">{habitStats.averageMoodLabel ?? "Happy"}</span>
             </div>
-            <p className="text-xs text-muted-foreground">How you've been feeling</p>
+            <p className="text-xs text-muted-foreground">Your average mood is <span className="font-bold">{habitStats.averageMoodLabel ?? "Happy"}</span>.</p>
           </div>
 
-          {/* Card 4 - Emotional Stability */}
+          {/* Card 3 - Mood Stability */}
           <div className="glass-card p-5 min-w-[180px] hover:shadow-large transition-all duration-300">
             <div className="flex items-start justify-between mb-3">
               <div>
@@ -163,6 +140,29 @@ export default function Overview() {
               <div 
                 className="h-full progress-bar-orange rounded-full transition-all duration-500"
                 style={{ width: `${((habitStats.emotionalStability ?? 7) / 10) * 100}%` }}
+              />
+            </div>
+          </div>
+
+          {/* Card 4 - Daily Progress */}
+          <div className="glass-card p-5 min-w-[180px] hover:shadow-large transition-all duration-300">
+            <div className="flex items-start justify-between mb-3">
+              <div>
+                <h3 className="text-base font-semibold text-foreground">Daily Progress</h3>
+              </div>
+              <div className="p-2 rounded-xl bg-secondary text-primary">
+                <TrendingUp className="w-4 h-4" />
+              </div>
+            </div>
+            <div className="flex items-baseline gap-0.5 mb-2">
+              <span className="text-3xl font-bold gradient-text">{habitStats.monthPercent}</span>
+              <span className="text-lg font-medium text-primary/70">%</span>
+            </div>
+            <p className="text-xs text-muted-foreground">Average daily completion</p>
+            <div className="mt-3 h-1.5 bg-secondary rounded-full overflow-hidden">
+              <div 
+                className="h-full progress-bar-orange rounded-full transition-all duration-500"
+                style={{ width: `${habitStats.monthPercent}%` }}
               />
             </div>
           </div>
