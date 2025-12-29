@@ -27,14 +27,15 @@ export function SuggestedQuestions({ onSelect, disabled }: SuggestedQuestionsPro
 
     const animate = () => {
       if (!container) return;
-      
+
       scrollPos += scrollSpeed;
-      
-      // Reset when we've scrolled half (since we duplicate the content)
-      if (scrollPos >= container.scrollWidth / 2) {
-        scrollPos = 0;
+
+      const halfWidth = container.scrollWidth / 2;
+      if (scrollPos >= halfWidth) {
+        // wrap without visible jump (duplicate content is identical)
+        scrollPos -= halfWidth;
       }
-      
+
       container.scrollLeft = scrollPos;
       animationRef.current = requestAnimationFrame(animate);
     };
@@ -76,30 +77,37 @@ export function SuggestedQuestions({ onSelect, disabled }: SuggestedQuestionsPro
 
   return (
     <div className="relative w-full overflow-hidden">
-      {/* Left fade */}
-      <div className="absolute left-0 top-0 bottom-0 w-16 bg-gradient-to-r from-background via-background/80 to-transparent z-10 pointer-events-none" />
-      
-      {/* Right fade */}
-      <div className="absolute right-0 top-0 bottom-0 w-16 bg-gradient-to-l from-background via-background/80 to-transparent z-10 pointer-events-none" />
-      
-      {/* Scrolling container */}
+      {/*
+        Fade edges via mask so it always matches any background (no visible overlay seams)
+      */}
       <div
-        ref={scrollRef}
-        className="flex gap-3 overflow-x-auto scrollbar-hide cursor-grab active:cursor-grabbing"
-        style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
+        className="w-full"
+        style={{
+          WebkitMaskImage:
+            "linear-gradient(to right, transparent, black 12%, black 88%, transparent)",
+          maskImage:
+            "linear-gradient(to right, transparent, black 12%, black 88%, transparent)",
+        }}
       >
-        {duplicatedSuggestions.map((suggestion, index) => (
-          <button
-            key={`${suggestion.text}-${index}`}
-            onClick={() => handleClick(suggestion.text, suggestion.emoji)}
-            disabled={disabled}
-            className="flex-shrink-0 flex items-center gap-2 px-4 py-2.5 rounded-full text-sm text-foreground/90 transition-all hover:opacity-80 active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed border border-orange-100/60"
-            style={{ background: 'hsl(35 30% 97%)' }}
-          >
-            <span className="whitespace-nowrap">{suggestion.text}</span>
-            <AppleEmoji emoji={String.fromCodePoint(parseInt(suggestion.emoji, 16))} size="sm" />
-          </button>
-        ))}
+        {/* Scrolling container */}
+        <div
+          ref={scrollRef}
+          className="flex gap-3 overflow-x-auto scrollbar-hide cursor-grab active:cursor-grabbing"
+          style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
+        >
+          {duplicatedSuggestions.map((suggestion, index) => (
+            <button
+              key={`${suggestion.text}-${index}`}
+              onClick={() => handleClick(suggestion.text, suggestion.emoji)}
+              disabled={disabled}
+              className="flex-shrink-0 flex items-center gap-2 px-4 py-2.5 rounded-full text-sm text-foreground/90 transition-all hover:opacity-80 active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed border border-orange-100/60"
+              style={{ background: "hsl(35 30% 97%)" }}
+            >
+              <span className="whitespace-nowrap">{suggestion.text}</span>
+              <AppleEmoji emoji={String.fromCodePoint(parseInt(suggestion.emoji, 16))} size="sm" />
+            </button>
+          ))}
+        </div>
       </div>
     </div>
   );
