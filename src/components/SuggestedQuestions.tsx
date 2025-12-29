@@ -23,7 +23,7 @@ export function SuggestedQuestions({ onSelect, disabled }: SuggestedQuestionsPro
     if (!container) return;
 
     let scrollPos = 0;
-    const scrollSpeed = 0.5;
+    const scrollSpeed = 0.2;
 
     const animate = () => {
       if (!container) return;
@@ -77,10 +77,10 @@ export function SuggestedQuestions({ onSelect, disabled }: SuggestedQuestionsPro
   return (
     <div className="relative w-full overflow-hidden">
       {/* Left fade */}
-      <div className="absolute left-0 top-0 bottom-0 w-8 bg-gradient-to-r from-card/40 to-transparent z-10 pointer-events-none" />
+      <div className="absolute left-0 top-0 bottom-0 w-16 bg-gradient-to-r from-background via-background/80 to-transparent z-10 pointer-events-none" />
       
       {/* Right fade */}
-      <div className="absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-l from-card/40 to-transparent z-10 pointer-events-none" />
+      <div className="absolute right-0 top-0 bottom-0 w-16 bg-gradient-to-l from-background via-background/80 to-transparent z-10 pointer-events-none" />
       
       {/* Scrolling container */}
       <div
