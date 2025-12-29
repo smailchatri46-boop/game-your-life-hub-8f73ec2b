@@ -229,7 +229,7 @@ export default function Journal() {
           </div>
         ) : (
           /* Empty State - Inline onboarding slides with card */
-          <div className="fixed inset-0 flex items-center justify-center z-10 pointer-events-none">
+          <div className="fixed inset-0 flex items-center justify-center z-10 pointer-events-none" style={{ minHeight: '100vh' }}>
             <div className="bg-card/95 backdrop-blur-sm rounded-3xl shadow-2xl border border-border/10 overflow-hidden w-full max-w-md mx-4 animate-scale-in pointer-events-auto">
               <div className="px-8 py-10 text-center">
                 {/* Emoji */}
