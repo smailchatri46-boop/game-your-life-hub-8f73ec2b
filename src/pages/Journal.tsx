@@ -170,7 +170,7 @@ export default function Journal() {
     <div className="min-h-screen gradient-bg">
       <Navbar />
       
-      <main className={`pt-28 pb-24 px-4 max-w-6xl mx-auto ${entries.length === 0 ? 'h-[calc(100vh-7rem)] flex flex-col justify-center' : ''}`}>
+      <main className={`px-4 max-w-6xl mx-auto ${entries.length === 0 ? 'min-h-[calc(100vh-7rem)] flex items-center justify-center' : 'pt-28 pb-24'}`}>
         {entries.length > 0 && (
           <div className="flex items-center justify-between mb-8">
             <div>
@@ -229,8 +229,8 @@ export default function Journal() {
           </div>
         ) : (
           /* Empty State - Inline onboarding slides with card */
-          <div className="fixed inset-0 flex items-center justify-center z-10 pointer-events-none" style={{ minHeight: '100vh' }}>
-            <div className="bg-card/95 backdrop-blur-sm rounded-3xl shadow-2xl border border-border/10 overflow-hidden w-full max-w-md mx-4 animate-scale-in pointer-events-auto">
+          <div className="flex items-center justify-center w-full">
+            <div className="bg-card/95 backdrop-blur-sm rounded-3xl shadow-2xl border border-border/10 overflow-hidden w-full max-w-md mx-4 animate-scale-in">
               <div className="px-8 py-10 text-center">
                 {/* Emoji */}
                 <div className="mb-6 flex justify-center">
