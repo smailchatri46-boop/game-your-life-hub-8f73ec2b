@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Slider } from "@/components/ui/slider";
 import { AppleEmoji } from "@/components/AppleEmoji";
+import { HabitGuidanceCarousel } from "@/components/HabitGuidanceCarousel";
 import { X } from "lucide-react";
 
 const CATEGORIES = [
@@ -85,13 +86,14 @@ export function AddHabitModal({ open, onOpenChange, onSave }: AddHabitModalProps
   const [selectedDays, setSelectedDays] = useState<number[]>([1, 15]);
   const [importance, setImportance] = useState(50);
   const [error, setError] = useState("");
+  const [showGuidance, setShowGuidance] = useState(true);
   
   // Progressive build-up state
   const [progressiveStartGoal, setProgressiveStartGoal] = useState(1);
   const [progressiveTargetGoal, setProgressiveTargetGoal] = useState(5);
   const [progressiveRampDuration, setProgressiveRampDuration] = useState<"1-week" | "2-weeks" | "1-month" | "custom">("2-weeks");
   const [progressiveCustomWeeks, setProgressiveCustomWeeks] = useState(3);
-  
+
 
   const selectedCategory = CATEGORIES.find(c => c.value === category);
 
@@ -152,6 +154,7 @@ export function AddHabitModal({ open, onOpenChange, onSave }: AddHabitModalProps
     setProgressiveRampDuration("2-weeks");
     setProgressiveCustomWeeks(3);
     setError("");
+    setShowGuidance(true);
   };
 
   const toggleWeekday = (day: number) => {
@@ -172,10 +175,16 @@ export function AddHabitModal({ open, onOpenChange, onSave }: AddHabitModalProps
   };
 
   return (
-    <Dialog open={open} onOpenChange={handleClose}>
-      <DialogContent 
-        hideCloseButton
-        className="sm:max-w-[720px] p-0 gap-0 bg-card border-0 shadow-2xl rounded-3xl overflow-hidden font-['Plus_Jakarta_Sans',sans-serif]"
+    <>
+      {/* Guidance Carousel - appears every time modal opens */}
+      {open && showGuidance && (
+        <HabitGuidanceCarousel onComplete={() => setShowGuidance(false)} />
+      )}
+      
+      <Dialog open={open} onOpenChange={handleClose}>
+        <DialogContent 
+          hideCloseButton
+          className="sm:max-w-[720px] p-0 gap-0 bg-card border-0 shadow-2xl rounded-3xl overflow-hidden font-['Plus_Jakarta_Sans',sans-serif]"
         onInteractOutside={(e) => e.preventDefault()}
       >
         {/* Header */}
@@ -490,5 +499,6 @@ export function AddHabitModal({ open, onOpenChange, onSave }: AddHabitModalProps
         </div>
       </DialogContent>
     </Dialog>
+    </>
   );
 }
