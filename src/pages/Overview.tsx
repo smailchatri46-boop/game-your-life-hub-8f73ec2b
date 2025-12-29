@@ -106,50 +106,26 @@ export default function Overview() {
     fetchTodos();
   }, [user, selectedDate, year, month]);
   
-  const handleAddTodo = async () => {
+  const handleAddTodo = () => {
     if (!newTodoText.trim()) return;
-    if (!user) {
-      toast.error("Please log in to add tasks");
-      return;
-    }
-    if (selectedDate === null) return;
     
-    const dateString = `${year}-${String(month + 1).padStart(2, '0')}-${String(selectedDate).padStart(2, '0')}`;
-    
-    const { data, error } = await supabase
-      .from('daily_todos')
-      .insert({
-        user_id: user.id,
-        date: dateString,
-        text: newTodoText.trim(),
-        completed: false
-      })
-      .select()
-      .single();
-    
-    if (!error && data) {
-      setTodos(prev => [...prev, { id: data.id, text: data.text, completed: data.completed, emoji: selectedEmoji }]);
-      setNewTodoText("");
-      setIsAddingTodo(false);
-      setSelectedEmoji("🧠");
-      setShowEmojiPicker(false);
-    }
+    const newTodo: TodoItem = {
+      id: crypto.randomUUID(),
+      text: newTodoText.trim(),
+      completed: false,
+      emoji: selectedEmoji
+    };
+    setTodos(prev => [...prev, newTodo]);
+    setNewTodoText("");
+    setIsAddingTodo(false);
+    setSelectedEmoji("🧠");
+    setShowEmojiPicker(false);
   };
   
-  const handleToggleTodo = async (todoId: string) => {
-    const todo = todos.find(t => t.id === todoId);
-    if (!todo) return;
-    
-    const { error } = await supabase
-      .from('daily_todos')
-      .update({ completed: !todo.completed })
-      .eq('id', todoId);
-    
-    if (!error) {
-      setTodos(prev => prev.map(t => 
-        t.id === todoId ? { ...t, completed: !t.completed } : t
-      ));
-    }
+  const handleToggleTodo = (todoId: string) => {
+    setTodos(prev => prev.map(t => 
+      t.id === todoId ? { ...t, completed: !t.completed } : t
+    ));
   };
   
   const weekDays = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
@@ -409,7 +385,7 @@ export default function Overview() {
                               setSelectedEmoji(emoji);
                               setShowEmojiPicker(false);
                             }}
-                            className={`p-2 rounded-xl hover:bg-secondary transition-colors ${
+                            className={`p-2 rounded-xl ${
                               selectedEmoji === emoji ? 'ring-2 ring-primary ring-offset-1' : ''
                             }`}
                           >
