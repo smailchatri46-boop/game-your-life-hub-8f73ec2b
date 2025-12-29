@@ -216,34 +216,42 @@ export default function Journal() {
             })}
           </div>
         ) : (
-          /* Empty State */
-          <div className="flex-1 flex flex-col items-center justify-center text-center px-4 -mt-16">
-            <h1 className="font-display text-4xl md:text-5xl font-semibold text-foreground mb-3">
-              Start journaling
-            </h1>
-            <p className="text-lg text-muted-foreground mb-6">
-              Write what you feel today
-            </p>
-            
-            {/* Animated rotating phrase */}
-            <div className="mb-10 h-8 flex items-center justify-center">
-              <span className="text-muted-foreground">Journaling will </span>
-              <span 
-                key={currentPhraseIndex}
-                className="text-primary font-medium ml-1 animate-fade-in"
+          /* Empty State - perfectly centered */
+          <div className="flex-1 flex items-center justify-center">
+            <div className="flex flex-col items-center text-center px-4">
+              <h1 className="font-display text-4xl md:text-5xl font-semibold text-foreground mb-3">
+                Start journaling
+              </h1>
+              <p className="text-lg text-muted-foreground mb-6">
+                Write what you feel today
+              </p>
+              
+              {/* Animated rotating phrase - fixed width container to prevent layout shifts */}
+              <div className="mb-10 h-8 flex items-center justify-center">
+                <span className="text-muted-foreground whitespace-nowrap">Journaling will</span>
+                <span className="relative ml-1.5 w-[200px] sm:w-[240px] text-left h-7 overflow-hidden">
+                  {ROTATING_PHRASES.map((phrase, index) => (
+                    <span
+                      key={phrase}
+                      className={`absolute left-0 top-0 text-primary font-medium transition-opacity duration-500 whitespace-nowrap ${
+                        index === currentPhraseIndex ? 'opacity-100' : 'opacity-0'
+                      }`}
+                    >
+                      {phrase}
+                    </span>
+                  ))}
+                </span>
+              </div>
+              
+              {/* Big round add button - orange gradient */}
+              <button
+                onClick={handleOpenNewEntry}
+                className="w-20 h-20 rounded-full bg-gradient-to-br from-primary via-primary to-[hsl(25,90%,55%)] shadow-large hover:shadow-xl hover:scale-110 transition-all duration-300 flex items-center justify-center"
+                aria-label="New journal entry"
               >
-                {ROTATING_PHRASES[currentPhraseIndex]}
-              </span>
+                <Plus className="w-10 h-10 text-white" />
+              </button>
             </div>
-            
-            {/* Big round add button */}
-            <button
-              onClick={handleOpenNewEntry}
-              className="w-20 h-20 rounded-full bg-gradient-to-br from-journal-yellow via-journal-green to-journal-purple shadow-large hover:shadow-xl hover:scale-110 transition-all duration-300 flex items-center justify-center"
-              aria-label="New journal entry"
-            >
-              <Plus className="w-10 h-10 text-foreground" />
-            </button>
           </div>
         )}
       </main>
