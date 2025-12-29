@@ -334,11 +334,11 @@ export default function Overview() {
                       onClick={() => handleToggleTodo(todo.id)}
                       className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-all ${
                         todo.completed 
-                          ? 'bg-primary border-primary' 
-                          : 'border-muted-foreground/40 hover:border-primary'
+                          ? 'bg-[hsl(25,40%,75%)] border-[hsl(25,40%,75%)]' 
+                          : 'border-[hsl(25,30%,80%)] hover:border-[hsl(25,40%,70%)]'
                       }`}
                     >
-                      {todo.completed && <Check className="w-4 h-4 text-primary-foreground" />}
+                      {todo.completed && <Check className="w-4 h-4 text-white" />}
                     </button>
                   </div>
                 ))}
