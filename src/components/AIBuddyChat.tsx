@@ -11,14 +11,25 @@ import { format } from "date-fns";
 import { AppleEmoji } from "@/components/AppleEmoji";
 import { parseTextWithEmojis } from "@/utils/parseTextWithEmojis";
 import GlowOrb from "@/components/GlowOrb";
+import { SuggestedQuestions } from "@/components/SuggestedQuestions";
+import { UpgradeModal } from "@/components/UpgradeModal";
+
+// TODO: Replace with actual subscription check from your backend
+const useIsSubscribed = () => {
+  // For now, return false to test the modal. 
+  // Replace with real subscription status check.
+  return false;
+};
 
 export function AIBuddyChat() {
   const [message, setMessage] = useState("");
   const [isExporting, setIsExporting] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [showUpgradeModal, setShowUpgradeModal] = useState(false);
   const { toast } = useToast();
   const { user } = useAuth();
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const isSubscribed = useIsSubscribed();
 
   const {
     messages,
@@ -45,9 +56,25 @@ export function AIBuddyChat() {
     e.preventDefault();
     if (!message.trim() || isLoading) return;
 
+    if (!isSubscribed) {
+      setShowUpgradeModal(true);
+      return;
+    }
+
     const currentMessage = message;
     setMessage("");
     await sendMessage(currentMessage);
+  };
+
+  const handleSuggestionSelect = async (question: string) => {
+    if (isLoading) return;
+
+    if (!isSubscribed) {
+      setShowUpgradeModal(true);
+      return;
+    }
+
+    await sendMessage(question);
   };
 
   const handleExport = async () => {
@@ -207,8 +234,15 @@ export function AIBuddyChat() {
         </div>
       </div>
 
+      {/* Suggested Questions Carousel - only show when no messages */}
+      {messages.length === 0 && (
+        <div className="px-4 pb-2">
+          <SuggestedQuestions onSelect={handleSuggestionSelect} disabled={isLoading} />
+        </div>
+      )}
+
       {/* Input Area - elevated with soft gradient */}
-      <div className="p-4">
+      <div className="p-4 pt-2">
         <form onSubmit={handleSubmit}>
           <div 
             className="flex items-center gap-3 rounded-full px-5 py-3 transition-all border border-orange-100/60" 
@@ -240,6 +274,9 @@ export function AIBuddyChat() {
           </div>
         </form>
       </div>
+
+      {/* Upgrade Modal */}
+      <UpgradeModal open={showUpgradeModal} onClose={() => setShowUpgradeModal(false)} />
     </div>
   );
 }
