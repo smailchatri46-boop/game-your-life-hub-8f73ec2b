@@ -21,7 +21,7 @@ interface TodoItem {
   emoji: string;
 }
 
-const TODO_EMOJIS = ["📝", "⏰", "💼", "📚", "🏃", "🧠", "🎨", "💪", "🍎", "💧", "🧘", "📞", "🛒", "🏠", "💡"];
+const TODO_EMOJIS = ["📝", "⏰", "💼", "📚", "🏃", "🧠", "🎨", "💪", "🍎", "💧", "🧘", "📞", "🛒", "🏠", "💡", "✈️", "🎵", "📷", "🎮", "☕"];
 
 interface DayData {
   date: number;
