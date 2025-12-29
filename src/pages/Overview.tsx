@@ -116,8 +116,7 @@ export default function Overview() {
         user_id: user.id,
         date: dateString,
         text: newTodoText.trim(),
-        completed: false,
-        emoji: selectedEmoji
+        completed: false
       })
       .select()
       .single();
@@ -320,7 +319,7 @@ export default function Overview() {
           
           {/* To-Do List Panel */}
           <div>
-            <div className="p-6 sticky top-28 rounded-3xl bg-gradient-to-br from-[hsl(30,70%,96%)] to-[hsl(25,60%,92%)]">
+            <div className="p-6 rounded-3xl bg-gradient-to-br from-[hsl(30,70%,96%)] to-[hsl(25,60%,92%)]">
               <div className="flex items-start justify-between mb-1">
                 <div>
                   <h3 className="font-display text-xl font-semibold text-foreground">To-Do List</h3>
@@ -351,9 +350,13 @@ export default function Overview() {
                     </span>
                     <button
                       onClick={() => handleToggleTodo(todo.id)}
-                      className="text-primary hover:opacity-80 transition-opacity"
+                      className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-all ${
+                        todo.completed 
+                          ? 'bg-primary border-primary' 
+                          : 'border-muted-foreground/40 hover:border-primary'
+                      }`}
                     >
-                      <Check className={`w-5 h-5 ${todo.completed ? 'opacity-100' : 'opacity-30'}`} />
+                      {todo.completed && <Check className="w-4 h-4 text-primary-foreground" />}
                     </button>
                   </div>
                 ))}
