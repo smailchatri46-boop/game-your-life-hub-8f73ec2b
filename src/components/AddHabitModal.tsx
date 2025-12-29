@@ -83,7 +83,7 @@ export function AddHabitModal({ open, onOpenChange, onSave }: AddHabitModalProps
   const [icon, setIcon] = useState("🎯");
   const [habitType] = useState<"boolean" | "numeric">("boolean");
   const [numericTarget] = useState(8);
-  const [frequency, setFrequency] = useState<"daily" | "weekdays" | "monthly" | "progressive">("daily");
+  const [frequency, setFrequency] = useState<"daily" | "weekdays" | "monthly" | "progressive">("progressive");
   const [selectedWeekdays, setSelectedWeekdays] = useState<number[]>([1, 2, 3, 4, 5]);
   const [selectedDays, setSelectedDays] = useState<number[]>([1, 15]);
   const [importance, setImportance] = useState(50);
@@ -153,7 +153,7 @@ export function AddHabitModal({ open, onOpenChange, onSave }: AddHabitModalProps
     setName("");
     setCategory("health");
     setIcon("🎯");
-    setFrequency("daily");
+    setFrequency("progressive");
     setSelectedWeekdays([1, 2, 3, 4, 5]);
     setSelectedDays([1, 15]);
     setImportance(50);
@@ -329,6 +329,103 @@ export function AddHabitModal({ open, onOpenChange, onSave }: AddHabitModalProps
                   Frequency
                 </label>
                 <div className="space-y-2">
+                  {/* Progressive build-up (default) */}
+                  <div>
+                    <button
+                      type="button"
+                      onClick={() => setFrequency("progressive")}
+                      className={`w-full p-3.5 rounded-2xl border text-left flex items-center justify-between transition-all ${
+                        frequency === "progressive"
+                          ? "border-primary/30 bg-primary/5"
+                          : "border-border/20 hover:border-border/40 hover:bg-muted/20"
+                      }`}
+                    >
+                      <div>
+                        <p className="font-medium text-sm text-foreground">Progressive build-up</p>
+                        <p className="text-xs text-muted-foreground">Start small and increase over time</p>
+                      </div>
+                      <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all ${
+                        frequency === "progressive" ? "border-primary bg-primary" : "border-muted-foreground/30"
+                      }`}>
+                        {frequency === "progressive" && <div className="w-2 h-2 bg-primary-foreground rounded-full" />}
+                      </div>
+                    </button>
+                    {/* Inline progressive build-up configuration */}
+                    {frequency === "progressive" && (
+                      <div className="mt-2 p-4 bg-muted/20 rounded-2xl space-y-4 border border-border/10">
+                        <div className="grid grid-cols-2 gap-3">
+                          <div>
+                            <label className="block text-xs font-medium text-muted-foreground mb-1.5">
+                              Starting goal per day
+                            </label>
+                            <Input
+                              type="number"
+                              min={1}
+                              max={progressiveTargetGoal - 1}
+                              value={progressiveStartGoal}
+                              onChange={(e) => setProgressiveStartGoal(Math.max(1, Math.min(progressiveTargetGoal - 1, parseInt(e.target.value) || 1)))}
+                              className="h-10 text-center bg-card border-border/20 rounded-xl"
+                            />
+                          </div>
+                          <div>
+                            <label className="block text-xs font-medium text-muted-foreground mb-1.5">
+                              Target goal per day
+                            </label>
+                            <Input
+                              type="number"
+                              min={progressiveStartGoal + 1}
+                              max={100}
+                              value={progressiveTargetGoal}
+                              onChange={(e) => setProgressiveTargetGoal(Math.max(progressiveStartGoal + 1, parseInt(e.target.value) || 2))}
+                              className="h-10 text-center bg-card border-border/20 rounded-xl"
+                            />
+                          </div>
+                        </div>
+                        
+                        <div>
+                          <label className="block text-xs font-medium text-muted-foreground mb-1.5">
+                            Ramp duration
+                          </label>
+                          <div className="flex flex-wrap gap-2">
+                            {RAMP_DURATION_OPTIONS.map((option) => (
+                              <button
+                                key={option.value}
+                                type="button"
+                                onClick={() => setProgressiveRampDuration(option.value as typeof progressiveRampDuration)}
+                                className={`px-3.5 py-2 rounded-xl text-sm font-medium transition-all ${
+                                  progressiveRampDuration === option.value
+                                    ? "btn-primary-gradient shadow-md text-white"
+                                    : "bg-card text-muted-foreground hover:bg-muted/40 border border-border/20"
+                                }`}
+                              >
+                                {option.label}
+                              </button>
+                            ))}
+                          </div>
+                          {progressiveRampDuration === "custom" && (
+                            <div className="mt-2 flex items-center gap-2">
+                              <Input
+                                type="number"
+                                min={1}
+                                max={52}
+                                value={progressiveCustomWeeks}
+                                onChange={(e) => setProgressiveCustomWeeks(Math.max(1, Math.min(52, parseInt(e.target.value) || 1)))}
+                                className="w-20 h-10 text-center bg-card border-border/20 rounded-xl"
+                              />
+                              <span className="text-sm text-muted-foreground">weeks</span>
+                            </div>
+                          )}
+                        </div>
+                        
+                        <div className="p-3 bg-primary/10 rounded-xl">
+                          <p className="text-sm text-primary">
+                            Start at {progressiveStartGoal}× per day, increase to {progressiveTargetGoal}× over {getRampDurationLabel()}.
+                          </p>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+
                   {/* Every day */}
                   <button
                     type="button"
@@ -430,103 +527,6 @@ export function AddHabitModal({ open, onOpenChange, onSave }: AddHabitModalProps
                             {day}
                           </button>
                         ))}
-                      </div>
-                    )}
-                  </div>
-
-                  {/* Progressive build-up */}
-                  <div>
-                    <button
-                      type="button"
-                      onClick={() => setFrequency("progressive")}
-                      className={`w-full p-3.5 rounded-2xl border text-left flex items-center justify-between transition-all ${
-                        frequency === "progressive"
-                          ? "border-primary/30 bg-primary/5"
-                          : "border-border/20 hover:border-border/40 hover:bg-muted/20"
-                      }`}
-                    >
-                      <div>
-                        <p className="font-medium text-sm text-foreground">Progressive build-up</p>
-                        <p className="text-xs text-muted-foreground">Start small and increase over time</p>
-                      </div>
-                      <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all ${
-                        frequency === "progressive" ? "border-primary bg-primary" : "border-muted-foreground/30"
-                      }`}>
-                        {frequency === "progressive" && <div className="w-2 h-2 bg-primary-foreground rounded-full" />}
-                      </div>
-                    </button>
-                    {/* Inline progressive build-up configuration */}
-                    {frequency === "progressive" && (
-                      <div className="mt-2 p-4 bg-muted/20 rounded-2xl space-y-4 border border-border/10">
-                        <div className="grid grid-cols-2 gap-3">
-                          <div>
-                            <label className="block text-xs font-medium text-muted-foreground mb-1.5">
-                              Starting goal per day
-                            </label>
-                            <Input
-                              type="number"
-                              min={1}
-                              max={progressiveTargetGoal - 1}
-                              value={progressiveStartGoal}
-                              onChange={(e) => setProgressiveStartGoal(Math.max(1, Math.min(progressiveTargetGoal - 1, parseInt(e.target.value) || 1)))}
-                              className="h-10 text-center bg-card border-border/20 rounded-xl"
-                            />
-                          </div>
-                          <div>
-                            <label className="block text-xs font-medium text-muted-foreground mb-1.5">
-                              Target goal per day
-                            </label>
-                            <Input
-                              type="number"
-                              min={progressiveStartGoal + 1}
-                              max={100}
-                              value={progressiveTargetGoal}
-                              onChange={(e) => setProgressiveTargetGoal(Math.max(progressiveStartGoal + 1, parseInt(e.target.value) || 2))}
-                              className="h-10 text-center bg-card border-border/20 rounded-xl"
-                            />
-                          </div>
-                        </div>
-                        
-                        <div>
-                          <label className="block text-xs font-medium text-muted-foreground mb-1.5">
-                            Ramp duration
-                          </label>
-                          <div className="flex flex-wrap gap-2">
-                            {RAMP_DURATION_OPTIONS.map((option) => (
-                              <button
-                                key={option.value}
-                                type="button"
-                                onClick={() => setProgressiveRampDuration(option.value as typeof progressiveRampDuration)}
-                                className={`px-3.5 py-2 rounded-xl text-sm font-medium transition-all ${
-                                  progressiveRampDuration === option.value
-                                    ? "btn-primary-gradient shadow-md text-white"
-                                    : "bg-card text-muted-foreground hover:bg-muted/40 border border-border/20"
-                                }`}
-                              >
-                                {option.label}
-                              </button>
-                            ))}
-                          </div>
-                          {progressiveRampDuration === "custom" && (
-                            <div className="mt-2 flex items-center gap-2">
-                              <Input
-                                type="number"
-                                min={1}
-                                max={52}
-                                value={progressiveCustomWeeks}
-                                onChange={(e) => setProgressiveCustomWeeks(Math.max(1, Math.min(52, parseInt(e.target.value) || 1)))}
-                                className="w-20 h-10 text-center bg-card border-border/20 rounded-xl"
-                              />
-                              <span className="text-sm text-muted-foreground">weeks</span>
-                            </div>
-                          )}
-                        </div>
-                        
-                        <div className="p-3 bg-primary/10 rounded-xl">
-                          <p className="text-sm text-primary">
-                            Start at {progressiveStartGoal}× per day, increase to {progressiveTargetGoal}× over {getRampDurationLabel()}.
-                          </p>
-                        </div>
                       </div>
                     )}
                   </div>
