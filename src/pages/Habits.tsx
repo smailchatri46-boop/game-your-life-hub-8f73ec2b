@@ -3,7 +3,7 @@ import { GlassCard } from "@/components/GlassCard";
 import { AppleEmoji } from "@/components/AppleEmoji";
 import { AlignedProgressChart } from "@/components/AlignedProgressChart";
 import { MoodMotivationChart } from "@/components/MoodMotivationChart";
-import { AICoachingSection } from "@/components/AICoachingSection";
+import { AIBuddyChat } from "@/components/AIBuddyChat";
 import { AddHabitModal, NewHabit } from "@/components/AddHabitModal";
 import { StatCard } from "@/components/StatCard";
 import { DailyReflectionModal } from "@/components/DailyReflectionModal";
@@ -691,8 +691,8 @@ export default function Habits() {
           </div>
         </GlassCard>
 
-        {/* AI Coaching Section */}
-        <AICoachingSection />
+        {/* AI Buddy Chat */}
+        <AIBuddyChat />
       </main>
 
       {/* Floating Add Habit Button */}
