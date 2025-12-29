@@ -170,18 +170,65 @@ export default function Journal() {
     <div className="min-h-screen gradient-bg">
       <Navbar />
       
-      <main className={`px-4 max-w-6xl mx-auto ${entries.length === 0 ? 'min-h-[calc(100vh-7rem)] flex items-center justify-center' : 'pt-28 pb-24'}`}>
-        {entries.length > 0 && (
+      {entries.length === 0 ? (
+        /* Onboarding wrapper - full viewport centering */
+        <div className="min-h-screen flex items-center justify-center px-4">
+          <div className="bg-card/95 backdrop-blur-sm rounded-3xl shadow-2xl border border-border/10 overflow-hidden w-full max-w-md animate-scale-in">
+            <div className="px-8 py-10 text-center">
+              {/* Emoji */}
+              <div className="mb-6 flex justify-center">
+                <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-primary/10 to-primary/5 flex items-center justify-center">
+                  <AppleEmoji emoji={ONBOARDING_SLIDES[currentSlideIndex].emoji} size="4xl" />
+                </div>
+              </div>
+
+              <h2 className="text-xl font-semibold text-foreground mb-3 font-display">
+                {ONBOARDING_SLIDES[currentSlideIndex].title}
+              </h2>
+
+              <p className="text-muted-foreground text-sm leading-relaxed mb-8 max-w-sm mx-auto">
+                {ONBOARDING_SLIDES[currentSlideIndex].message}
+              </p>
+
+              {/* Progress dots */}
+              <div className="flex justify-center gap-2 mb-6">
+                {ONBOARDING_SLIDES.map((_, index) => (
+                  <button
+                    key={index}
+                    type="button"
+                    onClick={() => setCurrentSlideIndex(index)}
+                    className={`w-2 h-2 rounded-full transition-all duration-300 ${
+                      index === currentSlideIndex
+                        ? "w-6 bg-gradient-to-r from-primary to-primary/80"
+                        : index < currentSlideIndex
+                          ? "bg-primary/40"
+                          : "bg-muted-foreground/20"
+                    }`}
+                    aria-label={`Go to slide ${index + 1}`}
+                  />
+                ))}
+              </div>
+
+              <Button
+                variant="gradient"
+                onClick={handleNextSlide}
+                className="px-8 py-3 rounded-xl shadow-lg hover:shadow-xl transition-all text-base font-medium"
+              >
+                {currentSlideIndex === ONBOARDING_SLIDES.length - 1 ? "Add Journal" : "Next"}
+              </Button>
+            </div>
+          </div>
+        </div>
+      ) : (
+        <main className="pt-28 pb-24 px-4 max-w-6xl mx-auto">
           <div className="flex items-center justify-between mb-8">
             <div>
               <h1 className="font-display text-3xl font-semibold">Journal</h1>
               <p className="text-muted-foreground mt-1">Reflect on your journey</p>
             </div>
           </div>
-        )}
-        
-        {/* Journal Entries Grid */}
-        {entries.length > 0 ? (
+          
+          {/* Journal Entries Grid */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {entries.map((entry, index) => {
               const canEdit = isWithin24Hours(entry.createdAt);
@@ -227,57 +274,8 @@ export default function Journal() {
               );
             })}
           </div>
-        ) : (
-          /* Empty State - Inline onboarding slides with card */
-          <div className="flex items-center justify-center w-full">
-            <div className="bg-card/95 backdrop-blur-sm rounded-3xl shadow-2xl border border-border/10 overflow-hidden w-full max-w-md mx-4 animate-scale-in">
-              <div className="px-8 py-10 text-center">
-                {/* Emoji */}
-                <div className="mb-6 flex justify-center">
-                  <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-primary/10 to-primary/5 flex items-center justify-center">
-                    <AppleEmoji emoji={ONBOARDING_SLIDES[currentSlideIndex].emoji} size="4xl" />
-                  </div>
-                </div>
-
-                <h2 className="text-xl font-semibold text-foreground mb-3 font-display">
-                  {ONBOARDING_SLIDES[currentSlideIndex].title}
-                </h2>
-
-                <p className="text-muted-foreground text-sm leading-relaxed mb-8 max-w-sm mx-auto">
-                  {ONBOARDING_SLIDES[currentSlideIndex].message}
-                </p>
-
-                {/* Progress dots */}
-                <div className="flex justify-center gap-2 mb-6">
-                  {ONBOARDING_SLIDES.map((_, index) => (
-                    <button
-                      key={index}
-                      type="button"
-                      onClick={() => setCurrentSlideIndex(index)}
-                      className={`w-2 h-2 rounded-full transition-all duration-300 ${
-                        index === currentSlideIndex
-                          ? "w-6 bg-gradient-to-r from-primary to-primary/80"
-                          : index < currentSlideIndex
-                            ? "bg-primary/40"
-                            : "bg-muted-foreground/20"
-                      }`}
-                      aria-label={`Go to slide ${index + 1}`}
-                    />
-                  ))}
-                </div>
-
-                <Button
-                  variant="gradient"
-                  onClick={handleNextSlide}
-                  className="px-8 py-3 rounded-xl shadow-lg hover:shadow-xl transition-all text-base font-medium"
-                >
-                  {currentSlideIndex === ONBOARDING_SLIDES.length - 1 ? "Add Journal" : "Next"}
-                </Button>
-              </div>
-            </div>
-          </div>
-        )}
-      </main>
+        </main>
+      )}
 
       {/* Floating Add Button - only show when entries exist */}
       {entries.length > 0 && (
