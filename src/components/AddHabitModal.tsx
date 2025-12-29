@@ -189,23 +189,24 @@ export function AddHabitModal({ open, onOpenChange, onSave }: AddHabitModalProps
     <>
     <Dialog open={open} onOpenChange={handleClose}>
       <DialogContent 
-        className="sm:max-w-[680px] p-0 gap-0 bg-card border-0 shadow-2xl rounded-3xl overflow-hidden font-['Plus_Jakarta_Sans',sans-serif]"
+        hideCloseButton
+        className="sm:max-w-[720px] p-0 gap-0 bg-card border-0 shadow-2xl rounded-3xl overflow-hidden font-['Plus_Jakarta_Sans',sans-serif]"
         onInteractOutside={(e) => e.preventDefault()}
       >
-        {/* Header - Clean, no badge */}
-        <div className="px-6 py-5 border-b border-border/50">
+        {/* Header - Clean text only */}
+        <div className="px-7 py-6 border-b border-border/40">
           <div className="flex items-center justify-between">
             <div>
               <h2 className="text-xl font-semibold text-foreground font-display">
                 Add New Habit
               </h2>
-              <p className="text-sm text-muted-foreground mt-0.5">
+              <p className="text-sm text-muted-foreground mt-1">
                 Build better routines, one habit at a time
               </p>
             </div>
             <button
               onClick={handleClose}
-              className="w-9 h-9 rounded-xl flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-all"
+              className="w-10 h-10 rounded-xl flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-muted/60 transition-all"
             >
               <X className="w-5 h-5" />
             </button>
@@ -213,59 +214,13 @@ export function AddHabitModal({ open, onOpenChange, onSave }: AddHabitModalProps
         </div>
 
         {/* Content */}
-        <div className="px-6 py-6 max-h-[60vh] overflow-y-auto">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-x-8 gap-y-6">
+        <div className="px-7 py-7 max-h-[62vh] overflow-y-auto">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-x-10 gap-y-7">
             {/* Left Column */}
-            <div className="space-y-6">
-              {/* Habit Name with emoji preview */}
-              <div>
-                <label className="block text-sm font-medium text-foreground mb-2">
-                  Habit Name
-                </label>
-                <div className="relative flex items-center">
-                  {/* Emoji preview inside input */}
-                  <div className="absolute left-3 z-10 flex items-center justify-center w-8 h-8 pointer-events-none">
-                    <AppleEmoji emoji={icon} size="2xl" />
-                  </div>
-                  <Input
-                    placeholder="e.g., Morning Meditation"
-                    value={name}
-                    onChange={(e) => {
-                      setName(e.target.value);
-                      if (error) setError("");
-                    }}
-                    className="h-14 pl-14 pr-4 bg-muted/30 border-border/50 rounded-2xl text-base placeholder:text-muted-foreground focus:ring-2 focus:ring-primary/20 focus:border-primary/50 transition-all"
-                  />
-                </div>
-                {/* Preview like habit list row */}
-                {name && (
-                  <div className="mt-3 flex items-center gap-3 p-3 bg-muted/30 rounded-2xl">
-                    <div className="w-10 h-10 flex items-center justify-center">
-                      <AppleEmoji emoji={icon} size="2xl" />
-                    </div>
-                    <div>
-                      <p className="font-medium text-foreground text-sm">{name || "Habit Name"}</p>
-                      <div className="flex items-center gap-1.5 mt-0.5">
-                        <span
-                          className="w-2 h-2 rounded-full"
-                          style={{ backgroundColor: selectedCategory?.color }}
-                        />
-                        <span className="text-xs text-muted-foreground">{selectedCategory?.label}</span>
-                      </div>
-                    </div>
-                  </div>
-                )}
-                {error && (
-                  <p className="mt-2 text-sm text-destructive">{error}</p>
-                )}
-              </div>
-
+            <div className="space-y-7">
               {/* Category */}
               <div>
-                <label className="block text-sm font-medium text-foreground mb-3">
-                  Category
-                </label>
-                <div className="flex flex-wrap gap-2">
+                <div className="flex flex-wrap gap-2.5">
                   {CATEGORIES.map((cat) => (
                     <button
                       key={cat.value}
@@ -292,94 +247,84 @@ export function AddHabitModal({ open, onOpenChange, onSave }: AddHabitModalProps
                 </div>
               </div>
 
-              {/* Icon Picker - Larger emojis, gradient pill selection */}
+              {/* Icon Picker - Larger emojis with rounded-rectangle gradient pill selection */}
               <div>
                 <label className="block text-sm font-medium text-foreground mb-3">
                   Icon
                 </label>
-                <div className="grid grid-cols-10 gap-1.5 p-4 bg-muted/30 rounded-2xl">
+                <div className="grid grid-cols-10 gap-3 p-5 bg-muted/30 rounded-2xl">
                   {EMOJI_OPTIONS.map((emoji) => (
                     <button
                       key={emoji}
                       type="button"
                       onClick={() => setIcon(emoji)}
-                      className={`aspect-square rounded-xl flex items-center justify-center transition-all p-1 ${
+                      className={`aspect-square rounded-xl flex items-center justify-center transition-all duration-200 ${
                         icon === emoji
-                          ? "btn-primary-gradient shadow-md scale-110"
-                          : "hover:bg-card hover:shadow-sm"
+                          ? "btn-primary-gradient shadow-lg ring-2 ring-white/50 ring-inset scale-105"
+                          : "hover:bg-card hover:shadow-sm hover:scale-105"
                       }`}
+                      style={{
+                        padding: '6px',
+                      }}
                     >
-                      <AppleEmoji emoji={emoji} size="xl" />
+                      <AppleEmoji emoji={emoji} size="2xl" />
                     </button>
                   ))}
                 </div>
               </div>
+
+              {/* Habit Name with emoji preview */}
+              <div>
+                <label className="block text-sm font-medium text-foreground mb-2.5">
+                  Habit Name
+                </label>
+                <div className="relative flex items-center">
+                  {/* Emoji preview inside input */}
+                  <div className="absolute left-4 z-10 flex items-center justify-center pointer-events-none">
+                    <AppleEmoji emoji={icon} size="2xl" />
+                  </div>
+                  <Input
+                    placeholder="e.g., Morning Meditation"
+                    value={name}
+                    onChange={(e) => {
+                      setName(e.target.value);
+                      if (error) setError("");
+                    }}
+                    className="h-14 pl-16 pr-4 bg-muted/30 border-border/40 rounded-2xl text-base placeholder:text-muted-foreground focus:ring-2 focus:ring-primary/20 focus:border-primary/50 transition-all"
+                  />
+                </div>
+                {/* Preview like habit list row */}
+                {name && (
+                  <div className="mt-3.5 flex items-center gap-3.5 p-4 bg-muted/30 rounded-2xl">
+                    <div className="w-11 h-11 flex items-center justify-center">
+                      <AppleEmoji emoji={icon} size="2xl" />
+                    </div>
+                    <div>
+                      <p className="font-medium text-foreground text-sm">{name || "Habit Name"}</p>
+                      <div className="flex items-center gap-1.5 mt-1">
+                        <span
+                          className="w-2 h-2 rounded-full"
+                          style={{ backgroundColor: selectedCategory?.color }}
+                        />
+                        <span className="text-xs text-muted-foreground">{selectedCategory?.label}</span>
+                      </div>
+                    </div>
+                  </div>
+                )}
+                {error && (
+                  <p className="mt-2 text-sm text-destructive">{error}</p>
+                )}
+              </div>
             </div>
 
             {/* Right Column */}
-            <div className="space-y-6">
-              {/* Habit Type */}
-              <div>
-                <label className="block text-sm font-medium text-foreground mb-3">
-                  Habit Type
-                </label>
-                <div className="grid grid-cols-2 gap-3">
-                  <button
-                    type="button"
-                    onClick={() => setHabitType("boolean")}
-                    className={`p-4 rounded-2xl border-2 text-left transition-all ${
-                      habitType === "boolean"
-                        ? "border-primary/50 bg-primary/5"
-                        : "border-border/50 hover:border-border"
-                    }`}
-                  >
-                    <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center mb-2 ${
-                      habitType === "boolean" ? "border-primary bg-primary" : "border-muted-foreground/30"
-                    }`}>
-                      {habitType === "boolean" && <Check className="w-3 h-3 text-primary-foreground" />}
-                    </div>
-                    <p className="font-medium text-sm text-foreground">Done / Not Done</p>
-                    <p className="text-xs text-muted-foreground mt-0.5">Simple completion</p>
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setHabitType("numeric")}
-                    className={`p-4 rounded-2xl border-2 text-left transition-all ${
-                      habitType === "numeric"
-                        ? "border-primary/50 bg-primary/5"
-                        : "border-border/50 hover:border-border"
-                    }`}
-                  >
-                    <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center mb-2 ${
-                      habitType === "numeric" ? "border-primary bg-primary" : "border-muted-foreground/30"
-                    }`}>
-                      {habitType === "numeric" && <Check className="w-3 h-3 text-primary-foreground" />}
-                    </div>
-                    <p className="font-medium text-sm text-foreground">Numeric Value</p>
-                    <p className="text-xs text-muted-foreground mt-0.5">Track a number</p>
-                  </button>
-                </div>
-                {habitType === "numeric" && (
-                  <div className="mt-3 flex items-center gap-3 p-4 bg-muted/30 rounded-2xl">
-                    <span className="text-sm text-muted-foreground">Daily target:</span>
-                    <Input
-                      type="number"
-                      min={1}
-                      max={100}
-                      value={numericTarget}
-                      onChange={(e) => setNumericTarget(Math.max(1, parseInt(e.target.value) || 1))}
-                      className="w-20 h-10 text-center bg-card border-border/50 rounded-xl"
-                    />
-                  </div>
-                )}
-              </div>
-
+            <div className="space-y-7">
               {/* Frequency */}
               <div>
                 <label className="block text-sm font-medium text-foreground mb-3">
                   Frequency
                 </label>
-                <div className="space-y-2">
+                <div className="space-y-2.5">
                   {[
                     { value: "daily", label: "Every day", desc: "Track daily" },
                     { value: "weekdays", label: "Specific days", desc: "Choose days" },
@@ -390,10 +335,10 @@ export function AddHabitModal({ open, onOpenChange, onSave }: AddHabitModalProps
                       key={freq.value}
                       type="button"
                       onClick={() => setFrequency(freq.value as "daily" | "weekdays" | "monthly" | "progressive")}
-                      className={`w-full p-3.5 rounded-2xl border-2 text-left flex items-center justify-between transition-all ${
+                      className={`w-full p-4 rounded-2xl border-2 text-left flex items-center justify-between transition-all ${
                         frequency === freq.value
                           ? "border-primary/50 bg-primary/5"
-                          : "border-border/50 hover:border-border"
+                          : "border-border/40 hover:border-border/60"
                       }`}
                     >
                       <div>
@@ -411,10 +356,10 @@ export function AddHabitModal({ open, onOpenChange, onSave }: AddHabitModalProps
 
                 {/* Progressive Build-up Configuration */}
                 {frequency === "progressive" && (
-                  <div className="mt-3 p-4 bg-muted/30 rounded-2xl space-y-4">
+                  <div className="mt-4 p-5 bg-muted/30 rounded-2xl space-y-4">
                     <div className="grid grid-cols-2 gap-4">
                       <div>
-                        <label className="block text-xs font-medium text-muted-foreground mb-1.5">
+                        <label className="block text-xs font-medium text-muted-foreground mb-2">
                           Starting goal per day
                         </label>
                         <Input
@@ -423,11 +368,11 @@ export function AddHabitModal({ open, onOpenChange, onSave }: AddHabitModalProps
                           max={progressiveTargetGoal - 1}
                           value={progressiveStartGoal}
                           onChange={(e) => setProgressiveStartGoal(Math.max(1, Math.min(progressiveTargetGoal - 1, parseInt(e.target.value) || 1)))}
-                          className="h-10 text-center bg-card border-border/50 rounded-xl"
+                          className="h-11 text-center bg-card border-border/40 rounded-xl"
                         />
                       </div>
                       <div>
-                        <label className="block text-xs font-medium text-muted-foreground mb-1.5">
+                        <label className="block text-xs font-medium text-muted-foreground mb-2">
                           Target goal per day
                         </label>
                         <Input
@@ -436,25 +381,25 @@ export function AddHabitModal({ open, onOpenChange, onSave }: AddHabitModalProps
                           max={100}
                           value={progressiveTargetGoal}
                           onChange={(e) => setProgressiveTargetGoal(Math.max(progressiveStartGoal + 1, parseInt(e.target.value) || 2))}
-                          className="h-10 text-center bg-card border-border/50 rounded-xl"
+                          className="h-11 text-center bg-card border-border/40 rounded-xl"
                         />
                       </div>
                     </div>
                     
                     <div>
-                      <label className="block text-xs font-medium text-muted-foreground mb-1.5">
+                      <label className="block text-xs font-medium text-muted-foreground mb-2">
                         Ramp duration
                       </label>
-                      <div className="flex flex-wrap gap-2">
+                      <div className="flex flex-wrap gap-2.5">
                         {RAMP_DURATION_OPTIONS.map((option) => (
                           <button
                             key={option.value}
                             type="button"
                             onClick={() => setProgressiveRampDuration(option.value as typeof progressiveRampDuration)}
-                            className={`px-4 py-2 rounded-xl text-sm font-medium transition-all ${
+                            className={`px-4 py-2.5 rounded-xl text-sm font-medium transition-all ${
                               progressiveRampDuration === option.value
-                                ? "btn-primary-gradient shadow-sm"
-                                : "bg-card text-muted-foreground hover:bg-muted/50 border border-border/50"
+                                ? "btn-primary-gradient shadow-md"
+                                : "bg-card text-muted-foreground hover:bg-muted/50 border border-border/40"
                             }`}
                           >
                             {option.label}
@@ -462,21 +407,21 @@ export function AddHabitModal({ open, onOpenChange, onSave }: AddHabitModalProps
                         ))}
                       </div>
                       {progressiveRampDuration === "custom" && (
-                        <div className="mt-2 flex items-center gap-2">
+                        <div className="mt-3 flex items-center gap-2">
                           <Input
                             type="number"
                             min={1}
                             max={52}
                             value={progressiveCustomWeeks}
                             onChange={(e) => setProgressiveCustomWeeks(Math.max(1, Math.min(52, parseInt(e.target.value) || 1)))}
-                            className="w-20 h-10 text-center bg-card border-border/50 rounded-xl"
+                            className="w-20 h-11 text-center bg-card border-border/40 rounded-xl"
                           />
                           <span className="text-sm text-muted-foreground">weeks</span>
                         </div>
                       )}
                     </div>
                     
-                    <div className="p-3 bg-primary/10 rounded-xl">
+                    <div className="p-4 bg-primary/10 rounded-xl">
                       <p className="text-sm text-primary">
                         You will start at {progressiveStartGoal}× per day and gradually increase to {progressiveTargetGoal}× per day over {getRampDurationLabel()}.
                       </p>
@@ -484,18 +429,18 @@ export function AddHabitModal({ open, onOpenChange, onSave }: AddHabitModalProps
                   </div>
                 )}
 
-                {/* Weekdays selector - Round gradient buttons */}
+                {/* Weekdays selector - Perfect circles with gradient */}
                 {frequency === "weekdays" && (
-                  <div className="mt-3 flex justify-between gap-2 p-4 bg-muted/30 rounded-2xl">
+                  <div className="mt-4 flex justify-between gap-2.5 p-5 bg-muted/30 rounded-2xl">
                     {WEEKDAYS.map((day) => (
                       <button
                         key={day.value}
                         type="button"
                         onClick={() => toggleWeekday(day.value)}
-                        className={`w-10 h-10 rounded-full text-sm font-semibold transition-all flex items-center justify-center ${
+                        className={`w-10 h-10 rounded-full text-sm font-semibold transition-all duration-200 flex items-center justify-center ${
                           selectedWeekdays.includes(day.value)
-                            ? "btn-primary-gradient shadow-md"
-                            : "bg-card text-muted-foreground hover:bg-muted/50 border border-border/30"
+                            ? "btn-primary-gradient shadow-md text-white"
+                            : "bg-card text-muted-foreground hover:bg-muted/60 border border-border/30"
                         }`}
                       >
                         {day.label}
@@ -504,18 +449,18 @@ export function AddHabitModal({ open, onOpenChange, onSave }: AddHabitModalProps
                   </div>
                 )}
 
-                {/* Monthly days selector - Round gradient buttons */}
+                {/* Monthly days selector - Perfect circles with gradient */}
                 {frequency === "monthly" && (
-                  <div className="mt-3 grid grid-cols-7 gap-2 p-4 bg-muted/30 rounded-2xl max-h-48 overflow-y-auto">
+                  <div className="mt-4 grid grid-cols-7 gap-2.5 p-5 bg-muted/30 rounded-2xl max-h-52 overflow-y-auto">
                     {Array.from({ length: 31 }, (_, i) => i + 1).map((day) => (
                       <button
                         key={day}
                         type="button"
                         onClick={() => toggleMonthDay(day)}
-                        className={`w-9 h-9 rounded-full text-xs font-semibold transition-all flex items-center justify-center ${
+                        className={`w-9 h-9 rounded-full text-xs font-semibold transition-all duration-200 flex items-center justify-center ${
                           selectedDays.includes(day)
-                            ? "btn-primary-gradient shadow-md"
-                            : "bg-card text-muted-foreground hover:bg-muted/50 border border-border/30"
+                            ? "btn-primary-gradient shadow-md text-white"
+                            : "bg-card text-muted-foreground hover:bg-muted/60 border border-border/30"
                         }`}
                       >
                         {day}
@@ -530,26 +475,26 @@ export function AddHabitModal({ open, onOpenChange, onSave }: AddHabitModalProps
                 <label className="block text-sm font-medium text-foreground mb-3">
                   Goal per Period
                 </label>
-                <div className="flex items-center gap-3 p-4 bg-muted/30 rounded-2xl">
+                <div className="flex items-center gap-3 p-5 bg-muted/30 rounded-2xl">
                   <Input
                     type="number"
                     min={1}
                     max={31}
                     value={goalValue}
                     onChange={(e) => setGoalValue(Math.max(1, parseInt(e.target.value) || 1))}
-                    className="w-16 h-10 text-center bg-card border-border/50 rounded-xl"
+                    className="w-16 h-11 text-center bg-card border-border/40 rounded-xl"
                   />
                   <span className="text-sm text-muted-foreground">
                     {habitType === "numeric" ? "times" : "days"} per
                   </span>
-                  <div className="flex rounded-xl overflow-hidden border border-border/30">
+                  <div className="flex rounded-xl overflow-hidden border border-border/30 bg-card">
                     <button
                       type="button"
                       onClick={() => setGoalPeriod("week")}
-                      className={`px-4 py-2 text-sm font-medium transition-all ${
+                      className={`px-5 py-2.5 text-sm font-semibold transition-all ${
                         goalPeriod === "week"
-                          ? "btn-primary-gradient"
-                          : "bg-card text-muted-foreground hover:bg-muted/50"
+                          ? "btn-primary-gradient text-white"
+                          : "bg-transparent text-foreground hover:bg-muted/50"
                       }`}
                     >
                       Week
@@ -557,10 +502,10 @@ export function AddHabitModal({ open, onOpenChange, onSave }: AddHabitModalProps
                     <button
                       type="button"
                       onClick={() => setGoalPeriod("month")}
-                      className={`px-4 py-2 text-sm font-medium transition-all ${
+                      className={`px-5 py-2.5 text-sm font-semibold transition-all ${
                         goalPeriod === "month"
-                          ? "btn-primary-gradient"
-                          : "bg-card text-muted-foreground hover:bg-muted/50"
+                          ? "btn-primary-gradient text-white"
+                          : "bg-transparent text-foreground hover:bg-muted/50"
                       }`}
                     >
                       Month
@@ -575,7 +520,7 @@ export function AddHabitModal({ open, onOpenChange, onSave }: AddHabitModalProps
                   <label className="block text-sm font-medium text-foreground">
                     Importance Weight
                   </label>
-                  <span className="text-sm font-semibold text-primary">{importance}%</span>
+                  <span className="text-sm font-semibold gradient-text">{importance}%</span>
                 </div>
                 <Slider
                   value={[importance]}
@@ -585,7 +530,7 @@ export function AddHabitModal({ open, onOpenChange, onSave }: AddHabitModalProps
                   step={5}
                   className="py-2"
                 />
-                <p className="text-xs text-muted-foreground mt-2">
+                <p className="text-xs text-muted-foreground mt-2.5">
                   Higher importance = more impact on daily score
                 </p>
               </div>
@@ -594,18 +539,18 @@ export function AddHabitModal({ open, onOpenChange, onSave }: AddHabitModalProps
         </div>
 
         {/* Footer - Soft button styling */}
-        <div className="px-6 py-4 border-t border-border/30 flex justify-end gap-3">
+        <div className="px-7 py-5 border-t border-border/30 flex justify-end gap-3">
           <Button
             variant="ghost"
             onClick={handleClose}
-            className="px-6 rounded-xl hover:bg-muted/50 text-muted-foreground hover:text-foreground"
+            className="px-6 rounded-xl hover:bg-muted/60 text-muted-foreground hover:text-foreground transition-all"
           >
             Cancel
           </Button>
           <Button
             variant="gradient"
             onClick={handleSave}
-            className="px-6 rounded-xl shadow-lg hover:shadow-xl hover:brightness-105 transition-all"
+            className="px-6 rounded-xl shadow-lg hover:shadow-xl transition-all"
           >
             Create Habit
           </Button>
