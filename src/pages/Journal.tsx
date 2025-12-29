@@ -45,17 +45,17 @@ const EMOJI_OPTIONS_ROW_2 = ["😴", "🎯", "🌟", "🎉", "💭", "🌈", "�
 // Onboarding slides for first-time users
 const ONBOARDING_SLIDES = [
   {
-    emoji: "📓",
+    emoji: "✨",
     title: "Each journal brings you closer to who you want to become",
     message: "Small reflections written daily compound over time. Journaling helps you notice patterns, track growth, and understand yourself better.",
   },
   {
-    emoji: "🤖",
+    emoji: "💬",
     title: "Your journals help the AI understand you better",
     message: "The more you write, the more personalized your guidance becomes. Your entries help the AI give advice that truly fits what you're going through.",
   },
   {
-    emoji: "🔒",
+    emoji: "🌟",
     title: "Entries can only be edited or deleted in the first 24 hours",
     message: "After the first day, entries become locked to protect your progress history and help keep an honest record of your journey.",
   },
@@ -170,7 +170,7 @@ export default function Journal() {
     <div className="min-h-screen gradient-bg">
       <Navbar />
       
-      <main className={`pt-28 pb-24 px-4 max-w-6xl mx-auto ${entries.length === 0 ? 'min-h-[calc(100vh-7rem)] flex flex-col' : ''}`}>
+      <main className={`pt-28 pb-24 px-4 max-w-6xl mx-auto ${entries.length === 0 ? 'h-[calc(100vh-7rem)] flex flex-col justify-center' : ''}`}>
         {entries.length > 0 && (
           <div className="flex items-center justify-between mb-8">
             <div>
