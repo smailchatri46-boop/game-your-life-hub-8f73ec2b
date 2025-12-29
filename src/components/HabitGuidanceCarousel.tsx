@@ -19,6 +19,11 @@ const SLIDES = [
     message: "Don't jump to the final goal immediately. Use progressive build-up habits and gradually increase difficulty so new routines stay comfortable.",
   },
   {
+    emoji: "📝",
+    title: "Need only a quick to-do?",
+    message: "Not everything needs to become a habit. If you just want a one-time task for today or tomorrow, use the To-Do List in the Overview tab.",
+  },
+  {
     emoji: "🔥",
     title: "Tiny steps beat burnout",
     message: "Small goals done daily are more powerful than big goals abandoned. Stick to simple habits and let compound progress work for you.",

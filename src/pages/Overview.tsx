@@ -4,11 +4,20 @@ import { AppleEmoji } from "@/components/AppleEmoji";
 import { OnboardingQuestionsModal } from "@/components/OnboardingQuestionsModal";
 import { AIBuddyChat } from "@/components/AIBuddyChat";
 import { useHabitStats } from "@/hooks/use-habit-stats";
-import { Target, TrendingUp, Heart, BarChart3, X } from "lucide-react";
+import { Target, TrendingUp, Heart, BarChart3, X, Plus, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { Link } from "react-router-dom";
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { useSelectedMonth } from "@/hooks/use-selected-month";
+import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/contexts/AuthContext";
+
+interface TodoItem {
+  id: string;
+  text: string;
+  completed: boolean;
+}
 
 interface DayData {
   date: number;
@@ -39,9 +48,7 @@ const generateMonthData = (daysInMonth: number, currentDay: number): Record<numb
 };
 
 export default function Overview() {
-  const [selectedDate, setSelectedDate] = useState<number | null>(null);
-  const [showOnboarding, setShowOnboarding] = useState(false);
-  const habitStats = useHabitStats();
+  const { user } = useAuth();
   const {
     monthName,
     year,
@@ -49,11 +56,88 @@ export default function Overview() {
     getDaysInMonth,
     getFirstDayOfMonth,
     getCurrentDay,
+    isCurrentMonth,
   } = useSelectedMonth();
-
+  
   const daysInMonth = getDaysInMonth();
   const startDay = getFirstDayOfMonth();
   const currentDay = getCurrentDay();
+  
+  // Auto-select today's date on initial load
+  const [selectedDate, setSelectedDate] = useState<number | null>(() => {
+    if (isCurrentMonth()) {
+      return new Date().getDate();
+    }
+    return 1; // First day of past months
+  });
+  const [showOnboarding, setShowOnboarding] = useState(false);
+  const habitStats = useHabitStats();
+  
+  // To-Do List state
+  const [todos, setTodos] = useState<TodoItem[]>([]);
+  const [newTodoText, setNewTodoText] = useState("");
+  const [isAddingTodo, setIsAddingTodo] = useState(false);
+  
+  // Fetch todos for selected date
+  useEffect(() => {
+    if (!user || selectedDate === null) return;
+    
+    const dateString = `${year}-${String(month + 1).padStart(2, '0')}-${String(selectedDate).padStart(2, '0')}`;
+    
+    const fetchTodos = async () => {
+      const { data, error } = await supabase
+        .from('daily_todos')
+        .select('*')
+        .eq('user_id', user.id)
+        .eq('date', dateString)
+        .order('created_at', { ascending: true });
+      
+      if (!error && data) {
+        setTodos(data.map(t => ({ id: t.id, text: t.text, completed: t.completed })));
+      }
+    };
+    
+    fetchTodos();
+  }, [user, selectedDate, year, month]);
+  
+  const handleAddTodo = async () => {
+    if (!user || !newTodoText.trim() || selectedDate === null) return;
+    
+    const dateString = `${year}-${String(month + 1).padStart(2, '0')}-${String(selectedDate).padStart(2, '0')}`;
+    
+    const { data, error } = await supabase
+      .from('daily_todos')
+      .insert({
+        user_id: user.id,
+        date: dateString,
+        text: newTodoText.trim(),
+        completed: false
+      })
+      .select()
+      .single();
+    
+    if (!error && data) {
+      setTodos(prev => [...prev, { id: data.id, text: data.text, completed: data.completed }]);
+      setNewTodoText("");
+      setIsAddingTodo(false);
+    }
+  };
+  
+  const handleToggleTodo = async (todoId: string) => {
+    const todo = todos.find(t => t.id === todoId);
+    if (!todo) return;
+    
+    const { error } = await supabase
+      .from('daily_todos')
+      .update({ completed: !todo.completed })
+      .eq('id', todoId);
+    
+    if (!error) {
+      setTodos(prev => prev.map(t => 
+        t.id === todoId ? { ...t, completed: !t.completed } : t
+      ));
+    }
+  };
   
   const weekDays = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
   
@@ -199,15 +283,15 @@ export default function Overview() {
                       key={day}
                       onClick={() => !isFuture && setSelectedDate(day)}
                       disabled={isFuture}
-                      className={`aspect-square rounded-2xl flex flex-col items-center justify-center transition-all duration-200 ${
+                      className={`aspect-square rounded-2xl flex flex-col items-center justify-center transition-colors duration-200 ${
                         isFuture 
                           ? 'bg-muted/30 cursor-not-allowed'
                           : isSelected
-                            ? 'bg-gradient-to-br from-accent to-primary text-primary-foreground shadow-medium scale-105'
+                            ? 'bg-[hsl(25,90%,55%)] text-primary-foreground shadow-medium'
                             : completionRate >= 80
-                              ? 'bg-primary/20 hover:bg-primary/30'
+                              ? 'bg-primary/25 hover:bg-primary/35'
                               : completionRate >= 50
-                                ? 'bg-accent/20 hover:bg-accent/30'
+                                ? 'bg-accent/25 hover:bg-accent/35'
                                 : 'bg-secondary hover:bg-secondary/80'
                       }`}
                     >
@@ -228,74 +312,136 @@ export default function Overview() {
           
           {/* Day Details Panel */}
           <div>
-            {selectedDate ? (
-              <GlassCard className="p-6 sticky top-28">
-                <div className="flex items-center justify-between mb-4">
-                  <h3 className="font-display text-xl font-semibold">
-                    {monthName} {selectedDate}
-                  </h3>
-                  <button 
-                    onClick={() => setSelectedDate(null)}
-                    className="p-1.5 rounded-lg hover:bg-secondary text-muted-foreground"
-                  >
-                    <X className="w-4 h-4" />
-                  </button>
-                </div>
-                
-                {monthData[selectedDate] ? (
-                  <>
-                    <div className="mb-6">
-                      <p className="text-sm font-medium text-muted-foreground mb-2">Mood</p>
-                      <AppleEmoji emoji={monthData[selectedDate].mood} size="3xl" />
+            <GlassCard className="p-6 sticky top-28">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="font-display text-xl font-semibold">
+                  {monthName} {selectedDate}
+                </h3>
+              </div>
+              
+              {monthData[selectedDate!] ? (
+                <>
+                  <div className="mb-6">
+                    <p className="text-sm font-medium text-muted-foreground mb-2">Mood</p>
+                    <AppleEmoji emoji={monthData[selectedDate!].mood} size="3xl" />
+                  </div>
+                  
+                  <div className="mb-6">
+                    <p className="text-sm font-medium text-muted-foreground mb-3">Habits</p>
+                    <div className="space-y-2">
+                      {monthData[selectedDate!].habits.map((habit, i) => (
+                        <div 
+                          key={i}
+                          className={`flex items-center gap-3 p-3 rounded-xl ${
+                            habit.completed ? 'bg-primary/10' : 'bg-secondary'
+                          }`}
+                        >
+                          <span className={`w-5 h-5 rounded-full flex items-center justify-center text-xs ${
+                            habit.completed 
+                              ? 'bg-primary text-primary-foreground' 
+                              : 'bg-muted'
+                          }`}>
+                            {habit.completed ? '✓' : ''}
+                          </span>
+                          <span className={`text-sm ${habit.completed ? 'text-foreground' : 'text-muted-foreground'}`}>
+                            {habit.name}
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                  
+                  {/* To-Do List Section */}
+                  <div className="mb-6">
+                    <div className="flex items-center justify-between mb-3">
+                      <p className="text-sm font-medium text-muted-foreground">To-Do List</p>
+                      {!isAddingTodo && (
+                        <button
+                          onClick={() => setIsAddingTodo(true)}
+                          className="p-1.5 rounded-lg hover:bg-secondary text-primary"
+                        >
+                          <Plus className="w-4 h-4" />
+                        </button>
+                      )}
                     </div>
                     
-                    <div className="mb-6">
-                      <p className="text-sm font-medium text-muted-foreground mb-3">Habits</p>
-                      <div className="space-y-2">
-                        {monthData[selectedDate].habits.map((habit, i) => (
-                          <div 
-                            key={i}
-                            className={`flex items-center gap-3 p-3 rounded-xl ${
-                              habit.completed ? 'bg-primary/10' : 'bg-secondary'
+                    <div className="space-y-2">
+                      {todos.map((todo) => (
+                        <div 
+                          key={todo.id}
+                          className={`flex items-center gap-3 p-3 rounded-xl ${
+                            todo.completed ? 'bg-primary/10' : 'bg-secondary'
+                          }`}
+                        >
+                          <button
+                            onClick={() => handleToggleTodo(todo.id)}
+                            className={`w-5 h-5 rounded-md border-2 flex items-center justify-center transition-colors ${
+                              todo.completed 
+                                ? 'bg-primary border-primary text-primary-foreground' 
+                                : 'border-muted-foreground/30 hover:border-primary/50'
                             }`}
                           >
-                            <span className={`w-5 h-5 rounded-full flex items-center justify-center text-xs ${
-                              habit.completed 
-                                ? 'bg-primary text-primary-foreground' 
-                                : 'bg-muted'
-                            }`}>
-                              {habit.completed ? '✓' : ''}
-                            </span>
-                            <span className={`text-sm ${habit.completed ? 'text-foreground' : 'text-muted-foreground'}`}>
-                              {habit.name}
-                            </span>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                    
-                    {monthData[selectedDate].journal && (
-                      <div>
-                        <p className="text-sm font-medium text-muted-foreground mb-2">Journal</p>
-                        <p className="text-sm text-foreground bg-secondary/50 p-3 rounded-xl">
-                          {monthData[selectedDate].journal}
+                            {todo.completed && <Check className="w-3 h-3" />}
+                          </button>
+                          <span className={`text-sm flex-1 ${
+                            todo.completed 
+                              ? 'text-muted-foreground line-through opacity-60' 
+                              : 'text-foreground'
+                          }`}>
+                            {todo.text}
+                          </span>
+                        </div>
+                      ))}
+                      
+                      {isAddingTodo && (
+                        <div className="flex items-center gap-2 p-2 rounded-xl bg-secondary">
+                          <Input
+                            value={newTodoText}
+                            onChange={(e) => setNewTodoText(e.target.value)}
+                            placeholder="Add a task..."
+                            className="flex-1 h-8 text-sm border-0 bg-transparent focus-visible:ring-0"
+                            onKeyDown={(e) => {
+                              if (e.key === 'Enter') handleAddTodo();
+                              if (e.key === 'Escape') {
+                                setIsAddingTodo(false);
+                                setNewTodoText("");
+                              }
+                            }}
+                            autoFocus
+                          />
+                          <Button
+                            size="sm"
+                            variant="ghost"
+                            onClick={handleAddTodo}
+                            disabled={!newTodoText.trim()}
+                            className="h-8 px-2"
+                          >
+                            <Plus className="w-4 h-4" />
+                          </Button>
+                        </div>
+                      )}
+                      
+                      {todos.length === 0 && !isAddingTodo && (
+                        <p className="text-xs text-muted-foreground text-center py-2">
+                          No tasks for this day
                         </p>
-                      </div>
-                    )}
-                  </>
-                ) : (
-                  <p className="text-muted-foreground text-center py-8">No data for this day</p>
-                )}
-              </GlassCard>
-            ) : (
-              <GlassCard className="p-6 text-center">
-                <span className="mb-4 block"><AppleEmoji emoji="📅" size="4xl" /></span>
-                <h3 className="font-display text-lg font-semibold mb-2">Select a day</h3>
-                <p className="text-sm text-muted-foreground">
-                  Click on any day to see your habits, mood, and journal entry
-                </p>
-              </GlassCard>
-            )}
+                      )}
+                    </div>
+                  </div>
+                  
+                  {monthData[selectedDate!].journal && (
+                    <div>
+                      <p className="text-sm font-medium text-muted-foreground mb-2">Journal</p>
+                      <p className="text-sm text-foreground bg-secondary/50 p-3 rounded-xl">
+                        {monthData[selectedDate!].journal}
+                      </p>
+                    </div>
+                  )}
+                </>
+              ) : (
+                <p className="text-muted-foreground text-center py-8">No data for this day</p>
+              )}
+            </GlassCard>
           </div>
         </div>
         
