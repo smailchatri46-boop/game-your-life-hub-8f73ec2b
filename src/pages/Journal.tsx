@@ -43,7 +43,6 @@ const EMOJI_OPTIONS_ROW_2 = ["😴", "🎯", "🌟", "🎉", "💭", "🌈", "�
 
 // Rotating phrases for empty state
 const ROTATING_PHRASES = [
-  "make things clearer",
   "help you stay accountable",
   "motivate you on low days",
   "capture your best memories",
@@ -219,13 +218,6 @@ export default function Journal() {
           /* Empty State - perfectly centered */
           <div className="flex-1 flex items-center justify-center">
             <div className="flex flex-col items-center text-center px-4">
-              <h1 className="font-display text-4xl md:text-5xl font-semibold text-foreground mb-3">
-                Start journaling
-              </h1>
-              <p className="text-lg text-muted-foreground mb-6">
-                Write what you feel today
-              </p>
-              
               {/* Animated rotating phrase - fixed width container to prevent layout shifts */}
               <div className="mb-10 h-8 flex items-center justify-center">
                 <span className="text-muted-foreground whitespace-nowrap">Journaling will</span>
