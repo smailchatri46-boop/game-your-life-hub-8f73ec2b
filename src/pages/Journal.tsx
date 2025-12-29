@@ -259,7 +259,7 @@ export default function Journal() {
 
       {/* New/Edit Entry Modal */}
       <Dialog open={isModalOpen} onOpenChange={(open) => { if (!open) resetModal(); else setIsModalOpen(true); }}>
-        <DialogContent className={`sm:max-w-lg overflow-hidden relative bg-gradient-to-br ${modalTintClass} to-transparent transition-all duration-300`}>
+        <DialogContent className={`sm:max-w-lg max-h-[90vh] overflow-y-auto relative bg-gradient-to-br ${modalTintClass} to-transparent transition-all duration-300`}>
           <DialogHeader>
             <DialogTitle className="font-display text-xl">
               {editingEntry ? "Edit Journal Entry" : "New Journal Entry"}
