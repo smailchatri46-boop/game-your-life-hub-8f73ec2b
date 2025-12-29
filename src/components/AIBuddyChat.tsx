@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button";
-import { ArrowUp, Download, Loader2, Menu } from "lucide-react";
+import { ArrowUp, Download, Loader2, Menu, HelpCircle } from "lucide-react";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { useState, useEffect, useRef } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { useAIChat } from "@/hooks/use-ai-chat";
@@ -87,6 +88,11 @@ export function AIBuddyChat() {
       return;
     }
 
+    if (!isSubscribed) {
+      setShowUpgradeModal(true);
+      return;
+    }
+
     setIsExporting(true);
     try {
       const content = await exportUserData(user.id);
@@ -136,20 +142,34 @@ export function AIBuddyChat() {
           </div>
         </div>
 
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={handleExport}
-          disabled={isExporting}
-          className="text-muted-foreground hover:text-foreground hover:bg-muted/50"
-        >
-          {isExporting ? (
-            <Loader2 className="w-4 h-4 animate-spin mr-2" />
-          ) : (
-            <Download className="w-4 h-4 mr-2" />
-          )}
-          Download data
-        </Button>
+        <div className="flex items-center gap-1">
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={handleExport}
+            disabled={isExporting}
+            className="text-muted-foreground hover:text-foreground hover:bg-muted/50"
+          >
+            {isExporting ? (
+              <Loader2 className="w-4 h-4 animate-spin mr-2" />
+            ) : (
+              <Download className="w-4 h-4 mr-2" />
+            )}
+            Download data
+          </Button>
+          <Tooltip delayDuration={200}>
+            <TooltipTrigger asChild>
+              <button className="p-1.5 rounded-full hover:bg-muted/50 text-muted-foreground transition-colors">
+                <HelpCircle className="w-4 h-4" />
+              </button>
+            </TooltipTrigger>
+            <TooltipContent side="bottom" className="max-w-[280px] text-center p-3 bg-card border border-border/20 shadow-lg">
+              <p className="text-sm">
+                Download your analytics to upload to ChatGPT, Gemini, Grok, or your favorite AI. Have a conversation about your data, get insights, or do whatever you want with it. Your data is yours and it's safe here.
+              </p>
+            </TooltipContent>
+          </Tooltip>
+        </div>
       </div>
 
       {/* Sidebar Overlay - no blur, just dim */}
