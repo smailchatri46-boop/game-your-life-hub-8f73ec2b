@@ -190,7 +190,7 @@ export function AIBuddyChat() {
               Start a conversation
             </h2>
             <p className="text-muted-foreground text-sm max-w-sm">
-              I'm your wellness buddy <AppleEmoji emoji="😊" size="sm" className="inline align-middle mx-0.5" /> Ask me about habits, routines, motivation, or anything to help you stay on track!
+              I'm your wellness buddy <AppleEmoji emoji="🙂" size="sm" className="inline align-middle mx-0.5" /> I turn your habits and progress into clear insights, so you can make smarter decisions and reach your goals faster.
             </p>
           </div>
         )}
