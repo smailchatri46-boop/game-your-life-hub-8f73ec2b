@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -94,6 +94,12 @@ export function AddHabitModal({ open, onOpenChange, onSave }: AddHabitModalProps
   const [progressiveRampDuration, setProgressiveRampDuration] = useState<"1-week" | "2-weeks" | "1-month" | "custom">("2-weeks");
   const [progressiveCustomWeeks, setProgressiveCustomWeeks] = useState(3);
 
+  // Reset guidance to show every time modal opens
+  useEffect(() => {
+    if (open) {
+      setShowGuidance(true);
+    }
+  }, [open]);
 
   const selectedCategory = CATEGORIES.find(c => c.value === category);
 
