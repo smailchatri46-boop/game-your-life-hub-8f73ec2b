@@ -276,7 +276,7 @@ export default function Overview() {
                         isFuture 
                           ? 'bg-muted/30 cursor-not-allowed'
                           : isSelected
-                            ? 'bg-gradient-to-br from-primary to-[hsl(25,90%,60%)] text-primary-foreground shadow-medium'
+                            ? 'btn-primary-gradient text-primary-foreground shadow-medium'
                             : completionRate >= 80
                               ? 'bg-primary/25 hover:bg-primary/35'
                               : completionRate >= 50
