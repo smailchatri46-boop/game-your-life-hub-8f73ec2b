@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -76,6 +76,8 @@ const RAMP_DURATION_OPTIONS = [
 ];
 
 export function AddHabitModal({ open, onOpenChange, onSave }: AddHabitModalProps) {
+  const formTopRef = useRef<HTMLDivElement | null>(null);
+
   const [name, setName] = useState("");
   const [category, setCategory] = useState("health");
   const [icon, setIcon] = useState("🎯");
@@ -87,7 +89,7 @@ export function AddHabitModal({ open, onOpenChange, onSave }: AddHabitModalProps
   const [importance, setImportance] = useState(50);
   const [error, setError] = useState("");
   const [showGuidance, setShowGuidance] = useState(true);
-  
+
   // Progressive build-up state
   const [progressiveStartGoal, setProgressiveStartGoal] = useState(1);
   const [progressiveTargetGoal, setProgressiveTargetGoal] = useState(5);
@@ -184,7 +186,14 @@ export function AddHabitModal({ open, onOpenChange, onSave }: AddHabitModalProps
     <>
       {/* Guidance Carousel - appears every time modal opens */}
       {open && showGuidance && (
-        <HabitGuidanceCarousel onComplete={() => setShowGuidance(false)} />
+        <HabitGuidanceCarousel
+          onComplete={() => {
+            setShowGuidance(false);
+            requestAnimationFrame(() => {
+              formTopRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+            });
+          }}
+        />
       )}
       
       <Dialog open={open} onOpenChange={handleClose}>
@@ -215,6 +224,7 @@ export function AddHabitModal({ open, onOpenChange, onSave }: AddHabitModalProps
 
         {/* Content - Scrollable area */}
         <div className="px-7 py-6 overflow-y-auto" style={{ maxHeight: 'calc(70vh - 200px)' }}>
+          <div ref={formTopRef} />
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-x-10 gap-y-6">
             {/* Left Column - Form fields in correct order */}
             <div className="space-y-6">

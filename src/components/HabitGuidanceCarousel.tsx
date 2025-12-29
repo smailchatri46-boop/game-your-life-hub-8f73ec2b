@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { createPortal } from "react-dom";
 import { Button } from "@/components/ui/button";
 import { AppleEmoji } from "@/components/AppleEmoji";
 
@@ -38,18 +39,14 @@ export function HabitGuidanceCarousel({ onComplete }: HabitGuidanceCarouselProps
   const slide = SLIDES[currentSlide];
   const isLastSlide = currentSlide === SLIDES.length - 1;
 
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center animate-fade-in">
+  return createPortal(
+    <div className="fixed inset-0 z-[9999] flex items-center justify-center animate-fade-in">
       {/* Blurred background overlay */}
-      <div 
-        className="absolute inset-0 bg-background/60 backdrop-blur-md"
-        onClick={(e) => e.stopPropagation()}
-      />
-      
+      <div className="absolute inset-0 bg-background/60 backdrop-blur-md" />
+
       {/* Card */}
       <div className="relative z-10 w-full max-w-md mx-4 animate-scale-in">
         <div className="bg-card/95 backdrop-blur-sm rounded-3xl shadow-2xl border border-border/10 overflow-hidden">
-          {/* Content */}
           <div className="px-8 py-10 text-center">
             {/* Emoji */}
             <div className="mb-6 flex justify-center">
@@ -58,12 +55,10 @@ export function HabitGuidanceCarousel({ onComplete }: HabitGuidanceCarouselProps
               </div>
             </div>
 
-            {/* Title */}
             <h2 className="text-xl font-semibold text-foreground mb-3 font-display">
               {slide.title}
             </h2>
 
-            {/* Message */}
             <p className="text-muted-foreground text-sm leading-relaxed mb-8 max-w-sm mx-auto">
               {slide.message}
             </p>
@@ -73,19 +68,20 @@ export function HabitGuidanceCarousel({ onComplete }: HabitGuidanceCarouselProps
               {SLIDES.map((_, index) => (
                 <button
                   key={index}
+                  type="button"
                   onClick={() => setCurrentSlide(index)}
                   className={`w-2 h-2 rounded-full transition-all duration-300 ${
                     index === currentSlide
                       ? "w-6 bg-gradient-to-r from-primary to-primary/80"
                       : index < currentSlide
-                      ? "bg-primary/40"
-                      : "bg-muted-foreground/20"
+                        ? "bg-primary/40"
+                        : "bg-muted-foreground/20"
                   }`}
+                  aria-label={`Go to slide ${index + 1}`}
                 />
               ))}
             </div>
 
-            {/* Button */}
             <Button
               variant="gradient"
               onClick={handleNext}
@@ -96,6 +92,7 @@ export function HabitGuidanceCarousel({ onComplete }: HabitGuidanceCarouselProps
           </div>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body,
   );
 }
