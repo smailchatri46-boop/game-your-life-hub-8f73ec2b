@@ -271,25 +271,20 @@ export default function Journal() {
 
       {/* New/Edit Entry Modal */}
       <Dialog open={isModalOpen} onOpenChange={(open) => { if (!open) resetModal(); else setIsModalOpen(true); }}>
-        <DialogContent className="sm:max-w-lg max-h-[85vh] overflow-y-auto transition-all duration-500">
+        <DialogContent className="sm:max-w-lg overflow-hidden">
           {/* Animated ambient glow background */}
           <div 
-            className="absolute inset-0 -z-10 opacity-60 transition-all duration-700 rounded-lg overflow-hidden"
+            className="absolute inset-0 -z-10 pointer-events-none"
             style={{
               background: `
                 radial-gradient(ellipse 80% 60% at 20% 30%, ${glowColor} 0%, transparent 50%),
                 radial-gradient(ellipse 70% 50% at 80% 70%, ${glowColor} 0%, transparent 45%),
                 radial-gradient(ellipse 50% 40% at 50% 50%, ${glowColor} 0%, transparent 40%)
               `,
-              animation: 'ambientPulse 8s ease-in-out infinite',
+              opacity: 0.5,
+              transition: 'background 0.5s ease-in-out',
             }}
           />
-          <style>{`
-            @keyframes ambientPulse {
-              0%, 100% { opacity: 0.4; transform: scale(1); }
-              50% { opacity: 0.6; transform: scale(1.02); }
-            }
-          `}</style>
           <DialogHeader>
             <DialogTitle className="font-display text-xl">
               {editingEntry ? "Edit Journal Entry" : "New Journal Entry"}
