@@ -4,6 +4,7 @@ import { AppleEmoji } from "@/components/AppleEmoji";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { JournalGuidanceCarousel } from "@/components/JournalGuidanceCarousel";
 import { Plus, Pencil, Trash2 } from "lucide-react";
 import { useState, useMemo, useEffect } from "react";
 
@@ -83,6 +84,7 @@ export default function Journal() {
   const [selectedEmoji, setSelectedEmoji] = useState("😊");
   const [editingEntry, setEditingEntry] = useState<JournalEntry | null>(null);
   const [currentPhraseIndex, setCurrentPhraseIndex] = useState(0);
+  const [showCarousel, setShowCarousel] = useState(false);
 
   // Rotate phrases every 2.5 seconds
   useEffect(() => {
@@ -147,10 +149,20 @@ export default function Journal() {
   };
 
   const handleOpenNewEntry = () => {
+    // Show carousel first, then open modal when carousel completes
+    setShowCarousel(true);
+  };
+
+  const handleCarouselComplete = () => {
+    setShowCarousel(false);
     setEditingEntry(null);
     setNewContent("");
     setSelectedEmoji("😊");
     setIsModalOpen(true);
+  };
+
+  const handleCarouselClose = () => {
+    setShowCarousel(false);
   };
 
   return (
@@ -345,6 +357,14 @@ export default function Journal() {
           </div>
         </DialogContent>
       </Dialog>
+
+      {/* Journal Guidance Carousel */}
+      {showCarousel && (
+        <JournalGuidanceCarousel
+          onComplete={handleCarouselComplete}
+          onClose={handleCarouselClose}
+        />
+      )}
     </div>
   );
 }
