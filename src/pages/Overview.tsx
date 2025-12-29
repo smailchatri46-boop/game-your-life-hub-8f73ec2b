@@ -456,19 +456,21 @@ export default function Overview() {
           </div>
           
           {/* Goals Teaser */}
-          <GlassCard className="p-4 pt-3 relative overflow-hidden bg-gradient-to-br from-[hsl(30,80%,95%)] to-[hsl(25,70%,90%)]" glow>
-            <div className="absolute top-2.5 right-3">
-              <span className="px-2 py-0.5 bg-primary/10 text-primary text-xs font-semibold rounded-full">
+          <GlassCard className="p-5 relative overflow-hidden bg-gradient-to-br from-[hsl(30,80%,95%)] to-[hsl(25,70%,90%)] flex flex-col" glow>
+            <div className="absolute top-3 right-3">
+              <span className="px-2 py-1 bg-primary/10 text-primary text-xs font-semibold rounded-full">
                 Most used feature
               </span>
             </div>
-            <h3 className="font-display text-xl font-semibold mb-1 flex items-center gap-2 mt-1">
-              <AppleEmoji emoji="🎯" size="2xl" />
-              Goals
-            </h3>
-            <p className="text-sm text-muted-foreground mb-2.5">
-              Set yearly and quarterly goals, break them into milestones, and track your progress.
-            </p>
+            <div className="flex-1 flex flex-col justify-center">
+              <h3 className="font-display text-xl font-semibold mb-1.5 flex items-center gap-2">
+                <AppleEmoji emoji="🎯" size="2xl" />
+                Goals
+              </h3>
+              <p className="text-sm text-muted-foreground mb-3">
+                Set yearly and quarterly goals, break them into milestones, and track your progress.
+              </p>
+            </div>
             <Button variant="gradient" size="sm" className="w-full" asChild>
               <Link to="/goals">
                 Explore Goals
