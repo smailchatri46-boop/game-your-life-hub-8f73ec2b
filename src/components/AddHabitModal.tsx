@@ -5,8 +5,6 @@ import { Input } from "@/components/ui/input";
 import { Slider } from "@/components/ui/slider";
 import { AppleEmoji } from "@/components/AppleEmoji";
 import { X } from "lucide-react";
-import { useFirstTimeTips } from "@/hooks/use-first-time-tips";
-import { FirstTimeTip } from "@/components/FirstTimeTip";
 
 const CATEGORIES = [
   { value: "work", label: "Work", color: "#3B82F6" },
@@ -93,7 +91,7 @@ export function AddHabitModal({ open, onOpenChange, onSave }: AddHabitModalProps
   const [progressiveTargetGoal, setProgressiveTargetGoal] = useState(5);
   const [progressiveRampDuration, setProgressiveRampDuration] = useState<"1-week" | "2-weeks" | "1-month" | "custom">("2-weeks");
   const [progressiveCustomWeeks, setProgressiveCustomWeeks] = useState(3);
-  const { activeTip, tipMessage, triggerTip, dismissTip, shouldShowTip } = useFirstTimeTips();
+  
 
   const selectedCategory = CATEGORIES.find(c => c.value === category);
 
@@ -139,10 +137,6 @@ export function AddHabitModal({ open, onOpenChange, onSave }: AddHabitModalProps
     onSave(newHabit);
     resetForm();
     onOpenChange(false);
-    
-    if (shouldShowTip("habit")) {
-      setTimeout(() => triggerTip("habit"), 300);
-    }
   };
 
   const resetForm = () => {
@@ -178,7 +172,6 @@ export function AddHabitModal({ open, onOpenChange, onSave }: AddHabitModalProps
   };
 
   return (
-    <>
     <Dialog open={open} onOpenChange={handleClose}>
       <DialogContent 
         hideCloseButton
@@ -497,13 +490,5 @@ export function AddHabitModal({ open, onOpenChange, onSave }: AddHabitModalProps
         </div>
       </DialogContent>
     </Dialog>
-    
-    <FirstTimeTip
-      open={activeTip === "habit"}
-      title={tipMessage?.title || ""}
-      message={tipMessage?.message || ""}
-      onDismiss={dismissTip}
-    />
-  </>
   );
 }
