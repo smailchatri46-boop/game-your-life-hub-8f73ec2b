@@ -11,6 +11,7 @@ import { UnifiedMoodMotivationModal } from "@/components/UnifiedMoodMotivationMo
 import { AppleEmoji as MoodEmoji } from "@/components/AppleEmoji";
 import { useFirstTimeTips } from "@/hooks/use-first-time-tips";
 import { FirstTimeTip } from "@/components/FirstTimeTip";
+import { GoalProgressOverview } from "@/components/GoalProgressOverview";
 
 import { Button } from "@/components/ui/button";
 import { Plus, Trash2, GripVertical, Check, ChevronLeft, ChevronRight, Target, Calendar, TrendingUp, FileText } from "lucide-react";
@@ -690,6 +691,11 @@ export default function Habits() {
             />
           </div>
         </GlassCard>
+
+        {/* Goal Progress Overview */}
+        <div className="mb-8">
+          <GoalProgressOverview />
+        </div>
 
         {/* AI Buddy Chat */}
         <div className="max-w-7xl mx-auto">

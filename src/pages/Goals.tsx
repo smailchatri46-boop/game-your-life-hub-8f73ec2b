@@ -1,32 +1,201 @@
+import { useState } from "react";
 import { Navbar } from "@/components/Navbar";
 import { GlassCard } from "@/components/GlassCard";
 import { AppleEmoji } from "@/components/AppleEmoji";
-import { Target } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { GoalCard } from "@/components/GoalCard";
+import { AddGoalModal } from "@/components/AddGoalModal";
+import { useGoals } from "@/hooks/use-goals";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/contexts/AuthContext";
+import { Plus, Target } from "lucide-react";
+// SEO meta tags handled in index.html
+
+type FilterType = "all" | "active" | "completed" | "quarterly" | "yearly";
 
 export default function Goals() {
+  const { user } = useAuth();
+  const { goals, activeGoals, completedGoals, goalHabits, isLoading } = useGoals();
+  const [showAddModal, setShowAddModal] = useState(false);
+  const [filter, setFilter] = useState<FilterType>("active");
+
+  // Fetch habits for linking
+  const { data: habits = [] } = useQuery({
+    queryKey: ["habits", user?.id],
+    queryFn: async () => {
+      if (!user) return [];
+      const { data, error } = await supabase
+        .from("habits")
+        .select("*")
+        .eq("user_id", user.id);
+      if (error) throw error;
+      return data;
+    },
+    enabled: !!user,
+  });
+
+  const getLinkedHabits = (goalId: string) => {
+    const links = goalHabits.filter((gh) => gh.goal_id === goalId);
+    return habits.filter((h) => links.some((l) => l.habit_id === h.id));
+  };
+
+  const getFilteredGoals = () => {
+    switch (filter) {
+      case "active":
+        return activeGoals;
+      case "completed":
+        return completedGoals;
+      case "quarterly":
+        return goals.filter((g) => {
+          const months = Math.ceil(
+            (new Date(g.end_date).getTime() - new Date(g.start_date).getTime()) / (1000 * 60 * 60 * 24 * 30)
+          );
+          return months <= 6;
+        });
+      case "yearly":
+        return goals.filter((g) => {
+          const months = Math.ceil(
+            (new Date(g.end_date).getTime() - new Date(g.start_date).getTime()) / (1000 * 60 * 60 * 24 * 30)
+          );
+          return months > 6;
+        });
+      default:
+        return goals;
+    }
+  };
+
+  const filteredGoals = getFilteredGoals();
+  const hasGoals = goals.length > 0;
+
+  const filters: { key: FilterType; label: string }[] = [
+    { key: "active", label: "Active" },
+    { key: "completed", label: "Completed" },
+    { key: "quarterly", label: "Quarterly" },
+    { key: "yearly", label: "Yearly" },
+  ];
+
   return (
     <div className="min-h-screen gradient-bg">
       <Navbar />
-      
-      <main className="pt-28 pb-12 px-4 max-w-4xl mx-auto">
-        <div className="text-center mb-8">
-          <h1 className="font-display text-3xl font-semibold text-foreground">Goals</h1>
-          <p className="text-muted-foreground text-sm mt-2">Set and track your life goals</p>
-        </div>
-        
-        <GlassCard className="p-12 text-center">
-          <div className="w-20 h-20 mx-auto rounded-2xl bg-gradient-to-br from-accent/30 to-primary/30 flex items-center justify-center mb-6">
-            <Target className="w-10 h-10 text-primary" />
+
+      <main className="pt-28 pb-12 px-4 max-w-7xl mx-auto">
+        {!hasGoals && !isLoading ? (
+          /* Empty State */
+          <div className="flex items-center justify-center min-h-[60vh]">
+            <GlassCard className="p-12 text-center max-w-md mx-auto">
+              <div className="w-24 h-24 mx-auto rounded-3xl bg-gradient-to-br from-primary/20 to-accent/20 flex items-center justify-center mb-6">
+                <AppleEmoji emoji="🎯" size="4xl" />
+              </div>
+              <h1 className="font-display text-2xl font-semibold text-foreground mb-3">
+                Set your first goal
+              </h1>
+              <p className="text-muted-foreground mb-8">
+                Small consistent actions lead to big changes. Define what matters and start tracking your journey.
+              </p>
+              <Button
+                onClick={() => setShowAddModal(true)}
+                variant="gradient"
+                size="lg"
+                className="px-8"
+              >
+                <Plus className="w-5 h-5 mr-2" />
+                Add Goal
+              </Button>
+            </GlassCard>
           </div>
-          <h2 className="font-display text-xl font-semibold mb-3">Coming Soon</h2>
-          <p className="text-muted-foreground max-w-md mx-auto">
-            Set yearly and quarterly goals, break them into actionable milestones, and track your progress toward what matters most.
-          </p>
-          <div className="mt-6">
-            <AppleEmoji emoji="🎯" size="xl" />
-          </div>
-        </GlassCard>
+        ) : (
+          <>
+            {/* Header */}
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
+              <div>
+                <h1 className="font-display text-3xl font-semibold text-foreground">Goals</h1>
+                <p className="text-muted-foreground text-sm mt-1">
+                  Track your progress toward what matters most
+                </p>
+              </div>
+              <Button onClick={() => setShowAddModal(true)} variant="gradient" size="lg">
+                <Plus className="w-5 h-5 mr-2" />
+                Add Goal
+              </Button>
+            </div>
+
+            {/* Stats Row */}
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-8">
+              <GlassCard className="p-4 text-center">
+                <p className="text-3xl font-bold gradient-text">{activeGoals.length}</p>
+                <p className="text-xs text-muted-foreground">Active Goals</p>
+              </GlassCard>
+              <GlassCard className="p-4 text-center">
+                <p className="text-3xl font-bold gradient-text">{completedGoals.length}</p>
+                <p className="text-xs text-muted-foreground">Completed</p>
+              </GlassCard>
+              <GlassCard className="p-4 text-center">
+                <p className="text-3xl font-bold gradient-text">
+                  {goals.filter((g) => {
+                    const months = Math.ceil(
+                      (new Date(g.end_date).getTime() - new Date(g.start_date).getTime()) / (1000 * 60 * 60 * 24 * 30)
+                    );
+                    return months <= 6;
+                  }).length}
+                </p>
+                <p className="text-xs text-muted-foreground">Quarterly</p>
+              </GlassCard>
+              <GlassCard className="p-4 text-center">
+                <p className="text-3xl font-bold gradient-text">
+                  {goals.filter((g) => {
+                    const months = Math.ceil(
+                      (new Date(g.end_date).getTime() - new Date(g.start_date).getTime()) / (1000 * 60 * 60 * 24 * 30)
+                    );
+                    return months > 6;
+                  }).length}
+                </p>
+                <p className="text-xs text-muted-foreground">Yearly</p>
+              </GlassCard>
+            </div>
+
+            {/* Filters */}
+            <div className="flex gap-2 mb-6 overflow-x-auto pb-2">
+              {filters.map((f) => (
+                <button
+                  key={f.key}
+                  onClick={() => setFilter(f.key)}
+                  className={`px-4 py-2 rounded-full text-sm font-medium transition-all whitespace-nowrap ${
+                    filter === f.key
+                      ? "bg-gradient-to-r from-primary to-accent text-primary-foreground"
+                      : "bg-white/70 text-muted-foreground hover:bg-white"
+                  }`}
+                >
+                  {f.label}
+                </button>
+              ))}
+            </div>
+
+            {/* Goals Grid */}
+            {filteredGoals.length > 0 ? (
+              <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                {filteredGoals.map((goal) => (
+                  <GoalCard
+                    key={goal.id}
+                    goal={goal}
+                    linkedHabits={getLinkedHabits(goal.id)}
+                  />
+                ))}
+              </div>
+            ) : (
+              <GlassCard className="p-8 text-center">
+                <AppleEmoji emoji="📭" size="3xl" className="mb-4" />
+                <p className="text-muted-foreground">
+                  No {filter === "all" ? "" : filter} goals found
+                </p>
+              </GlassCard>
+            )}
+          </>
+        )}
       </main>
+
+      {/* Add Goal Modal */}
+      <AddGoalModal open={showAddModal} onOpenChange={setShowAddModal} />
     </div>
   );
 }
