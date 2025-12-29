@@ -96,23 +96,13 @@ export function JournalGuidanceCarousel({ onComplete, onClose }: JournalGuidance
               ))}
             </div>
 
-            {isLastSlide ? (
-              <Button
-                variant="gradient"
-                onClick={handleNext}
-                className="px-8 py-3 rounded-xl shadow-lg hover:shadow-xl transition-all text-base font-medium"
-              >
-                Add Journal
-              </Button>
-            ) : (
-              <Button
-                variant="ghost"
-                onClick={handleNext}
-                className="px-8 py-3 rounded-xl text-base font-medium text-muted-foreground hover:text-foreground"
-              >
-                Next
-              </Button>
-            )}
+            <Button
+              variant="gradient"
+              onClick={handleNext}
+              className="px-8 py-3 rounded-xl shadow-lg hover:shadow-xl transition-all text-base font-medium"
+            >
+              {isLastSlide ? "Add Journal" : "Next"}
+            </Button>
           </div>
         </div>
       </div>

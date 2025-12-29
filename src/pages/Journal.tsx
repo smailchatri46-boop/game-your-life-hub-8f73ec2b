@@ -4,7 +4,7 @@ import { AppleEmoji } from "@/components/AppleEmoji";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { JournalGuidanceCarousel } from "@/components/JournalGuidanceCarousel";
+
 import { Plus, Pencil, Trash2 } from "lucide-react";
 import { useState, useMemo, useEffect } from "react";
 
@@ -42,12 +42,23 @@ const emojiToColorMap: Record<string, { bg: string; tint: string; btnGradient: s
 const EMOJI_OPTIONS_ROW_1 = ["🥳", "😌", "💡", "🤔", "💪", "😊", "🙏", "🔥"];
 const EMOJI_OPTIONS_ROW_2 = ["😴", "🎯", "🌟", "🎉", "💭", "🌈", "☕", "📚"];
 
-// Rotating phrases for empty state
-const ROTATING_PHRASES = [
-  "help you stay accountable",
-  "motivate you on low days",
-  "capture your best memories",
-  "help you understand yourself",
+// Onboarding slides for first-time users
+const ONBOARDING_SLIDES = [
+  {
+    emoji: "📓",
+    title: "Each journal brings you closer to who you want to become",
+    message: "Small reflections written daily compound over time. Journaling helps you notice patterns, track growth, and understand yourself better.",
+  },
+  {
+    emoji: "🤖",
+    title: "Your journals help the AI understand you better",
+    message: "The more you write, the more personalized your guidance becomes. Your entries help the AI give advice that truly fits what you're going through.",
+  },
+  {
+    emoji: "🔒",
+    title: "Entries can only be edited or deleted in the first 24 hours",
+    message: "After the first day, entries become locked to protect your progress history and help keep an honest record of your journey.",
+  },
 ];
 
 // Helper to check if entry is within 24 hours
@@ -83,16 +94,7 @@ export default function Journal() {
   const [newContent, setNewContent] = useState("");
   const [selectedEmoji, setSelectedEmoji] = useState("😊");
   const [editingEntry, setEditingEntry] = useState<JournalEntry | null>(null);
-  const [currentPhraseIndex, setCurrentPhraseIndex] = useState(0);
-  const [showCarousel, setShowCarousel] = useState(false);
-
-  // Rotate phrases every 2.5 seconds
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setCurrentPhraseIndex((prev) => (prev + 1) % ROTATING_PHRASES.length);
-    }, 2500);
-    return () => clearInterval(interval);
-  }, []);
+  const [currentSlideIndex, setCurrentSlideIndex] = useState(0);
 
   const modalBgClass = useMemo(() => getModalBgClass(selectedEmoji), [selectedEmoji]);
   const modalTintClass = useMemo(() => getModalTintClass(selectedEmoji), [selectedEmoji]);
@@ -149,20 +151,19 @@ export default function Journal() {
   };
 
   const handleOpenNewEntry = () => {
-    // Show carousel first, then open modal when carousel completes
-    setShowCarousel(true);
-  };
-
-  const handleCarouselComplete = () => {
-    setShowCarousel(false);
     setEditingEntry(null);
     setNewContent("");
     setSelectedEmoji("😊");
     setIsModalOpen(true);
   };
 
-  const handleCarouselClose = () => {
-    setShowCarousel(false);
+  const handleNextSlide = () => {
+    if (currentSlideIndex < ONBOARDING_SLIDES.length - 1) {
+      setCurrentSlideIndex((prev) => prev + 1);
+    } else {
+      // Last slide - open modal
+      handleOpenNewEntry();
+    }
   };
 
   return (
@@ -227,34 +228,50 @@ export default function Journal() {
             })}
           </div>
         ) : (
-          /* Empty State - perfectly centered */
+          /* Empty State - Inline onboarding slides */
           <div className="flex-1 flex items-center justify-center">
-            <div className="flex flex-col items-center text-center px-4">
-              {/* Animated rotating phrase - fixed width container to prevent layout shifts */}
-              <div className="mb-10 h-8 flex items-center justify-center">
-                <span className="text-muted-foreground whitespace-nowrap">Journaling will</span>
-                <span className="relative ml-1.5 w-[200px] sm:w-[240px] text-left h-7 overflow-hidden">
-                  {ROTATING_PHRASES.map((phrase, index) => (
-                    <span
-                      key={phrase}
-                      className={`absolute left-0 top-0 text-primary font-medium transition-opacity duration-500 whitespace-nowrap ${
-                        index === currentPhraseIndex ? 'opacity-100' : 'opacity-0'
-                      }`}
-                    >
-                      {phrase}
-                    </span>
-                  ))}
-                </span>
+            <div className="flex flex-col items-center text-center px-4 max-w-md animate-fade-in">
+              {/* Emoji */}
+              <div className="mb-6 flex justify-center">
+                <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-primary/10 to-primary/5 flex items-center justify-center">
+                  <AppleEmoji emoji={ONBOARDING_SLIDES[currentSlideIndex].emoji} size="4xl" />
+                </div>
               </div>
-              
-              {/* Big round add button - orange gradient */}
-              <button
-                onClick={handleOpenNewEntry}
-                className="w-20 h-20 rounded-full bg-gradient-to-br from-primary via-primary to-[hsl(25,90%,55%)] shadow-large hover:shadow-xl hover:scale-110 transition-all duration-300 flex items-center justify-center"
-                aria-label="New journal entry"
+
+              <h2 className="text-xl font-semibold text-foreground mb-3 font-display">
+                {ONBOARDING_SLIDES[currentSlideIndex].title}
+              </h2>
+
+              <p className="text-muted-foreground text-sm leading-relaxed mb-8 max-w-sm mx-auto">
+                {ONBOARDING_SLIDES[currentSlideIndex].message}
+              </p>
+
+              {/* Progress dots */}
+              <div className="flex justify-center gap-2 mb-6">
+                {ONBOARDING_SLIDES.map((_, index) => (
+                  <button
+                    key={index}
+                    type="button"
+                    onClick={() => setCurrentSlideIndex(index)}
+                    className={`w-2 h-2 rounded-full transition-all duration-300 ${
+                      index === currentSlideIndex
+                        ? "w-6 bg-gradient-to-r from-primary to-primary/80"
+                        : index < currentSlideIndex
+                          ? "bg-primary/40"
+                          : "bg-muted-foreground/20"
+                    }`}
+                    aria-label={`Go to slide ${index + 1}`}
+                  />
+                ))}
+              </div>
+
+              <Button
+                variant="gradient"
+                onClick={handleNextSlide}
+                className="px-8 py-3 rounded-xl shadow-lg hover:shadow-xl transition-all text-base font-medium"
               >
-                <Plus className="w-10 h-10 text-white" />
-              </button>
+                {currentSlideIndex === ONBOARDING_SLIDES.length - 1 ? "Add Journal" : "Next"}
+              </Button>
             </div>
           </div>
         )}
@@ -358,13 +375,6 @@ export default function Journal() {
         </DialogContent>
       </Dialog>
 
-      {/* Journal Guidance Carousel */}
-      {showCarousel && (
-        <JournalGuidanceCarousel
-          onComplete={handleCarouselComplete}
-          onClose={handleCarouselClose}
-        />
-      )}
     </div>
   );
 }
