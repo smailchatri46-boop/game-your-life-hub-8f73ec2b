@@ -19,10 +19,11 @@ const CATEGORIES = [
 ];
 
 // Curated unique Apple emoji set - 21 emojis for 3 rows of 7
+// Removed problematic emojis that don't render consistently: ❤️, 🏋️, ☀️
 const EMOJI_OPTIONS = [
   "📖", "💪", "💼", "🏃", "💧", "🧘", "✍️",
   "🎯", "🥗", "😴", "🚶", "📝", "🎨", "🎵",
-  "💡", "🧠", "❤️", "🌟", "🏋️", "🍎", "☀️",
+  "💡", "🧠", "🌸", "🌟", "🔥", "🍎", "🌙",
 ];
 
 const WEEKDAYS = [
