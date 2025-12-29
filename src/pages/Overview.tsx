@@ -1,13 +1,10 @@
 import { Navbar } from "@/components/Navbar";
-import { StatCard } from "@/components/StatCard";
-import { LevelProgress } from "@/components/LevelProgress";
 import { GlassCard } from "@/components/GlassCard";
 import { AppleEmoji } from "@/components/AppleEmoji";
-import { ProfileChecklist } from "@/components/ProfileChecklist";
 import { OnboardingQuestionsModal } from "@/components/OnboardingQuestionsModal";
 import { AIBuddyChat } from "@/components/AIBuddyChat";
 import { useHabitStats } from "@/hooks/use-habit-stats";
-import { Target, Calendar, TrendingUp, Flame, Sparkles, X } from "lucide-react";
+import { Target, TrendingUp, Heart, BarChart3, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { useState, useMemo } from "react";
@@ -82,52 +79,93 @@ export default function Overview() {
           <AIBuddyChat />
         </div>
 
-        {/* Stats Row */}
+        {/* Stats Row - New Analytics Cards */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-          <StatCard
-            title="Today"
-            subtitle={habitStats.todayTotal > 0 ? `${habitStats.todayCompleted}/${habitStats.todayTotal} completed` : "No habits yet"}
-            value={habitStats.todayPercent}
-            icon={Target}
-            iconColor="text-primary"
-            progress={habitStats.todayPercent}
-          />
-          <StatCard
-            title="This Week Average"
-            subtitle="Last 7 days"
-            value={habitStats.weekAvg}
-            icon={Calendar}
-            iconColor="text-accent"
-            progress={habitStats.weekAvg}
-          />
-          <StatCard
-            title="This Month"
-            subtitle={new Date().toLocaleString('default', { month: 'long' })}
-            value={habitStats.monthPercent}
-            icon={TrendingUp}
-            iconColor="text-primary"
-            progress={habitStats.monthPercent}
-          />
-          <StatCard
-            title="Current Streak"
-            subtitle={<span className="flex items-center gap-1">Keep it up! <AppleEmoji emoji="🔥" size="sm" /></span>}
-            value={habitStats.currentStreak}
-            suffix=" days"
-            icon={Flame}
-            iconColor="text-accent"
-          />
-        </div>
-        
-        {/* Profile Checklist */}
-        <ProfileChecklist onOpenOnboarding={() => setShowOnboarding(true)} />
-        
-        {/* Level Progress */}
-        <div className="mb-8">
-          <LevelProgress
-            level={7}
-            currentXP={2450}
-            maxXP={3000}
-          />
+          {/* Card 1 - Average Day Progress */}
+          <div className="glass-card p-5 min-w-[180px] hover:shadow-large transition-all duration-300">
+            <div className="flex items-start justify-between mb-3">
+              <div>
+                <h3 className="text-sm font-semibold text-foreground">Average Day Progress</h3>
+              </div>
+              <div className="p-2 rounded-xl bg-secondary text-primary">
+                <TrendingUp className="w-4 h-4" />
+              </div>
+            </div>
+            <div className="flex items-baseline gap-0.5 mb-2">
+              <span className="text-3xl font-bold gradient-text">{habitStats.monthPercent}</span>
+              <span className="text-lg font-medium text-primary/70">%</span>
+            </div>
+            <p className="text-xs text-muted-foreground">Average daily completion</p>
+            <div className="mt-3 h-1.5 bg-secondary rounded-full overflow-hidden">
+              <div 
+                className="h-full progress-bar-orange rounded-full transition-all duration-500"
+                style={{ width: `${habitStats.monthPercent}%` }}
+              />
+            </div>
+          </div>
+
+          {/* Card 2 - Perfect Days This Week */}
+          <div className="glass-card p-5 min-w-[180px] hover:shadow-large transition-all duration-300">
+            <div className="flex items-start justify-between mb-3">
+              <div>
+                <h3 className="text-sm font-semibold text-foreground">Perfect Days This Week</h3>
+              </div>
+              <div className="p-2 rounded-xl bg-secondary text-accent">
+                <Target className="w-4 h-4" />
+              </div>
+            </div>
+            <div className="flex items-baseline gap-0.5 mb-2">
+              <span className="text-3xl font-bold gradient-text">{habitStats.perfectDaysThisWeek ?? 0}</span>
+              <span className="text-lg font-medium text-primary/70"> / 7</span>
+            </div>
+            <p className="text-xs text-muted-foreground">Days completed fully this week</p>
+            <div className="mt-3 h-1.5 bg-secondary rounded-full overflow-hidden">
+              <div 
+                className="h-full progress-bar-orange rounded-full transition-all duration-500"
+                style={{ width: `${((habitStats.perfectDaysThisWeek ?? 0) / 7) * 100}%` }}
+              />
+            </div>
+          </div>
+
+          {/* Card 3 - Average Mood */}
+          <div className="glass-card p-5 min-w-[180px] hover:shadow-large transition-all duration-300">
+            <div className="flex items-start justify-between mb-3">
+              <div>
+                <h3 className="text-sm font-semibold text-foreground">Average Mood</h3>
+              </div>
+              <div className="p-2 rounded-xl bg-secondary text-primary">
+                <Heart className="w-4 h-4" />
+              </div>
+            </div>
+            <div className="flex items-center gap-2 mb-2">
+              <AppleEmoji emoji={habitStats.averageMoodEmoji ?? "😊"} size="3xl" />
+              <span className="text-lg font-semibold text-foreground">{habitStats.averageMoodLabel ?? "Happy"}</span>
+            </div>
+            <p className="text-xs text-muted-foreground">How you've been feeling</p>
+          </div>
+
+          {/* Card 4 - Emotional Stability */}
+          <div className="glass-card p-5 min-w-[180px] hover:shadow-large transition-all duration-300">
+            <div className="flex items-start justify-between mb-3">
+              <div>
+                <h3 className="text-sm font-semibold text-foreground">Emotional Stability</h3>
+              </div>
+              <div className="p-2 rounded-xl bg-secondary text-accent">
+                <BarChart3 className="w-4 h-4" />
+              </div>
+            </div>
+            <div className="flex items-baseline gap-0.5 mb-2">
+              <span className="text-3xl font-bold gradient-text">{habitStats.emotionalStability ?? 7}</span>
+              <span className="text-lg font-medium text-primary/70"> / 10</span>
+            </div>
+            <p className="text-xs text-muted-foreground">Consistency of mood</p>
+            <div className="mt-3 h-1.5 bg-secondary rounded-full overflow-hidden">
+              <div 
+                className="h-full progress-bar-orange rounded-full transition-all duration-500"
+                style={{ width: `${((habitStats.emotionalStability ?? 7) / 10) * 100}%` }}
+              />
+            </div>
+          </div>
         </div>
 
         {/* Monthly Calendar */}
@@ -296,11 +334,11 @@ export default function Overview() {
                   </Link>
                 </Button>
                 <Button variant="secondary" className="justify-start h-auto py-4 px-5" asChild>
-                  <Link to="/settings">
-                    <span className="mr-3"><AppleEmoji emoji="⚙️" size="xl" /></span>
+                  <Link to="/goals">
+                    <span className="mr-3"><AppleEmoji emoji="🎯" size="xl" /></span>
                     <div className="text-left">
-                      <p className="font-semibold">Settings</p>
-                      <p className="text-xs text-muted-foreground">Customize your experience</p>
+                      <p className="font-semibold">Goals</p>
+                      <p className="text-xs text-muted-foreground">See how close you are to your goals</p>
                     </div>
                   </Link>
                 </Button>
@@ -316,7 +354,7 @@ export default function Overview() {
               </span>
             </div>
             <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-accent/30 to-primary/30 flex items-center justify-center mb-4">
-              <Sparkles className="w-7 h-7 text-primary" />
+              <AppleEmoji emoji="🎯" size="3xl" />
             </div>
             <h3 className="font-display text-xl font-semibold mb-2">Goals</h3>
             <p className="text-sm text-muted-foreground mb-4">
@@ -336,10 +374,10 @@ export default function Overview() {
             <h3 className="font-display text-xl font-semibold mb-4">Recent Activity</h3>
             <div className="space-y-3">
               {[
-                { emoji: "✅", text: "Completed 'Morning Meditation'", time: "2 hours ago" },
-                { emoji: "🔥", text: `${habitStats.currentStreak} day streak achieved!`, time: "Yesterday" },
-                { emoji: "⬆️", text: "Leveled up to Level 7", time: "2 days ago" },
-                { emoji: "📝", text: "Wrote journal entry", time: "2 days ago" },
+                { emoji: "💪", text: "Completed 'Exercise'", time: "2 hours ago" },
+                { emoji: "💧", text: "Completed 'Drink Water'", time: "3 hours ago" },
+                { emoji: "📓", text: "Wrote a journal entry", time: "Yesterday" },
+                { emoji: "🧘", text: "Completed 'Morning Meditation'", time: "Yesterday" },
               ].map((activity, i) => (
                 <div key={i} className="flex items-center gap-3 py-2 border-b border-border/50 last:border-0">
                   <AppleEmoji emoji={activity.emoji} size="xl" />
@@ -348,7 +386,7 @@ export default function Overview() {
                 </div>
               ))}
             </div>
-        </GlassCard>
+          </GlassCard>
         </div>
         
         {/* Onboarding Questions Modal */}
