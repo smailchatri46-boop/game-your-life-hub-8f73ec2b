@@ -272,11 +272,12 @@ export default function Overview() {
                       key={day}
                       onClick={() => !isFuture && setSelectedDate(day)}
                       disabled={isFuture}
+                      style={isSelected && !isFuture ? { background: 'linear-gradient(135deg, hsl(38 100% 70%) 0%, hsl(24 95% 53%) 100%)' } : undefined}
                       className={`aspect-square rounded-2xl flex flex-col items-center justify-center transition-colors duration-200 ${
                         isFuture 
                           ? 'bg-muted/30 cursor-not-allowed'
                           : isSelected
-                            ? 'btn-primary-gradient text-primary-foreground shadow-medium'
+                            ? 'text-primary-foreground shadow-medium hover:brightness-[1.03]'
                             : completionRate >= 80
                               ? 'bg-primary/25 hover:bg-primary/35'
                               : completionRate >= 50
