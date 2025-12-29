@@ -6,8 +6,6 @@ import { Textarea } from "@/components/ui/textarea";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Plus, Pencil, Trash2 } from "lucide-react";
 import { useState, useMemo } from "react";
-import { useFirstTimeTips } from "@/hooks/use-first-time-tips";
-import { FirstTimeTip } from "@/components/FirstTimeTip";
 
 interface JournalEntry {
   id: string;
@@ -102,7 +100,7 @@ export default function Journal() {
   const [newContent, setNewContent] = useState("");
   const [selectedEmoji, setSelectedEmoji] = useState("😊");
   const [editingEntry, setEditingEntry] = useState<JournalEntry | null>(null);
-  const { activeTip, tipMessage, triggerTip, dismissTip, shouldShowTip } = useFirstTimeTips();
+  
 
   const modalBgClass = useMemo(() => getModalBgClass(selectedEmoji), [selectedEmoji]);
 
@@ -146,11 +144,6 @@ export default function Journal() {
     }
     
     resetModal();
-    
-    // Trigger first-time tip after saving
-    if (shouldShowTip("journal")) {
-      setTimeout(() => triggerTip("journal"), 300);
-    }
   };
 
   const resetModal = () => {
@@ -304,14 +297,6 @@ export default function Journal() {
           </div>
         </DialogContent>
       </Dialog>
-      
-      {/* First-time tip */}
-      <FirstTimeTip
-        open={activeTip === "journal"}
-        title={tipMessage?.title || ""}
-        message={tipMessage?.message || ""}
-        onDismiss={dismissTip}
-      />
     </div>
   );
 }
