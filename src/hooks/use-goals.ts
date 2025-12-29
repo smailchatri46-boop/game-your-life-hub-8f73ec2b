@@ -2,6 +2,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner";
+import { useState, useCallback } from "react";
 
 export interface Goal {
   id: string;
@@ -35,9 +36,45 @@ export interface CreateGoalInput {
   habit_ids: string[];
 }
 
+// Local storage key for demo goals
+const DEMO_GOALS_KEY = "demo_goals";
+const DEMO_GOAL_HABITS_KEY = "demo_goal_habits";
+
+// Helper functions for local storage
+const getDemoGoals = (): Goal[] => {
+  try {
+    const stored = localStorage.getItem(DEMO_GOALS_KEY);
+    return stored ? JSON.parse(stored) : [];
+  } catch {
+    return [];
+  }
+};
+
+const setDemoGoals = (goals: Goal[]) => {
+  localStorage.setItem(DEMO_GOALS_KEY, JSON.stringify(goals));
+};
+
+const getDemoGoalHabits = (): GoalHabit[] => {
+  try {
+    const stored = localStorage.getItem(DEMO_GOAL_HABITS_KEY);
+    return stored ? JSON.parse(stored) : [];
+  } catch {
+    return [];
+  }
+};
+
+const setDemoGoalHabits = (habits: GoalHabit[]) => {
+  localStorage.setItem(DEMO_GOAL_HABITS_KEY, JSON.stringify(habits));
+};
+
 export function useGoals() {
   const { user } = useAuth();
   const queryClient = useQueryClient();
+  const isDemo = !user;
+
+  // Demo mode state
+  const [demoGoals, setDemoGoalsState] = useState<Goal[]>(() => getDemoGoals());
+  const [demoGoalHabits, setDemoGoalHabitsState] = useState<GoalHabit[]>(() => getDemoGoalHabits());
 
   const goalsQuery = useQuery({
     queryKey: ["goals", user?.id],
@@ -70,15 +107,69 @@ export function useGoals() {
     enabled: !!user,
   });
 
+  // Demo mode create goal
+  const createDemoGoal = useCallback((input: CreateGoalInput) => {
+    const newGoal: Goal = {
+      id: crypto.randomUUID(),
+      user_id: "demo",
+      name: input.name,
+      category: input.category,
+      category_emoji: input.category_emoji,
+      start_date: input.start_date,
+      end_date: input.end_date,
+      target_count: input.target_count,
+      completed_count: 0,
+      status: "active",
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+    };
+
+    const updatedGoals = [newGoal, ...demoGoals];
+    setDemoGoals(updatedGoals);
+    setDemoGoalsState(updatedGoals);
+
+    // Link habits
+    if (input.habit_ids.length > 0) {
+      const newLinks: GoalHabit[] = input.habit_ids.map((habit_id) => ({
+        id: crypto.randomUUID(),
+        goal_id: newGoal.id,
+        habit_id,
+        user_id: "demo",
+      }));
+      const updatedLinks = [...demoGoalHabits, ...newLinks];
+      setDemoGoalHabits(updatedLinks);
+      setDemoGoalHabitsState(updatedLinks);
+    }
+
+    toast.success("Goal created! (Demo mode - data stored locally)");
+    return newGoal;
+  }, [demoGoals, demoGoalHabits]);
+
+  // Demo mode delete goal
+  const deleteDemoGoal = useCallback((goalId: string) => {
+    const updatedGoals = demoGoals.filter((g) => g.id !== goalId);
+    setDemoGoals(updatedGoals);
+    setDemoGoalsState(updatedGoals);
+
+    const updatedLinks = demoGoalHabits.filter((gh) => gh.goal_id !== goalId);
+    setDemoGoalHabits(updatedLinks);
+    setDemoGoalHabitsState(updatedLinks);
+
+    toast.success("Goal deleted (Demo mode)");
+  }, [demoGoals, demoGoalHabits]);
+
   const createGoal = useMutation({
     mutationFn: async (input: CreateGoalInput) => {
-      if (!user) throw new Error("Not authenticated");
+      // Demo mode - use local storage
+      if (isDemo) {
+        return createDemoGoal(input);
+      }
 
-      // Create the goal
+      // Authenticated mode - use Supabase
       const { data: goal, error: goalError } = await supabase
         .from("goals")
         .insert({
-          user_id: user.id,
+          user_id: user!.id,
           name: input.name,
           category: input.category,
           category_emoji: input.category_emoji,
@@ -96,7 +187,7 @@ export function useGoals() {
         const habitLinks = input.habit_ids.map((habit_id) => ({
           goal_id: goal.id,
           habit_id,
-          user_id: user.id,
+          user_id: user!.id,
         }));
 
         const { error: linkError } = await supabase
@@ -109,9 +200,11 @@ export function useGoals() {
       return goal;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["goals"] });
-      queryClient.invalidateQueries({ queryKey: ["goal_habits"] });
-      toast.success("Goal created successfully!");
+      if (!isDemo) {
+        queryClient.invalidateQueries({ queryKey: ["goals"] });
+        queryClient.invalidateQueries({ queryKey: ["goal_habits"] });
+        toast.success("Goal created successfully!");
+      }
     },
     onError: (error) => {
       console.error("Error creating goal:", error);
@@ -121,6 +214,12 @@ export function useGoals() {
 
   const deleteGoal = useMutation({
     mutationFn: async (goalId: string) => {
+      // Demo mode
+      if (isDemo) {
+        deleteDemoGoal(goalId);
+        return;
+      }
+
       const { error } = await supabase
         .from("goals")
         .delete()
@@ -129,9 +228,11 @@ export function useGoals() {
       if (error) throw error;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["goals"] });
-      queryClient.invalidateQueries({ queryKey: ["goal_habits"] });
-      toast.success("Goal deleted");
+      if (!isDemo) {
+        queryClient.invalidateQueries({ queryKey: ["goals"] });
+        queryClient.invalidateQueries({ queryKey: ["goal_habits"] });
+        toast.success("Goal deleted");
+      }
     },
     onError: () => {
       toast.error("Failed to delete goal");
@@ -161,15 +262,20 @@ export function useGoals() {
     return "On track";
   };
 
-  const activeGoals = goalsQuery.data?.filter((g) => g.status === "active") || [];
-  const completedGoals = goalsQuery.data?.filter((g) => g.status === "completed") || [];
+  // Use demo data or real data based on auth status
+  const goals = isDemo ? demoGoals : (goalsQuery.data || []);
+  const goalHabits = isDemo ? demoGoalHabits : (goalHabitsQuery.data || []);
+  
+  const activeGoals = goals.filter((g) => g.status === "active");
+  const completedGoals = goals.filter((g) => g.status === "completed");
 
   return {
-    goals: goalsQuery.data || [],
+    goals,
     activeGoals,
     completedGoals,
-    goalHabits: goalHabitsQuery.data || [],
-    isLoading: goalsQuery.isLoading,
+    goalHabits,
+    isLoading: isDemo ? false : goalsQuery.isLoading,
+    isDemo,
     createGoal,
     deleteGoal,
     getGoalProgress,
