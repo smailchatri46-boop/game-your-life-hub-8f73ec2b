@@ -17,21 +17,29 @@ interface JournalEntry {
   createdAt: number; // timestamp for 24-hour logic
 }
 
-// Map emojis to specific background colors
-const emojiToColorMap: Record<string, string> = {
-  "🥳": "bg-journal-orange",
-  "😌": "bg-journal-yellow",
-  "💡": "bg-journal-yellow",
-  "🤔": "bg-journal-purple",
-  "💪": "bg-journal-pink",
-  "😊": "bg-journal-green",
-  "🙏": "bg-journal-purple",
-  "🔥": "bg-journal-orange",
-  "✨": "bg-journal-yellow",
-  "❤️": "bg-journal-pink",
+// Map emojis to specific background colors and modal tints
+const emojiToColorMap: Record<string, { bg: string; tint: string }> = {
+  "🥳": { bg: "bg-journal-orange", tint: "from-[hsl(30,90%,95%)/0.4]" },
+  "😌": { bg: "bg-journal-yellow", tint: "from-[hsl(45,90%,95%)/0.4]" },
+  "💡": { bg: "bg-journal-yellow", tint: "from-[hsl(45,90%,95%)/0.4]" },
+  "🤔": { bg: "bg-journal-purple", tint: "from-[hsl(270,60%,95%)/0.4]" },
+  "💪": { bg: "bg-journal-pink", tint: "from-[hsl(340,70%,95%)/0.4]" },
+  "😊": { bg: "bg-journal-green", tint: "from-[hsl(150,50%,95%)/0.4]" },
+  "🙏": { bg: "bg-journal-purple", tint: "from-[hsl(270,60%,95%)/0.4]" },
+  "🔥": { bg: "bg-journal-orange", tint: "from-[hsl(30,90%,95%)/0.4]" },
+  "😴": { bg: "bg-journal-purple", tint: "from-[hsl(270,60%,95%)/0.4]" },
+  "🎯": { bg: "bg-journal-orange", tint: "from-[hsl(30,90%,95%)/0.4]" },
+  "🌟": { bg: "bg-journal-yellow", tint: "from-[hsl(45,90%,95%)/0.4]" },
+  "🎉": { bg: "bg-journal-pink", tint: "from-[hsl(340,70%,95%)/0.4]" },
+  "💭": { bg: "bg-journal-purple", tint: "from-[hsl(270,60%,95%)/0.4]" },
+  "🌈": { bg: "bg-journal-green", tint: "from-[hsl(150,50%,95%)/0.4]" },
+  "☕": { bg: "bg-journal-orange", tint: "from-[hsl(30,90%,95%)/0.4]" },
+  "📚": { bg: "bg-journal-yellow", tint: "from-[hsl(45,90%,95%)/0.4]" },
 };
 
-const EMOJI_OPTIONS = ["🥳", "😌", "💡", "🤔", "💪", "😊", "🙏", "🔥", "✨", "❤️"];
+// Two rows of emojis (Apple style)
+const EMOJI_OPTIONS_ROW_1 = ["🥳", "😌", "💡", "🤔", "💪", "😊", "🙏", "🔥"];
+const EMOJI_OPTIONS_ROW_2 = ["😴", "🎯", "🌟", "🎉", "💭", "🌈", "☕", "📚"];
 
 // Initial entries with timestamps set to more than 24 hours ago (locked)
 const initialEntries: JournalEntry[] = [
@@ -91,7 +99,12 @@ const isWithin24Hours = (createdAt: number): boolean => {
 
 // Helper to get tailwind bg class for modal based on emoji
 const getModalBgClass = (emoji: string): string => {
-  return emojiToColorMap[emoji] || "bg-journal-green";
+  return emojiToColorMap[emoji]?.bg || "bg-journal-green";
+};
+
+// Helper to get modal tint gradient based on emoji
+const getModalTintClass = (emoji: string): string => {
+  return emojiToColorMap[emoji]?.tint || "from-[hsl(150,50%,95%)/0.4]";
 };
 
 export default function Journal() {
@@ -103,6 +116,7 @@ export default function Journal() {
   
 
   const modalBgClass = useMemo(() => getModalBgClass(selectedEmoji), [selectedEmoji]);
+  const modalTintClass = useMemo(() => getModalTintClass(selectedEmoji), [selectedEmoji]);
 
   const deleteEntry = (id: string) => {
     setEntries(entries.filter(e => e.id !== id));
@@ -245,7 +259,7 @@ export default function Journal() {
 
       {/* New/Edit Entry Modal */}
       <Dialog open={isModalOpen} onOpenChange={(open) => { if (!open) resetModal(); else setIsModalOpen(true); }}>
-        <DialogContent className="sm:max-w-lg overflow-hidden">
+        <DialogContent className={`sm:max-w-lg overflow-hidden relative bg-gradient-to-br ${modalTintClass} to-transparent transition-all duration-300`}>
           <DialogHeader>
             <DialogTitle className="font-display text-xl">
               {editingEntry ? "Edit Journal Entry" : "New Journal Entry"}
@@ -253,26 +267,44 @@ export default function Journal() {
           </DialogHeader>
           
           <div className="space-y-4 pt-4">
-            {/* Emoji Picker */}
+            {/* Emoji Picker - Two Rows */}
             <div>
               <label className="block text-sm font-medium text-muted-foreground mb-2">
                 How are you feeling?
               </label>
-              <div className="flex gap-2 flex-wrap">
-                {EMOJI_OPTIONS.map((emoji) => (
-                  <button
-                    key={emoji}
-                    type="button"
-                    onClick={() => setSelectedEmoji(emoji)}
-                    className={`p-2 rounded-xl transition-all ${
-                      selectedEmoji === emoji
-                        ? "bg-primary/20 ring-2 ring-primary scale-110"
-                        : "hover:bg-secondary"
-                    }`}
-                  >
-                    <AppleEmoji emoji={emoji} size="lg" />
-                  </button>
-                ))}
+              <div className="space-y-2">
+                <div className="flex gap-2 flex-wrap">
+                  {EMOJI_OPTIONS_ROW_1.map((emoji) => (
+                    <button
+                      key={emoji}
+                      type="button"
+                      onClick={() => setSelectedEmoji(emoji)}
+                      className={`p-2 rounded-xl transition-all ${
+                        selectedEmoji === emoji
+                          ? "bg-primary/20 ring-2 ring-primary scale-110"
+                          : "hover:bg-secondary"
+                      }`}
+                    >
+                      <AppleEmoji emoji={emoji} size="lg" />
+                    </button>
+                  ))}
+                </div>
+                <div className="flex gap-2 flex-wrap">
+                  {EMOJI_OPTIONS_ROW_2.map((emoji) => (
+                    <button
+                      key={emoji}
+                      type="button"
+                      onClick={() => setSelectedEmoji(emoji)}
+                      className={`p-2 rounded-xl transition-all ${
+                        selectedEmoji === emoji
+                          ? "bg-primary/20 ring-2 ring-primary scale-110"
+                          : "hover:bg-secondary"
+                      }`}
+                    >
+                      <AppleEmoji emoji={emoji} size="lg" />
+                    </button>
+                  ))}
+                </div>
               </div>
             </div>
 
@@ -286,13 +318,14 @@ export default function Journal() {
               />
             </div>
 
-            <div className="flex justify-end gap-3">
-              <Button variant="outline" onClick={resetModal}>
-                Cancel
-              </Button>
-              <Button variant="gradient" onClick={handleSave} disabled={!newContent.trim()}>
-                {editingEntry ? "Update Entry" : "Save Entry"}
-              </Button>
+            <div className="flex justify-end">
+              <button
+                onClick={handleSave}
+                disabled={!newContent.trim()}
+                className="px-6 py-2.5 rounded-full bg-gradient-to-br from-journal-yellow via-journal-green to-journal-purple shadow-medium hover:shadow-large hover:scale-105 transition-all duration-300 text-foreground font-medium disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
+              >
+                Save
+              </button>
             </div>
           </div>
         </DialogContent>
