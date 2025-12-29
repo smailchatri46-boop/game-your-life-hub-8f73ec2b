@@ -112,6 +112,33 @@ export type Database = {
           },
         ]
       }
+      daily_todos: {
+        Row: {
+          completed: boolean
+          created_at: string
+          date: string
+          id: string
+          text: string
+          user_id: string
+        }
+        Insert: {
+          completed?: boolean
+          created_at?: string
+          date: string
+          id?: string
+          text: string
+          user_id: string
+        }
+        Update: {
+          completed?: boolean
+          created_at?: string
+          date?: string
+          id?: string
+          text?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       habit_completions: {
         Row: {
           created_at: string
