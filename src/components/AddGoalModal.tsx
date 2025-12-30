@@ -135,7 +135,8 @@ export function AddGoalModal({ open, onOpenChange }: AddGoalModalProps) {
   }, [isComplete]);
 
   const handleNext = () => {
-    if (step === 7 && selectedHabitObjects.length > 0) {
+    // Step 6 is now the target step (was step 7)
+    if (step === 6 && selectedHabitObjects.length > 0) {
       // Save current habit target
       if (currentHabit && currentHabitTarget) {
         setHabitTargets((prev) => ({
@@ -155,15 +156,12 @@ export function AddGoalModal({ open, onOpenChange }: AddGoalModalProps) {
     if (step < totalSteps) {
       setStep(step + 1);
       if (step === 5) {
-        // Reset habit target state when entering step 6 (commitment)
-        // nothing special needed here
-      }
-      if (step === 6) {
-        // Reset habit target state when entering step 7
+        // Reset habit target state when entering step 6 (target setting)
         setCurrentHabitIndex(0);
         setCurrentHabitTarget("");
       }
     } else {
+      // Step 7 (commitment) is the last step - submit the goal
       handleSubmit();
     }
   };
@@ -176,7 +174,8 @@ export function AddGoalModal({ open, onOpenChange }: AddGoalModalProps) {
   };
 
   const handleBack = () => {
-    if (step === 7 && currentHabitIndex > 0) {
+    // Step 6 is now the target step
+    if (step === 6 && currentHabitIndex > 0) {
       // Go back to previous habit target
       setCurrentHabitIndex((prev) => prev - 1);
       const prevHabit = selectedHabitObjects[currentHabitIndex - 1];
@@ -707,10 +706,10 @@ export function AddGoalModal({ open, onOpenChange }: AddGoalModalProps) {
             >
               {createGoal.isPending 
                 ? "Creating..." 
-                : step === totalSteps && (selectedHabitObjects.length === 0 || isLastHabitTarget)
+                : step === totalSteps
                   ? "Create Goal" 
                   : "Next"}
-              {!(step === totalSteps && (selectedHabitObjects.length === 0 || isLastHabitTarget)) && (
+              {step !== totalSteps && (
                 <ChevronRight className="w-4 h-4 ml-1" />
               )}
             </Button>
