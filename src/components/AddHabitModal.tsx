@@ -213,7 +213,7 @@ export function AddHabitModal({ open, onOpenChange, onSave, skipGuidance = false
           <div className="flex items-center justify-between">
             <div>
               <h2 className="text-xl font-semibold text-foreground font-display">
-                Add New Habit
+                Add New Habit or Task
               </h2>
               <p className="text-sm text-muted-foreground mt-1">
                 Build better routines, one habit at a time
@@ -574,7 +574,7 @@ export function AddHabitModal({ open, onOpenChange, onSave, skipGuidance = false
               onClick={handleSave}
               className="px-6 rounded-xl shadow-lg hover:shadow-xl transition-all"
             >
-              Create Habit
+              Create Habit or Task
             </Button>
           </div>
         </div>
