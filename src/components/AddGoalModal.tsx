@@ -525,10 +525,10 @@ export function AddGoalModal({ open, onOpenChange }: AddGoalModalProps) {
                 </div>
                 <div className="space-y-3">
                   {COMMITMENT_STATEMENTS.map((statement, index) => (
-                    <button
+                    <div
                       key={index}
                       onClick={() => toggleCommitment(index)}
-                      className={`w-full p-3 rounded-2xl flex items-start gap-3 text-left transition-all duration-200 ${
+                      className={`w-full p-3 rounded-2xl flex items-start gap-3 text-left transition-all duration-200 cursor-pointer ${
                         commitmentChecks[index]
                           ? "bg-gradient-to-br from-primary/20 to-accent/20 border-2 border-primary/50"
                           : "bg-white/80 hover:bg-white border-2 border-transparent"
@@ -536,11 +536,10 @@ export function AddGoalModal({ open, onOpenChange }: AddGoalModalProps) {
                     >
                       <Checkbox
                         checked={commitmentChecks[index]}
-                        onCheckedChange={() => toggleCommitment(index)}
-                        className="mt-0.5"
+                        className="mt-0.5 pointer-events-none"
                       />
                       <span className="text-sm text-foreground">{statement}</span>
-                    </button>
+                    </div>
                   ))}
                 </div>
                 <div className="pt-2">
@@ -635,16 +634,6 @@ export function AddGoalModal({ open, onOpenChange }: AddGoalModalProps) {
               </div>
             )}
 
-            {/* Skip button for step 2 */}
-            {step === 2 && (
-              <Button
-                variant="outline"
-                onClick={handleSkip}
-                className="text-muted-foreground bg-muted/30 border-muted/50 hover:bg-muted/50 rounded-xl h-11"
-              >
-                Skip
-              </Button>
-            )}
             
             <Button
               onClick={handleNext}
