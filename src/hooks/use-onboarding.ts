@@ -4,8 +4,8 @@ export type OnboardingStep =
   | "welcome"
   | "identity-1"
   | "identity-2"
-  | "identity-3"
   | "why-we-exist"
+  | "tell-us-about-you"
   | "about-focus"
   | "about-struggle"
   | "about-time"
@@ -25,6 +25,7 @@ export interface OnboardingData {
   goalName: string;
   commitmentName: string;
   checkedAffirmations: string[];
+  uniqueAbout: string;
 }
 
 const INITIAL_DATA: OnboardingData = {
@@ -37,14 +38,15 @@ const INITIAL_DATA: OnboardingData = {
   goalName: "",
   commitmentName: "",
   checkedAffirmations: [],
+  uniqueAbout: "",
 };
 
 const STEP_ORDER: OnboardingStep[] = [
   "welcome",
   "identity-1",
   "identity-2",
-  "identity-3",
   "why-we-exist",
+  "tell-us-about-you",
   "about-focus",
   "about-struggle",
   "about-time",
