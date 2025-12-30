@@ -84,15 +84,14 @@ export function AddGoalModal({ open, onOpenChange }: AddGoalModalProps) {
   const [commitmentChecks, setCommitmentChecks] = useState<boolean[]>([false, false, false, false]);
   const [signatureName, setSignatureName] = useState("");
 
-  // Demo habits for when user is not logged in
-  // Note: "Drink Water" is marked as oncePerDay for testing the different wording
-  const demoHabits = [
+  // Demo habits for when user is not logged in (stored in state so we can add to it)
+  const [localDemoHabits, setLocalDemoHabits] = useState([
     { id: "demo-1", name: "Morning Meditation", icon: "🧘", target: 1, oncePerDay: false },
     { id: "demo-2", name: "Exercise", icon: "💪", target: 3, oncePerDay: false },
     { id: "demo-3", name: "Read 30 mins", icon: "📚", target: 1, oncePerDay: false },
-    { id: "demo-4", name: "Drink Water", icon: "💧", target: 8, oncePerDay: true }, // TEST: once-per-day habit
+    { id: "demo-4", name: "Drink Water", icon: "💧", target: 8, oncePerDay: true },
     { id: "demo-5", name: "No Social Media", icon: "📵", target: 1, oncePerDay: false },
-  ];
+  ]);
 
   // Fetch user's habits (only when logged in)
   const { data: fetchedHabits = [], refetch: refetchHabits } = useQuery({
@@ -110,8 +109,8 @@ export function AddGoalModal({ open, onOpenChange }: AddGoalModalProps) {
     enabled: !!user,
   });
 
-  // Use fetched habits if logged in, otherwise use demo habits
-  const habits = user ? fetchedHabits : demoHabits;
+  // Use fetched habits if logged in, otherwise use local demo habits
+  const habits = user ? fetchedHabits : localDemoHabits;
 
   // Get currently selected habit objects
   const selectedHabitObjects = habits.filter((h) => selectedHabits.includes(h.id));
@@ -292,7 +291,22 @@ export function AddGoalModal({ open, onOpenChange }: AddGoalModalProps) {
   // Handle inline habit creation
   const handleInlineHabitSave = async (newHabit: NewHabit) => {
     if (!user) {
-      // For demo mode, just add to local state
+      // For demo mode, add to local demo habits state
+      const demoHabitId = `demo-${Date.now()}`;
+      const newDemoHabit = {
+        id: demoHabitId,
+        name: newHabit.name,
+        icon: newHabit.icon,
+        target: newHabit.target,
+        oncePerDay: false,
+      };
+      
+      // Add to local demo habits list
+      setLocalDemoHabits(prev => [...prev, newDemoHabit]);
+      
+      // Auto-select the newly created habit
+      setSelectedHabits(prev => [...prev, demoHabitId]);
+      
       toast.success("Habit created and selected!");
       return;
     }
