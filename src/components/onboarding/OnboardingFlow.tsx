@@ -1,0 +1,225 @@
+import { useNavigate } from "react-router-dom";
+import { useOnboarding } from "@/hooks/use-onboarding";
+import { OnboardingProgress } from "./OnboardingProgress";
+import { WelcomeStep } from "./steps/WelcomeStep";
+import { IdentityStep } from "./steps/IdentityStep";
+import { WhyWeExistStep } from "./steps/WhyWeExistStep";
+import { AboutYourselfStep } from "./steps/AboutYourselfStep";
+import { HabitSuggestionsStep } from "./steps/HabitSuggestionsStep";
+import { GoalsStep } from "./steps/GoalsStep";
+import { CommitmentStep } from "./steps/CommitmentStep";
+import { LoadingStep } from "./steps/LoadingStep";
+import { SuccessStep } from "./steps/SuccessStep";
+
+export function OnboardingFlow() {
+  const navigate = useNavigate();
+  const {
+    currentStep,
+    data,
+    progress,
+    goToNext,
+    goToPrevious,
+    updateData,
+    toggleFocusArea,
+    toggleStruggle,
+    toggleHabit,
+    addCustomHabit,
+    removeCustomHabit,
+    toggleAffirmation,
+    completeOnboarding,
+    skipOnboarding,
+  } = useOnboarding();
+
+  const handleSkip = () => {
+    skipOnboarding();
+    navigate("/dashboard");
+  };
+
+  const handleCreateAccount = () => {
+    // For now, just go to next step (auth will be handled separately)
+    goToNext();
+  };
+
+  const handleLogin = () => {
+    navigate("/auth");
+  };
+
+  const handleGoToDashboard = () => {
+    completeOnboarding();
+    navigate("/dashboard");
+  };
+
+  const handleAddMoreHabits = () => {
+    completeOnboarding();
+    navigate("/dashboard");
+  };
+
+  const handleStartJournaling = () => {
+    completeOnboarding();
+    navigate("/journal");
+  };
+
+  const handleCommitmentComplete = () => {
+    goToNext(); // Go to loading step
+  };
+
+  const renderStep = () => {
+    switch (currentStep) {
+      case "welcome":
+        return (
+          <WelcomeStep
+            onCreateAccount={handleCreateAccount}
+            onLogin={handleLogin}
+            onSkip={handleSkip}
+          />
+        );
+
+      case "identity-1":
+        return (
+          <IdentityStep
+            variant={1}
+            onNext={goToNext}
+            onBack={goToPrevious}
+            onSkip={handleSkip}
+          />
+        );
+
+      case "identity-2":
+        return (
+          <IdentityStep
+            variant={2}
+            onNext={goToNext}
+            onBack={goToPrevious}
+            onSkip={handleSkip}
+          />
+        );
+
+      case "identity-3":
+        return (
+          <IdentityStep
+            variant={3}
+            onNext={goToNext}
+            onBack={goToPrevious}
+            onSkip={handleSkip}
+          />
+        );
+
+      case "why-we-exist":
+        return (
+          <WhyWeExistStep
+            onNext={goToNext}
+            onBack={goToPrevious}
+            onSkip={handleSkip}
+          />
+        );
+
+      case "about-focus":
+        return (
+          <AboutYourselfStep
+            variant="focus"
+            selectedItems={data.focusAreas}
+            onToggleItem={toggleFocusArea}
+            onNext={goToNext}
+            onBack={goToPrevious}
+            onSkip={handleSkip}
+          />
+        );
+
+      case "about-struggle":
+        return (
+          <AboutYourselfStep
+            variant="struggle"
+            selectedItems={data.struggles}
+            onToggleItem={toggleStruggle}
+            onNext={goToNext}
+            onBack={goToPrevious}
+            onSkip={handleSkip}
+          />
+        );
+
+      case "about-time":
+        return (
+          <AboutYourselfStep
+            variant="time"
+            selectedItems={[]}
+            preferredTime={data.preferredTime}
+            onToggleItem={() => {}}
+            onSetTime={(time) => updateData({ preferredTime: time })}
+            onNext={goToNext}
+            onBack={goToPrevious}
+            onSkip={handleSkip}
+          />
+        );
+
+      case "habit-suggestions":
+        return (
+          <HabitSuggestionsStep
+            focusAreas={data.focusAreas}
+            selectedHabits={data.selectedHabits}
+            customHabits={data.customHabits}
+            onToggleHabit={toggleHabit}
+            onAddCustomHabit={addCustomHabit}
+            onRemoveCustomHabit={removeCustomHabit}
+            onNext={goToNext}
+            onBack={goToPrevious}
+            onSkip={handleSkip}
+          />
+        );
+
+      case "goals":
+        return (
+          <GoalsStep
+            goalCategory={data.goalCategory}
+            goalName={data.goalName}
+            onUpdateGoal={(category, name) => updateData({ goalCategory: category, goalName: name })}
+            onNext={goToNext}
+            onBack={goToPrevious}
+            onSkip={handleSkip}
+          />
+        );
+
+      case "commitment":
+        return (
+          <CommitmentStep
+            checkedAffirmations={data.checkedAffirmations}
+            commitmentName={data.commitmentName}
+            onToggleAffirmation={toggleAffirmation}
+            onSetName={(name) => updateData({ commitmentName: name })}
+            onComplete={handleCommitmentComplete}
+            onBack={goToPrevious}
+            onSkip={handleSkip}
+          />
+        );
+
+      case "loading":
+        return <LoadingStep onComplete={goToNext} />;
+
+      case "success":
+        return (
+          <SuccessStep
+            commitmentName={data.commitmentName}
+            onGoToDashboard={handleGoToDashboard}
+            onAddMoreHabits={handleAddMoreHabits}
+            onStartJournaling={handleStartJournaling}
+          />
+        );
+
+      default:
+        return null;
+    }
+  };
+
+  const showProgress = currentStep !== "welcome" && currentStep !== "loading" && currentStep !== "success";
+
+  return (
+    <div className="min-h-screen flex flex-col items-center justify-center p-4">
+      {/* Progress bar */}
+      {showProgress && <OnboardingProgress progress={progress} />}
+
+      {/* Current step */}
+      <div className="w-full max-w-md animate-in fade-in slide-in-from-bottom-4 duration-300">
+        {renderStep()}
+      </div>
+    </div>
+  );
+}
