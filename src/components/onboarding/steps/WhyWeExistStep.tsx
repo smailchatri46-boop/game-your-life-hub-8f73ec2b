@@ -17,14 +17,9 @@ export function WhyWeExistStep({ onNext }: WhyWeExistStepProps) {
         <h2 className="text-2xl font-bold font-display text-foreground mb-4">
           Why Locked exists
         </h2>
-        <div className="space-y-3 text-muted-foreground text-base leading-relaxed">
-          <p>
-            Locked is an AI-powered habit, task, and goals tracker.
-          </p>
-          <p>
-            Everything in one place — with meaningful insights built for you.
-          </p>
-        </div>
+        <p className="text-muted-foreground text-base leading-relaxed">
+          Locked is an AI-powered habit, task, and goals tracker. Everything in one place with meaningful insights built for you.
+        </p>
       </div>
 
       <div className="grid grid-cols-4 gap-3 mb-8">
