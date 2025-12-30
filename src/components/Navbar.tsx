@@ -10,9 +10,6 @@ const navItems = [
   { name: "Tutorials", path: "/tutorials" },
 ];
 
-const activeTextStyle = {
-  textShadow: '0 0 16px hsl(0 0% 100%), 0 0 32px hsl(0 0% 100% / 0.8), 0 0 8px hsl(0 0% 100%)'
-};
 
 export function Navbar() {
   const location = useLocation();
@@ -56,7 +53,6 @@ export function Navbar() {
                       ? "font-bold text-foreground"
                       : "font-medium text-muted-foreground hover:text-foreground/60"
                   )}
-                  style={isActive ? activeTextStyle : undefined}
                 >
                   {item.name}
                 </Link>
@@ -75,8 +71,7 @@ export function Navbar() {
             )}
             style={{ 
               width: '36px', 
-              minWidth: '36px',
-              ...(isSettingsActive ? { filter: 'drop-shadow(0 0 8px hsl(0 0% 100%)) drop-shadow(0 0 16px hsl(0 0% 100% / 0.6))' } : {})
+              minWidth: '36px'
             }}
           >
             <Settings className={cn("w-5 h-5", isSettingsActive && "stroke-[2.5px]")} />
