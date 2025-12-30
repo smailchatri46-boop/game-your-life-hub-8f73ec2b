@@ -358,31 +358,23 @@ export default function Habits() {
       
       <main className="pt-28 pb-24 px-3 sm:px-4 lg:px-6 xl:px-8">
         {/* Month Navigation - Centered above stats */}
-        <div className="flex items-center justify-center mb-6">
-          <div 
-            className="flex items-center gap-3 px-4 py-2 rounded-[24px]"
-            style={{
-              background: 'rgba(255, 255, 255, 0.95)',
-              boxShadow: '0 6px 16px rgba(0, 0, 0, 0.08), 0 2px 6px rgba(0, 0, 0, 0.05)',
-            }}
+        <div className="flex items-center justify-center gap-4 mb-6">
+          <button 
+            onClick={goToPreviousMonth}
+            className="p-2 rounded-full hover:bg-secondary transition-colors"
           >
-            <button 
-              onClick={goToPreviousMonth}
-              className="p-2 rounded-full hover:bg-secondary transition-colors"
-            >
-              <ChevronLeft className="w-5 h-5 text-muted-foreground" />
-            </button>
-            <h2 className="font-display text-2xl min-w-[180px] text-center">
-              <span className="text-primary font-semibold">{monthName}</span>
-              <span className="text-foreground ml-2 font-sans font-semibold italic">{year}</span>
-            </h2>
-            <button 
-              onClick={goToNextMonth}
-              className="p-2 rounded-full hover:bg-secondary transition-colors"
-            >
-              <ChevronRight className="w-5 h-5 text-muted-foreground" />
-            </button>
-          </div>
+            <ChevronLeft className="w-5 h-5 text-muted-foreground" />
+          </button>
+          <h2 className="font-display text-2xl min-w-[200px] text-center">
+            <span className="text-primary font-semibold">{monthName}</span>
+            <span className="text-foreground ml-2 font-sans font-semibold italic">{year}</span>
+          </h2>
+          <button 
+            onClick={goToNextMonth}
+            className="p-2 rounded-full hover:bg-secondary transition-colors"
+          >
+            <ChevronRight className="w-5 h-5 text-muted-foreground" />
+          </button>
         </div>
 
         {/* Stats Row */}
