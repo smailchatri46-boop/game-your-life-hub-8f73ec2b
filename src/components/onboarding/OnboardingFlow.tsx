@@ -161,7 +161,6 @@ export function OnboardingFlow() {
           <GoalsStep
             onNext={goToNext}
             onBack={goToPrevious}
-            onSkip={handleSkip}
           />
         );
 
@@ -174,7 +173,6 @@ export function OnboardingFlow() {
             onSetName={(name) => updateData({ commitmentName: name })}
             onComplete={handleCommitmentComplete}
             onBack={goToPrevious}
-            onSkip={handleSkip}
           />
         );
 

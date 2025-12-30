@@ -11,7 +11,6 @@ interface CommitmentStepProps {
   onSetName: (name: string) => void;
   onComplete: () => void;
   onBack: () => void;
-  onSkip: () => void;
 }
 
 const AFFIRMATIONS = [
@@ -27,7 +26,6 @@ export function CommitmentStep({
   onToggleAffirmation,
   onSetName,
   onComplete,
-  onSkip,
 }: CommitmentStepProps) {
   const allChecked = AFFIRMATIONS.every(a => checkedAffirmations.includes(a));
   const canComplete = allChecked && commitmentName.trim().length > 0;
@@ -96,13 +94,6 @@ export function CommitmentStep({
       >
         Sign & Continue
       </Button>
-
-      <button
-        onClick={onSkip}
-        className="mt-4 w-full text-sm text-muted-foreground hover:text-foreground hover:bg-secondary/30 py-2 rounded-lg transition-colors"
-      >
-        Skip onboarding
-      </button>
     </OnboardingCard>
   );
 }

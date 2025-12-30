@@ -6,10 +6,9 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 interface GoalsStepProps {
   onNext: () => void;
   onBack: () => void;
-  onSkip: () => void;
 }
 
-export function GoalsStep({ onNext, onBack, onSkip }: GoalsStepProps) {
+export function GoalsStep({ onNext, onBack }: GoalsStepProps) {
   return (
     <OnboardingCard className="text-center">
       <div className="mb-8">
@@ -44,13 +43,6 @@ export function GoalsStep({ onNext, onBack, onSkip }: GoalsStepProps) {
           <ChevronRight className="w-4 h-4 ml-1" />
         </Button>
       </div>
-
-      <button
-        onClick={onSkip}
-        className="mt-4 text-sm text-muted-foreground hover:text-foreground transition-colors"
-      >
-        Skip onboarding
-      </button>
     </OnboardingCard>
   );
 }
