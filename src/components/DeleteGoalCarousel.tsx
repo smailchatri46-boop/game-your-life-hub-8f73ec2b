@@ -89,10 +89,10 @@ export function DeleteGoalCarousel({ goalName, onConfirmDelete, onClose }: Delet
             {/* Slide 3 - Confirmation */}
             {isConfirmationSlide && (
               <>
-                {/* Warning emoji */}
+                {/* Delete emoji */}
                 <div className="mb-6 flex justify-center">
                   <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-destructive/10 to-destructive/5 flex items-center justify-center">
-                    <AppleEmoji emoji="⚠️" size="4xl" />
+                    <AppleEmoji emoji="🗑️" size="4xl" />
                   </div>
                 </div>
 
