@@ -1,9 +1,12 @@
+import { useState } from "react";
 import { AppleEmoji } from "@/components/AppleEmoji";
 import { GlassCard } from "@/components/GlassCard";
 import { Goal, useGoals } from "@/hooks/use-goals";
 import { format } from "date-fns";
-import { Trash2, Calendar, Target } from "lucide-react";
+import { Trash2, Calendar } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { DeleteGoalCarousel } from "@/components/DeleteGoalCarousel";
+import { useToast } from "@/hooks/use-toast";
 
 interface GoalCardProps {
   goal: Goal;
@@ -12,6 +15,8 @@ interface GoalCardProps {
 
 export function GoalCard({ goal, linkedHabits = [] }: GoalCardProps) {
   const { getGoalProgress, getGoalPace, deleteGoal } = useGoals();
+  const { toast } = useToast();
+  const [showDeleteCarousel, setShowDeleteCarousel] = useState(false);
   
   const progress = getGoalProgress(goal);
   const pace = getGoalPace(goal);
@@ -43,11 +48,27 @@ export function GoalCard({ goal, linkedHabits = [] }: GoalCardProps) {
           variant="ghost"
           size="icon"
           className="opacity-0 group-hover:opacity-100 transition-opacity h-8 w-8 text-destructive hover:bg-muted/50 hover:text-destructive"
-          onClick={() => deleteGoal.mutate(goal.id)}
+          onClick={() => setShowDeleteCarousel(true)}
         >
           <Trash2 className="w-4 h-4" />
         </Button>
       </div>
+
+      {/* Delete confirmation carousel */}
+      {showDeleteCarousel && (
+        <DeleteGoalCarousel
+          goalName={goal.name}
+          onClose={() => setShowDeleteCarousel(false)}
+          onConfirmDelete={() => {
+            deleteGoal.mutate(goal.id);
+            setShowDeleteCarousel(false);
+            toast({
+              title: "Goal deleted successfully",
+              description: "Your goal has been permanently removed.",
+            });
+          }}
+        />
+      )}
 
       {/* Progress */}
       <div className="mb-4">
