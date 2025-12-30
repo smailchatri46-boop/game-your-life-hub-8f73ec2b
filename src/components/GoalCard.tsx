@@ -3,10 +3,17 @@ import { AppleEmoji } from "@/components/AppleEmoji";
 import { GlassCard } from "@/components/GlassCard";
 import { Goal, useGoals } from "@/hooks/use-goals";
 import { format } from "date-fns";
-import { Trash2, Calendar } from "lucide-react";
+import { Trash2, Calendar, Pencil } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { DeleteGoalCarousel } from "@/components/DeleteGoalCarousel";
 import { useToast } from "@/hooks/use-toast";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 
 interface GoalCardProps {
   goal: Goal;
@@ -14,9 +21,11 @@ interface GoalCardProps {
 }
 
 export function GoalCard({ goal, linkedHabits = [] }: GoalCardProps) {
-  const { getGoalProgress, getGoalPace, deleteGoal } = useGoals();
+  const { getGoalProgress, getGoalPace, deleteGoal, updateGoal } = useGoals();
   const { toast } = useToast();
   const [showDeleteCarousel, setShowDeleteCarousel] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [editName, setEditName] = useState(goal.name);
   
   const progress = getGoalProgress(goal);
   const pace = getGoalPace(goal);
@@ -29,6 +38,22 @@ export function GoalCard({ goal, linkedHabits = [] }: GoalCardProps) {
     "Ended": "text-muted-foreground",
     "Completed": "text-green-600",
   }[pace] || "text-muted-foreground";
+
+  const handleSaveEdit = () => {
+    if (editName.trim() && editName !== goal.name) {
+      updateGoal.mutate({ id: goal.id, name: editName.trim() });
+      toast({
+        title: "Goal renamed",
+        description: "Your goal has been updated successfully.",
+      });
+    }
+    setShowEditModal(false);
+  };
+
+  const handleOpenEdit = () => {
+    setEditName(goal.name);
+    setShowEditModal(true);
+  };
 
   return (
     <GlassCard className="p-5 hover:shadow-large transition-all duration-300 group">
@@ -44,15 +69,60 @@ export function GoalCard({ goal, linkedHabits = [] }: GoalCardProps) {
             <p className="text-xs text-muted-foreground">{goal.category}</p>
           </div>
         </div>
-        <Button
-          variant="ghost"
-          size="icon"
-          className="opacity-0 group-hover:opacity-100 transition-opacity h-8 w-8 text-destructive hover:bg-muted/50 hover:text-destructive"
-          onClick={() => setShowDeleteCarousel(true)}
-        >
-          <Trash2 className="w-4 h-4" />
-        </Button>
+        <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+          <Button
+            variant="ghost"
+            size="icon"
+            className="h-8 w-8 text-muted-foreground hover:bg-muted/50 hover:text-foreground"
+            onClick={handleOpenEdit}
+          >
+            <Pencil className="w-4 h-4" />
+          </Button>
+          <Button
+            variant="ghost"
+            size="icon"
+            className="h-8 w-8 text-destructive hover:bg-muted/50 hover:text-destructive"
+            onClick={() => setShowDeleteCarousel(true)}
+          >
+            <Trash2 className="w-4 h-4" />
+          </Button>
+        </div>
       </div>
+
+      {/* Edit name modal */}
+      <Dialog open={showEditModal} onOpenChange={setShowEditModal}>
+        <DialogContent className="sm:max-w-md bg-gradient-to-br from-[hsl(30,100%,98%)] to-[hsl(25,80%,95%)] border-0">
+          <DialogHeader>
+            <DialogTitle className="font-display text-xl">Rename Goal</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4 pt-2">
+            <Input
+              value={editName}
+              onChange={(e) => setEditName(e.target.value)}
+              placeholder="Enter goal name..."
+              className="h-12 bg-white/80 border-white/50 rounded-xl"
+              autoFocus
+            />
+            <div className="flex justify-end gap-2">
+              <Button
+                variant="outline"
+                onClick={() => setShowEditModal(false)}
+                className="bg-muted/30 border-muted/50 hover:bg-muted/50 rounded-xl"
+              >
+                Cancel
+              </Button>
+              <Button
+                variant="gradient"
+                onClick={handleSaveEdit}
+                disabled={!editName.trim() || updateGoal.isPending}
+                className="rounded-xl"
+              >
+                {updateGoal.isPending ? "Saving..." : "Save"}
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
 
       {/* Delete confirmation carousel */}
       {showDeleteCarousel && (
