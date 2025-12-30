@@ -65,9 +65,9 @@ export function DeleteGoalCarousel({ goalName, onConfirmDelete, onClose }: Delet
             <X className="w-5 h-5" />
           </button>
 
-          <div className="px-8 py-10 text-center min-h-[380px] flex flex-col">
+          <div className="px-8 py-10 text-center h-[440px] flex flex-col">
             {/* Content area with fixed height to prevent card size changes */}
-            <div className="flex-1 flex flex-col justify-start">
+            <div className="h-[260px] flex flex-col justify-start">
               {/* Slides 1 & 2 */}
               {!isConfirmationSlide && (
                 <>
