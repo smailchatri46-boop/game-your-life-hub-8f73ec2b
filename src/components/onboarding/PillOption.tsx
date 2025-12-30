@@ -16,7 +16,7 @@ export function PillOption({ label, emoji, selected, onClick }: PillOptionProps)
       className={cn(
         "inline-flex items-center gap-2 px-4 py-2.5 rounded-full text-sm font-medium transition-colors duration-200 border-2",
         selected
-          ? "btn-primary-gradient text-white border-transparent"
+          ? "bg-primary text-white border-transparent shadow-md"
           : "bg-white/80 text-foreground border-border/30 hover:border-primary/40 hover:bg-white"
       )}
     >
