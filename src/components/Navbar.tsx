@@ -54,7 +54,7 @@ export function Navbar() {
                     "px-4 py-2 rounded-2xl text-sm transition-all duration-200 whitespace-nowrap",
                     isActive
                       ? "font-bold text-foreground"
-                      : "font-medium text-muted-foreground hover:text-primary hover:bg-primary/5"
+                      : "font-medium text-muted-foreground hover:text-foreground/60"
                   )}
                   style={isActive ? activeTextStyle : undefined}
                 >
@@ -71,7 +71,7 @@ export function Navbar() {
               "flex-shrink-0 p-2 rounded-2xl transition-all duration-200",
               isSettingsActive
                 ? "text-foreground"
-                : "text-muted-foreground hover:text-primary hover:bg-primary/5"
+                : "text-muted-foreground hover:text-foreground/60"
             )}
             style={{ 
               width: '36px', 
