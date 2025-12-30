@@ -395,9 +395,6 @@ export function AddGoalModal({ open, onOpenChange }: AddGoalModalProps) {
                     placeholder="Write your 'why' here…"
                     className="min-h-[100px] text-base bg-white/80 border-white/50 rounded-2xl resize-none"
                   />
-                  <p className="text-xs text-muted-foreground mt-2 text-center">
-                    Optional — you can skip this if you want
-                  </p>
                 </div>
               </div>
             )}
