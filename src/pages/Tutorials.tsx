@@ -3,6 +3,7 @@ import { GlassCard } from "@/components/GlassCard";
 import { AppleEmoji } from "@/components/AppleEmoji";
 import { YouTubeEmbed } from "@/components/YouTubeEmbed";
 import { Clock } from "lucide-react";
+import { Link } from "react-router-dom";
 
 // YouTube video ID for all tutorials (extracted from https://youtu.be/E_sPvPHwpuk)
 const TUTORIAL_VIDEO_ID = "E_sPvPHwpuk";
@@ -112,10 +113,10 @@ const faqs: FAQ[] = [
     ),
   },
   {
-    question: "Can I schedule a habit for specific days of the week?",
+    question: "Can I schedule a habit or task for specific days of the week?",
     answer: (
       <>
-        Currently, habits are designed as daily practices to build consistency. However, you can use the to-do list feature to add one-time tasks on specific days if you need more flexibility with scheduling.
+        Yes! While habits are designed as daily practices for consistency, you can schedule tasks for specific days of the week. Use the to-do list feature in the <strong>Overview</strong> page—click on the days you want and add your tasks there.
       </>
     ),
   },
@@ -131,7 +132,7 @@ const faqs: FAQ[] = [
     question: "Can I add a progressive build-up habit?",
     answer: (
       <>
-        While the app doesn't currently support automatic progressive targets, you can manually adjust your habit targets over time as you build capacity. Start with a smaller target and increase it as the habit becomes easier—this gradual approach helps build sustainable routines.
+        Yes! When you click "Add Habit," you can set a progressive target that builds up over time. This allows you to start small and gradually increase your goal—perfect for building sustainable habits without overwhelming yourself.
       </>
     ),
   },
@@ -171,7 +172,7 @@ const faqs: FAQ[] = [
     question: "Is there a video tutorial on how to use this app?",
     answer: (
       <>
-        Yes! We have a comprehensive video walkthrough that shows you all the features of the app. Head to the <strong>Tutorials</strong> page and watch our guide to get the most out of every feature.
+        Yes! We've created a comprehensive video walkthrough showing you all the features of the app and how to use them effectively. <Link to="/video-tutorial" className="font-bold text-primary hover:underline">Click here to watch it</Link>.
       </>
     ),
   },
@@ -208,18 +209,10 @@ const faqs: FAQ[] = [
     ),
   },
   {
-    question: "What is the difference between habits and tasks?",
-    answer: (
-      <>
-        Habits are recurring actions you want to build into your daily routine—like exercising or reading. Tasks are one-time to-dos you check off when completed. In Locked, the <strong>Dashboard</strong> focuses on habits while daily tasks can be managed separately.
-      </>
-    ),
-  },
-  {
     question: "How do progress percentages work?",
     answer: (
       <>
-        Progress percentages show how close you are to completing your goal target. For example, if your goal is to complete a habit 100 times and you've done it 50 times, you're at 50%. Check your progress on the <strong>Goals</strong> page.
+        Progress percentages show how close you are to completing your goal target. For example, if your goal is to complete a habit or task 100 times and you've done it 50 times, you're at 50%. Check your progress on the <strong>Goals</strong> page.
       </>
     ),
   },
@@ -267,31 +260,7 @@ const faqs: FAQ[] = [
     question: "Can I edit journals after writing them?",
     answer: (
       <>
-        Currently, journal entries are meant to capture your thoughts in the moment. We encourage authentic reflection, so entries are saved as-is to preserve your genuine feelings at the time of writing.
-      </>
-    ),
-  },
-  {
-    question: "Are my entries private?",
-    answer: (
-      <>
-        Yes, 100%. Your journal entries, habits, and goals are private to you. The AI uses this data only to provide personalized support within the app—nothing is shared externally.
-      </>
-    ),
-  },
-  {
-    question: "How are streaks calculated?",
-    answer: (
-      <>
-        A streak counts consecutive days where you completed at least one instance of a habit. If you miss a day, the streak resets to zero. Streaks are a fun way to build consistency!
-      </>
-    ),
-  },
-  {
-    question: "What is a quarterly goal vs yearly goal?",
-    answer: (
-      <>
-        When creating a goal, you can choose different time periods. A quarterly goal spans 3 months, while a yearly goal gives you 12 months to achieve your target. Choose based on the scope of what you want to accomplish.
+        You can edit journal entries within the first 24 hours of writing them. After that, they become permanent—we do this so your memories and authentic feelings are preserved forever. Think of it as a time capsule of your thoughts!
       </>
     ),
   },
@@ -300,38 +269,6 @@ const faqs: FAQ[] = [
     answer: (
       <>
         Meaningful goals take time to achieve. We encourage a minimum of 3 months because lasting change happens through consistent effort over time, not quick fixes. This helps you build sustainable habits.
-      </>
-    ),
-  },
-  {
-    question: "How do reminders work?",
-    answer: (
-      <>
-        Reminders help you stay on track by nudging you to complete your habits. You can customize notification preferences in the <strong>Settings</strong> page to match your schedule.
-      </>
-    ),
-  },
-  {
-    question: "What are onboarding cards and tips?",
-    answer: (
-      <>
-        When you first start using the app, you'll see helpful tip cards that guide you through features. These onboarding tips can be dismissed once you're familiar with the app.
-      </>
-    ),
-  },
-  {
-    question: "How do I track my completed actions?",
-    answer: (
-      <>
-        Your completed habits appear on the <strong>Dashboard</strong> with checkmarks. For a broader view, visit the <strong>Overview</strong> page to see your monthly calendar and progress charts.
-      </>
-    ),
-  },
-  {
-    question: "How does the app help motivation?",
-    answer: (
-      <>
-        Locked uses gamification elements like XP, levels, and streaks to keep you engaged. The AI Coach provides personalized encouragement, and seeing your progress visually helps reinforce your commitment.
       </>
     ),
   },

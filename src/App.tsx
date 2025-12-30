@@ -11,6 +11,7 @@ import Journal from "./pages/Journal";
 import Overview from "./pages/Overview";
 import Goals from "./pages/Goals";
 import Tutorials from "./pages/Tutorials";
+import VideoTutorial from "./pages/VideoTutorial";
 import Settings from "./pages/Settings";
 import NotFound from "./pages/NotFound";
 
@@ -33,6 +34,7 @@ const App = () => (
             <Route path="/overview" element={<Overview />} />
             <Route path="/goals" element={<Goals />} />
             <Route path="/tutorials" element={<Tutorials />} />
+            <Route path="/video-tutorial" element={<VideoTutorial />} />
             <Route path="/settings" element={<Settings />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
