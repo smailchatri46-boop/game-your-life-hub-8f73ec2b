@@ -111,7 +111,7 @@ export default function Settings() {
         
         {/* Profile Section */}
         <GlassCard className="p-6 mb-6">
-          <div className="flex items-center gap-4 mb-6">
+          <div className="flex items-center gap-3 mb-6">
             <div className={`w-16 h-16 rounded-2xl bg-gradient-to-br ${avatarColor} flex items-center justify-center text-white text-2xl font-bold shadow-lg`}>
               {initial}
             </div>
