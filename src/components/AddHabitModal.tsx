@@ -66,6 +66,7 @@ interface AddHabitModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onSave: (habit: NewHabit) => void;
+  skipGuidance?: boolean; // Skip the guidance carousel when opening from goal flow
 }
 
 const RAMP_DURATION_OPTIONS = [
@@ -75,7 +76,7 @@ const RAMP_DURATION_OPTIONS = [
   { value: "custom", label: "Custom" },
 ];
 
-export function AddHabitModal({ open, onOpenChange, onSave }: AddHabitModalProps) {
+export function AddHabitModal({ open, onOpenChange, onSave, skipGuidance = false }: AddHabitModalProps) {
   const formTopRef = useRef<HTMLDivElement | null>(null);
 
   const [name, setName] = useState("");
@@ -88,7 +89,7 @@ export function AddHabitModal({ open, onOpenChange, onSave }: AddHabitModalProps
   const [selectedDays, setSelectedDays] = useState<number[]>([1, 15]);
   const [importance, setImportance] = useState(50);
   const [error, setError] = useState("");
-  const [showGuidance, setShowGuidance] = useState(true);
+  const [showGuidance, setShowGuidance] = useState(!skipGuidance);
 
   // Progressive build-up state
   const [progressiveStartGoal, setProgressiveStartGoal] = useState(1);
@@ -96,12 +97,12 @@ export function AddHabitModal({ open, onOpenChange, onSave }: AddHabitModalProps
   const [progressiveRampDuration, setProgressiveRampDuration] = useState<"1-week" | "2-weeks" | "1-month" | "custom">("2-weeks");
   const [progressiveCustomWeeks, setProgressiveCustomWeeks] = useState(3);
 
-  // Reset guidance to show every time modal opens
+  // Reset guidance to show every time modal opens (unless skipGuidance is true)
   useEffect(() => {
     if (open) {
-      setShowGuidance(true);
+      setShowGuidance(!skipGuidance);
     }
-  }, [open]);
+  }, [open, skipGuidance]);
 
   const selectedCategory = CATEGORIES.find(c => c.value === category);
 

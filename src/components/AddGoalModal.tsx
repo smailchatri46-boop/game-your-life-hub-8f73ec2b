@@ -7,11 +7,12 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { AppleEmoji } from "@/components/AppleEmoji";
 import { ChevronLeft, ChevronRight, Check, Plus } from "lucide-react";
 import { useGoals, CreateGoalInput } from "@/hooks/use-goals";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner";
 import { format, addMonths } from "date-fns";
+import { AddHabitModal, NewHabit } from "@/components/AddHabitModal";
 
 interface AddGoalModalProps {
   open: boolean;
@@ -63,9 +64,11 @@ function ConfettiParticle({ delay, left }: { delay: number; left: number }) {
 export function AddGoalModal({ open, onOpenChange }: AddGoalModalProps) {
   const { user } = useAuth();
   const { createGoal } = useGoals();
+  const queryClient = useQueryClient();
   const [step, setStep] = useState(1);
   const [isComplete, setIsComplete] = useState(false);
   const [showConfetti, setShowConfetti] = useState(false);
+  const [showInlineHabitModal, setShowInlineHabitModal] = useState(false);
 
   // Form state
   const [goalName, setGoalName] = useState("");
@@ -284,6 +287,43 @@ export function AddGoalModal({ open, onOpenChange }: AddGoalModalProps) {
       newChecks[index] = !newChecks[index];
       return newChecks;
     });
+  };
+
+  // Handle inline habit creation
+  const handleInlineHabitSave = async (newHabit: NewHabit) => {
+    if (!user) {
+      // For demo mode, just add to local state
+      toast.success("Habit created and selected!");
+      return;
+    }
+
+    try {
+      // Save the habit to the database
+      const { data, error } = await supabase.from("habits").insert({
+        user_id: user.id,
+        name: newHabit.name,
+        icon: newHabit.icon,
+        category: newHabit.category,
+        category_color: newHabit.categoryColor,
+        target: newHabit.target,
+        importance: newHabit.importance,
+      }).select().single();
+
+      if (error) throw error;
+
+      // Refresh the habits list
+      await queryClient.invalidateQueries({ queryKey: ["habits", user.id] });
+
+      // Auto-select the newly created habit
+      if (data) {
+        setSelectedHabits(prev => [...prev, data.id]);
+      }
+
+      toast.success("Habit created and selected!");
+    } catch (error) {
+      console.error("Error creating habit:", error);
+      toast.error("Failed to create habit");
+    }
   };
 
   if (isComplete) {
@@ -620,6 +660,18 @@ export function AddGoalModal({ open, onOpenChange }: AddGoalModalProps) {
               {step === 1 ? "Cancel" : "Back"}
             </Button>
             
+            {/* Add habit button - only on step 5 */}
+            {step === 5 && (
+              <Button
+                variant="outline"
+                onClick={() => setShowInlineHabitModal(true)}
+                className="text-primary bg-primary/10 border-primary/30 hover:bg-primary/20 rounded-xl h-11"
+              >
+                <Plus className="w-4 h-4 mr-1" />
+                Add Habit
+              </Button>
+            )}
+
             {/* Progress circle badge - centered between buttons on step 6 */}
             {step === 6 && selectedHabitObjects.length > 1 && (
               <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary/20 to-accent/20 border-2 border-primary/30 flex items-center justify-center">
@@ -648,6 +700,14 @@ export function AddGoalModal({ open, onOpenChange }: AddGoalModalProps) {
           </div>
         </div>
       </DialogContent>
+
+      {/* Inline Add Habit Modal - skips guidance carousel */}
+      <AddHabitModal
+        open={showInlineHabitModal}
+        onOpenChange={setShowInlineHabitModal}
+        onSave={handleInlineHabitSave}
+        skipGuidance
+      />
     </Dialog>
   );
 }
