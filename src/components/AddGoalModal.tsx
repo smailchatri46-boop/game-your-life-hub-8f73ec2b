@@ -95,7 +95,7 @@ export function AddGoalModal({ open, onOpenChange }: AddGoalModalProps) {
   ];
 
   // Fetch user's habits (only when logged in)
-  const { data: fetchedHabits = [] } = useQuery({
+  const { data: fetchedHabits = [], refetch: refetchHabits } = useQuery({
     queryKey: ["habits", user?.id],
     queryFn: async () => {
       if (!user) return [];
@@ -311,8 +311,11 @@ export function AddGoalModal({ open, onOpenChange }: AddGoalModalProps) {
 
       if (error) throw error;
 
-      // Refresh the habits list
-      await queryClient.invalidateQueries({ queryKey: ["habits", user.id] });
+      // Refetch the habits list to get the new habit
+      await refetchHabits();
+
+      // Also invalidate the dashboard habits query
+      await queryClient.invalidateQueries({ queryKey: ["habits"] });
 
       // Auto-select the newly created habit
       if (data) {
