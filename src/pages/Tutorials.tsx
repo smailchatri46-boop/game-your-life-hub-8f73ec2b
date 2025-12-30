@@ -1,7 +1,11 @@
 import { Navbar } from "@/components/Navbar";
 import { GlassCard } from "@/components/GlassCard";
 import { AppleEmoji } from "@/components/AppleEmoji";
-import { Play, Clock } from "lucide-react";
+import { YouTubeEmbed } from "@/components/YouTubeEmbed";
+import { Clock } from "lucide-react";
+
+// YouTube video ID for all tutorials (extracted from https://youtu.be/E_sPvPHwpuk)
+const TUTORIAL_VIDEO_ID = "E_sPvPHwpuk";
 import {
   Accordion,
   AccordionContent,
@@ -269,23 +273,17 @@ export default function Tutorials() {
           {tutorials.map((tutorial, index) => (
             <GlassCard 
               key={tutorial.id} 
-              className="overflow-hidden group cursor-pointer animate-fade-in"
+              className="overflow-hidden animate-fade-in"
               style={{ animationDelay: `${index * 100}ms` } as React.CSSProperties}
-              hover
             >
-              <div className="aspect-video bg-gradient-to-br from-secondary to-muted flex items-center justify-center relative">
-                <AppleEmoji emoji={tutorial.thumbnail} size="5xl" className="w-16 h-16" />
-                <div className="absolute inset-0 bg-foreground/0 group-hover:bg-foreground/10 transition-colors flex items-center justify-center">
-                  <div className="w-14 h-14 rounded-full bg-primary/90 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity shadow-large">
-                    <Play className="w-6 h-6 text-primary-foreground ml-1" />
-                  </div>
-                </div>
-                <span className="absolute top-3 left-3 px-2 py-1 bg-card/80 backdrop-blur-sm rounded-lg text-xs font-medium">
+              <div className="relative">
+                <YouTubeEmbed videoId={TUTORIAL_VIDEO_ID} />
+                <span className="absolute top-3 left-3 px-2 py-1 bg-card/80 backdrop-blur-sm rounded-lg text-xs font-medium z-10">
                   {tutorial.category}
                 </span>
               </div>
               <div className="p-5">
-                <h3 className="font-display text-lg font-semibold mb-2 group-hover:text-primary transition-colors">
+                <h3 className="font-display text-lg font-semibold mb-2">
                   {tutorial.title}
                 </h3>
                 <p className="text-sm text-muted-foreground mb-3">
