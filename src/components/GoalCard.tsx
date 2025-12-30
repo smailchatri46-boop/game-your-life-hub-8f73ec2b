@@ -1,9 +1,9 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { AppleEmoji } from "@/components/AppleEmoji";
 import { GlassCard } from "@/components/GlassCard";
 import { Goal, useGoals } from "@/hooks/use-goals";
 import { format } from "date-fns";
-import { Trash2, Calendar, Pencil } from "lucide-react";
+import { Trash2, Calendar, Pencil, ChevronDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { DeleteGoalCarousel } from "@/components/DeleteGoalCarousel";
@@ -26,6 +26,9 @@ export function GoalCard({ goal, linkedHabits = [] }: GoalCardProps) {
   const [showDeleteCarousel, setShowDeleteCarousel] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
   const [editName, setEditName] = useState(goal.name);
+  const [showActions, setShowActions] = useState(false);
+  const [isHovered, setIsHovered] = useState(false);
+  const cardRef = useRef<HTMLDivElement>(null);
   
   const progress = getGoalProgress(goal);
   const pace = getGoalPace(goal);
@@ -53,10 +56,38 @@ export function GoalCard({ goal, linkedHabits = [] }: GoalCardProps) {
   const handleOpenEdit = () => {
     setEditName(goal.name);
     setShowEditModal(true);
+    setShowActions(false);
   };
 
+  const toggleActions = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setShowActions(!showActions);
+  };
+
+  // Close actions when clicking outside the card
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (cardRef.current && !cardRef.current.contains(event.target as Node)) {
+        setShowActions(false);
+      }
+    };
+
+    if (showActions) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [showActions]);
+
   return (
-    <GlassCard className="p-5 hover:shadow-large transition-all duration-300 group">
+    <GlassCard 
+      ref={cardRef}
+      className="p-5 hover:shadow-large transition-all duration-300 group"
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+    >
       <div className="flex items-start justify-between mb-4">
         <div className="flex items-center gap-3">
           <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-primary/20 to-accent/20 flex items-center justify-center">
@@ -69,23 +100,40 @@ export function GoalCard({ goal, linkedHabits = [] }: GoalCardProps) {
             <p className="text-xs text-muted-foreground">{goal.category}</p>
           </div>
         </div>
-        <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+        <div className="flex items-center gap-1">
+          {/* Chevron toggle - only visible on hover */}
           <Button
             variant="ghost"
             size="icon"
-            className="h-8 w-8 text-muted-foreground hover:bg-muted/50 hover:text-foreground"
-            onClick={handleOpenEdit}
+            className={`h-8 w-8 text-muted-foreground hover:bg-muted/50 hover:text-foreground transition-opacity ${
+              isHovered || showActions ? "opacity-100" : "opacity-0"
+            }`}
+            onClick={toggleActions}
           >
-            <Pencil className="w-4 h-4" />
+            <ChevronDown className={`w-4 h-4 transition-transform ${showActions ? "rotate-180" : ""}`} />
           </Button>
-          <Button
-            variant="ghost"
-            size="icon"
-            className="h-8 w-8 text-destructive hover:bg-muted/50 hover:text-destructive"
-            onClick={() => setShowDeleteCarousel(true)}
-          >
-            <Trash2 className="w-4 h-4" />
-          </Button>
+          {/* Edit and Delete icons - only visible when toggled */}
+          <div className={`flex items-center gap-1 transition-opacity ${showActions ? "opacity-100" : "opacity-0 pointer-events-none"}`}>
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-8 w-8 text-muted-foreground hover:bg-muted/50 hover:text-foreground"
+              onClick={handleOpenEdit}
+            >
+              <Pencil className="w-4 h-4" />
+            </Button>
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-8 w-8 text-destructive hover:bg-muted/50 hover:text-destructive"
+              onClick={() => {
+                setShowDeleteCarousel(true);
+                setShowActions(false);
+              }}
+            >
+              <Trash2 className="w-4 h-4" />
+            </Button>
+          </div>
         </div>
       </div>
 
