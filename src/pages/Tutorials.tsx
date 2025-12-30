@@ -152,6 +152,46 @@ const faqs: FAQ[] = [
     ),
   },
   {
+    question: "How can I add a daily reflection or feedback?",
+    answer: (
+      <>
+        On the <strong>Overview</strong> page, you can log your daily reflection to capture how your day went. This feedback helps the AI understand your patterns and provides better insights over time. It's a quick way to track your daily experience beyond just completing habits.
+      </>
+    ),
+  },
+  {
+    question: "Is this just a habit tracker?",
+    answer: (
+      <>
+        Not at all! This is a complete life management tool. Beyond habit tracking, you get an AI Buddy that answers your questions, a to-do list for daily tasks, mood and motivation tracking, yearly and quarterly goal setting with progress tracking, journaling, and daily reflections. It's the only tool you need to track everything in your life—no need for multiple apps.
+      </>
+    ),
+  },
+  {
+    question: "Is there a video tutorial on how to use this app?",
+    answer: (
+      <>
+        Yes! We have a comprehensive video walkthrough that shows you all the features of the app. Head to the <strong>Tutorials</strong> page and watch our guide to get the most out of every feature.
+      </>
+    ),
+  },
+  {
+    question: "Can I do journaling in the app?",
+    answer: (
+      <>
+        Yes! The <strong>Journal</strong> tab is your personal space to write down your thoughts, memories, and experiences. Everything you write is saved and can be reviewed anytime. You can also share your journal entries with the AI for personalized insights.
+      </>
+    ),
+  },
+  {
+    question: "What's the difference between daily reflection and journaling?",
+    answer: (
+      <>
+        <strong>Daily Reflection</strong> is a quick log about how your day went—it gives the AI feedback to help analyze your patterns and improve your life over time. <strong>Journaling</strong> is for deeper thoughts: write about what you're going through, capture good moments, process difficult ones. These are your personal notes and memories that stay saved for you to revisit anytime.
+      </>
+    ),
+  },
+  {
     question: "How does the AI use my data?",
     answer: (
       <>
