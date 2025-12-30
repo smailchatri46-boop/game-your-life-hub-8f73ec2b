@@ -265,7 +265,7 @@ export default function Tutorials() {
       <main className="pt-28 pb-12 px-4 max-w-5xl mx-auto">
         <div className="mb-8">
           <h1 className="font-display text-3xl font-semibold">Tutorials</h1>
-          <p className="text-muted-foreground mt-1">Learn how to get the most out of Locked</p>
+          <p className="font-body text-muted-foreground mt-1">Learn how to get the most out of Locked</p>
         </div>
         
         {/* Tutorial Grid */}
@@ -278,18 +278,18 @@ export default function Tutorials() {
             >
               <div className="relative">
                 <YouTubeEmbed videoId={TUTORIAL_VIDEO_ID} />
-                <span className="absolute top-3 left-3 px-2 py-1 bg-card/80 backdrop-blur-sm rounded-lg text-xs font-medium z-10">
+                <span className="absolute top-3 left-3 px-2 py-1 bg-card/80 backdrop-blur-sm rounded-lg text-xs font-body font-semibold z-10">
                   {tutorial.category}
                 </span>
               </div>
               <div className="p-5">
-                <h3 className="font-display text-lg font-semibold mb-2">
+                <h3 className="font-body text-xl font-bold mb-2">
                   {tutorial.title}
                 </h3>
-                <p className="text-sm text-muted-foreground mb-3">
+                <p className="font-body text-sm text-muted-foreground mb-3">
                   {tutorial.description}
                 </p>
-                <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                <div className="flex items-center gap-2 text-xs font-body font-medium text-muted-foreground">
                   <Clock className="w-3.5 h-3.5" />
                   <span>{tutorial.duration}</span>
                 </div>
@@ -303,23 +303,23 @@ export default function Tutorials() {
           <div className="mb-8">
             <div className="flex items-center gap-3 mb-2">
               <AppleEmoji emoji="❓" size="2xl" />
-              <h2 className="font-display text-2xl font-semibold">Frequently Asked Questions</h2>
+              <h2 className="font-body text-2xl font-bold">Frequently Asked Questions</h2>
             </div>
-            <p className="text-muted-foreground">Find answers to common questions about using Locked</p>
+            <p className="font-body text-muted-foreground">Find answers to common questions about using Locked</p>
           </div>
 
           <GlassCard className="p-6">
-            <Accordion type="single" collapsible className="w-full">
+            <Accordion type="single" collapsible className="w-full font-body">
               {faqs.map((faq, index) => (
                 <AccordionItem 
                   key={index} 
                   value={`item-${index}`}
                   className="border-b border-border/50 last:border-0"
                 >
-                  <AccordionTrigger className="text-left font-medium text-base hover:text-primary transition-colors py-4">
+                  <AccordionTrigger className="text-left font-bold text-base hover:text-primary transition-colors py-4">
                     {faq.question}
                   </AccordionTrigger>
-                  <AccordionContent className="text-muted-foreground text-sm leading-relaxed pb-4">
+                  <AccordionContent className="text-muted-foreground text-sm font-medium leading-relaxed pb-4">
                     {faq.answer}
                   </AccordionContent>
                 </AccordionItem>
