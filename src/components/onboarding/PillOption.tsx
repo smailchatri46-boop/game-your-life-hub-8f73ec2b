@@ -1,4 +1,5 @@
 import { cn } from "@/lib/utils";
+import { AppleEmoji } from "@/components/AppleEmoji";
 
 interface PillOptionProps {
   label: string;
@@ -20,7 +21,7 @@ export function PillOption({ label, emoji, selected, onClick }: PillOptionProps)
           : "bg-white/80 text-foreground border-border/30 hover:border-primary/40 hover:bg-white"
       )}
     >
-      {emoji && <span className="text-base">{emoji}</span>}
+      {emoji && <AppleEmoji emoji={emoji} size="md" />}
       {label}
     </button>
   );
