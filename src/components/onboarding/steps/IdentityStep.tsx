@@ -9,16 +9,18 @@ interface IdentityStepProps {
   onSkip: () => void;
 }
 
-const IDENTITY_CONTENT: Record<1 | 2, { emoji: string; title: string; subtitle: string }> = {
+const IDENTITY_CONTENT: Record<1 | 2, { emoji: string; title: string; subtitle: string; skipLabel: string }> = {
   1: {
     emoji: "🎯",
     title: "Take control over your life.",
-    subtitle: "Locked gives you habits, tasks, to-do lists, journals, and goal tracking — everything you need to organize your life.",
+    subtitle: "Locked gives you habits, tasks, to-do lists, journals, and goal tracking. Everything you need to organize your life.",
+    skipLabel: "Skip",
   },
   2: {
     emoji: "💪",
     title: "You're ready to stay consistent.",
     subtitle: "Start with small steps today — let momentum compound over the next months.",
+    skipLabel: "Skip onboarding",
   },
 };
 
@@ -52,7 +54,7 @@ export function IdentityStep({ variant, onNext, onSkip }: IdentityStepProps) {
         onClick={onSkip}
         className="mt-4 text-sm text-muted-foreground hover:text-foreground transition-colors"
       >
-        Skip onboarding
+        {content.skipLabel}
       </button>
     </OnboardingCard>
   );
