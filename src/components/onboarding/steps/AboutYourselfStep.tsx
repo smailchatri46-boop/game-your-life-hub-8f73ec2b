@@ -52,7 +52,7 @@ const CONTENT = {
     subtitle: "Choose your preferred time",
     options: [
       { label: "Morning", emoji: "🌅" },
-      { label: "Afternoon", emoji: "☀️" },
+      { label: "Afternoon", emoji: "🌞" },
       { label: "Evening", emoji: "🌙" },
       { label: "No specific time", emoji: "🤷" },
     ],
