@@ -116,7 +116,7 @@ export default function Settings() {
               {initial}
             </div>
             <div>
-              <h2 className="font-semibold text-lg text-foreground">{displayName}</h2>
+              <h2 className="font-sans italic text-lg text-foreground">{displayName}</h2>
               <p className="text-sm text-muted-foreground">{displayEmail}</p>
             </div>
           </div>
@@ -178,7 +178,7 @@ export default function Settings() {
           variant="secondary"
           onClick={handleDownloadData}
           disabled={exporting}
-          className="w-full rounded-full mb-6 h-12"
+          className="w-full rounded-full mb-6 h-12 bg-white hover:bg-white/90 text-foreground border-0"
         >
           {exporting ? "Exporting..." : "Download my data"}
         </Button>
