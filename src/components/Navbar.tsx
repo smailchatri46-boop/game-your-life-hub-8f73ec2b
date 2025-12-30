@@ -14,8 +14,8 @@ export function Navbar() {
   const location = useLocation();
 
   return (
-    <nav className="fixed top-6 left-1/2 -translate-x-1/2 z-50 w-full max-w-[820px] px-4">
-      <div className="navbar-glass-container relative h-14 w-full">
+    <nav className="fixed top-6 left-1/2 -translate-x-1/2 z-50 px-4">
+      <div className="navbar-glass-container relative h-14 w-[780px]">
         {/* Animated noise/grain layer for visible blur */}
         <div className="navbar-noise absolute inset-0 rounded-[1.25rem] overflow-hidden pointer-events-none" />
         
