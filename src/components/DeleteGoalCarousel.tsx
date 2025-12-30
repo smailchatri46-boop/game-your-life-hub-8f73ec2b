@@ -65,55 +65,58 @@ export function DeleteGoalCarousel({ goalName, onConfirmDelete, onClose }: Delet
             <X className="w-5 h-5" />
           </button>
 
-          <div className="px-8 py-10 text-center">
-            {/* Slides 1 & 2 */}
-            {!isConfirmationSlide && (
-              <>
-                {/* Emoji */}
-                <div className="mb-6 flex justify-center">
-                  <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-primary/10 to-primary/5 flex items-center justify-center">
-                    <AppleEmoji emoji={SLIDES[currentSlide].emoji} size="4xl" />
+          <div className="px-8 py-10 text-center min-h-[380px] flex flex-col">
+            {/* Content area with fixed height to prevent card size changes */}
+            <div className="flex-1 flex flex-col justify-start">
+              {/* Slides 1 & 2 */}
+              {!isConfirmationSlide && (
+                <>
+                  {/* Emoji */}
+                  <div className="mb-6 flex justify-center">
+                    <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-primary/10 to-primary/5 flex items-center justify-center">
+                      <AppleEmoji emoji={SLIDES[currentSlide].emoji} size="4xl" />
+                    </div>
                   </div>
-                </div>
 
-                <h2 className="text-xl font-semibold text-foreground mb-3 font-display">
-                  {SLIDES[currentSlide].title}
-                </h2>
+                  <h2 className="text-xl font-semibold text-foreground mb-3 font-display">
+                    {SLIDES[currentSlide].title}
+                  </h2>
 
-                <p className="text-muted-foreground text-sm leading-relaxed mb-8 max-w-sm mx-auto">
-                  {SLIDES[currentSlide].message}
-                </p>
-              </>
-            )}
+                  <p className="text-muted-foreground text-sm leading-relaxed mb-8 max-w-sm mx-auto">
+                    {SLIDES[currentSlide].message}
+                  </p>
+                </>
+              )}
 
-            {/* Slide 3 - Confirmation */}
-            {isConfirmationSlide && (
-              <>
-                {/* Delete emoji */}
-                <div className="mb-6 flex justify-center">
-                  <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-destructive/10 to-destructive/5 flex items-center justify-center">
-                    <AppleEmoji emoji="🗑️" size="4xl" />
+              {/* Slide 3 - Confirmation */}
+              {isConfirmationSlide && (
+                <>
+                  {/* Delete emoji */}
+                  <div className="mb-6 flex justify-center">
+                    <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-destructive/10 to-destructive/5 flex items-center justify-center">
+                      <AppleEmoji emoji="❌" size="4xl" />
+                    </div>
                   </div>
-                </div>
 
-                <h2 className="text-xl font-semibold text-foreground mb-3 font-display">
-                  Are you sure you want to delete this goal?
-                </h2>
+                  <h2 className="text-xl font-semibold text-foreground mb-3 font-display">
+                    Are you sure you want to delete this goal?
+                  </h2>
 
-                <p className="text-muted-foreground text-sm leading-relaxed mb-6 max-w-sm mx-auto">
-                  This will permanently remove <span className="font-medium text-foreground">"{goalName}"</span> and its progress.
-                  To confirm, please type <span className="font-medium text-foreground">delete</span> in the box below.
-                </p>
+                  <p className="text-muted-foreground text-sm leading-relaxed mb-6 max-w-sm mx-auto">
+                    This will permanently remove <span className="font-medium text-foreground">"{goalName}"</span> and its progress.
+                    To confirm, please type <span className="font-medium text-foreground">delete</span> in the box below.
+                  </p>
 
-                <Input
-                  type="text"
-                  placeholder="Type 'delete' to confirm"
-                  value={deleteInput}
-                  onChange={(e) => setDeleteInput(e.target.value)}
-                  className="mb-6 text-center"
-                />
-              </>
-            )}
+                  <Input
+                    type="text"
+                    placeholder="Type 'delete' to confirm"
+                    value={deleteInput}
+                    onChange={(e) => setDeleteInput(e.target.value)}
+                    className="mb-6 text-center"
+                  />
+                </>
+              )}
+            </div>
 
             {/* Progress dots */}
             <div className="flex justify-center gap-2 mb-6">
@@ -147,9 +150,9 @@ export function DeleteGoalCarousel({ goalName, onConfirmDelete, onClose }: Delet
             ) : (
               <div className="flex gap-3 justify-center">
                 <Button
-                  variant="ghost"
+                  variant="outline"
                   onClick={onClose}
-                  className="px-6 py-3 rounded-xl text-base font-medium"
+                  className="px-6 py-3 rounded-xl text-base font-medium hover:bg-muted/50"
                 >
                   Cancel
                 </Button>
