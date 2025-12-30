@@ -107,17 +107,11 @@ export default function Goals() {
         ) : (
           <>
             {/* Header */}
-            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
-              <div>
-                <h1 className="font-display text-3xl font-semibold text-foreground">Goals</h1>
-                <p className="text-muted-foreground text-sm mt-1">
-                  Track your progress toward what matters most
-                </p>
-              </div>
-              <Button onClick={() => setShowAddModal(true)} variant="gradient" size="lg">
-                <Plus className="w-5 h-5 mr-2" />
-                Add Goal
-              </Button>
+            <div className="mb-8">
+              <h1 className="font-display text-3xl font-semibold text-foreground">Goals</h1>
+              <p className="text-muted-foreground text-sm mt-1">
+                Track your progress toward what matters most
+              </p>
             </div>
 
             {/* Stats Row */}
@@ -193,6 +187,16 @@ export default function Goals() {
           </>
         )}
       </main>
+
+      {/* Floating Add Goal Button */}
+      <Button 
+        variant="gradient" 
+        size="icon" 
+        className="fixed bottom-6 right-6 w-14 h-14 rounded-full shadow-large z-50"
+        onClick={() => setShowAddModal(true)}
+      >
+        <Plus className="w-6 h-6" />
+      </Button>
 
       {/* Add Goal Modal */}
       <AddGoalModal open={showAddModal} onOpenChange={setShowAddModal} />
