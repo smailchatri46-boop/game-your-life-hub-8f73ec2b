@@ -303,7 +303,7 @@ export default function Tutorials() {
           <div className="mb-8">
             <div className="flex items-center gap-3 mb-2">
               <AppleEmoji emoji="❓" size="2xl" />
-              <h2 className="font-body text-2xl font-bold">Frequently Asked Questions</h2>
+              <h2 className="text-2xl font-bold" style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}>Frequently Asked Questions</h2>
             </div>
             <p className="font-body text-muted-foreground">Find answers to common questions about using Locked</p>
           </div>
