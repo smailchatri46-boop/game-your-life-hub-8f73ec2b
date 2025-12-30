@@ -91,10 +91,8 @@ export function AboutYourselfStep({
     ? !!preferredTime 
     : selectedItems.length > 0;
 
-  // Focus screen: no back, no skip - only Next
-  // Struggle and time screens: show back + skip
+  // No skip for any of these screens - user must select an option
   const showBack = variant !== "focus";
-  const showSkip = variant !== "focus";
 
   return (
     <OnboardingCard>
@@ -122,7 +120,7 @@ export function AboutYourselfStep({
         ))}
       </div>
 
-      <div className="flex gap-3">
+      <div className="flex gap-3 justify-end">
         {showBack && (
           <Button
             onClick={onBack}
@@ -137,22 +135,14 @@ export function AboutYourselfStep({
         <Button
           onClick={onNext}
           variant="gradient"
-          className={showBack ? "flex-1 h-11" : "w-full h-11"}
+          size="default"
+          className={showBack ? "h-11 px-4" : "w-full h-11"}
           disabled={!canProceed}
         >
           Next
           <ChevronRight className="w-4 h-4 ml-1" />
         </Button>
       </div>
-
-      {showSkip && (
-        <button
-          onClick={onSkip}
-          className="mt-4 w-full text-sm text-muted-foreground hover:text-foreground transition-colors"
-        >
-          Skip onboarding
-        </button>
-      )}
     </OnboardingCard>
   );
 }
