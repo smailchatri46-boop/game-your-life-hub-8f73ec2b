@@ -33,7 +33,7 @@ export function GoalCard({ goal, linkedHabits = [] }: GoalCardProps) {
             <AppleEmoji emoji={goal.category_emoji} size="xl" />
           </div>
           <div>
-            <h3 className="text-lg font-semibold text-foreground line-clamp-1">
+            <h3 className="text-base font-semibold text-foreground line-clamp-1">
               {goal.name}
             </h3>
             <p className="text-xs text-muted-foreground">{goal.category}</p>
