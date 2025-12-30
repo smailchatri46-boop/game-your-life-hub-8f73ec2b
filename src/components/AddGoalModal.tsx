@@ -22,7 +22,7 @@ const CATEGORIES = [
   { name: "Learning", emoji: "📚" },
   { name: "Career", emoji: "💼" },
   { name: "Finance", emoji: "💰" },
-  { name: "Relationships", emoji: "❤️" },
+  { name: "Relationships", emoji: "💞" },
   { name: "Mental Wellness", emoji: "🧘" },
 ];
 
@@ -44,15 +44,17 @@ export function AddGoalModal({ open, onOpenChange }: AddGoalModalProps) {
   const [selectedCategory, setSelectedCategory] = useState<typeof CATEGORIES[0] | null>(null);
   const [selectedPeriod, setSelectedPeriod] = useState<typeof TIME_PERIODS[0] | null>(null);
   const [selectedHabits, setSelectedHabits] = useState<string[]>([]);
-  const [targetCount, setTargetCount] = useState("");
+  const [habitTargets, setHabitTargets] = useState<Record<string, number>>({});
+  const [currentHabitIndex, setCurrentHabitIndex] = useState(0);
+  const [currentHabitTarget, setCurrentHabitTarget] = useState("");
 
   // Demo habits for when user is not logged in
   const demoHabits = [
-    { id: "demo-1", name: "Morning Meditation", icon: "🧘" },
-    { id: "demo-2", name: "Exercise", icon: "💪" },
-    { id: "demo-3", name: "Read 30 mins", icon: "📚" },
-    { id: "demo-4", name: "Drink Water", icon: "💧" },
-    { id: "demo-5", name: "No Social Media", icon: "📵" },
+    { id: "demo-1", name: "Morning Meditation", icon: "🧘", target: 1 },
+    { id: "demo-2", name: "Exercise", icon: "💪", target: 3 },
+    { id: "demo-3", name: "Read 30 mins", icon: "📚", target: 1 },
+    { id: "demo-4", name: "Drink Water", icon: "💧", target: 8 },
+    { id: "demo-5", name: "No Social Media", icon: "📵", target: 1 },
   ];
 
   // Fetch user's habits (only when logged in)
@@ -74,17 +76,57 @@ export function AddGoalModal({ open, onOpenChange }: AddGoalModalProps) {
   // Use fetched habits if logged in, otherwise use demo habits
   const habits = user ? fetchedHabits : demoHabits;
 
+  // Get currently selected habit objects
+  const selectedHabitObjects = habits.filter((h) => selectedHabits.includes(h.id));
+  const currentHabit = selectedHabitObjects[currentHabitIndex];
+  const isLastHabitTarget = currentHabitIndex >= selectedHabitObjects.length - 1;
+
+  // Check if habit is numeric (target > 1) or action-based (target = 1)
+  const isNumericHabit = (habit: typeof habits[0]) => {
+    return habit.target > 1;
+  };
+
   const totalSteps = 5;
 
   const handleNext = () => {
+    if (step === 5 && selectedHabitObjects.length > 0) {
+      // Save current habit target
+      if (currentHabit && currentHabitTarget) {
+        setHabitTargets((prev) => ({
+          ...prev,
+          [currentHabit.id]: parseInt(currentHabitTarget) || 0,
+        }));
+      }
+
+      if (!isLastHabitTarget) {
+        // Move to next habit target
+        setCurrentHabitIndex((prev) => prev + 1);
+        setCurrentHabitTarget("");
+        return;
+      }
+    }
+
     if (step < totalSteps) {
       setStep(step + 1);
+      if (step === 4) {
+        // Reset habit target state when entering step 5
+        setCurrentHabitIndex(0);
+        setCurrentHabitTarget("");
+      }
     } else {
       handleSubmit();
     }
   };
 
   const handleBack = () => {
+    if (step === 5 && currentHabitIndex > 0) {
+      // Go back to previous habit target
+      setCurrentHabitIndex((prev) => prev - 1);
+      const prevHabit = selectedHabitObjects[currentHabitIndex - 1];
+      setCurrentHabitTarget(habitTargets[prevHabit?.id]?.toString() || "");
+      return;
+    }
+
     if (step > 1) {
       setStep(step - 1);
     }
@@ -93,8 +135,17 @@ export function AddGoalModal({ open, onOpenChange }: AddGoalModalProps) {
   const handleSubmit = async () => {
     if (!selectedCategory || !selectedPeriod) return;
 
+    // Save the last habit target before submitting
+    const finalHabitTargets = { ...habitTargets };
+    if (currentHabit && currentHabitTarget) {
+      finalHabitTargets[currentHabit.id] = parseInt(currentHabitTarget) || 0;
+    }
+
     const startDate = new Date();
     const endDate = addMonths(startDate, selectedPeriod.months);
+
+    // Calculate total target from all habit targets
+    const totalTarget = Object.values(finalHabitTargets).reduce((sum, val) => sum + val, 0) || 100;
 
     const input: CreateGoalInput = {
       name: goalName,
@@ -102,7 +153,7 @@ export function AddGoalModal({ open, onOpenChange }: AddGoalModalProps) {
       category_emoji: selectedCategory.emoji,
       start_date: format(startDate, "yyyy-MM-dd"),
       end_date: format(endDate, "yyyy-MM-dd"),
-      target_count: parseInt(targetCount) || 100,
+      target_count: totalTarget,
       habit_ids: selectedHabits,
     };
 
@@ -121,7 +172,9 @@ export function AddGoalModal({ open, onOpenChange }: AddGoalModalProps) {
     setSelectedCategory(null);
     setSelectedPeriod(null);
     setSelectedHabits([]);
-    setTargetCount("");
+    setHabitTargets({});
+    setCurrentHabitIndex(0);
+    setCurrentHabitTarget("");
     onOpenChange(false);
   };
 
@@ -131,7 +184,9 @@ export function AddGoalModal({ open, onOpenChange }: AddGoalModalProps) {
       case 2: return selectedCategory !== null;
       case 3: return selectedPeriod !== null;
       case 4: return true; // Habits are optional
-      case 5: return parseInt(targetCount) > 0;
+      case 5: 
+        if (selectedHabitObjects.length === 0) return true;
+        return parseInt(currentHabitTarget) > 0;
       default: return false;
     }
   };
@@ -192,7 +247,7 @@ export function AddGoalModal({ open, onOpenChange }: AddGoalModalProps) {
             {step === 1 && (
               <div className="space-y-6">
                 <div className="text-center">
-                  <AppleEmoji emoji="✨" size="3xl" className="mb-4" />
+                  <AppleEmoji emoji="🌈" size="3xl" className="mb-4" />
                   <h2 className="font-display text-xl font-semibold text-foreground">
                     What is your goal?
                   </h2>
@@ -205,7 +260,7 @@ export function AddGoalModal({ open, onOpenChange }: AddGoalModalProps) {
                     className="h-14 text-lg bg-white/80 border-white/50 rounded-2xl"
                   />
                   <p className="text-sm text-muted-foreground mt-3 text-center">
-                    Examples: Run a marathon, Learn Spanish, Read 20 books
+                    Examples: Make 10k MRR, Learn Spanish, Read 20 books
                   </p>
                 </div>
               </div>
@@ -275,7 +330,7 @@ export function AddGoalModal({ open, onOpenChange }: AddGoalModalProps) {
                 <div className="text-center mb-6">
                   <AppleEmoji emoji="🔗" size="3xl" className="mb-4" />
                   <h2 className="font-display text-xl font-semibold text-foreground">
-                    Which habits will help you?
+                    Which habits and tasks will help you?
                   </h2>
                 </div>
                 {habits.length > 0 ? (
@@ -317,35 +372,92 @@ export function AddGoalModal({ open, onOpenChange }: AddGoalModalProps) {
 
             {step === 5 && (
               <div className="space-y-6">
-                <div className="text-center">
-                  <AppleEmoji emoji="🎯" size="3xl" className="mb-4" />
-                  <h2 className="font-display text-xl font-semibold text-foreground">
-                    Set your target
-                  </h2>
-                  <p className="text-sm text-muted-foreground mt-2">
-                    How many times do you need to complete your habits?
-                  </p>
-                </div>
-                <div>
-                  <Input
-                    type="number"
-                    value={targetCount}
-                    onChange={(e) => setTargetCount(e.target.value)}
-                    placeholder="Enter target number..."
-                    min={1}
-                    className="h-14 text-lg text-center bg-white/80 border-white/50 rounded-2xl"
-                  />
-                  <div className="mt-4 space-y-1">
-                    <p className="text-xs text-muted-foreground text-center">Examples:</p>
-                    <div className="flex flex-wrap justify-center gap-2">
-                      {["Read 200 times", "Workout 120 sessions", "Meditate 90 days"].map((ex) => (
-                        <span key={ex} className="text-xs px-3 py-1 rounded-full bg-white/80 text-muted-foreground">
-                          {ex}
-                        </span>
-                      ))}
+                {selectedHabitObjects.length > 0 && currentHabit ? (
+                  <>
+                    <div className="text-center">
+                      <AppleEmoji emoji={currentHabit.icon} size="3xl" className="mb-4" />
+                      <h2 className="font-display text-xl font-semibold text-foreground">
+                        Set target for "{currentHabit.name}"
+                      </h2>
+                      <p className="text-sm text-muted-foreground mt-2">
+                        {isNumericHabit(currentHabit)
+                          ? "How many times do you need to complete this habit?"
+                          : "How many days do you want to do this?"}
+                      </p>
+                      {selectedHabitObjects.length > 1 && (
+                        <p className="text-xs text-muted-foreground mt-1">
+                          ({currentHabitIndex + 1} of {selectedHabitObjects.length})
+                        </p>
+                      )}
                     </div>
-                  </div>
-                </div>
+                    <div>
+                      <Input
+                        type="number"
+                        value={currentHabitTarget}
+                        onChange={(e) => setCurrentHabitTarget(e.target.value)}
+                        placeholder={isNumericHabit(currentHabit) ? "Enter number of times..." : "Enter number of days..."}
+                        min={1}
+                        className="h-14 text-lg text-center bg-white/80 border-white/50 rounded-2xl"
+                      />
+                      <div className="mt-4 space-y-1">
+                        <p className="text-xs text-muted-foreground text-center">Examples:</p>
+                        <div className="flex flex-wrap justify-center gap-2">
+                          {isNumericHabit(currentHabit) ? (
+                            <>
+                              <span className="text-xs px-3 py-1 rounded-full bg-white/80 text-muted-foreground">
+                                120 sessions
+                              </span>
+                              <span className="text-xs px-3 py-1 rounded-full bg-white/80 text-muted-foreground">
+                                200 times
+                              </span>
+                            </>
+                          ) : (
+                            <>
+                              <span className="text-xs px-3 py-1 rounded-full bg-white/80 text-muted-foreground">
+                                90 days
+                              </span>
+                              <span className="text-xs px-3 py-1 rounded-full bg-white/80 text-muted-foreground">
+                                180 days
+                              </span>
+                            </>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    <div className="text-center">
+                      <AppleEmoji emoji="🎯" size="3xl" className="mb-4" />
+                      <h2 className="font-display text-xl font-semibold text-foreground">
+                        Set your target
+                      </h2>
+                      <p className="text-sm text-muted-foreground mt-2">
+                        How many times do you need to complete your goal?
+                      </p>
+                    </div>
+                    <div>
+                      <Input
+                        type="number"
+                        value={currentHabitTarget}
+                        onChange={(e) => setCurrentHabitTarget(e.target.value)}
+                        placeholder="Enter target number..."
+                        min={1}
+                        className="h-14 text-lg text-center bg-white/80 border-white/50 rounded-2xl"
+                      />
+                      <div className="mt-4 space-y-1">
+                        <p className="text-xs text-muted-foreground text-center">Examples:</p>
+                        <div className="flex flex-wrap justify-center gap-2">
+                          {["100 times", "200 sessions", "90 days"].map((ex) => (
+                            <span key={ex} className="text-xs px-3 py-1 rounded-full bg-white/80 text-muted-foreground">
+                              {ex}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                  </>
+                )}
               </div>
             )}
           </div>
@@ -353,20 +465,27 @@ export function AddGoalModal({ open, onOpenChange }: AddGoalModalProps) {
           {/* Navigation */}
           <div className="flex justify-between items-center mt-6 pt-4 border-t border-white/30">
             <Button
-              variant="ghost"
+              variant="outline"
               onClick={step === 1 ? handleClose : handleBack}
-              className="text-muted-foreground"
+              className="text-muted-foreground bg-muted/30 border-muted/50 hover:bg-muted/50 rounded-xl h-11"
             >
-              <ChevronLeft className="w-4 h-4 mr-1" />
+              {step > 1 && <ChevronLeft className="w-4 h-4 mr-1" />}
               {step === 1 ? "Cancel" : "Back"}
             </Button>
             <Button
               onClick={handleNext}
               disabled={!canProceed() || createGoal.isPending}
               variant="gradient"
+              className="rounded-xl h-11"
             >
-              {createGoal.isPending ? "Creating..." : step === totalSteps ? "Create Goal" : "Next"}
-              {step < totalSteps && <ChevronRight className="w-4 h-4 ml-1" />}
+              {createGoal.isPending 
+                ? "Creating..." 
+                : step === totalSteps && (selectedHabitObjects.length === 0 || isLastHabitTarget)
+                  ? "Create Goal" 
+                  : "Next"}
+              {!(step === totalSteps && (selectedHabitObjects.length === 0 || isLastHabitTarget)) && (
+                <ChevronRight className="w-4 h-4 ml-1" />
+              )}
             </Button>
           </div>
         </div>
