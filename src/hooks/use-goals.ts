@@ -177,6 +177,16 @@ export function useGoals() {
     toast.success("Goal deleted (Demo mode)");
   }, [demoGoals, demoGoalHabits]);
 
+  // Demo mode update goal
+  const updateDemoGoal = useCallback((goalId: string, updates: Partial<Goal>) => {
+    const updatedGoals = demoGoals.map((g) =>
+      g.id === goalId ? { ...g, ...updates, updated_at: new Date().toISOString() } : g
+    );
+    setDemoGoals(updatedGoals);
+    setDemoGoalsState(updatedGoals);
+    toast.success("Goal updated (Demo mode)");
+  }, [demoGoals]);
+
   const createGoal = useMutation({
     mutationFn: async (input: CreateGoalInput) => {
       // Demo mode - use local storage
@@ -258,6 +268,32 @@ export function useGoals() {
     },
   });
 
+  const updateGoal = useMutation({
+    mutationFn: async ({ id, ...updates }: { id: string } & Partial<Omit<Goal, 'id' | 'user_id' | 'created_at'>>) => {
+      // Demo mode
+      if (isDemo) {
+        updateDemoGoal(id, updates);
+        return;
+      }
+
+      const { error } = await supabase
+        .from("goals")
+        .update(updates)
+        .eq("id", id);
+      
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      if (!isDemo) {
+        queryClient.invalidateQueries({ queryKey: ["goals"] });
+        toast.success("Goal updated");
+      }
+    },
+    onError: () => {
+      toast.error("Failed to update goal");
+    },
+  });
+
   const getGoalProgress = (goal: Goal) => {
     if (goal.target_count === 0) return 0;
     return Math.min(100, Math.round((goal.completed_count / goal.target_count) * 100));
@@ -297,6 +333,7 @@ export function useGoals() {
     isDemo,
     createGoal,
     deleteGoal,
+    updateGoal,
     getGoalProgress,
     getGoalPace,
   };
