@@ -3,7 +3,7 @@ import { AppleEmoji } from "@/components/AppleEmoji";
 import { GlassCard } from "@/components/GlassCard";
 import { Goal, useGoals } from "@/hooks/use-goals";
 import { format } from "date-fns";
-import { Trash2, Calendar, Pencil, MoreVertical } from "lucide-react";
+import { Trash2, Calendar, Pencil } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { DeleteGoalCarousel } from "@/components/DeleteGoalCarousel";
@@ -14,12 +14,6 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 
 interface GoalCardProps {
   goal: Goal;
@@ -75,31 +69,23 @@ export function GoalCard({ goal, linkedHabits = [] }: GoalCardProps) {
             <p className="text-xs text-muted-foreground">{goal.category}</p>
           </div>
         </div>
-        <div className="opacity-0 group-hover:opacity-100 transition-opacity">
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button
-                variant="ghost"
-                size="icon"
-                className="h-8 w-8 text-muted-foreground hover:bg-muted/50 hover:text-foreground"
-              >
-                <MoreVertical className="w-4 h-4" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="bg-white border border-border shadow-lg z-50">
-              <DropdownMenuItem onClick={handleOpenEdit} className="cursor-pointer">
-                <Pencil className="w-4 h-4 mr-2" />
-                Rename
-              </DropdownMenuItem>
-              <DropdownMenuItem 
-                onClick={() => setShowDeleteCarousel(true)} 
-                className="cursor-pointer text-destructive focus:text-destructive"
-              >
-                <Trash2 className="w-4 h-4 mr-2" />
-                Delete
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+        <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+          <Button
+            variant="ghost"
+            size="icon"
+            className="h-8 w-8 text-muted-foreground hover:bg-muted/50 hover:text-foreground"
+            onClick={handleOpenEdit}
+          >
+            <Pencil className="w-4 h-4" />
+          </Button>
+          <Button
+            variant="ghost"
+            size="icon"
+            className="h-8 w-8 text-destructive hover:bg-muted/50 hover:text-destructive"
+            onClick={() => setShowDeleteCarousel(true)}
+          >
+            <Trash2 className="w-4 h-4" />
+          </Button>
         </div>
       </div>
 
