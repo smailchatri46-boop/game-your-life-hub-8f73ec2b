@@ -2,7 +2,7 @@ import { OnboardingCard } from "../OnboardingCard";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { AppleEmoji } from "@/components/AppleEmoji";
-import { ChevronLeft, Check } from "lucide-react";
+import { Check } from "lucide-react";
 
 interface CommitmentStepProps {
   checkedAffirmations: string[];
@@ -27,7 +27,6 @@ export function CommitmentStep({
   onToggleAffirmation,
   onSetName,
   onComplete,
-  onBack,
   onSkip,
 }: CommitmentStepProps) {
   const allChecked = AFFIRMATIONS.every(a => checkedAffirmations.includes(a));
@@ -37,7 +36,7 @@ export function CommitmentStep({
     <OnboardingCard>
       <div className="text-center mb-6">
         <div className="flex justify-center mb-4">
-          <AppleEmoji emoji="✍️" size="3xl" />
+          <AppleEmoji emoji="🤝" size="3xl" />
         </div>
         <h2 className="text-xl font-bold font-display text-foreground mb-2">
           Sign your commitment
@@ -58,7 +57,7 @@ export function CommitmentStep({
               className={`w-full flex items-start gap-3 p-3 rounded-xl text-left transition-all ${
                 isChecked
                   ? "bg-gradient-to-r from-amber-50 to-orange-50 border-2 border-primary/30"
-                  : "bg-white/50 border-2 border-border/20 hover:border-border/40"
+                  : "bg-white/50 border-2 border-border/20 hover:bg-secondary/30 hover:border-border/30"
               }`}
             >
               <div className={`flex-shrink-0 w-5 h-5 rounded-md flex items-center justify-center mt-0.5 ${
@@ -89,29 +88,18 @@ export function CommitmentStep({
         />
       </div>
 
-      <div className="flex gap-3">
-        <Button
-          onClick={onBack}
-          variant="outline"
-          size="default"
-          className="h-11 px-4 bg-white/50 border-border/30 hover:bg-secondary/50"
-        >
-          <ChevronLeft className="w-4 h-4 mr-1" />
-          Back
-        </Button>
-        <Button
-          onClick={onComplete}
-          variant="gradient"
-          className="flex-1 h-11"
-          disabled={!canComplete}
-        >
-          Sign & Continue
-        </Button>
-      </div>
+      <Button
+        onClick={onComplete}
+        variant="gradient"
+        className="w-full h-11 hover:opacity-90"
+        disabled={!canComplete}
+      >
+        Sign & Continue
+      </Button>
 
       <button
         onClick={onSkip}
-        className="mt-4 w-full text-sm text-muted-foreground hover:text-foreground transition-colors"
+        className="mt-4 w-full text-sm text-muted-foreground hover:text-foreground hover:bg-secondary/30 py-2 rounded-lg transition-colors"
       >
         Skip onboarding
       </button>

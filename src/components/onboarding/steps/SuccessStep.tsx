@@ -41,7 +41,7 @@ export function SuccessStep({
         <Button
           onClick={onGoToDashboard}
           variant="gradient"
-          className="w-full h-12 text-base"
+          className="w-full h-12 text-base hover:opacity-90"
         >
           <AppleEmoji emoji="🏠" size="sm" />
           Go to my dashboard
@@ -51,7 +51,7 @@ export function SuccessStep({
           <Button
             onClick={onAddMoreHabits}
             variant="outline"
-            className="flex-1 h-11 bg-white/50 border-border/30"
+            className="flex-1 h-11 bg-white/50 border-border/30 hover:bg-secondary/50 hover:border-border/30"
           >
             <AppleEmoji emoji="➕" size="sm" />
             Add more habits
@@ -59,7 +59,7 @@ export function SuccessStep({
           <Button
             onClick={onStartJournaling}
             variant="outline"
-            className="flex-1 h-11 bg-white/50 border-border/30"
+            className="flex-1 h-11 bg-white/50 border-border/30 hover:bg-secondary/50 hover:border-border/30"
           >
             <AppleEmoji emoji="📝" size="sm" />
             Start journaling
