@@ -18,7 +18,7 @@ export function WelcomeStep({ onNext }: WelcomeStepProps) {
           Welcome to Locked
         </h1>
         <p className="text-muted-foreground text-base leading-relaxed">
-          Turn your daily habits, tasks, journals and goals into clear data you can analyze with AI — and finally stay consistent.
+          Turn your daily habits, tasks, journals and goals into clear data you can analyze with AI.
         </p>
       </div>
 
