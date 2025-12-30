@@ -256,7 +256,7 @@ export function AddGoalModal({ open, onOpenChange }: AddGoalModalProps) {
   const canProceed = () => {
     switch (step) {
       case 1: return goalName.trim().length > 0;
-      case 2: return true; // Why is optional
+      case 2: return goalWhy.trim().length > 0;
       case 3: return selectedCategory !== null;
       case 4: return selectedPeriod !== null;
       case 5: return true; // Habits are optional
