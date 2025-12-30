@@ -261,11 +261,11 @@ export function AddGoalModal({ open, onOpenChange }: AddGoalModalProps) {
       case 4: return selectedPeriod !== null;
       case 5: return true; // Habits are optional
       case 6: 
-        // All checkboxes must be checked and name must be entered
-        return commitmentChecks.every(c => c) && signatureName.trim().length > 0;
-      case 7: 
         if (selectedHabitObjects.length === 0) return true;
         return parseInt(currentHabitTarget) > 0;
+      case 7: 
+        // All checkboxes must be checked and name must be entered
+        return commitmentChecks.every(c => c) && signatureName.trim().length > 0;
       default: return false;
     }
   };
@@ -504,55 +504,8 @@ export function AddGoalModal({ open, onOpenChange }: AddGoalModalProps) {
               </div>
             )}
 
-            {/* Step 6: Sign your commitment */}
+            {/* Step 6: Set your target */}
             {step === 6 && (
-              <div className="space-y-4">
-                <div className="text-center mb-4">
-                  <AppleEmoji emoji="🤝" size="3xl" className="mb-4" />
-                  <h2 className="font-display text-xl font-semibold text-foreground">
-                    Sign your commitment
-                  </h2>
-                  <p className="text-sm text-muted-foreground mt-2 leading-relaxed">
-                    A written commitment increases your chance of success.
-                    <br />
-                    Read and confirm the statements below, then sign your name.
-                  </p>
-                </div>
-                <div className="space-y-3">
-                  {COMMITMENT_STATEMENTS.map((statement, index) => (
-                    <div
-                      key={index}
-                      onClick={() => toggleCommitment(index)}
-                      className={`w-full p-3 rounded-2xl flex items-start gap-3 text-left transition-all duration-200 cursor-pointer ${
-                        commitmentChecks[index]
-                          ? "bg-gradient-to-br from-primary/20 to-accent/20 border-2 border-primary/50"
-                          : "bg-white/80 hover:bg-white border-2 border-transparent"
-                      }`}
-                    >
-                      <Checkbox
-                        checked={commitmentChecks[index]}
-                        className="mt-0.5 pointer-events-none"
-                      />
-                      <span className="text-sm text-foreground">{statement}</span>
-                    </div>
-                  ))}
-                </div>
-                <div className="pt-2">
-                  <label className="text-xs text-muted-foreground mb-2 block">
-                    Type your name to sign
-                  </label>
-                  <Input
-                    value={signatureName}
-                    onChange={(e) => setSignatureName(e.target.value)}
-                    placeholder="Your name"
-                    className="h-12 text-base bg-white/80 border-white/50 rounded-2xl"
-                  />
-                </div>
-              </div>
-            )}
-
-            {/* Step 7: Set your target */}
-            {step === 7 && (
               <div className="space-y-6 relative">
                 {selectedHabitObjects.length > 0 && currentHabit ? (
                   <>
@@ -607,6 +560,53 @@ export function AddGoalModal({ open, onOpenChange }: AddGoalModalProps) {
                 )}
               </div>
             )}
+
+            {/* Step 7: Sign your commitment */}
+            {step === 7 && (
+              <div className="space-y-4">
+                <div className="text-center mb-4">
+                  <AppleEmoji emoji="🤝" size="3xl" className="mb-4" />
+                  <h2 className="font-display text-xl font-semibold text-foreground">
+                    Sign your commitment
+                  </h2>
+                  <p className="text-sm text-muted-foreground mt-2 leading-relaxed">
+                    A written commitment increases your chance of success.
+                    <br />
+                    Read and confirm the statements below, then sign your name.
+                  </p>
+                </div>
+                <div className="space-y-3">
+                  {COMMITMENT_STATEMENTS.map((statement, index) => (
+                    <div
+                      key={index}
+                      onClick={() => toggleCommitment(index)}
+                      className={`w-full p-3 rounded-2xl flex items-start gap-3 text-left transition-all duration-200 cursor-pointer ${
+                        commitmentChecks[index]
+                          ? "bg-gradient-to-br from-primary/20 to-accent/20 border-2 border-primary/50"
+                          : "bg-white/80 hover:bg-white border-2 border-transparent"
+                      }`}
+                    >
+                      <Checkbox
+                        checked={commitmentChecks[index]}
+                        className="mt-0.5 pointer-events-none"
+                      />
+                      <span className="text-sm text-foreground">{statement}</span>
+                    </div>
+                  ))}
+                </div>
+                <div className="pt-2">
+                  <label className="text-xs text-muted-foreground mb-2 block">
+                    Type your name to sign
+                  </label>
+                  <Input
+                    value={signatureName}
+                    onChange={(e) => setSignatureName(e.target.value)}
+                    placeholder="Your name"
+                    className="h-12 text-base bg-white/80 border-white/50 rounded-2xl"
+                  />
+                </div>
+              </div>
+            )}
           </div>
 
           {/* Navigation */}
@@ -620,8 +620,8 @@ export function AddGoalModal({ open, onOpenChange }: AddGoalModalProps) {
               {step === 1 ? "Cancel" : "Back"}
             </Button>
             
-            {/* Progress circle badge - centered between buttons on step 7 */}
-            {step === 7 && selectedHabitObjects.length > 1 && (
+            {/* Progress circle badge - centered between buttons on step 6 */}
+            {step === 6 && selectedHabitObjects.length > 1 && (
               <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary/20 to-accent/20 border-2 border-primary/30 flex items-center justify-center">
                 <span className="text-xs font-semibold text-primary">
                   {currentHabitIndex + 1}/{selectedHabitObjects.length}
