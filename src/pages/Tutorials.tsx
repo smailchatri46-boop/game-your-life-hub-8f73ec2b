@@ -2,7 +2,7 @@ import { Navbar } from "@/components/Navbar";
 import { GlassCard } from "@/components/GlassCard";
 import { AppleEmoji } from "@/components/AppleEmoji";
 import { YouTubeEmbed } from "@/components/YouTubeEmbed";
-import { Clock } from "lucide-react";
+import { Clock, Play } from "lucide-react";
 import { Link } from "react-router-dom";
 
 // YouTube video ID for all tutorials (extracted from https://youtu.be/E_sPvPHwpuk)
@@ -294,6 +294,15 @@ export default function Tutorials() {
   return (
     <div className="min-h-screen gradient-bg">
       <Navbar />
+      
+      {/* Sticky Video Tutorial Button */}
+      <Link 
+        to="/video-tutorial"
+        className="fixed bottom-6 right-6 z-50 btn-primary-gradient px-5 py-3 rounded-full flex items-center gap-2 shadow-lg hover:shadow-xl transition-all duration-300"
+      >
+        <Play className="w-5 h-5 fill-current" />
+        <span className="font-body font-semibold">Watch a full tutorial</span>
+      </Link>
       
       <main className="pt-28 pb-12 px-4 max-w-5xl mx-auto">
         <div className="mb-8">
