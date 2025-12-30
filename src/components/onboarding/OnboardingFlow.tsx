@@ -20,6 +20,7 @@ export function OnboardingFlow() {
     progress,
     goToNext,
     goToPrevious,
+    goToStep,
     updateData,
     toggleFocusArea,
     toggleStruggle,
@@ -34,6 +35,10 @@ export function OnboardingFlow() {
   const handleSkip = () => {
     skipOnboarding();
     navigate("/dashboard");
+  };
+
+  const handleSkipToWhyWeExist = () => {
+    goToStep("why-we-exist");
   };
 
   const handleGoToDashboard = () => {
@@ -69,7 +74,7 @@ export function OnboardingFlow() {
           <IdentityStep
             variant={1}
             onNext={goToNext}
-            onSkip={handleSkip}
+            onSkip={handleSkipToWhyWeExist}
           />
         );
 
