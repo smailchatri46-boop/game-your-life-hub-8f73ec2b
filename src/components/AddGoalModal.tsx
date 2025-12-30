@@ -1,7 +1,9 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Checkbox } from "@/components/ui/checkbox";
 import { AppleEmoji } from "@/components/AppleEmoji";
 import { ChevronLeft, ChevronRight, Check, Plus } from "lucide-react";
 import { useGoals, CreateGoalInput } from "@/hooks/use-goals";
@@ -33,20 +35,51 @@ const TIME_PERIODS = [
   { label: "1 Year", months: 12 },
 ];
 
+const COMMITMENT_STATEMENTS = [
+  "From today forward, I commit to working toward this goal.",
+  "I understand progress is built through small daily actions.",
+  "I will stay consistent even when motivation is low.",
+  "This goal matters to me and I am taking it seriously.",
+];
+
+// Confetti particle component
+function ConfettiParticle({ delay, left }: { delay: number; left: number }) {
+  const colors = ["#F97316", "#FBBF24", "#34D399", "#60A5FA", "#A78BFA", "#F472B6"];
+  const color = colors[Math.floor(Math.random() * colors.length)];
+  
+  return (
+    <div
+      className="absolute w-2 h-2 rounded-full animate-confetti"
+      style={{
+        left: `${left}%`,
+        backgroundColor: color,
+        animationDelay: `${delay}ms`,
+        top: "-10px",
+      }}
+    />
+  );
+}
+
 export function AddGoalModal({ open, onOpenChange }: AddGoalModalProps) {
   const { user } = useAuth();
   const { createGoal } = useGoals();
   const [step, setStep] = useState(1);
   const [isComplete, setIsComplete] = useState(false);
+  const [showConfetti, setShowConfetti] = useState(false);
 
   // Form state
   const [goalName, setGoalName] = useState("");
+  const [goalWhy, setGoalWhy] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<typeof CATEGORIES[0] | null>(null);
   const [selectedPeriod, setSelectedPeriod] = useState<typeof TIME_PERIODS[0] | null>(null);
   const [selectedHabits, setSelectedHabits] = useState<string[]>([]);
   const [habitTargets, setHabitTargets] = useState<Record<string, number>>({});
   const [currentHabitIndex, setCurrentHabitIndex] = useState(0);
   const [currentHabitTarget, setCurrentHabitTarget] = useState("");
+  
+  // Commitment state
+  const [commitmentChecks, setCommitmentChecks] = useState<boolean[]>([false, false, false, false]);
+  const [signatureName, setSignatureName] = useState("");
 
   // Demo habits for when user is not logged in
   // Note: "Drink Water" is marked as oncePerDay for testing the different wording
@@ -87,10 +120,20 @@ export function AddGoalModal({ open, onOpenChange }: AddGoalModalProps) {
     return habit.oncePerDay === true;
   };
 
-  const totalSteps = 5;
+  // Total steps: 1-Goal, 2-Why, 3-Category, 4-Period, 5-Habits, 6-Commitment, 7-Target
+  const totalSteps = 7;
+
+  // Trigger confetti when complete
+  useEffect(() => {
+    if (isComplete) {
+      setShowConfetti(true);
+      const timer = setTimeout(() => setShowConfetti(false), 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [isComplete]);
 
   const handleNext = () => {
-    if (step === 5 && selectedHabitObjects.length > 0) {
+    if (step === 7 && selectedHabitObjects.length > 0) {
       // Save current habit target
       if (currentHabit && currentHabitTarget) {
         setHabitTargets((prev) => ({
@@ -109,8 +152,12 @@ export function AddGoalModal({ open, onOpenChange }: AddGoalModalProps) {
 
     if (step < totalSteps) {
       setStep(step + 1);
-      if (step === 4) {
-        // Reset habit target state when entering step 5
+      if (step === 5) {
+        // Reset habit target state when entering step 6 (commitment)
+        // nothing special needed here
+      }
+      if (step === 6) {
+        // Reset habit target state when entering step 7
         setCurrentHabitIndex(0);
         setCurrentHabitTarget("");
       }
@@ -119,8 +166,15 @@ export function AddGoalModal({ open, onOpenChange }: AddGoalModalProps) {
     }
   };
 
+  const handleSkip = () => {
+    // Only used for step 2 (Why) - skip without filling
+    if (step === 2) {
+      setStep(3);
+    }
+  };
+
   const handleBack = () => {
-    if (step === 5 && currentHabitIndex > 0) {
+    if (step === 7 && currentHabitIndex > 0) {
       // Go back to previous habit target
       setCurrentHabitIndex((prev) => prev - 1);
       const prevHabit = selectedHabitObjects[currentHabitIndex - 1];
@@ -170,22 +224,46 @@ export function AddGoalModal({ open, onOpenChange }: AddGoalModalProps) {
     setStep(1);
     setIsComplete(false);
     setGoalName("");
+    setGoalWhy("");
     setSelectedCategory(null);
     setSelectedPeriod(null);
     setSelectedHabits([]);
     setHabitTargets({});
     setCurrentHabitIndex(0);
     setCurrentHabitTarget("");
+    setCommitmentChecks([false, false, false, false]);
+    setSignatureName("");
+    setShowConfetti(false);
     onOpenChange(false);
+  };
+
+  const handleAddAnother = () => {
+    setStep(1);
+    setIsComplete(false);
+    setGoalName("");
+    setGoalWhy("");
+    setSelectedCategory(null);
+    setSelectedPeriod(null);
+    setSelectedHabits([]);
+    setHabitTargets({});
+    setCurrentHabitIndex(0);
+    setCurrentHabitTarget("");
+    setCommitmentChecks([false, false, false, false]);
+    setSignatureName("");
+    setShowConfetti(false);
   };
 
   const canProceed = () => {
     switch (step) {
       case 1: return goalName.trim().length > 0;
-      case 2: return selectedCategory !== null;
-      case 3: return selectedPeriod !== null;
-      case 4: return true; // Habits are optional
-      case 5: 
+      case 2: return true; // Why is optional
+      case 3: return selectedCategory !== null;
+      case 4: return selectedPeriod !== null;
+      case 5: return true; // Habits are optional
+      case 6: 
+        // All checkboxes must be checked and name must be entered
+        return commitmentChecks.every(c => c) && signatureName.trim().length > 0;
+      case 7: 
         if (selectedHabitObjects.length === 0) return true;
         return parseInt(currentHabitTarget) > 0;
       default: return false;
@@ -200,23 +278,51 @@ export function AddGoalModal({ open, onOpenChange }: AddGoalModalProps) {
     );
   };
 
+  const toggleCommitment = (index: number) => {
+    setCommitmentChecks(prev => {
+      const newChecks = [...prev];
+      newChecks[index] = !newChecks[index];
+      return newChecks;
+    });
+  };
+
   if (isComplete) {
     return (
       <Dialog open={open} onOpenChange={handleClose}>
         <DialogContent className="sm:max-w-lg p-0 overflow-hidden bg-gradient-to-br from-[hsl(30,100%,98%)] to-[hsl(25,80%,95%)] border-0" hideCloseButton>
-          <div className="p-8 text-center">
-            <div className="w-20 h-20 mx-auto mb-6 rounded-full bg-gradient-to-br from-primary/20 to-accent/20 flex items-center justify-center">
-              <AppleEmoji emoji="🎯" size="3xl" />
+          <div className="p-8 text-center relative overflow-hidden">
+            {/* Confetti animation */}
+            {showConfetti && (
+              <div className="absolute inset-0 pointer-events-none overflow-hidden">
+                {Array.from({ length: 30 }).map((_, i) => (
+                  <ConfettiParticle 
+                    key={i} 
+                    delay={i * 100} 
+                    left={Math.random() * 100} 
+                  />
+                ))}
+              </div>
+            )}
+            
+            <div className="w-20 h-20 mx-auto mb-6 rounded-full bg-gradient-to-br from-primary/20 to-accent/20 flex items-center justify-center animate-scale-in">
+              <AppleEmoji emoji="🎉" size="3xl" />
             </div>
-            <h2 className="font-display text-2xl font-semibold text-foreground mb-2">
-              Goal Created!
+            <h2 className="font-display text-2xl font-semibold text-foreground mb-3">
+              Goal created! 🎉
             </h2>
-            <p className="text-muted-foreground mb-6">
-              Your journey to "{goalName}" has begun. Stay consistent and track your progress!
+            <p className="text-muted-foreground mb-6 leading-relaxed">
+              Congratulations — you just took the first step toward the life you want.
+              <br />
+              Stay consistent and your small actions will compound into real change.
             </p>
-            <Button onClick={handleClose} variant="gradient" size="lg" className="w-full">
-              Let's Go
-            </Button>
+            <div className="space-y-3">
+              <Button onClick={handleClose} variant="gradient" size="lg" className="w-full">
+                Go to my goals
+              </Button>
+              <Button onClick={handleAddAnother} variant="outline" size="lg" className="w-full text-muted-foreground bg-muted/30 border-muted/50 hover:bg-muted/50">
+                Add another goal
+              </Button>
+            </div>
           </div>
         </DialogContent>
       </Dialog>
@@ -245,6 +351,7 @@ export function AddGoalModal({ open, onOpenChange }: AddGoalModalProps) {
 
           {/* Step Content */}
           <div className="min-h-[300px]">
+            {/* Step 1: What is your goal? */}
             {step === 1 && (
               <div className="flex flex-col justify-center h-full min-h-[280px]">
                 <div className="text-center mb-6">
@@ -267,7 +374,36 @@ export function AddGoalModal({ open, onOpenChange }: AddGoalModalProps) {
               </div>
             )}
 
+            {/* Step 2: Why do you want to achieve this? */}
             {step === 2 && (
+              <div className="flex flex-col justify-center h-full min-h-[280px]">
+                <div className="text-center mb-6">
+                  <AppleEmoji emoji="💡" size="3xl" className="mb-4" />
+                  <h2 className="font-display text-xl font-semibold text-foreground">
+                    Why do you want to achieve this goal?
+                  </h2>
+                  <p className="text-sm text-muted-foreground mt-3 leading-relaxed">
+                    Writing your "why" keeps you motivated when things get hard.
+                    <br />
+                    We also use this privately to personalize your AI guidance and remind you why you started.
+                  </p>
+                </div>
+                <div>
+                  <Textarea
+                    value={goalWhy}
+                    onChange={(e) => setGoalWhy(e.target.value)}
+                    placeholder="Write your 'why' here…"
+                    className="min-h-[100px] text-base bg-white/80 border-white/50 rounded-2xl resize-none"
+                  />
+                  <p className="text-xs text-muted-foreground mt-2 text-center">
+                    Optional — you can skip this if you want
+                  </p>
+                </div>
+              </div>
+            )}
+
+            {/* Step 3: What type of goal is this? */}
+            {step === 3 && (
               <div className="space-y-4">
                 <div className="text-center mb-6">
                   <AppleEmoji emoji="🎨" size="3xl" className="mb-4" />
@@ -294,7 +430,8 @@ export function AddGoalModal({ open, onOpenChange }: AddGoalModalProps) {
               </div>
             )}
 
-            {step === 3 && (
+            {/* Step 4: When do you want to achieve this? */}
+            {step === 4 && (
               <div className="space-y-4">
                 <div className="text-center mb-6">
                   <AppleEmoji emoji="📅" size="3xl" className="mb-4" />
@@ -326,7 +463,8 @@ export function AddGoalModal({ open, onOpenChange }: AddGoalModalProps) {
               </div>
             )}
 
-            {step === 4 && (
+            {/* Step 5: Which habits and tasks will help you? */}
+            {step === 5 && (
               <div className="space-y-4">
                 <div className="text-center mb-6">
                   <AppleEmoji emoji="🔗" size="3xl" className="mb-4" />
@@ -371,7 +509,56 @@ export function AddGoalModal({ open, onOpenChange }: AddGoalModalProps) {
               </div>
             )}
 
-            {step === 5 && (
+            {/* Step 6: Sign your commitment */}
+            {step === 6 && (
+              <div className="space-y-4">
+                <div className="text-center mb-4">
+                  <AppleEmoji emoji="🤝" size="3xl" className="mb-4" />
+                  <h2 className="font-display text-xl font-semibold text-foreground">
+                    Sign your commitment
+                  </h2>
+                  <p className="text-sm text-muted-foreground mt-2 leading-relaxed">
+                    A written commitment increases your chance of success.
+                    <br />
+                    Read and confirm the statements below, then sign your name.
+                  </p>
+                </div>
+                <div className="space-y-3">
+                  {COMMITMENT_STATEMENTS.map((statement, index) => (
+                    <button
+                      key={index}
+                      onClick={() => toggleCommitment(index)}
+                      className={`w-full p-3 rounded-2xl flex items-start gap-3 text-left transition-all duration-200 ${
+                        commitmentChecks[index]
+                          ? "bg-gradient-to-br from-primary/20 to-accent/20 border-2 border-primary/50"
+                          : "bg-white/80 hover:bg-white border-2 border-transparent"
+                      }`}
+                    >
+                      <Checkbox
+                        checked={commitmentChecks[index]}
+                        onCheckedChange={() => toggleCommitment(index)}
+                        className="mt-0.5"
+                      />
+                      <span className="text-sm text-foreground">{statement}</span>
+                    </button>
+                  ))}
+                </div>
+                <div className="pt-2">
+                  <label className="text-xs text-muted-foreground mb-2 block">
+                    Type your name to sign
+                  </label>
+                  <Input
+                    value={signatureName}
+                    onChange={(e) => setSignatureName(e.target.value)}
+                    placeholder="Your name"
+                    className="h-12 text-base bg-white/80 border-white/50 rounded-2xl"
+                  />
+                </div>
+              </div>
+            )}
+
+            {/* Step 7: Set your target */}
+            {step === 7 && (
               <div className="space-y-6 relative">
                 {selectedHabitObjects.length > 0 && currentHabit ? (
                   <>
@@ -439,13 +626,24 @@ export function AddGoalModal({ open, onOpenChange }: AddGoalModalProps) {
               {step === 1 ? "Cancel" : "Back"}
             </Button>
             
-            {/* Progress circle badge - centered between buttons on step 5 */}
-            {step === 5 && selectedHabitObjects.length > 1 && (
+            {/* Progress circle badge - centered between buttons on step 7 */}
+            {step === 7 && selectedHabitObjects.length > 1 && (
               <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary/20 to-accent/20 border-2 border-primary/30 flex items-center justify-center">
                 <span className="text-xs font-semibold text-primary">
                   {currentHabitIndex + 1}/{selectedHabitObjects.length}
                 </span>
               </div>
+            )}
+
+            {/* Skip button for step 2 */}
+            {step === 2 && (
+              <Button
+                variant="outline"
+                onClick={handleSkip}
+                className="text-muted-foreground bg-muted/30 border-muted/50 hover:bg-muted/50 rounded-xl h-11"
+              >
+                Skip
+              </Button>
             )}
             
             <Button
