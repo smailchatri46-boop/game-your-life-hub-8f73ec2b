@@ -5,7 +5,6 @@ import { GlassCard } from "@/components/GlassCard";
 import { Button } from "@/components/ui/button";
 import { UpgradeModal } from "@/components/UpgradeModal";
 import { EditProfileModal } from "@/components/EditProfileModal";
-import { NotificationsModal } from "@/components/NotificationsModal";
 import { DeleteAccountModal } from "@/components/DeleteAccountModal";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
@@ -13,16 +12,12 @@ import { exportUserData, downloadTextFile } from "@/utils/exportChatData";
 import { toast } from "sonner";
 import { 
   User, 
-  Bell, 
   CreditCard, 
   LogOut, 
   ChevronRight, 
-  Download,
   Shield,
-  Key,
   Smartphone,
-  Trash2,
-  Sparkles
+  Trash2
 } from "lucide-react";
 import {
   AlertDialog,
@@ -34,13 +29,13 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import { AppleEmoji } from "@/components/AppleEmoji";
 
 export default function Settings() {
   const navigate = useNavigate();
   const { user, signOut } = useAuth();
   const [showUpgradeModal, setShowUpgradeModal] = useState(false);
   const [showEditProfile, setShowEditProfile] = useState(false);
-  const [showNotifications, setShowNotifications] = useState(false);
   const [showDeleteAccount, setShowDeleteAccount] = useState(false);
   const [showSignOutConfirm, setShowSignOutConfirm] = useState(false);
   const [profile, setProfile] = useState<{ full_name: string | null; email: string | null; avatar_url: string | null }>({ 
@@ -52,7 +47,6 @@ export default function Settings() {
 
   // For demo purposes - in real app this would come from subscription data
   const isPro = false;
-  const trialDaysLeft = 8;
 
   useEffect(() => {
     if (user) {
@@ -68,6 +62,11 @@ export default function Settings() {
         });
     }
   }, [user, showEditProfile]);
+
+  const displayName = profile.full_name || user?.email?.split("@")[0] || "User";
+  const displayEmail = profile.email || user?.email || "";
+  const avatarColor = profile.avatar_url || "from-primary to-accent";
+  const initial = displayName.charAt(0).toUpperCase();
 
   const handleSignOut = async () => {
     await signOut();
@@ -98,11 +97,6 @@ export default function Settings() {
       setExporting(false);
     }
   };
-
-  const displayName = profile.full_name || user?.email?.split("@")[0] || "User";
-  const displayEmail = profile.email || user?.email || "";
-  const avatarColor = profile.avatar_url || "from-primary to-accent";
-  const initial = displayName.charAt(0).toUpperCase();
 
   return (
     <div className="min-h-screen gradient-bg">
@@ -138,44 +132,23 @@ export default function Settings() {
           </button>
         </GlassCard>
         
-        {/* Notifications & Subscription */}
-        <GlassCard className="divide-y divide-border/30 mb-6">
-          <button 
-            onClick={() => setShowNotifications(true)}
-            className="w-full p-5 flex items-center justify-between hover:bg-secondary/30 transition-colors first:rounded-t-3xl"
-          >
-            <span className="flex items-center gap-3">
-              <Bell className="w-5 h-5 text-primary" />
-              <span className="font-medium text-foreground">Notifications</span>
-            </span>
-            <ChevronRight className="w-5 h-5 text-muted-foreground" />
-          </button>
-          
+        {/* Subscription Card */}
+        <GlassCard className="mb-6">
           <button 
             onClick={() => setShowUpgradeModal(true)}
-            className="w-full p-5 flex items-center justify-between hover:bg-secondary/30 transition-colors last:rounded-b-3xl"
+            className="w-full p-5 flex items-center justify-between hover:bg-secondary/30 transition-colors rounded-3xl"
           >
             <span className="flex items-center gap-3">
               <CreditCard className="w-5 h-5 text-primary" />
               <div className="text-left">
                 <span className="font-medium block text-foreground">Subscription</span>
                 <span className="text-sm text-muted-foreground">
-                  {isPro ? `Pro Plan • Active` : `Free Plan • ${trialDaysLeft} days left`}
+                  {isPro ? "Pro Plan" : "Free Plan"}
                 </span>
               </div>
             </span>
             <ChevronRight className="w-5 h-5 text-muted-foreground" />
           </button>
-        </GlassCard>
-
-        {/* Subscription Status */}
-        <GlassCard className="p-5 mb-6">
-          <p className="text-sm text-muted-foreground">
-            {isPro 
-              ? "✨ Pro plan – unlimited access to all features" 
-              : "🔒 Free plan – AI features locked after trial"
-            }
-          </p>
         </GlassCard>
         
         {/* Upgrade Card */}
@@ -183,68 +156,39 @@ export default function Settings() {
           <GlassCard className="p-6 mb-6" glow>
             <div className="flex items-center gap-4 mb-4">
               <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-primary/20 to-accent/20 flex items-center justify-center">
-                <Sparkles className="w-6 h-6 text-primary" />
+                <AppleEmoji emoji="💰" className="text-2xl" />
               </div>
               <div>
-                <h3 className="font-display text-lg font-semibold text-foreground">Upgrade to Pro</h3>
-                <p className="text-sm text-muted-foreground">Unlock AI coaching & unlimited features</p>
+                <h3 className="font-sans text-lg font-semibold text-foreground">Upgrade to Pro</h3>
+                <p className="text-sm text-muted-foreground">Unlock AI coaching & premium features</p>
               </div>
             </div>
-            <div className="flex gap-3">
-              <Button 
-                onClick={() => setShowUpgradeModal(true)}
-                className="flex-1 rounded-full text-primary-foreground font-medium"
-                style={{ background: 'linear-gradient(135deg, hsl(38 100% 70%) 0%, hsl(24 95% 53%) 100%)' }}
-              >
-                $14/month
-              </Button>
-              <Button 
-                variant="secondary" 
-                onClick={() => setShowUpgradeModal(true)}
-                className="flex-1 rounded-full"
-              >
-                $7/month (yearly)
-              </Button>
-            </div>
+            <Button 
+              onClick={() => setShowUpgradeModal(true)}
+              className="w-full rounded-full text-primary-foreground font-medium"
+              style={{ background: 'linear-gradient(135deg, hsl(38 100% 70%) 0%, hsl(24 95% 53%) 100%)' }}
+            >
+              View plans
+            </Button>
           </GlassCard>
         )}
 
         {/* Download Data */}
-        <GlassCard className="mb-6">
-          <button 
-            onClick={handleDownloadData}
-            disabled={exporting}
-            className="w-full p-5 flex items-center justify-between hover:bg-secondary/30 transition-colors rounded-3xl"
-          >
-            <span className="flex items-center gap-3">
-              <Download className="w-5 h-5 text-primary" />
-              <div className="text-left">
-                <span className="font-medium block text-foreground">
-                  {exporting ? "Exporting..." : "📥 Download my data"}
-                </span>
-                <span className="text-xs text-muted-foreground">
-                  Your data is private. Export gives you a readable copy.
-                </span>
-              </div>
-            </span>
-            <ChevronRight className="w-5 h-5 text-muted-foreground" />
-          </button>
-        </GlassCard>
+        <Button
+          variant="secondary"
+          onClick={handleDownloadData}
+          disabled={exporting}
+          className="w-full rounded-full mb-6 h-12"
+        >
+          {exporting ? "Exporting..." : "Download my data"}
+        </Button>
         
         {/* Privacy & Security */}
         <GlassCard className="divide-y divide-border/30 mb-6">
           <div className="p-5 flex items-center gap-3">
             <Shield className="w-5 h-5 text-primary" />
-            <span className="font-display font-semibold text-foreground">Privacy & Security</span>
+            <span className="font-sans font-semibold text-foreground">Privacy and Security</span>
           </div>
-          
-          <button className="w-full p-5 flex items-center justify-between hover:bg-secondary/30 transition-colors">
-            <span className="flex items-center gap-3">
-              <Key className="w-5 h-5 text-muted-foreground" />
-              <span className="font-medium text-foreground">Change Password</span>
-            </span>
-            <ChevronRight className="w-5 h-5 text-muted-foreground" />
-          </button>
           
           <button className="w-full p-5 flex items-center justify-between opacity-50 cursor-not-allowed">
             <span className="flex items-center gap-3">
@@ -292,12 +236,7 @@ export default function Settings() {
         onClose={() => setShowEditProfile(false)} 
       />
       
-      <NotificationsModal 
-        open={showNotifications} 
-        onClose={() => setShowNotifications(false)} 
-      />
-      
-      <DeleteAccountModal 
+      <DeleteAccountModal
         open={showDeleteAccount} 
         onClose={() => setShowDeleteAccount(false)}
         onConfirm={handleDeleteAccount}
