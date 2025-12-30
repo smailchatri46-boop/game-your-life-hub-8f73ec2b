@@ -33,11 +33,14 @@ export function Navbar() {
                 key={item.path}
                 to={item.path}
                 className={cn(
-                  "px-4 py-2 rounded-2xl text-sm font-medium transition-all duration-200 whitespace-nowrap",
+                  "px-4 py-2 rounded-2xl text-sm transition-all duration-200 whitespace-nowrap",
                   location.pathname === item.path
-                    ? "bg-primary text-primary-foreground shadow-soft"
-                    : "text-muted-foreground hover:text-foreground hover:bg-white/40"
+                    ? "font-bold text-foreground"
+                    : "font-medium text-muted-foreground hover:text-foreground hover:bg-white/40"
                 )}
+                style={location.pathname === item.path ? {
+                  textShadow: '0 0 12px hsl(0 0% 100% / 0.9), 0 0 24px hsl(0 0% 100% / 0.6), 0 0 4px hsl(0 0% 100% / 0.8)'
+                } : undefined}
               >
                 {item.name}
               </Link>
