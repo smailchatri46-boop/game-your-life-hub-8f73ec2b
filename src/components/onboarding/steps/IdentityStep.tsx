@@ -19,8 +19,8 @@ const IDENTITY_CONTENT: Record<1 | 2, { emoji: string; title: string; subtitle: 
   2: {
     emoji: "💪",
     title: "You're ready to stay consistent.",
-    subtitle: "Start with small steps today — let momentum compound over the next months.",
-    skipLabel: "Skip onboarding",
+    subtitle: "Start with small steps today. Let momentum compound over the next months.",
+    skipLabel: "Skip",
   },
 };
 
