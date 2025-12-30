@@ -308,12 +308,10 @@ export function AddGoalModal({ open, onOpenChange }: AddGoalModalProps) {
               <AppleEmoji emoji="🎉" size="3xl" />
             </div>
             <h2 className="font-display text-2xl font-semibold text-foreground mb-3">
-              Goal created! 🎉
+              Goal created! <AppleEmoji emoji="🎉" className="inline" />
             </h2>
-            <p className="text-muted-foreground mb-6 leading-relaxed">
-              Congratulations — you just took the first step toward the life you want.
-              <br />
-              Stay consistent and your small actions will compound into real change.
+            <p className="text-muted-foreground text-sm mb-6 leading-relaxed text-center max-w-sm mx-auto">
+              You just took a meaningful step toward the life you want. Stay consistent, keep showing up, and your small actions will compound into real, lasting change.
             </p>
             <div className="space-y-3">
               <Button onClick={handleClose} variant="gradient" size="lg" className="w-full">
