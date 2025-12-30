@@ -3,7 +3,7 @@ import { AppleEmoji } from "@/components/AppleEmoji";
 import { GlassCard } from "@/components/GlassCard";
 import { Goal, useGoals } from "@/hooks/use-goals";
 import { format } from "date-fns";
-import { Trash2, Calendar, Pencil, ChevronRight } from "lucide-react";
+import { Trash2, Calendar, Pencil, ChevronLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { DeleteGoalCarousel } from "@/components/DeleteGoalCarousel";
@@ -101,18 +101,7 @@ export function GoalCard({ goal, linkedHabits = [] }: GoalCardProps) {
           </div>
         </div>
         <div className="flex items-center gap-1">
-          {/* Chevron toggle - only visible on hover, points right when closed, down when open */}
-          <Button
-            variant="ghost"
-            size="icon"
-            className={`h-8 w-8 text-muted-foreground hover:bg-muted/50 hover:text-foreground transition-opacity ${
-              isHovered || showActions ? "opacity-100" : "opacity-0"
-            }`}
-            onClick={toggleActions}
-          >
-            <ChevronRight className={`w-4 h-4 transition-transform ${showActions ? "rotate-90" : ""}`} />
-          </Button>
-          {/* Edit and Delete icons - only visible when toggled, appear to the right of arrow */}
+          {/* Edit and Delete icons - only visible when toggled, appear to the left of arrow */}
           <div className={`flex items-center gap-1 transition-opacity ${showActions ? "opacity-100" : "opacity-0 pointer-events-none"}`}>
             <Button
               variant="ghost"
@@ -134,6 +123,17 @@ export function GoalCard({ goal, linkedHabits = [] }: GoalCardProps) {
               <Trash2 className="w-4 h-4" />
             </Button>
           </div>
+          {/* Chevron toggle - points left when closed, right when open */}
+          <Button
+            variant="ghost"
+            size="icon"
+            className={`h-8 w-8 text-muted-foreground hover:bg-muted/50 hover:text-foreground transition-opacity ${
+              isHovered || showActions ? "opacity-100" : "opacity-0"
+            }`}
+            onClick={toggleActions}
+          >
+            <ChevronLeft className={`w-4 h-4 transition-transform ${showActions ? "rotate-180" : ""}`} />
+          </Button>
         </div>
       </div>
 
