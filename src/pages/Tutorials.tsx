@@ -298,7 +298,7 @@ export default function Tutorials() {
       {/* Sticky Video Tutorial Button */}
       <Link 
         to="/video-tutorial"
-        className="fixed bottom-6 right-6 z-50 btn-primary-gradient px-5 py-3 rounded-full flex items-center gap-2 shadow-lg hover:shadow-xl transition-all duration-300"
+        className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 btn-primary-gradient px-5 py-3 rounded-full flex items-center gap-2 shadow-lg hover:shadow-xl transition-all duration-300"
       >
         <Play className="w-5 h-5 fill-current" />
         <span className="font-body font-semibold">Watch a full tutorial</span>
