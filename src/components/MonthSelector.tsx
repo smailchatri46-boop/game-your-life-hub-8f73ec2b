@@ -11,7 +11,7 @@ export function MonthSelector({ monthName, year, onPreviousMonth, onNextMonth }:
   return (
     <div className="flex items-center justify-center mb-6">
       <div 
-        className="inline-flex items-center gap-3 bg-white rounded-[24px] px-4 py-2"
+        className="inline-flex items-center gap-3 bg-white rounded-[14px] px-4 py-2"
         style={{ 
           boxShadow: 'none',
         }}
