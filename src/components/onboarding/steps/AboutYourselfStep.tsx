@@ -28,7 +28,7 @@ const CONTENT = {
       { label: "Finance", emoji: "💰" },
       { label: "Fitness", emoji: "🏃" },
       { label: "School", emoji: "📚" },
-      { label: "Relationships", emoji: "❤️" },
+      { label: "Relationships", emoji: "💕" },
       { label: "Mental wellness", emoji: "🧘" },
       { label: "Other", emoji: "✨" },
     ],
