@@ -14,7 +14,8 @@ import { FirstTimeTip } from "@/components/FirstTimeTip";
 import { GoalProgressOverview } from "@/components/GoalProgressOverview";
 
 import { Button } from "@/components/ui/button";
-import { Plus, Trash2, GripVertical, Check, ChevronLeft, ChevronRight, Target, Calendar, TrendingUp, FileText } from "lucide-react";
+import { Plus, Trash2, GripVertical, Check, Target, Calendar, TrendingUp, FileText } from "lucide-react";
+import { MonthSelector } from "@/components/MonthSelector";
 import { useMemo, useState } from "react";
 import { useSelectedMonth } from "@/hooks/use-selected-month";
 import { format } from "date-fns";
@@ -358,24 +359,12 @@ export default function Habits() {
       
       <main className="pt-28 pb-24 px-3 sm:px-4 lg:px-6 xl:px-8">
         {/* Month Navigation - Centered above stats */}
-        <div className="flex items-center justify-center gap-4 mb-6">
-          <button 
-            onClick={goToPreviousMonth}
-            className="p-2 rounded-full hover:bg-secondary transition-colors"
-          >
-            <ChevronLeft className="w-5 h-5 text-muted-foreground" />
-          </button>
-          <h2 className="font-display text-2xl min-w-[200px] text-center">
-            <span className="text-primary font-semibold">{monthName}</span>
-            <span className="text-foreground ml-2 font-sans font-semibold italic">{year}</span>
-          </h2>
-          <button 
-            onClick={goToNextMonth}
-            className="p-2 rounded-full hover:bg-secondary transition-colors"
-          >
-            <ChevronRight className="w-5 h-5 text-muted-foreground" />
-          </button>
-        </div>
+        <MonthSelector
+          monthName={monthName}
+          year={year}
+          onPreviousMonth={goToPreviousMonth}
+          onNextMonth={goToNextMonth}
+        />
 
         {/* Stats Row */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
