@@ -24,6 +24,11 @@ export default function Auth() {
     }
   };
 
+  const handleSkipToOnboarding = () => {
+    // For dev/testing: skip auth and go directly to onboarding
+    navigate("/onboarding");
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen gradient-hero flex items-center justify-center">
@@ -74,6 +79,15 @@ export default function Auth() {
                   />
                 </svg>
                 Continue with Google
+              </Button>
+              
+              <Button 
+                variant="ghost" 
+                size="lg" 
+                className="w-full text-muted-foreground hover:text-foreground"
+                onClick={handleSkipToOnboarding}
+              >
+                Skip to test the app
               </Button>
             </div>
             
