@@ -116,7 +116,7 @@ const faqs: FAQ[] = [
     question: "Can I schedule a habit or task for specific days of the week?",
     answer: (
       <>
-        Yes! While habits are designed as daily practices for consistency, you can schedule tasks for specific days of the week. Use the to-do list feature in the <strong>Overview</strong> page—click on the days you want and add your tasks there.
+        Yes! This is a native feature. Go to the <strong>Dashboard</strong> and click the plus button at the bottom right corner to add a new habit or task. During the setup, you can choose specific days of the week for it to repeat automatically. Note: this is different from the to-do list—habits and tasks repeat each week on your chosen days, while to-do items are one-time and won't repeat.
       </>
     ),
   },
@@ -124,7 +124,7 @@ const faqs: FAQ[] = [
     question: "Can I add a task only on certain days of the month?",
     answer: (
       <>
-        Yes! Use the to-do list feature in the <strong>Overview</strong> page. Click on any specific date in the monthly calendar, and you can add tasks just for that day. This is perfect for monthly appointments, deadlines, or occasional reminders.
+        Yes! Go to the <strong>Dashboard</strong> and click the plus button at the bottom right corner. When adding a new habit or task, you can select specific days of the month for it to appear. This is perfect for monthly appointments, deadlines, or recurring monthly reminders.
       </>
     ),
   },
@@ -132,7 +132,7 @@ const faqs: FAQ[] = [
     question: "Can I add a progressive build-up habit?",
     answer: (
       <>
-        Yes! When you click "Add Habit," you can set a progressive target that builds up over time. This allows you to start small and gradually increase your goal—perfect for building sustainable habits without overwhelming yourself.
+        Yes! Go to the <strong>Dashboard</strong> and click the plus button at the bottom right corner. Follow the steps to add a habit, and you'll see the option to enable progressive build-up. This allows you to start small and gradually increase your target over time—perfect for building sustainable habits without overwhelming yourself.
       </>
     ),
   },
@@ -140,7 +140,7 @@ const faqs: FAQ[] = [
     question: "Can I download my data?",
     answer: (
       <>
-        Yes! You can export your data from the <strong>Settings</strong> page. This includes your habits, journal entries, mood logs, and chat history—everything you need to keep a personal backup or use with other tools.
+        Yes! Go to the <strong>Dashboard</strong> or <strong>Overview</strong> page, open the AI chat box, and click on "Download Data." This includes your habits, journal entries, mood logs, and chat history—everything you need to keep a personal backup or use with other tools.
       </>
     ),
   },
@@ -148,7 +148,7 @@ const faqs: FAQ[] = [
     question: "Can I track my mood and emotions?",
     answer: (
       <>
-        Absolutely! The app includes mood and motivation tracking. You can log how you're feeling each day, and over time you'll see patterns in your emotional well-being alongside your habit completion. This helps you understand how your routines affect your overall mood.
+        Absolutely! Go to the <strong>Dashboard</strong> and scroll down to find the Mood and Motivation section. There you can log how you're feeling each day. Over time, you'll see patterns in your emotional well-being alongside your habit completion—this helps you understand how your routines affect your overall mood.
       </>
     ),
   },
@@ -156,7 +156,7 @@ const faqs: FAQ[] = [
     question: "How can I add a daily reflection or feedback?",
     answer: (
       <>
-        On the <strong>Overview</strong> page, you can log your daily reflection to capture how your day went. This feedback helps the AI understand your patterns and provides better insights over time. It's a quick way to track your daily experience beyond just completing habits.
+        Go to the <strong>Dashboard</strong> page and you'll find the daily reflection section where you can log how your day went. This feedback helps the AI understand your patterns and provides better insights over time. It's a quick way to track your daily experience beyond just completing habits.
       </>
     ),
   },
@@ -228,7 +228,7 @@ const faqs: FAQ[] = [
     question: "How do I add a new habit?",
     answer: (
       <>
-        On the <strong>Dashboard</strong>, look for the "Add Habit" button. You can create a new habit by giving it a name, choosing an icon, and setting your daily target.
+        Go to the <strong>Dashboard</strong> and click the plus button at the bottom right corner. Follow the steps to create a new habit by giving it a name, choosing an icon, and setting your daily target.
       </>
     ),
   },
@@ -244,7 +244,7 @@ const faqs: FAQ[] = [
     question: "Can the AI analyze my progress?",
     answer: (
       <>
-        Absolutely! The AI Coach can look at your habits, goals, and journal entries to provide personalized insights. Visit the <strong>Overview</strong> page or chat with your AI Buddy to get analysis and encouragement.
+        Absolutely! The AI Buddy can look at your habits, goals, and journal entries to provide personalized insights. Visit the <strong>Overview</strong> page or chat with your AI Buddy to get analysis and encouragement.
       </>
     ),
   },
