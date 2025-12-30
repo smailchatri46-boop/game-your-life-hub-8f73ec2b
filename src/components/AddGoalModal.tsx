@@ -245,9 +245,9 @@ export function AddGoalModal({ open, onOpenChange }: AddGoalModalProps) {
           {/* Step Content */}
           <div className="min-h-[300px]">
             {step === 1 && (
-              <div className="space-y-6">
-                <div className="text-center">
-                  <AppleEmoji emoji="🌈" size="3xl" className="mb-4" />
+              <div className="flex flex-col justify-center h-full min-h-[280px]">
+                <div className="text-center mb-6">
+                  <AppleEmoji emoji="✨" size="3xl" className="mb-4" />
                   <h2 className="font-display text-xl font-semibold text-foreground">
                     What is your goal?
                   </h2>
@@ -260,7 +260,7 @@ export function AddGoalModal({ open, onOpenChange }: AddGoalModalProps) {
                     className="h-14 text-lg bg-white/80 border-white/50 rounded-2xl"
                   />
                   <p className="text-sm text-muted-foreground mt-3 text-center">
-                    Examples: Make 10k MRR, Learn Spanish, Read 20 books
+                    Examples: Make 10k, Learn Spanish, Read 20 books
                   </p>
                 </div>
               </div>
@@ -269,7 +269,7 @@ export function AddGoalModal({ open, onOpenChange }: AddGoalModalProps) {
             {step === 2 && (
               <div className="space-y-4">
                 <div className="text-center mb-6">
-                  <AppleEmoji emoji="🏷️" size="3xl" className="mb-4" />
+                  <AppleEmoji emoji="🎨" size="3xl" className="mb-4" />
                   <h2 className="font-display text-xl font-semibold text-foreground">
                     What type of goal is this?
                   </h2>
@@ -365,13 +365,13 @@ export function AddGoalModal({ open, onOpenChange }: AddGoalModalProps) {
                   </div>
                 )}
                 <p className="text-xs text-muted-foreground text-center">
-                  Selected: {selectedHabits.length} habit{selectedHabits.length !== 1 ? "s" : ""}
+                  {selectedHabits.length} selected
                 </p>
               </div>
             )}
 
             {step === 5 && (
-              <div className="space-y-6">
+              <div className="space-y-6 relative">
                 {selectedHabitObjects.length > 0 && currentHabit ? (
                   <>
                     <div className="text-center">
@@ -380,61 +380,16 @@ export function AddGoalModal({ open, onOpenChange }: AddGoalModalProps) {
                         Set target for "{currentHabit.name}"
                       </h2>
                       <p className="text-sm text-muted-foreground mt-2">
-                        {isNumericHabit(currentHabit)
-                          ? "How many times do you need to complete this habit?"
-                          : "How many days do you want to do this?"}
+                        How many total times do you want to complete this over the selected goal period?
                       </p>
-                      {selectedHabitObjects.length > 1 && (
-                        <p className="text-xs text-muted-foreground mt-1">
-                          ({currentHabitIndex + 1} of {selectedHabitObjects.length})
+                      <p className="text-xs text-muted-foreground mt-1">
+                        This is the total count — it can be done multiple times per day.
+                      </p>
+                      {selectedPeriod && (
+                        <p className="text-xs text-primary font-medium mt-2">
+                          over the next {selectedPeriod.months === 12 ? "1 year" : `${selectedPeriod.months} months`}
                         </p>
                       )}
-                    </div>
-                    <div>
-                      <Input
-                        type="number"
-                        value={currentHabitTarget}
-                        onChange={(e) => setCurrentHabitTarget(e.target.value)}
-                        placeholder={isNumericHabit(currentHabit) ? "Enter number of times..." : "Enter number of days..."}
-                        min={1}
-                        className="h-14 text-lg text-center bg-white/80 border-white/50 rounded-2xl"
-                      />
-                      <div className="mt-4 space-y-1">
-                        <p className="text-xs text-muted-foreground text-center">Examples:</p>
-                        <div className="flex flex-wrap justify-center gap-2">
-                          {isNumericHabit(currentHabit) ? (
-                            <>
-                              <span className="text-xs px-3 py-1 rounded-full bg-white/80 text-muted-foreground">
-                                120 sessions
-                              </span>
-                              <span className="text-xs px-3 py-1 rounded-full bg-white/80 text-muted-foreground">
-                                200 times
-                              </span>
-                            </>
-                          ) : (
-                            <>
-                              <span className="text-xs px-3 py-1 rounded-full bg-white/80 text-muted-foreground">
-                                90 days
-                              </span>
-                              <span className="text-xs px-3 py-1 rounded-full bg-white/80 text-muted-foreground">
-                                180 days
-                              </span>
-                            </>
-                          )}
-                        </div>
-                      </div>
-                    </div>
-                  </>
-                ) : (
-                  <>
-                    <div className="text-center">
-                      <AppleEmoji emoji="🎯" size="3xl" className="mb-4" />
-                      <h2 className="font-display text-xl font-semibold text-foreground">
-                        Set your target
-                      </h2>
-                      <p className="text-sm text-muted-foreground mt-2">
-                        How many times do you need to complete your goal?
-                      </p>
                     </div>
                     <div>
                       <Input
@@ -445,16 +400,46 @@ export function AddGoalModal({ open, onOpenChange }: AddGoalModalProps) {
                         min={1}
                         className="h-14 text-lg text-center bg-white/80 border-white/50 rounded-2xl"
                       />
-                      <div className="mt-4 space-y-1">
-                        <p className="text-xs text-muted-foreground text-center">Examples:</p>
-                        <div className="flex flex-wrap justify-center gap-2">
-                          {["100 times", "200 sessions", "90 days"].map((ex) => (
-                            <span key={ex} className="text-xs px-3 py-1 rounded-full bg-white/80 text-muted-foreground">
-                              {ex}
-                            </span>
-                          ))}
+                    </div>
+                    {/* Progress circle badge */}
+                    {selectedHabitObjects.length > 1 && (
+                      <div className="flex justify-center mt-4">
+                        <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary/20 to-accent/20 border-2 border-primary/30 flex items-center justify-center">
+                          <span className="text-xs font-semibold text-primary">
+                            {currentHabitIndex + 1}/{selectedHabitObjects.length}
+                          </span>
                         </div>
                       </div>
+                    )}
+                  </>
+                ) : (
+                  <>
+                    <div className="text-center">
+                      <AppleEmoji emoji="🎯" size="3xl" className="mb-4" />
+                      <h2 className="font-display text-xl font-semibold text-foreground">
+                        Set your target
+                      </h2>
+                      <p className="text-sm text-muted-foreground mt-2">
+                        How many total times do you want to complete this over the selected goal period?
+                      </p>
+                      <p className="text-xs text-muted-foreground mt-1">
+                        This is the total count — it can be done multiple times per day.
+                      </p>
+                      {selectedPeriod && (
+                        <p className="text-xs text-primary font-medium mt-2">
+                          over the next {selectedPeriod.months === 12 ? "1 year" : `${selectedPeriod.months} months`}
+                        </p>
+                      )}
+                    </div>
+                    <div>
+                      <Input
+                        type="number"
+                        value={currentHabitTarget}
+                        onChange={(e) => setCurrentHabitTarget(e.target.value)}
+                        placeholder="Enter target number..."
+                        min={1}
+                        className="h-14 text-lg text-center bg-white/80 border-white/50 rounded-2xl"
+                      />
                     </div>
                   </>
                 )}
