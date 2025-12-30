@@ -6,6 +6,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "@/contexts/AuthContext";
 import Landing from "./pages/Landing";
 import Auth from "./pages/Auth";
+import Onboarding from "./pages/Onboarding";
 import Habits from "./pages/Habits";
 import Journal from "./pages/Journal";
 import Overview from "./pages/Overview";
@@ -26,6 +27,7 @@ const App = () => (
         <BrowserRouter>
           <Routes>
             <Route path="/" element={<Landing />} />
+            <Route path="/onboarding" element={<Onboarding />} />
             <Route path="/auth" element={<Auth />} />
             <Route path="/signup" element={<Auth />} />
             <Route path="/login" element={<Auth />} />
