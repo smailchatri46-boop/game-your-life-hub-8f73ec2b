@@ -40,7 +40,7 @@ export function TellUsAboutYouStep({
         className="min-h-[120px] bg-white/50 border-border/30 rounded-xl text-base resize-none mb-6"
       />
 
-      <div className="flex gap-3">
+      <div className="flex gap-3 justify-end">
         <Button
           onClick={onBack}
           variant="outline"
@@ -53,7 +53,8 @@ export function TellUsAboutYouStep({
         <Button
           onClick={onNext}
           variant="gradient"
-          className="flex-1 h-11"
+          size="default"
+          className="h-11 px-4"
           disabled={!canProceed}
         >
           Next
