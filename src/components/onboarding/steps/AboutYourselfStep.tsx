@@ -120,13 +120,13 @@ export function AboutYourselfStep({
         ))}
       </div>
 
-      <div className="flex gap-3 justify-end">
+      <div className={showBack ? "flex justify-between items-center" : ""}>
         {showBack && (
           <Button
             onClick={onBack}
             variant="outline"
             size="default"
-            className="h-11 px-4 bg-white/50 border-border/30 hover:bg-secondary/50"
+            className="h-11 px-5 border-border/30 hover:bg-secondary/50"
           >
             <ChevronLeft className="w-4 h-4 mr-1" />
             Back
@@ -136,7 +136,7 @@ export function AboutYourselfStep({
           onClick={onNext}
           variant="gradient"
           size="default"
-          className={showBack ? "h-11 px-4" : "w-full h-11"}
+          className={showBack ? "h-11 px-6" : "w-full h-11"}
           disabled={!canProceed}
         >
           Next

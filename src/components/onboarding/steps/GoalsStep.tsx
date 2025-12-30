@@ -24,12 +24,12 @@ export function GoalsStep({ onNext, onBack, onSkip }: GoalsStepProps) {
         </p>
       </div>
 
-      <div className="flex gap-3">
+      <div className="flex justify-between items-center">
         <Button
           onClick={onBack}
           variant="outline"
           size="default"
-          className="h-11 px-4 bg-white/50 border-border/30 hover:bg-secondary/50"
+          className="h-11 px-5 border-border/30 hover:bg-secondary/50"
         >
           <ChevronLeft className="w-4 h-4 mr-1" />
           Back
@@ -37,7 +37,8 @@ export function GoalsStep({ onNext, onBack, onSkip }: GoalsStepProps) {
         <Button
           onClick={onNext}
           variant="gradient"
-          className="flex-1 h-11"
+          size="default"
+          className="h-11 px-6"
         >
           Next
           <ChevronRight className="w-4 h-4 ml-1" />

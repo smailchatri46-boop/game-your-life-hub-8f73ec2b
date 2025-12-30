@@ -99,12 +99,12 @@ export function HabitSuggestionsStep({
           Add habit or task
         </Button>
 
-        <div className="flex gap-3 justify-end">
+        <div className="flex justify-between items-center">
           <Button
             onClick={onBack}
             variant="outline"
             size="default"
-            className="h-11 px-4 bg-white/50 border-border/30 hover:bg-secondary/50"
+            className="h-11 px-5 border-border/30 hover:bg-secondary/50"
           >
             <ChevronLeft className="w-4 h-4 mr-1" />
             Back
@@ -113,7 +113,7 @@ export function HabitSuggestionsStep({
             onClick={onNext}
             variant="gradient"
             size="default"
-            className="h-11 px-4"
+            className="h-11 px-6"
             disabled={!canProceed}
           >
             Next
