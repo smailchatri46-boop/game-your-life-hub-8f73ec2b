@@ -49,12 +49,13 @@ export function AddGoalModal({ open, onOpenChange }: AddGoalModalProps) {
   const [currentHabitTarget, setCurrentHabitTarget] = useState("");
 
   // Demo habits for when user is not logged in
+  // Note: "Drink Water" is marked as oncePerDay for testing the different wording
   const demoHabits = [
-    { id: "demo-1", name: "Morning Meditation", icon: "🧘", target: 1 },
-    { id: "demo-2", name: "Exercise", icon: "💪", target: 3 },
-    { id: "demo-3", name: "Read 30 mins", icon: "📚", target: 1 },
-    { id: "demo-4", name: "Drink Water", icon: "💧", target: 8 },
-    { id: "demo-5", name: "No Social Media", icon: "📵", target: 1 },
+    { id: "demo-1", name: "Morning Meditation", icon: "🧘", target: 1, oncePerDay: false },
+    { id: "demo-2", name: "Exercise", icon: "💪", target: 3, oncePerDay: false },
+    { id: "demo-3", name: "Read 30 mins", icon: "📚", target: 1, oncePerDay: false },
+    { id: "demo-4", name: "Drink Water", icon: "💧", target: 8, oncePerDay: true }, // TEST: once-per-day habit
+    { id: "demo-5", name: "No Social Media", icon: "📵", target: 1, oncePerDay: false },
   ];
 
   // Fetch user's habits (only when logged in)
@@ -81,9 +82,9 @@ export function AddGoalModal({ open, onOpenChange }: AddGoalModalProps) {
   const currentHabit = selectedHabitObjects[currentHabitIndex];
   const isLastHabitTarget = currentHabitIndex >= selectedHabitObjects.length - 1;
 
-  // Check if habit is numeric (target > 1) or action-based (target = 1)
-  const isNumericHabit = (habit: typeof habits[0]) => {
-    return habit.target > 1;
+  // Check if habit is once-per-day type (for testing, uses oncePerDay flag if present)
+  const isOncePerDayHabit = (habit: any) => {
+    return habit.oncePerDay === true;
   };
 
   const totalSteps = 5;
@@ -380,37 +381,25 @@ export function AddGoalModal({ open, onOpenChange }: AddGoalModalProps) {
                         Set target for "{currentHabit.name}"
                       </h2>
                       <p className="text-sm text-muted-foreground mt-2">
-                        How many total times do you want to complete this over the selected goal period?
+                        {isOncePerDayHabit(currentHabit)
+                          ? "How many days do you need to do this?"
+                          : "How many total times do you want to complete this over the selected goal period?"}
                       </p>
-                      <p className="text-xs text-muted-foreground mt-1">
-                        This is the total count — it can be done multiple times per day.
-                      </p>
-                      {selectedPeriod && (
-                        <p className="text-xs text-primary font-medium mt-2">
-                          over the next {selectedPeriod.months === 12 ? "1 year" : `${selectedPeriod.months} months`}
-                        </p>
-                      )}
                     </div>
                     <div>
                       <Input
                         type="number"
                         value={currentHabitTarget}
                         onChange={(e) => setCurrentHabitTarget(e.target.value)}
-                        placeholder="Enter target number..."
+                        placeholder={
+                          isOncePerDayHabit(currentHabit)
+                            ? `Once per day ${selectedPeriod ? `over the next ${selectedPeriod.months === 12 ? "1 year" : `${selectedPeriod.months} months`}` : ""}`
+                            : `Total count — multiple times per day ${selectedPeriod ? `over the next ${selectedPeriod.months === 12 ? "1 year" : `${selectedPeriod.months} months`}` : ""}`
+                        }
                         min={1}
-                        className="h-14 text-lg text-center bg-white/80 border-white/50 rounded-2xl"
+                        className="h-14 text-lg text-center bg-white/80 border-white/50 rounded-2xl placeholder:text-muted-foreground/50 placeholder:text-sm"
                       />
                     </div>
-                    {/* Progress circle badge */}
-                    {selectedHabitObjects.length > 1 && (
-                      <div className="flex justify-center mt-4">
-                        <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary/20 to-accent/20 border-2 border-primary/30 flex items-center justify-center">
-                          <span className="text-xs font-semibold text-primary">
-                            {currentHabitIndex + 1}/{selectedHabitObjects.length}
-                          </span>
-                        </div>
-                      </div>
-                    )}
                   </>
                 ) : (
                   <>
@@ -422,23 +411,15 @@ export function AddGoalModal({ open, onOpenChange }: AddGoalModalProps) {
                       <p className="text-sm text-muted-foreground mt-2">
                         How many total times do you want to complete this over the selected goal period?
                       </p>
-                      <p className="text-xs text-muted-foreground mt-1">
-                        This is the total count — it can be done multiple times per day.
-                      </p>
-                      {selectedPeriod && (
-                        <p className="text-xs text-primary font-medium mt-2">
-                          over the next {selectedPeriod.months === 12 ? "1 year" : `${selectedPeriod.months} months`}
-                        </p>
-                      )}
                     </div>
                     <div>
                       <Input
                         type="number"
                         value={currentHabitTarget}
                         onChange={(e) => setCurrentHabitTarget(e.target.value)}
-                        placeholder="Enter target number..."
+                        placeholder={`Total count — multiple times per day ${selectedPeriod ? `over the next ${selectedPeriod.months === 12 ? "1 year" : `${selectedPeriod.months} months`}` : ""}`}
                         min={1}
-                        className="h-14 text-lg text-center bg-white/80 border-white/50 rounded-2xl"
+                        className="h-14 text-lg text-center bg-white/80 border-white/50 rounded-2xl placeholder:text-muted-foreground/50 placeholder:text-sm"
                       />
                     </div>
                   </>
@@ -457,6 +438,16 @@ export function AddGoalModal({ open, onOpenChange }: AddGoalModalProps) {
               {step > 1 && <ChevronLeft className="w-4 h-4 mr-1" />}
               {step === 1 ? "Cancel" : "Back"}
             </Button>
+            
+            {/* Progress circle badge - centered between buttons on step 5 */}
+            {step === 5 && selectedHabitObjects.length > 1 && (
+              <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary/20 to-accent/20 border-2 border-primary/30 flex items-center justify-center">
+                <span className="text-xs font-semibold text-primary">
+                  {currentHabitIndex + 1}/{selectedHabitObjects.length}
+                </span>
+              </div>
+            )}
+            
             <Button
               onClick={handleNext}
               disabled={!canProceed() || createGoal.isPending}
