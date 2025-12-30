@@ -96,6 +96,62 @@ const tutorials: Tutorial[] = [
 
 const faqs: FAQ[] = [
   {
+    question: "Can I add a to-do list?",
+    answer: (
+      <>
+        Yes! You can add to-do tasks, which are one-time items that get hidden once completed. Navigate to the <strong>Overview</strong> page and find the to-do list section. Click on any day in the monthly calendar to view and add tasks for that specific date—your tasks are automatically saved.
+      </>
+    ),
+  },
+  {
+    question: "How do goals work?",
+    answer: (
+      <>
+        Goals are long-term targets you want to achieve over a quarter (3 months) or a year. You can link habits to your goals, and every time you complete a linked habit, it counts toward your goal progress. Track your advancement on the <strong>Goals</strong> page where you'll see percentages and status indicators.
+      </>
+    ),
+  },
+  {
+    question: "Can I schedule a habit for specific days of the week?",
+    answer: (
+      <>
+        Currently, habits are designed as daily practices to build consistency. However, you can use the to-do list feature to add one-time tasks on specific days if you need more flexibility with scheduling.
+      </>
+    ),
+  },
+  {
+    question: "Can I add a task only on certain days of the month?",
+    answer: (
+      <>
+        Yes! Use the to-do list feature in the <strong>Overview</strong> page. Click on any specific date in the monthly calendar, and you can add tasks just for that day. This is perfect for monthly appointments, deadlines, or occasional reminders.
+      </>
+    ),
+  },
+  {
+    question: "Can I add a progressive build-up habit?",
+    answer: (
+      <>
+        While the app doesn't currently support automatic progressive targets, you can manually adjust your habit targets over time as you build capacity. Start with a smaller target and increase it as the habit becomes easier—this gradual approach helps build sustainable routines.
+      </>
+    ),
+  },
+  {
+    question: "Can I download my data?",
+    answer: (
+      <>
+        Yes! You can export your data from the <strong>Settings</strong> page. This includes your habits, journal entries, mood logs, and chat history—everything you need to keep a personal backup or use with other tools.
+      </>
+    ),
+  },
+  {
+    question: "Can I track my mood and emotions?",
+    answer: (
+      <>
+        Absolutely! The app includes mood and motivation tracking. You can log how you're feeling each day, and over time you'll see patterns in your emotional well-being alongside your habit completion. This helps you understand how your routines affect your overall mood.
+      </>
+    ),
+  },
+  {
     question: "How does the AI use my data?",
     answer: (
       <>
