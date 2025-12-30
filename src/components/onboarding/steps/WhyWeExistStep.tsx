@@ -1,30 +1,28 @@
 import { OnboardingCard } from "../OnboardingCard";
 import { Button } from "@/components/ui/button";
 import { AppleEmoji } from "@/components/AppleEmoji";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronRight } from "lucide-react";
 
 interface WhyWeExistStepProps {
   onNext: () => void;
-  onBack: () => void;
-  onSkip: () => void;
 }
 
-export function WhyWeExistStep({ onNext, onBack, onSkip }: WhyWeExistStepProps) {
+export function WhyWeExistStep({ onNext }: WhyWeExistStepProps) {
   return (
     <OnboardingCard className="text-center">
       <div className="mb-8">
         <div className="flex justify-center mb-5">
-          <AppleEmoji emoji="✨" size="3xl" />
+          <AppleEmoji emoji="🚀" size="3xl" />
         </div>
         <h2 className="text-2xl font-bold font-display text-foreground mb-4">
           Why Locked exists
         </h2>
         <div className="space-y-3 text-muted-foreground text-base leading-relaxed">
           <p>
-            Locked helps you build habits, complete tasks, set goals, and reflect — all in one place.
+            Locked is an AI-powered habit, task, and goals tracker.
           </p>
           <p>
-            We believe in consistency over intensity. Small steps, taken daily, lead to remarkable change.
+            Everything in one place — with meaningful insights built for you.
           </p>
         </div>
       </div>
@@ -48,31 +46,14 @@ export function WhyWeExistStep({ onNext, onBack, onSkip }: WhyWeExistStepProps) 
         </div>
       </div>
 
-      <div className="flex gap-3">
-        <Button
-          onClick={onBack}
-          variant="outline"
-          className="flex-1 h-11 bg-white/50 border-border/30"
-        >
-          <ChevronLeft className="w-4 h-4 mr-1" />
-          Back
-        </Button>
-        <Button
-          onClick={onNext}
-          variant="gradient"
-          className="flex-1 h-11"
-        >
-          Next
-          <ChevronRight className="w-4 h-4 ml-1" />
-        </Button>
-      </div>
-
-      <button
-        onClick={onSkip}
-        className="mt-4 text-sm text-muted-foreground hover:text-foreground transition-colors underline underline-offset-2"
+      <Button
+        onClick={onNext}
+        variant="gradient"
+        className="w-full h-11"
       >
-        Skip onboarding
-      </button>
+        Next
+        <ChevronRight className="w-4 h-4 ml-1" />
+      </Button>
     </OnboardingCard>
   );
 }

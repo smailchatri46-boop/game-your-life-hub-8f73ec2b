@@ -4,6 +4,7 @@ import { OnboardingProgress } from "./OnboardingProgress";
 import { WelcomeStep } from "./steps/WelcomeStep";
 import { IdentityStep } from "./steps/IdentityStep";
 import { WhyWeExistStep } from "./steps/WhyWeExistStep";
+import { TellUsAboutYouStep } from "./steps/TellUsAboutYouStep";
 import { AboutYourselfStep } from "./steps/AboutYourselfStep";
 import { HabitSuggestionsStep } from "./steps/HabitSuggestionsStep";
 import { GoalsStep } from "./steps/GoalsStep";
@@ -35,15 +36,6 @@ export function OnboardingFlow() {
     navigate("/dashboard");
   };
 
-  const handleCreateAccount = () => {
-    // For now, just go to next step (auth will be handled separately)
-    goToNext();
-  };
-
-  const handleLogin = () => {
-    navigate("/auth");
-  };
-
   const handleGoToDashboard = () => {
     completeOnboarding();
     navigate("/dashboard");
@@ -68,9 +60,7 @@ export function OnboardingFlow() {
       case "welcome":
         return (
           <WelcomeStep
-            onCreateAccount={handleCreateAccount}
-            onLogin={handleLogin}
-            onSkip={handleSkip}
+            onNext={goToNext}
           />
         );
 
@@ -94,22 +84,20 @@ export function OnboardingFlow() {
           />
         );
 
-      case "identity-3":
-        return (
-          <IdentityStep
-            variant={3}
-            onNext={goToNext}
-            onBack={goToPrevious}
-            onSkip={handleSkip}
-          />
-        );
-
       case "why-we-exist":
         return (
           <WhyWeExistStep
             onNext={goToNext}
+          />
+        );
+
+      case "tell-us-about-you":
+        return (
+          <TellUsAboutYouStep
+            uniqueAbout={data.uniqueAbout}
+            onSetUniqueAbout={(value) => updateData({ uniqueAbout: value })}
+            onNext={goToNext}
             onBack={goToPrevious}
-            onSkip={handleSkip}
           />
         );
 

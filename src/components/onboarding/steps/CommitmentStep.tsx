@@ -93,7 +93,8 @@ export function CommitmentStep({
         <Button
           onClick={onBack}
           variant="outline"
-          className="flex-1 h-11 bg-white/50 border-border/30"
+          size="default"
+          className="h-11 px-4 bg-white/50 border-border/30 hover:bg-secondary/50"
         >
           <ChevronLeft className="w-4 h-4 mr-1" />
           Back
@@ -110,7 +111,7 @@ export function CommitmentStep({
 
       <button
         onClick={onSkip}
-        className="mt-4 w-full text-sm text-muted-foreground hover:text-foreground transition-colors underline underline-offset-2"
+        className="mt-4 w-full text-sm text-muted-foreground hover:text-foreground transition-colors"
       >
         Skip onboarding
       </button>
