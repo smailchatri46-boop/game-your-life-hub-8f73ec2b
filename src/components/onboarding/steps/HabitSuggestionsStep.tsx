@@ -15,66 +15,56 @@ interface HabitSuggestionsStepProps {
   onRemoveCustomHabit: (habit: string) => void;
   onNext: () => void;
   onBack: () => void;
-  onSkip: () => void;
 }
 
 const HABIT_SUGGESTIONS: Record<string, { label: string; emoji: string }[]> = {
   Health: [
-    { label: "Drink 8 glasses of water", emoji: "💧" },
-    { label: "Sleep 8 hours", emoji: "😴" },
+    { label: "Drink water", emoji: "💧" },
+    { label: "Sleep on time", emoji: "😴" },
     { label: "Take vitamins", emoji: "💊" },
-    { label: "Eat vegetables", emoji: "🥗" },
   ],
   Career: [
-    { label: "Deep work session", emoji: "💼" },
-    { label: "Learn new skill", emoji: "📖" },
-    { label: "Network with someone", emoji: "🤝" },
-    { label: "Review goals", emoji: "🎯" },
-  ],
-  School: [
-    { label: "Study session", emoji: "📚" },
-    { label: "Review notes", emoji: "📝" },
-    { label: "Complete assignment", emoji: "✅" },
-    { label: "Read 30 minutes", emoji: "📖" },
+    { label: "Daily learning", emoji: "📖" },
+    { label: "Network building", emoji: "🤝" },
+    { label: "Update portfolio", emoji: "💼" },
   ],
   Finance: [
     { label: "Track expenses", emoji: "💰" },
     { label: "Budget review", emoji: "📊" },
-    { label: "No impulse purchases", emoji: "🛑" },
     { label: "Save money", emoji: "🏦" },
+  ],
+  Fitness: [
+    { label: "Exercise", emoji: "🏃" },
+    { label: "Stretch routine", emoji: "🧘" },
+    { label: "Walk 10k steps", emoji: "👟" },
+  ],
+  School: [
+    { label: "Study session", emoji: "📚" },
+    { label: "Review notes", emoji: "📝" },
+    { label: "Complete homework", emoji: "✏️" },
   ],
   Relationships: [
     { label: "Call a friend", emoji: "📞" },
     { label: "Quality time", emoji: "❤️" },
-    { label: "Send gratitude message", emoji: "💌" },
-    { label: "Active listening", emoji: "👂" },
+    { label: "Express gratitude", emoji: "🙏" },
   ],
   "Mental wellness": [
     { label: "Meditate", emoji: "🧘" },
     { label: "Daily reflection", emoji: "📝" },
-    { label: "Gratitude journal", emoji: "🙏" },
-    { label: "Digital detox", emoji: "📵" },
-  ],
-  Fitness: [
-    { label: "Exercise 30 minutes", emoji: "💪" },
-    { label: "10,000 steps", emoji: "🚶" },
-    { label: "Stretch routine", emoji: "🤸" },
-    { label: "No junk food", emoji: "🍎" },
+    { label: "No social media", emoji: "📵" },
   ],
   Other: [
     { label: "Read 30 minutes", emoji: "📖" },
-    { label: "Learn something new", emoji: "🧠" },
-    { label: "Creative time", emoji: "🎨" },
-    { label: "Organize space", emoji: "🏠" },
+    { label: "Practice hobby", emoji: "🎨" },
+    { label: "Learn something new", emoji: "💡" },
   ],
 };
 
-// Default habits shown when no focus areas selected
 const DEFAULT_HABITS = [
   { label: "Drink water", emoji: "💧" },
-  { label: "Exercise", emoji: "💪" },
+  { label: "Exercise", emoji: "🏃" },
   { label: "Read 30 minutes", emoji: "📖" },
-  { label: "No social media", emoji: "📵" },
+  { label: "Meditate", emoji: "🧘" },
   { label: "Sleep on time", emoji: "😴" },
   { label: "Daily reflection", emoji: "📝" },
 ];
@@ -88,22 +78,21 @@ export function HabitSuggestionsStep({
   onRemoveCustomHabit,
   onNext,
   onBack,
-  onSkip,
 }: HabitSuggestionsStepProps) {
   const [customInput, setCustomInput] = useState("");
 
-  // Generate suggested habits based on focus areas
+  // Get suggested habits based on focus areas
   const suggestedHabits = focusAreas.length > 0
     ? focusAreas.flatMap(area => HABIT_SUGGESTIONS[area] || [])
     : DEFAULT_HABITS;
 
   // Remove duplicates
   const uniqueHabits = suggestedHabits.filter(
-    (habit, index, self) => self.findIndex(h => h.label === habit.label) === index
+    (habit, index, self) => index === self.findIndex(h => h.label === habit.label)
   );
 
   const totalSelected = selectedHabits.length + customHabits.length;
-  const canProceed = totalSelected >= 3;
+  const canProceed = totalSelected >= 2;
 
   const handleAddCustom = () => {
     if (customInput.trim()) {
@@ -112,33 +101,36 @@ export function HabitSuggestionsStep({
     }
   };
 
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      handleAddCustom();
+    }
+  };
+
   return (
     <OnboardingCard>
-      <div className="text-center mb-5">
+      <div className="text-center mb-6">
         <div className="flex justify-center mb-4">
-          <AppleEmoji emoji="📋" size="3xl" />
+          <AppleEmoji emoji="✅" size="3xl" />
         </div>
         <h2 className="text-xl font-bold font-display text-foreground mb-2">
-          Choose your starter habits
+          Choose habits and tasks to start with
         </h2>
         <p className="text-muted-foreground text-sm">
-          Select at least 3 to get started
+          Pick at least 2 to get started
         </p>
       </div>
 
       {/* Selected count */}
-      <div className="flex justify-center mb-4">
-        <span className={`text-sm font-medium px-3 py-1 rounded-full ${
-          canProceed 
-            ? "bg-green-100 text-green-700" 
-            : "bg-orange-100 text-orange-700"
-        }`}>
-          {totalSelected} / 3 minimum selected
+      <div className="text-center mb-4">
+        <span className={`text-sm font-medium ${canProceed ? "text-primary" : "text-muted-foreground"}`}>
+          {totalSelected} selected {canProceed ? "✓" : `(need ${2 - totalSelected} more)`}
         </span>
       </div>
 
       {/* Suggested habits */}
-      <div className="flex flex-wrap justify-center gap-2 mb-4">
+      <div className="flex flex-wrap gap-2 justify-center mb-4">
         {uniqueHabits.map((habit) => (
           <PillOption
             key={habit.label}
@@ -152,13 +144,13 @@ export function HabitSuggestionsStep({
 
       {/* Custom habits */}
       {customHabits.length > 0 && (
-        <div className="flex flex-wrap justify-center gap-2 mb-4">
+        <div className="flex flex-wrap gap-2 justify-center mb-4">
           {customHabits.map((habit) => (
             <div
               key={habit}
               className="inline-flex items-center gap-1 px-3 py-2 rounded-full text-sm font-medium bg-gradient-to-r from-amber-400 to-orange-500 text-white"
             >
-              <AppleEmoji emoji="✨" size="sm" />
+              <AppleEmoji emoji="⭐" size="sm" />
               {habit}
               <button
                 onClick={() => onRemoveCustomHabit(habit)}
@@ -171,20 +163,20 @@ export function HabitSuggestionsStep({
         </div>
       )}
 
-      {/* Add custom habit */}
+      {/* Add custom input */}
       <div className="flex gap-2 mb-6">
         <Input
-          placeholder="Add your own habit..."
+          placeholder="Add your own habit or task..."
           value={customInput}
           onChange={(e) => setCustomInput(e.target.value)}
-          onKeyPress={(e) => e.key === "Enter" && handleAddCustom()}
+          onKeyDown={handleKeyDown}
           className="flex-1 h-10 bg-white/50 border-border/30 rounded-xl"
         />
         <Button
           onClick={handleAddCustom}
           variant="outline"
           size="icon"
-          className="h-10 w-10 bg-white/50 border-border/30 rounded-xl"
+          className="h-10 w-10 bg-white/50 border-border/30 rounded-xl hover:bg-secondary/50"
           disabled={!customInput.trim()}
         >
           <Plus className="w-4 h-4" />
@@ -195,7 +187,8 @@ export function HabitSuggestionsStep({
         <Button
           onClick={onBack}
           variant="outline"
-          className="flex-1 h-11 bg-white/50 border-border/30"
+          size="default"
+          className="h-11 px-4 bg-white/50 border-border/30 hover:bg-secondary/50"
         >
           <ChevronLeft className="w-4 h-4 mr-1" />
           Back
@@ -210,13 +203,6 @@ export function HabitSuggestionsStep({
           <ChevronRight className="w-4 h-4 ml-1" />
         </Button>
       </div>
-
-      <button
-        onClick={onSkip}
-        className="mt-4 w-full text-sm text-muted-foreground hover:text-foreground transition-colors underline underline-offset-2"
-      >
-        Skip onboarding
-      </button>
     </OnboardingCard>
   );
 }

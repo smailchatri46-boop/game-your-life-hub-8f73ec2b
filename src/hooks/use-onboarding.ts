@@ -143,7 +143,6 @@ export function useOnboarding() {
 
   const completeOnboarding = useCallback(() => {
     setIsComplete(true);
-    // Save to localStorage to prevent showing again
     localStorage.setItem("locked_onboarding_complete", "true");
   }, []);
 

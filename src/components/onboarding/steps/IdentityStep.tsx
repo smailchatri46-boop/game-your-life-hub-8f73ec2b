@@ -1,34 +1,28 @@
 import { OnboardingCard } from "../OnboardingCard";
 import { Button } from "@/components/ui/button";
 import { AppleEmoji } from "@/components/AppleEmoji";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronRight } from "lucide-react";
 
 interface IdentityStepProps {
-  variant: 1 | 2 | 3;
+  variant: 1 | 2;
   onNext: () => void;
-  onBack: () => void;
   onSkip: () => void;
 }
 
-const IDENTITY_CONTENT = {
+const IDENTITY_CONTENT: Record<1 | 2, { emoji: string; title: string; subtitle: string }> = {
   1: {
     emoji: "🎯",
-    title: "You want more control over your life.",
-    subtitle: "And that's exactly why you're here.",
+    title: "Take control over your life.",
+    subtitle: "Locked gives you habits, tasks, to-do lists, journals, and goal tracking — everything you need to organize your life.",
   },
   2: {
-    emoji: "🔄",
-    title: "You're tired of starting and stopping.",
-    subtitle: "We get it. The cycle ends here.",
-  },
-  3: {
     emoji: "💪",
     title: "You're ready to stay consistent.",
-    subtitle: "Small steps, every single day.",
+    subtitle: "Start with small steps today — let momentum compound over the next months.",
   },
 };
 
-export function IdentityStep({ variant, onNext, onBack, onSkip }: IdentityStepProps) {
+export function IdentityStep({ variant, onNext, onSkip }: IdentityStepProps) {
   const content = IDENTITY_CONTENT[variant];
 
   return (
@@ -37,36 +31,26 @@ export function IdentityStep({ variant, onNext, onBack, onSkip }: IdentityStepPr
         <div className="flex justify-center mb-5">
           <AppleEmoji emoji={content.emoji} size="3xl" />
         </div>
-        <h2 className="text-2xl font-bold font-display text-foreground mb-3 leading-snug">
+        <h2 className="text-2xl font-bold font-display text-foreground mb-4">
           {content.title}
         </h2>
-        <p className="text-muted-foreground text-base">
+        <p className="text-muted-foreground text-base leading-relaxed">
           {content.subtitle}
         </p>
       </div>
 
-      <div className="flex gap-3">
-        <Button
-          onClick={onBack}
-          variant="outline"
-          className="flex-1 h-11 bg-white/50 border-border/30"
-        >
-          <ChevronLeft className="w-4 h-4 mr-1" />
-          Back
-        </Button>
-        <Button
-          onClick={onNext}
-          variant="gradient"
-          className="flex-1 h-11"
-        >
-          Next
-          <ChevronRight className="w-4 h-4 ml-1" />
-        </Button>
-      </div>
+      <Button
+        onClick={onNext}
+        variant="gradient"
+        className="w-full h-11"
+      >
+        Next
+        <ChevronRight className="w-4 h-4 ml-1" />
+      </Button>
 
       <button
         onClick={onSkip}
-        className="mt-4 text-sm text-muted-foreground hover:text-foreground transition-colors underline underline-offset-2"
+        className="mt-4 text-sm text-muted-foreground hover:text-foreground transition-colors"
       >
         Skip onboarding
       </button>

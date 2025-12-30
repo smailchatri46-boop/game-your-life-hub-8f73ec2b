@@ -52,7 +52,7 @@ export function OnboardingFlow() {
   };
 
   const handleCommitmentComplete = () => {
-    goToNext(); // Go to loading step
+    goToNext();
   };
 
   const renderStep = () => {
@@ -69,7 +69,6 @@ export function OnboardingFlow() {
           <IdentityStep
             variant={1}
             onNext={goToNext}
-            onBack={goToPrevious}
             onSkip={handleSkip}
           />
         );
@@ -79,7 +78,6 @@ export function OnboardingFlow() {
           <IdentityStep
             variant={2}
             onNext={goToNext}
-            onBack={goToPrevious}
             onSkip={handleSkip}
           />
         );
@@ -150,16 +148,12 @@ export function OnboardingFlow() {
             onRemoveCustomHabit={removeCustomHabit}
             onNext={goToNext}
             onBack={goToPrevious}
-            onSkip={handleSkip}
           />
         );
 
       case "goals":
         return (
           <GoalsStep
-            goalCategory={data.goalCategory}
-            goalName={data.goalName}
-            onUpdateGoal={(category, name) => updateData({ goalCategory: category, goalName: name })}
             onNext={goToNext}
             onBack={goToPrevious}
             onSkip={handleSkip}
