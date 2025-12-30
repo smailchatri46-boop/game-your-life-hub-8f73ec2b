@@ -301,22 +301,22 @@ export default function Tutorials() {
         {/* FAQ Section */}
         <div className="mt-16">
           <div className="mb-8">
-            <div className="flex items-center gap-3 mb-2">
-              <AppleEmoji emoji="❓" size="2xl" />
-              <h2 className="text-2xl font-bold" style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}>Frequently Asked Questions</h2>
-            </div>
+            <h2 className="text-2xl font-bold mb-2" style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}>Frequently Asked Questions</h2>
             <p className="font-body text-muted-foreground">Find answers to common questions about using Locked</p>
           </div>
 
           <GlassCard className="p-6">
-            <Accordion type="single" collapsible className="w-full font-body">
+            <Accordion type="single" collapsible className="w-full">
               {faqs.map((faq, index) => (
                 <AccordionItem 
                   key={index} 
                   value={`item-${index}`}
                   className="border-b border-border/50 last:border-0"
                 >
-                  <AccordionTrigger className="text-left font-bold text-base hover:text-primary transition-colors py-4">
+                  <AccordionTrigger 
+                    className="text-left font-bold text-base hover:text-primary transition-colors py-4"
+                    style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}
+                  >
                     {faq.question}
                   </AccordionTrigger>
                   <AccordionContent className="text-muted-foreground text-sm font-medium leading-relaxed pb-4">
