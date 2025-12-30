@@ -23,7 +23,7 @@ export function MonthSelector({ monthName, year, onPreviousMonth, onNextMonth }:
           <ChevronLeft className="w-5 h-5 text-muted-foreground" />
         </button>
         
-        <h2 className="font-display text-2xl min-w-[200px] text-center">
+        <h2 className="font-display text-lg min-w-[180px] text-center">
           <span className="text-primary font-semibold">{monthName}</span>
           <span className="text-foreground ml-2 font-sans font-semibold italic">{year}</span>
         </h2>
