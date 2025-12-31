@@ -96,7 +96,7 @@ const generateChartData = (habits: Habit[], daysInMonth: number, currentDay: num
 
 export default function Habits() {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [reflections, setReflections] = useState<Record<string, string>>({});
+  const [reflections, setReflections] = useState<Record<string, { text: string; createdAt: string }>>({});
   const [reflectionModalOpen, setReflectionModalOpen] = useState(false);
   const [selectedReflectionDay, setSelectedReflectionDay] = useState<number | null>(null);
   
@@ -229,7 +229,7 @@ export default function Habits() {
   const handleSaveReflection = (dateKey: string, text: string) => {
     setReflections(prev => ({
       ...prev,
-      [dateKey]: text,
+      [dateKey]: { text, createdAt: new Date().toISOString() },
     }));
   };
 
@@ -495,7 +495,7 @@ export default function Habits() {
                 {Array.from({ length: daysInMonth }, (_, i) => {
                   const day = i + 1;
                   const dateKey = getDateKey(day);
-                  const hasReflection = !!reflections[dateKey];
+                  const hasReflection = !!reflections[dateKey]?.text;
                   const isFuture = day > currentDay;
                   
                   return (
@@ -529,7 +529,7 @@ export default function Habits() {
                   <span className="text-xs lg:text-sm font-bold gradient-text">
                     {currentDay > 0 ? Math.round((Object.keys(reflections).filter(key => {
                       const [y, m] = key.split('-').map(Number);
-                      return y === year && m === month + 1;
+                      return y === year && m === month + 1 && reflections[key]?.text;
                     }).length / currentDay) * 100) : 0}%
                   </span>
                 </td>
@@ -715,7 +715,8 @@ export default function Habits() {
           date={formatReflectionDate(selectedReflectionDay)}
           dateKey={getDateKey(selectedReflectionDay)}
           completionPercent={getDayCompletionPercent(selectedReflectionDay)}
-          existingReflection={reflections[getDateKey(selectedReflectionDay)]}
+          existingReflection={reflections[getDateKey(selectedReflectionDay)]?.text}
+          reflectionCreatedAt={reflections[getDateKey(selectedReflectionDay)]?.createdAt}
           onSave={handleSaveReflection}
         />
       )}
