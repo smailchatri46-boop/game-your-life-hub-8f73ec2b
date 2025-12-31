@@ -1,4 +1,4 @@
-import { Navbar } from "@/components/Navbar";
+
 import { GlassCard } from "@/components/GlassCard";
 import { AppleEmoji } from "@/components/AppleEmoji";
 import { AlignedProgressChart } from "@/components/AlignedProgressChart";
@@ -349,9 +349,7 @@ export default function Habits() {
   }, [displayHabits, currentDay, year, month]);
 
   return (
-    <div className="min-h-screen gradient-bg">
-      <Navbar />
-      
+    <>
       <main className="pt-28 pb-24 px-3 sm:px-4 lg:px-6 xl:px-8">
         {/* Month Navigation - Centered above stats */}
         <MonthSelector
@@ -736,6 +734,6 @@ export default function Habits() {
         message={tipMessage?.message || ""}
         onDismiss={dismissTip}
       />
-    </div>
+    </>
   );
 }

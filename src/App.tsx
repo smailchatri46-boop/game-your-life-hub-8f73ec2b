@@ -5,6 +5,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { HelmetProvider } from "react-helmet-async";
 import { AuthProvider } from "@/contexts/AuthContext";
+import { AppLayout } from "@/components/AppLayout";
 import Landing from "./pages/Landing";
 import Auth from "./pages/Auth";
 import Onboarding from "./pages/Onboarding";
@@ -33,13 +34,16 @@ const App = () => (
               <Route path="/auth" element={<Auth />} />
               <Route path="/signup" element={<Auth />} />
               <Route path="/login" element={<Auth />} />
-              <Route path="/dashboard" element={<Habits />} />
-              <Route path="/journal" element={<Journal />} />
-              <Route path="/overview" element={<Overview />} />
-              <Route path="/goals" element={<Goals />} />
-              <Route path="/tutorials" element={<Tutorials />} />
-              <Route path="/video-tutorial" element={<VideoTutorial />} />
-              <Route path="/settings" element={<Settings />} />
+              {/* App pages with persistent navbar */}
+              <Route element={<AppLayout />}>
+                <Route path="/dashboard" element={<Habits />} />
+                <Route path="/journal" element={<Journal />} />
+                <Route path="/overview" element={<Overview />} />
+                <Route path="/goals" element={<Goals />} />
+                <Route path="/tutorials" element={<Tutorials />} />
+                <Route path="/video-tutorial" element={<VideoTutorial />} />
+                <Route path="/settings" element={<Settings />} />
+              </Route>
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
               <Route path="*" element={<NotFound />} />
             </Routes>

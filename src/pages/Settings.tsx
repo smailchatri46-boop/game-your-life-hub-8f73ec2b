@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { Navbar } from "@/components/Navbar";
+
 import { GlassCard } from "@/components/GlassCard";
 import { Button } from "@/components/ui/button";
 import { UpgradeModal } from "@/components/UpgradeModal";
@@ -100,8 +100,7 @@ export default function Settings() {
   };
 
   return (
-    <div className="min-h-screen gradient-bg">
-      <Navbar />
+    <>
       
       <main className="pt-28 pb-12 px-4 max-w-2xl mx-auto">
         {/* Header */}
@@ -266,6 +265,6 @@ export default function Settings() {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
-    </div>
+    </>
   );
 }

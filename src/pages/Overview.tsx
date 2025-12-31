@@ -1,4 +1,4 @@
-import { Navbar } from "@/components/Navbar";
+
 import { GlassCard } from "@/components/GlassCard";
 import { AppleEmoji } from "@/components/AppleEmoji";
 import { OnboardingQuestionsModal } from "@/components/OnboardingQuestionsModal";
@@ -144,8 +144,7 @@ export default function Overview() {
   };
 
   return (
-    <div className="min-h-screen gradient-bg">
-      <Navbar />
+    <>
       
       <main className="pt-28 pb-12 px-4 max-w-7xl mx-auto">
         {/* AI Buddy Chat - First Section */}
@@ -487,6 +486,6 @@ export default function Overview() {
           onOpenChange={setShowOnboarding} 
         />
       </main>
-    </div>
+    </>
   );
 }

@@ -1,4 +1,4 @@
-import { Navbar } from "@/components/Navbar";
+
 import { GlassCard } from "@/components/GlassCard";
 import { AppleEmoji } from "@/components/AppleEmoji";
 import { YouTubeEmbed } from "@/components/YouTubeEmbed";
@@ -292,8 +292,7 @@ const faqs: FAQ[] = [
 
 export default function Tutorials() {
   return (
-    <div className="min-h-screen gradient-bg">
-      <Navbar />
+    <>
       
       {/* Sticky Video Tutorial Button */}
       <Link 
@@ -370,6 +369,6 @@ export default function Tutorials() {
           </GlassCard>
         </div>
       </main>
-    </div>
+    </>
   );
 }
