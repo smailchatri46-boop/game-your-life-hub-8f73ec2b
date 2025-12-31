@@ -323,10 +323,10 @@ export function AddHabitModal({ open, onOpenChange, onSave, skipGuidance = false
           </div>
 
           {/* Step Content */}
-          <div className="min-h-[300px]">
+          <div className="min-h-[300px] flex flex-col">
             {/* Guidance Slides */}
             {isGuidancePhase && currentGuidanceSlide && (
-              <div className="flex flex-col justify-center h-full min-h-[280px] text-center">
+              <div className="flex-1 flex flex-col items-center justify-center text-center py-4">
                 <div className="mb-6 flex justify-center">
                   <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-primary/10 to-primary/5 flex items-center justify-center">
                     <AppleEmoji emoji={currentGuidanceSlide.emoji} size="4xl" />
