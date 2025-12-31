@@ -42,9 +42,9 @@ const DEMO_GOAL_HABITS_KEY = "demo_goal_habits";
 
 // Default demo goal that's always present
 const getDefaultDemoGoal = (): Goal => ({
-  id: "demo-default-10k-mrr",
+  id: "demo-default-save-5k",
   user_id: "demo",
-  name: "10K MRR",
+  name: "SAVE 5K",
   category: "Finance",
   category_emoji: "💰",
   start_date: new Date().toISOString().split("T")[0],
