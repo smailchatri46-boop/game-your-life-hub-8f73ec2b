@@ -1,24 +1,22 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Slider } from "@/components/ui/slider";
 import { AppleEmoji } from "@/components/AppleEmoji";
-import { HabitGuidanceCarousel } from "@/components/HabitGuidanceCarousel";
-import { X } from "lucide-react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 
 const CATEGORIES = [
-  { value: "work", label: "Work", color: "#3B82F6" },
-  { value: "health", label: "Health", color: "#22C55E" },
-  { value: "fitness", label: "Fitness", color: "#F59E0B" },
-  { value: "learning", label: "Learning", color: "#8B5CF6" },
-  { value: "growth", label: "Personal Growth", color: "#EC4899" },
-  { value: "spiritual", label: "Spiritual", color: "#06B6D4" },
-  { value: "other", label: "Other", color: "#6B7280" },
+  { value: "work", label: "Work", color: "#3B82F6", emoji: "💼" },
+  { value: "health", label: "Health", color: "#22C55E", emoji: "💚" },
+  { value: "fitness", label: "Fitness", color: "#F59E0B", emoji: "💪" },
+  { value: "learning", label: "Learning", color: "#8B5CF6", emoji: "📚" },
+  { value: "growth", label: "Personal Growth", color: "#EC4899", emoji: "🧠" },
+  { value: "spiritual", label: "Spiritual", color: "#06B6D4", emoji: "🧘" },
+  { value: "other", label: "Other", color: "#6B7280", emoji: "✨" },
 ];
 
 // Curated unique Apple emoji set - 21 emojis for 3 rows of 7
-// Removed problematic emojis that don't render consistently: ❤️, 🏋️, ☀️
 const EMOJI_OPTIONS = [
   "📖", "💪", "💼", "🏃", "💧", "🧘", "✍️",
   "🎯", "🥗", "😴", "🚶", "📝", "🎨", "🎵",
@@ -66,7 +64,7 @@ interface AddHabitModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onSave: (habit: NewHabit) => void;
-  skipGuidance?: boolean; // Skip the guidance carousel when opening from goal flow
+  skipGuidance?: boolean; // Not used anymore, kept for compatibility
 }
 
 const RAMP_DURATION_OPTIONS = [
@@ -76,11 +74,13 @@ const RAMP_DURATION_OPTIONS = [
   { value: "custom", label: "Custom" },
 ];
 
-export function AddHabitModal({ open, onOpenChange, onSave, skipGuidance = false }: AddHabitModalProps) {
-  const formTopRef = useRef<HTMLDivElement | null>(null);
+export function AddHabitModal({ open, onOpenChange, onSave }: AddHabitModalProps) {
+  const [step, setStep] = useState(1);
+  const [isComplete, setIsComplete] = useState(false);
 
+  // Form state
   const [name, setName] = useState("");
-  const [category, setCategory] = useState("health");
+  const [category, setCategory] = useState("");
   const [icon, setIcon] = useState("🎯");
   const [habitType] = useState<"boolean" | "numeric">("boolean");
   const [numericTarget] = useState(8);
@@ -88,8 +88,6 @@ export function AddHabitModal({ open, onOpenChange, onSave, skipGuidance = false
   const [selectedWeekdays, setSelectedWeekdays] = useState<number[]>([1, 2, 3, 4, 5]);
   const [selectedDays, setSelectedDays] = useState<number[]>([1, 15]);
   const [importance, setImportance] = useState(50);
-  const [error, setError] = useState("");
-  const [showGuidance, setShowGuidance] = useState(!skipGuidance);
 
   // Progressive build-up state
   const [progressiveStartGoal, setProgressiveStartGoal] = useState(1);
@@ -97,12 +95,7 @@ export function AddHabitModal({ open, onOpenChange, onSave, skipGuidance = false
   const [progressiveRampDuration, setProgressiveRampDuration] = useState<"1-week" | "2-weeks" | "1-month" | "custom">("2-weeks");
   const [progressiveCustomWeeks, setProgressiveCustomWeeks] = useState(3);
 
-  // Reset guidance to show every time modal opens (unless skipGuidance is true)
-  useEffect(() => {
-    if (open) {
-      setShowGuidance(!skipGuidance);
-    }
-  }, [open, skipGuidance]);
+  const totalSteps = 5; // Icon → Name → Category → Frequency → Importance
 
   const selectedCategory = CATEGORIES.find(c => c.value === category);
 
@@ -113,19 +106,30 @@ export function AddHabitModal({ open, onOpenChange, onSave, skipGuidance = false
     return RAMP_DURATION_OPTIONS.find(opt => opt.value === progressiveRampDuration)?.label || "2 weeks";
   };
 
-  const handleSave = () => {
-    if (!name.trim()) {
-      setError("Please enter a habit name");
-      return;
+  const handleNext = () => {
+    if (step < totalSteps) {
+      setStep(step + 1);
+    } else {
+      // Final step - submit the habit
+      handleSubmit();
     }
-    setError("");
+  };
 
+  const handleBack = () => {
+    if (step > 1) {
+      setStep(step - 1);
+    }
+  };
+
+  const handleSubmit = () => {
+    const cat = CATEGORIES.find(c => c.value === category) || CATEGORIES[6];
+    
     const newHabit: NewHabit = {
       id: Date.now().toString(),
       name: name.trim(),
       icon,
-      category: selectedCategory?.label || "Other",
-      categoryColor: selectedCategory?.color || "#6B7280",
+      category: cat.label,
+      categoryColor: cat.color,
       habitType,
       target: habitType === "boolean" ? 1 : numericTarget,
       frequency,
@@ -146,13 +150,19 @@ export function AddHabitModal({ open, onOpenChange, onSave, skipGuidance = false
     };
 
     onSave(newHabit);
+    setIsComplete(true);
+  };
+
+  const handleClose = () => {
     resetForm();
     onOpenChange(false);
   };
 
   const resetForm = () => {
+    setStep(1);
+    setIsComplete(false);
     setName("");
-    setCategory("health");
+    setCategory("");
     setIcon("🎯");
     setFrequency("daily");
     setSelectedWeekdays([1, 2, 3, 4, 5]);
@@ -162,9 +172,17 @@ export function AddHabitModal({ open, onOpenChange, onSave, skipGuidance = false
     setProgressiveTargetGoal(5);
     setProgressiveRampDuration("2-weeks");
     setProgressiveCustomWeeks(3);
-    setError("");
-    setShowGuidance(true);
   };
+
+  const handleAddAnother = () => {
+    resetForm();
+  };
+
+  useEffect(() => {
+    if (open) {
+      resetForm();
+    }
+  }, [open]);
 
   const toggleWeekday = (day: number) => {
     setSelectedWeekdays(prev =>
@@ -178,166 +196,172 @@ export function AddHabitModal({ open, onOpenChange, onSave, skipGuidance = false
     );
   };
 
-  const handleClose = () => {
-    resetForm();
-    onOpenChange(false);
+  const canProceed = () => {
+    switch (step) {
+      case 1: return icon.length > 0;
+      case 2: return name.trim().length > 0;
+      case 3: return category.length > 0;
+      case 4: 
+        if (frequency === "weekdays") return selectedWeekdays.length > 0;
+        if (frequency === "monthly") return selectedDays.length > 0;
+        return true;
+      case 5: return true;
+      default: return false;
+    }
   };
 
-  return (
-    <>
-      {/* Guidance Carousel - appears every time modal opens */}
-      {open && showGuidance && (
-        <HabitGuidanceCarousel
-          onComplete={() => {
-            setShowGuidance(false);
-            // After the form dialog mounts, smoothly scroll to its top.
-            requestAnimationFrame(() => {
-              requestAnimationFrame(() => {
-                formTopRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
-              });
-            });
-          }}
-        />
-      )}
-
-      {/* Only show the habit form AFTER guidance is completed */}
-      {open && !showGuidance && (
-        <Dialog open={open} onOpenChange={handleClose}>
-          <DialogContent
-            hideCloseButton
-            className="sm:max-w-[720px] p-0 gap-0 bg-card border-0 shadow-2xl rounded-3xl overflow-hidden font-['Plus_Jakarta_Sans',sans-serif]"
-            onInteractOutside={(e) => e.preventDefault()}
-          >
-        {/* Header */}
-        <div className="px-7 py-6 border-b border-border/20">
-          <div className="flex items-center justify-between">
-            <div>
-              <h2 className="text-xl font-semibold text-foreground font-display">
-                Add New Habit or Task
-              </h2>
-              <p className="text-sm text-muted-foreground mt-1">
-                Build better routines, one habit at a time
-              </p>
+  // Success screen
+  if (isComplete) {
+    return (
+      <Dialog open={open} onOpenChange={handleClose}>
+        <DialogContent className="sm:max-w-lg p-0 overflow-hidden bg-gradient-to-br from-[hsl(30,100%,98%)] to-[hsl(25,80%,95%)] border-0" hideCloseButton>
+          <div className="p-8 text-center relative overflow-hidden">
+            <div className="w-20 h-20 mx-auto mb-6 rounded-full bg-gradient-to-br from-primary/20 to-accent/20 flex items-center justify-center animate-scale-in">
+              <AppleEmoji emoji="🎉" size="3xl" />
             </div>
-            <button
-              onClick={handleClose}
-              className="w-10 h-10 rounded-xl flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-muted/40 transition-all"
-            >
-              <X className="w-5 h-5" />
-            </button>
+            <h2 className="font-display text-2xl font-semibold text-foreground mb-3">
+              Habit created! <AppleEmoji emoji="🎉" className="inline" />
+            </h2>
+            <p className="text-muted-foreground text-sm mb-6 leading-relaxed text-center max-w-sm mx-auto">
+              Your new habit has been added. Stay consistent and watch your progress grow over time.
+            </p>
+            <div className="space-y-3">
+              <Button onClick={handleClose} variant="gradient" size="lg" className="w-full">
+                Done
+              </Button>
+              <Button onClick={handleAddAnother} variant="outline" size="lg" className="w-full text-muted-foreground bg-muted/30 border-muted/50 hover:bg-muted/50">
+                Add another habit
+              </Button>
+            </div>
           </div>
-        </div>
+        </DialogContent>
+      </Dialog>
+    );
+  }
 
-        {/* Content - Scrollable area */}
-        <div className="px-7 py-6 overflow-y-auto" style={{ maxHeight: 'calc(70vh - 200px)' }}>
-          <div ref={formTopRef} />
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-x-10 gap-y-6">
-            {/* Left Column - Form fields in correct order */}
-            <div className="space-y-6">
-              {/* 1. Habit Name with emoji inside input */}
-              <div>
-                <label className="block text-sm font-medium text-foreground mb-2">
-                  Habit Name
-                </label>
-                <div className="relative flex items-center">
-                  <div className="absolute left-3.5 z-10 flex items-center justify-center pointer-events-none">
-                    <AppleEmoji emoji={icon} size="xl" />
-                  </div>
-                  <Input
-                    placeholder="e.g., Morning Meditation"
-                    value={name}
-                    onChange={(e) => {
-                      setName(e.target.value);
-                      if (error) setError("");
-                    }}
-                    className="h-12 pl-12 pr-4 bg-muted/20 border-border/20 rounded-2xl text-base placeholder:text-muted-foreground/60 focus:ring-2 focus:ring-primary/20 focus:border-primary/30 transition-all"
-                  />
+  return (
+    <Dialog open={open} onOpenChange={handleClose}>
+      <DialogContent className="sm:max-w-lg p-0 overflow-hidden bg-gradient-to-br from-[hsl(30,100%,98%)] to-[hsl(25,80%,95%)] border-0" hideCloseButton>
+        <div className="p-6">
+          {/* Progress dots */}
+          <div className="flex justify-center gap-2 mb-6">
+            {Array.from({ length: totalSteps }).map((_, i) => (
+              <div
+                key={i}
+                className={`h-2 rounded-full transition-all duration-300 ${
+                  i + 1 === step
+                    ? "w-8 bg-gradient-to-r from-primary to-accent"
+                    : i + 1 < step
+                    ? "w-2 bg-primary/60"
+                    : "w-2 bg-muted-foreground/20"
+                }`}
+              />
+            ))}
+          </div>
+
+          {/* Step Content */}
+          <div className="min-h-[300px]">
+            {/* Step 1: Choose an icon */}
+            {step === 1 && (
+              <div className="space-y-4">
+                <div className="text-center mb-6">
+                  <AppleEmoji emoji="🎨" size="3xl" className="mb-4" />
+                  <h2 className="font-display text-xl font-semibold text-foreground">
+                    Choose an icon
+                  </h2>
+                  <p className="text-sm text-muted-foreground mt-2">
+                    Pick an icon that represents your habit
+                  </p>
                 </div>
-                {error && (
-                  <p className="mt-2 text-sm text-destructive">{error}</p>
-                )}
-              </div>
-
-              {/* 2. Category */}
-              <div>
-                <label className="block text-sm font-medium text-foreground mb-3">
-                  Category
-                </label>
-                <div className="flex flex-wrap gap-2">
-                  {CATEGORIES.map((cat) => (
-                    <button
-                      key={cat.value}
-                      type="button"
-                      onClick={() => setCategory(cat.value)}
-                      className={`inline-flex items-center gap-2 px-3.5 py-2 rounded-full text-sm font-medium transition-all ${
-                        category === cat.value
-                          ? "shadow-sm"
-                          : "text-muted-foreground hover:bg-muted/40"
-                      }`}
-                      style={{
-                        backgroundColor: category === cat.value ? `${cat.color}15` : undefined,
-                        color: category === cat.value ? cat.color : undefined,
-                        boxShadow: category === cat.value ? `0 0 0 1.5px ${cat.color}40` : undefined,
-                      }}
-                    >
-                      <span
-                        className="w-2 h-2 rounded-full"
-                        style={{ backgroundColor: cat.color }}
-                      />
-                      {cat.label}
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              {/* 3. Icon Picker - Clean grid with outline selection */}
-              <div>
-                <label className="block text-sm font-medium text-foreground mb-3">
-                  Choose Icon
-                </label>
-                <div 
-                  className="grid grid-cols-7 gap-3 p-3 bg-muted/10 rounded-2xl"
-                  style={{ minHeight: '160px' }}
-                >
+                <div className="grid grid-cols-7 gap-3 p-4 bg-white/50 rounded-2xl">
                   {EMOJI_OPTIONS.map((emoji, index) => (
                     <button
                       key={`${emoji}-${index}`}
                       type="button"
                       onClick={() => setIcon(emoji)}
-                      className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all duration-150 ${
+                      className={`w-11 h-11 rounded-xl flex items-center justify-center transition-all duration-150 ${
                         icon === emoji
-                          ? "ring-2 ring-primary ring-offset-1 ring-offset-card bg-muted/30"
-                          : "hover:bg-muted/30 hover:scale-105"
+                          ? "bg-gradient-to-br from-primary/20 to-accent/20 border-2 border-primary/50"
+                          : "hover:bg-white border-2 border-transparent"
                       }`}
-                      style={{
-                        boxShadow: icon === emoji 
-                          ? 'inset 0 1px 3px rgba(0,0,0,0.08)' 
-                          : undefined,
-                      }}
                     >
                       <AppleEmoji emoji={emoji} size="2xl" />
                     </button>
                   ))}
                 </div>
               </div>
-            </div>
+            )}
 
-            {/* Right Column - Frequency */}
-            <div className="space-y-6">
-              {/* 4. Frequency */}
-              <div>
-                <label className="block text-sm font-medium text-foreground mb-3">
-                  Frequency
-                </label>
+            {/* Step 2: Name your habit */}
+            {step === 2 && (
+              <div className="flex flex-col justify-center h-full min-h-[280px]">
+                <div className="text-center mb-6">
+                  <AppleEmoji emoji={icon} size="3xl" className="mb-4" />
+                  <h2 className="font-display text-xl font-semibold text-foreground">
+                    Name your habit
+                  </h2>
+                </div>
+                <div>
+                  <Input
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    placeholder="e.g., Morning Meditation"
+                    className="h-14 text-lg bg-white/80 border-white/50 rounded-2xl"
+                    autoFocus
+                  />
+                  <p className="text-sm text-muted-foreground mt-3 text-center">
+                    Examples: Read 30 mins, Drink water, Exercise
+                  </p>
+                </div>
+              </div>
+            )}
+
+            {/* Step 3: Choose a category */}
+            {step === 3 && (
+              <div className="space-y-4">
+                <div className="text-center mb-6">
+                  <AppleEmoji emoji="📂" size="3xl" className="mb-4" />
+                  <h2 className="font-display text-xl font-semibold text-foreground">
+                    What category is this?
+                  </h2>
+                </div>
+                <div className="grid grid-cols-2 gap-3">
+                  {CATEGORIES.map((cat) => (
+                    <button
+                      key={cat.value}
+                      onClick={() => setCategory(cat.value)}
+                      className={`p-4 rounded-2xl text-left transition-all duration-200 ${
+                        category === cat.value
+                          ? "bg-gradient-to-br from-primary/20 to-accent/20 border-2 border-primary/50"
+                          : "bg-white/80 hover:bg-white border-2 border-transparent"
+                      }`}
+                    >
+                      <AppleEmoji emoji={cat.emoji} size="xl" className="mb-2" />
+                      <p className="text-sm font-medium text-foreground">{cat.label}</p>
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Step 4: Choose frequency */}
+            {step === 4 && (
+              <div className="space-y-4">
+                <div className="text-center mb-6">
+                  <AppleEmoji emoji="📅" size="3xl" className="mb-4" />
+                  <h2 className="font-display text-xl font-semibold text-foreground">
+                    How often?
+                  </h2>
+                </div>
                 <div className="space-y-2">
                   {/* Every day */}
                   <button
                     type="button"
                     onClick={() => setFrequency("daily")}
-                    className={`w-full p-3.5 rounded-2xl border text-left flex items-center justify-between transition-all ${
+                    className={`w-full p-3.5 rounded-2xl text-left flex items-center justify-between transition-all ${
                       frequency === "daily"
-                        ? "border-primary/30 bg-primary/5"
-                        : "border-border/20 hover:border-border/40 hover:bg-muted/20"
+                        ? "bg-gradient-to-br from-primary/20 to-accent/20 border-2 border-primary/50"
+                        : "bg-white/80 hover:bg-white border-2 border-transparent"
                     }`}
                   >
                     <div>
@@ -356,10 +380,10 @@ export function AddHabitModal({ open, onOpenChange, onSave, skipGuidance = false
                     <button
                       type="button"
                       onClick={() => setFrequency("weekdays")}
-                      className={`w-full p-3.5 rounded-2xl border text-left flex items-center justify-between transition-all ${
+                      className={`w-full p-3.5 rounded-2xl text-left flex items-center justify-between transition-all ${
                         frequency === "weekdays"
-                          ? "border-primary/30 bg-primary/5"
-                          : "border-border/20 hover:border-border/40 hover:bg-muted/20"
+                          ? "bg-gradient-to-br from-primary/20 to-accent/20 border-2 border-primary/50"
+                          : "bg-white/80 hover:bg-white border-2 border-transparent"
                       }`}
                     >
                       <div>
@@ -372,9 +396,8 @@ export function AddHabitModal({ open, onOpenChange, onSave, skipGuidance = false
                         {frequency === "weekdays" && <div className="w-2 h-2 bg-primary-foreground rounded-full" />}
                       </div>
                     </button>
-                    {/* Inline weekdays selector */}
                     {frequency === "weekdays" && (
-                      <div className="mt-2 flex justify-between gap-2 p-4 bg-muted/20 rounded-2xl border border-border/10">
+                      <div className="mt-2 flex justify-between gap-2 p-4 bg-white/60 rounded-2xl">
                         {WEEKDAYS.map((day) => (
                           <button
                             key={day.value}
@@ -382,8 +405,8 @@ export function AddHabitModal({ open, onOpenChange, onSave, skipGuidance = false
                             onClick={() => toggleWeekday(day.value)}
                             className={`w-10 h-10 rounded-full text-sm font-semibold transition-all duration-150 flex items-center justify-center ${
                               selectedWeekdays.includes(day.value)
-                                ? "btn-primary-gradient shadow-md text-white"
-                                : "bg-card text-muted-foreground hover:bg-muted/40 border border-border/15"
+                                ? "bg-primary text-primary-foreground shadow-md"
+                                : "bg-white text-muted-foreground hover:bg-muted/40 border border-border/20"
                             }`}
                           >
                             {day.label}
@@ -398,10 +421,10 @@ export function AddHabitModal({ open, onOpenChange, onSave, skipGuidance = false
                     <button
                       type="button"
                       onClick={() => setFrequency("monthly")}
-                      className={`w-full p-3.5 rounded-2xl border text-left flex items-center justify-between transition-all ${
+                      className={`w-full p-3.5 rounded-2xl text-left flex items-center justify-between transition-all ${
                         frequency === "monthly"
-                          ? "border-primary/30 bg-primary/5"
-                          : "border-border/20 hover:border-border/40 hover:bg-muted/20"
+                          ? "bg-gradient-to-br from-primary/20 to-accent/20 border-2 border-primary/50"
+                          : "bg-white/80 hover:bg-white border-2 border-transparent"
                       }`}
                     >
                       <div>
@@ -414,9 +437,8 @@ export function AddHabitModal({ open, onOpenChange, onSave, skipGuidance = false
                         {frequency === "monthly" && <div className="w-2 h-2 bg-primary-foreground rounded-full" />}
                       </div>
                     </button>
-                    {/* Inline monthly days selector */}
                     {frequency === "monthly" && (
-                      <div className="mt-2 grid grid-cols-7 gap-2 p-4 bg-muted/20 rounded-2xl max-h-44 overflow-y-auto border border-border/10">
+                      <div className="mt-2 grid grid-cols-7 gap-2 p-4 bg-white/60 rounded-2xl max-h-44 overflow-y-auto">
                         {Array.from({ length: 31 }, (_, i) => i + 1).map((day) => (
                           <button
                             key={day}
@@ -424,8 +446,8 @@ export function AddHabitModal({ open, onOpenChange, onSave, skipGuidance = false
                             onClick={() => toggleMonthDay(day)}
                             className={`w-9 h-9 rounded-full text-xs font-semibold transition-all duration-150 flex items-center justify-center ${
                               selectedDays.includes(day)
-                                ? "btn-primary-gradient shadow-md text-white"
-                                : "bg-card text-muted-foreground hover:bg-muted/40 border border-border/15"
+                                ? "bg-primary text-primary-foreground shadow-md"
+                                : "bg-white text-muted-foreground hover:bg-muted/40 border border-border/20"
                             }`}
                           >
                             {day}
@@ -440,10 +462,10 @@ export function AddHabitModal({ open, onOpenChange, onSave, skipGuidance = false
                     <button
                       type="button"
                       onClick={() => setFrequency("progressive")}
-                      className={`w-full p-3.5 rounded-2xl border text-left flex items-center justify-between transition-all ${
+                      className={`w-full p-3.5 rounded-2xl text-left flex items-center justify-between transition-all ${
                         frequency === "progressive"
-                          ? "border-primary/30 bg-primary/5"
-                          : "border-border/20 hover:border-border/40 hover:bg-muted/20"
+                          ? "bg-gradient-to-br from-primary/20 to-accent/20 border-2 border-primary/50"
+                          : "bg-white/80 hover:bg-white border-2 border-transparent"
                       }`}
                     >
                       <div>
@@ -456,9 +478,8 @@ export function AddHabitModal({ open, onOpenChange, onSave, skipGuidance = false
                         {frequency === "progressive" && <div className="w-2 h-2 bg-primary-foreground rounded-full" />}
                       </div>
                     </button>
-                    {/* Inline progressive build-up configuration */}
                     {frequency === "progressive" && (
-                      <div className="mt-2 p-4 bg-muted/20 rounded-2xl space-y-4 border border-border/10">
+                      <div className="mt-2 p-4 bg-white/60 rounded-2xl space-y-4">
                         <div className="grid grid-cols-2 gap-3">
                           <div>
                             <label className="block text-xs font-medium text-muted-foreground mb-1.5">
@@ -470,7 +491,7 @@ export function AddHabitModal({ open, onOpenChange, onSave, skipGuidance = false
                               max={progressiveTargetGoal - 1}
                               value={progressiveStartGoal}
                               onChange={(e) => setProgressiveStartGoal(Math.max(1, Math.min(progressiveTargetGoal - 1, parseInt(e.target.value) || 1)))}
-                              className="h-10 text-center bg-card border-border/20 rounded-xl"
+                              className="h-10 text-center bg-white border-border/20 rounded-xl"
                             />
                           </div>
                           <div>
@@ -483,7 +504,7 @@ export function AddHabitModal({ open, onOpenChange, onSave, skipGuidance = false
                               max={100}
                               value={progressiveTargetGoal}
                               onChange={(e) => setProgressiveTargetGoal(Math.max(progressiveStartGoal + 1, parseInt(e.target.value) || 2))}
-                              className="h-10 text-center bg-card border-border/20 rounded-xl"
+                              className="h-10 text-center bg-white border-border/20 rounded-xl"
                             />
                           </div>
                         </div>
@@ -500,8 +521,8 @@ export function AddHabitModal({ open, onOpenChange, onSave, skipGuidance = false
                                 onClick={() => setProgressiveRampDuration(option.value as typeof progressiveRampDuration)}
                                 className={`px-3.5 py-2 rounded-xl text-sm font-medium transition-all ${
                                   progressiveRampDuration === option.value
-                                    ? "btn-primary-gradient shadow-md text-white"
-                                    : "bg-card text-muted-foreground hover:bg-muted/40 border border-border/20"
+                                    ? "bg-primary text-primary-foreground shadow-md"
+                                    : "bg-white text-muted-foreground hover:bg-muted/40 border border-border/20"
                                 }`}
                               >
                                 {option.label}
@@ -516,7 +537,7 @@ export function AddHabitModal({ open, onOpenChange, onSave, skipGuidance = false
                                 max={52}
                                 value={progressiveCustomWeeks}
                                 onChange={(e) => setProgressiveCustomWeeks(Math.max(1, Math.min(52, parseInt(e.target.value) || 1)))}
-                                className="w-20 h-10 text-center bg-card border-border/20 rounded-xl"
+                                className="w-20 h-10 text-center bg-white border-border/20 rounded-xl"
                               />
                               <span className="text-sm text-muted-foreground">weeks</span>
                             </div>
@@ -533,54 +554,62 @@ export function AddHabitModal({ open, onOpenChange, onSave, skipGuidance = false
                   </div>
                 </div>
               </div>
-            </div>
-          </div>
-        </div>
+            )}
 
-        {/* Fixed Bottom Section - Importance Weight and Buttons */}
-        <div className="px-7 py-5 border-t border-border/20 bg-card">
-          {/* Importance Weight */}
-          <div className="mb-5">
-            <div className="flex items-center justify-between mb-2">
-              <label className="block text-sm font-medium text-foreground">
-                Importance Weight
-              </label>
-              <span className="text-sm font-semibold gradient-text">{importance}%</span>
-            </div>
-            <Slider
-              value={[importance]}
-              onValueChange={(val) => setImportance(val[0])}
-              min={10}
-              max={100}
-              step={5}
-              className="py-2"
-            />
-            <p className="text-xs text-muted-foreground mt-1.5">
-              Higher importance = more impact on daily score
-            </p>
+            {/* Step 5: Set importance */}
+            {step === 5 && (
+              <div className="flex flex-col justify-center h-full min-h-[280px]">
+                <div className="text-center mb-8">
+                  <AppleEmoji emoji="⚖️" size="3xl" className="mb-4" />
+                  <h2 className="font-display text-xl font-semibold text-foreground">
+                    How important is this habit?
+                  </h2>
+                  <p className="text-sm text-muted-foreground mt-2">
+                    Higher importance = more impact on your daily score
+                  </p>
+                </div>
+                <div className="space-y-6">
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm text-muted-foreground">Low</span>
+                    <span className="text-2xl font-bold gradient-text">{importance}%</span>
+                    <span className="text-sm text-muted-foreground">High</span>
+                  </div>
+                  <Slider
+                    value={[importance]}
+                    onValueChange={(val) => setImportance(val[0])}
+                    min={10}
+                    max={100}
+                    step={5}
+                    className="py-2"
+                  />
+                </div>
+              </div>
+            )}
           </div>
 
-          {/* Action Buttons */}
-          <div className="flex justify-end gap-3 pt-4 border-t border-border/15">
+          {/* Navigation */}
+          <div className="flex justify-between items-center mt-6 pt-4 border-t border-white/30">
             <Button
-              variant="ghost"
-              onClick={handleClose}
-              className="px-6 rounded-xl hover:bg-muted/40 text-muted-foreground hover:text-foreground transition-all"
+              variant="outline"
+              onClick={step === 1 ? handleClose : handleBack}
+              className="text-muted-foreground bg-muted/30 border-muted/50 hover:bg-muted/50 rounded-xl h-11"
             >
-              Cancel
+              {step > 1 && <ChevronLeft className="w-4 h-4 mr-1" />}
+              {step === 1 ? "Cancel" : "Back"}
             </Button>
+            
             <Button
+              onClick={handleNext}
+              disabled={!canProceed()}
               variant="gradient"
-              onClick={handleSave}
-              className="px-6 rounded-xl shadow-lg hover:shadow-xl transition-all"
+              className="rounded-xl h-11"
             >
-              Create Habit or Task
+              {step === totalSteps ? "Add Habit" : "Next"}
+              {step !== totalSteps && <ChevronRight className="w-4 h-4 ml-1" />}
             </Button>
           </div>
         </div>
-          </DialogContent>
-        </Dialog>
-      )}
-    </>
+      </DialogContent>
+    </Dialog>
   );
 }
