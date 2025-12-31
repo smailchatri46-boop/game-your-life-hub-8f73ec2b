@@ -185,11 +185,6 @@ export default function Habits() {
       completions: {},
     };
     setAllHabits(prev => [...prev, habit]);
-    
-    // Trigger first-time tip after adding habit
-    if (shouldShowTip("habit")) {
-      setTimeout(() => triggerTip("habit"), 300);
-    }
   };
 
   const handleDeleteHabit = (habitId: string) => {
