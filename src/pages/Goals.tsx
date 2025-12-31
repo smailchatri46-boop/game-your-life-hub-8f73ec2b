@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Navbar } from "@/components/Navbar";
+
 import { GlassCard } from "@/components/GlassCard";
 import { AppleEmoji } from "@/components/AppleEmoji";
 import { Button } from "@/components/ui/button";
@@ -76,8 +76,7 @@ export default function Goals() {
   ];
 
   return (
-    <div className="min-h-screen gradient-bg">
-      <Navbar />
+    <>
 
       <main className="pt-28 pb-12 px-4 max-w-7xl mx-auto">
         {!hasGoals && !isLoading ? (
@@ -200,6 +199,6 @@ export default function Goals() {
 
       {/* Add Goal Modal */}
       <AddGoalModal open={showAddModal} onOpenChange={setShowAddModal} />
-    </div>
+    </>
   );
 }

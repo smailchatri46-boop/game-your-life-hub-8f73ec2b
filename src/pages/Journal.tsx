@@ -1,4 +1,4 @@
-import { Navbar } from "@/components/Navbar";
+
 import { GlassCard } from "@/components/GlassCard";
 import { AppleEmoji } from "@/components/AppleEmoji";
 import { Button } from "@/components/ui/button";
@@ -167,8 +167,7 @@ export default function Journal() {
   };
 
   return (
-    <div className="min-h-screen gradient-bg">
-      <Navbar />
+    <>
       
       {entries.length === 0 ? (
         /* Onboarding wrapper - full viewport centering */
@@ -375,6 +374,6 @@ export default function Journal() {
         </DialogContent>
       </Dialog>
 
-    </div>
+    </>
   );
 }
