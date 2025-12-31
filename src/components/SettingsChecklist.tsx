@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { GlassCard } from "@/components/GlassCard";
 import { AppleEmoji } from "@/components/AppleEmoji";
-import { Check, Bookmark, Target, BookOpen, MessageSquare, Sparkles } from "lucide-react";
+import { Check, Bookmark, Target, BookOpen, Sparkles, PlayCircle } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 
@@ -13,104 +14,121 @@ interface ChecklistItem {
   completed: boolean;
   current: number;
   target: number;
+  action?: () => void;
 }
 
 export function SettingsChecklist() {
   const { user } = useAuth();
+  const navigate = useNavigate();
   const [items, setItems] = useState<ChecklistItem[]>([]);
   const [loading, setLoading] = useState(true);
   
   useEffect(() => {
     const fetchProgress = async () => {
-      if (!user) {
-        setLoading(false);
-        return;
+      // Check localStorage values
+      const bookmarked = localStorage.getItem("locked_bookmarked") === "true";
+      const tutorialsChecked = localStorage.getItem("locked_tutorials_checked") === "true";
+
+      let goalsCount = 0;
+      let journalsCount = 0;
+      let habitsCount = 0;
+
+      if (user) {
+        try {
+          // Fetch counts from database in parallel
+          const [goalsRes, journalsRes, habitsRes] = await Promise.all([
+            supabase.from("goals").select("id", { count: "exact" }).eq("user_id", user.id),
+            supabase.from("journal_entries").select("id", { count: "exact" }).eq("user_id", user.id),
+            supabase.from("habits").select("id", { count: "exact" }).eq("user_id", user.id),
+          ]);
+
+          goalsCount = goalsRes.count || 0;
+          journalsCount = journalsRes.count || 0;
+          habitsCount = habitsRes.count || 0;
+        } catch (error) {
+          console.error("Error fetching checklist progress:", error);
+        }
       }
 
-      try {
-        // Fetch counts from database in parallel
-        const [goalsRes, journalsRes, messagesRes, habitsRes] = await Promise.all([
-          supabase.from("goals").select("id", { count: "exact" }).eq("user_id", user.id),
-          supabase.from("journal_entries").select("id", { count: "exact" }).eq("user_id", user.id),
-          supabase.from("chat_messages").select("id", { count: "exact" }).eq("user_id", user.id).eq("role", "user"),
-          supabase.from("habits").select("id", { count: "exact" }).eq("user_id", user.id),
-        ]);
+      const checklistItems: ChecklistItem[] = [
+        {
+          id: "bookmark",
+          label: "Bookmark Locked",
+          icon: <Bookmark className="w-4 h-4" />,
+          emoji: "🔖",
+          completed: bookmarked,
+          current: bookmarked ? 1 : 0,
+          target: 1,
+        },
+        {
+          id: "goals",
+          label: "Add 2 goals",
+          icon: <Target className="w-4 h-4" />,
+          emoji: "🎯",
+          completed: goalsCount >= 2,
+          current: Math.min(goalsCount, 2),
+          target: 2,
+        },
+        {
+          id: "journals",
+          label: "Add 2 journal entries",
+          icon: <BookOpen className="w-4 h-4" />,
+          emoji: "📔",
+          completed: journalsCount >= 2,
+          current: Math.min(journalsCount, 2),
+          target: 2,
+        },
+        {
+          id: "habits",
+          label: "Add 3 habits",
+          icon: <Sparkles className="w-4 h-4" />,
+          emoji: "✨",
+          completed: habitsCount >= 3,
+          current: Math.min(habitsCount, 3),
+          target: 3,
+        },
+        {
+          id: "tutorials",
+          label: "Check the tutorials tab",
+          icon: <PlayCircle className="w-4 h-4" />,
+          emoji: "🎬",
+          completed: tutorialsChecked,
+          current: tutorialsChecked ? 1 : 0,
+          target: 1,
+        },
+      ];
 
-        const goalsCount = goalsRes.count || 0;
-        const journalsCount = journalsRes.count || 0;
-        const messagesCount = messagesRes.count || 0;
-        const habitsCount = habitsRes.count || 0;
-        
-        // Check localStorage for bookmark
-        const bookmarked = localStorage.getItem("locked_bookmarked") === "true";
-
-        const checklistItems: ChecklistItem[] = [
-          {
-            id: "bookmark",
-            label: "Bookmark Locked",
-            icon: <Bookmark className="w-4 h-4" />,
-            emoji: "🔖",
-            completed: bookmarked,
-            current: bookmarked ? 1 : 0,
-            target: 1,
-          },
-          {
-            id: "goals",
-            label: "Add 2 goals",
-            icon: <Target className="w-4 h-4" />,
-            emoji: "🎯",
-            completed: goalsCount >= 2,
-            current: Math.min(goalsCount, 2),
-            target: 2,
-          },
-          {
-            id: "journals",
-            label: "Add 3 journal entries",
-            icon: <BookOpen className="w-4 h-4" />,
-            emoji: "📔",
-            completed: journalsCount >= 3,
-            current: Math.min(journalsCount, 3),
-            target: 3,
-          },
-          {
-            id: "ai_message",
-            label: "Send your first message to AI",
-            icon: <MessageSquare className="w-4 h-4" />,
-            emoji: "💬",
-            completed: messagesCount >= 1,
-            current: Math.min(messagesCount, 1),
-            target: 1,
-          },
-          {
-            id: "habits",
-            label: "Add 3 habits",
-            icon: <Sparkles className="w-4 h-4" />,
-            emoji: "✨",
-            completed: habitsCount >= 3,
-            current: Math.min(habitsCount, 3),
-            target: 3,
-          },
-        ];
-
-        setItems(checklistItems);
-      } catch (error) {
-        console.error("Error fetching checklist progress:", error);
-      } finally {
-        setLoading(false);
-      }
+      setItems(checklistItems);
+      setLoading(false);
     };
 
     fetchProgress();
   }, [user]);
   
-  const toggleBookmark = () => {
-    const newValue = !items.find(i => i.id === "bookmark")?.completed;
-    localStorage.setItem("locked_bookmarked", String(newValue));
-    setItems(prev => prev.map(item => 
-      item.id === "bookmark" 
-        ? { ...item, completed: newValue, current: newValue ? 1 : 0 } 
-        : item
-    ));
+  const handleItemClick = (id: string) => {
+    if (id === "bookmark") {
+      const newValue = !items.find(i => i.id === "bookmark")?.completed;
+      localStorage.setItem("locked_bookmarked", String(newValue));
+      setItems(prev => prev.map(item => 
+        item.id === "bookmark" 
+          ? { ...item, completed: newValue, current: newValue ? 1 : 0 } 
+          : item
+      ));
+    } else if (id === "tutorials") {
+      localStorage.setItem("locked_tutorials_checked", "true");
+      setItems(prev => prev.map(item => 
+        item.id === "tutorials" 
+          ? { ...item, completed: true, current: 1 } 
+          : item
+      ));
+      navigate("/tutorials");
+    } else if (id === "goals") {
+      navigate("/goals");
+    } else if (id === "journals") {
+      navigate("/journal");
+    } else if (id === "habits") {
+      navigate("/dashboard");
+    }
   };
   
   const completedCount = items.filter(i => i.completed).length;
@@ -172,13 +190,12 @@ export function SettingsChecklist() {
         {items.map(item => (
           <button
             key={item.id}
-            onClick={item.id === "bookmark" ? toggleBookmark : undefined}
-            disabled={item.id !== "bookmark"}
-            className={`w-full flex items-center gap-4 p-4 rounded-xl transition-all duration-200 ${
+            onClick={() => handleItemClick(item.id)}
+            className={`w-full flex items-center gap-4 p-4 rounded-xl transition-all duration-200 cursor-pointer ${
               item.completed 
                 ? 'bg-primary/10 border border-primary/20' 
                 : 'bg-secondary/50 hover:bg-secondary border border-transparent'
-            } ${item.id !== "bookmark" ? "cursor-default" : "cursor-pointer"}`}
+            }`}
           >
             <div className={`w-6 h-6 rounded-full flex items-center justify-center transition-all ${
               item.completed 
