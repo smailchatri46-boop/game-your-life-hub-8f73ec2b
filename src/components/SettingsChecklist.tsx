@@ -53,7 +53,7 @@ export function SettingsChecklist() {
       const checklistItems: ChecklistItem[] = [
         {
           id: "bookmark",
-          label: "Bookmark Locked",
+          label: "Bookmark Neyler",
           icon: <Bookmark className="w-4 h-4" />,
           emoji: "🔖",
           completed: bookmarked,
