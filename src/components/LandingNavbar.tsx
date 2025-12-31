@@ -1,6 +1,7 @@
 import { Link, useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
+import neylerLogo from "@/assets/neyler-logo.png";
 
 export function LandingNavbar() {
   const location = useLocation();
@@ -8,8 +9,8 @@ export function LandingNavbar() {
   return (
     <nav className="fixed top-6 left-1/2 -translate-x-1/2 z-50 w-full max-w-4xl px-4">
       <div className="glass-card px-4 py-3 flex items-center justify-between">
-        <Link to="/" className="px-2 font-display text-xl font-semibold gradient-text">
-          Locked.
+        <Link to="/" className="px-2">
+          <img src={neylerLogo} alt="Neyler" className="h-7 w-auto" />
         </Link>
         
         <div className="flex items-center gap-6">

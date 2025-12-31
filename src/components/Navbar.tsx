@@ -1,6 +1,7 @@
 import { Link, useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { Settings } from "lucide-react";
+import neylerLogo from "@/assets/neyler-logo.png";
 
 const navItems = [
   { name: "Dashboard", path: "/dashboard" },
@@ -33,10 +34,10 @@ export function Navbar() {
           {/* Logo - fixed left */}
           <Link 
             to="/" 
-            className="flex-shrink-0 font-display text-lg font-semibold gradient-text"
-            style={{ width: '75px', minWidth: '75px' }}
+            className="flex-shrink-0"
+            style={{ width: '100px', minWidth: '100px' }}
           >
-            Locked.
+            <img src={neylerLogo} alt="Neyler" className="h-6 w-auto" />
           </Link>
           
           {/* Centered tabs */}
