@@ -644,9 +644,9 @@ export function AddHabitModal({ open, onOpenChange, onSave, skipGuidance = false
             {!isGuidancePhase && habitStep === 5 && (
               <div className="flex flex-col justify-center h-full min-h-[280px]">
                 <div className="text-center mb-8">
-                  <AppleEmoji emoji="🎚️" size="3xl" className="mb-4" />
+                  <AppleEmoji emoji="🤔" size="3xl" className="mb-4" />
                   <h2 className="font-display text-xl font-semibold text-foreground">
-                    How important is this habit?
+                    How important is this habit or task?
                   </h2>
                   <p className="text-sm text-muted-foreground mt-2">
                     Higher importance = more impact on your daily score
