@@ -30,6 +30,7 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { AppleEmoji } from "@/components/AppleEmoji";
+import { SettingsChecklist } from "@/components/SettingsChecklist";
 
 export default function Settings() {
   const navigate = useNavigate();
@@ -108,6 +109,9 @@ export default function Settings() {
           <h1 className="font-display text-3xl font-semibold text-foreground">Settings</h1>
           <p className="text-muted-foreground mt-1">Manage your account and preferences</p>
         </div>
+        
+        {/* Getting Started Checklist */}
+        <SettingsChecklist />
         
         {/* Profile Section */}
         <GlassCard className="p-6 mb-6">
