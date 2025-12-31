@@ -16,6 +16,15 @@ const CATEGORIES = [
   { value: "other", label: "Other", color: "#6B7280", emoji: "✨" },
 ];
 
+// Helper to get lighter background color from category color
+const getCategoryBgColor = (color: string) => {
+  return `${color}20`; // 20% opacity
+};
+
+const getCategoryBorderColor = (color: string) => {
+  return `${color}50`; // 50% opacity
+};
+
 // Curated unique Apple emoji set - 21 emojis for 3 rows of 7
 const EMOJI_OPTIONS = [
   "📖", "💪", "💼", "🏃", "💧", "🧘", "✍️",
@@ -330,11 +339,15 @@ export function AddHabitModal({ open, onOpenChange, onSave }: AddHabitModalProps
                     <button
                       key={cat.value}
                       onClick={() => setCategory(cat.value)}
-                      className={`p-4 rounded-2xl text-left transition-all duration-200 ${
+                      className={`p-4 rounded-2xl text-left transition-all duration-200 border-2 ${
                         category === cat.value
-                          ? "bg-gradient-to-br from-primary/20 to-accent/20 border-2 border-primary/50"
-                          : "bg-white/80 hover:bg-white border-2 border-transparent"
+                          ? ""
+                          : "bg-white/80 hover:bg-white border-transparent"
                       }`}
+                      style={category === cat.value ? {
+                        backgroundColor: getCategoryBgColor(cat.color),
+                        borderColor: getCategoryBorderColor(cat.color),
+                      } : undefined}
                     >
                       <AppleEmoji emoji={cat.emoji} size="xl" className="mb-2" />
                       <p className="text-sm font-medium text-foreground">{cat.label}</p>
@@ -560,7 +573,7 @@ export function AddHabitModal({ open, onOpenChange, onSave }: AddHabitModalProps
             {step === 5 && (
               <div className="flex flex-col justify-center h-full min-h-[280px]">
                 <div className="text-center mb-8">
-                  <AppleEmoji emoji="⚖️" size="3xl" className="mb-4" />
+                  <AppleEmoji emoji="🎚️" size="3xl" className="mb-4" />
                   <h2 className="font-display text-xl font-semibold text-foreground">
                     How important is this habit?
                   </h2>
