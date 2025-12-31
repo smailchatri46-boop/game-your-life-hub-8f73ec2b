@@ -42,6 +42,30 @@ const WEEKDAYS = [
   { value: 6, label: "S" },
 ];
 
+// Guidance slides shown before habit creation
+const GUIDANCE_SLIDES = [
+  {
+    emoji: "🌱",
+    title: "Start small, stay consistent",
+    message: "Over 90% of people who set hard goals give up in the first week. Make your habits easy and achievable so you can build momentum.",
+  },
+  {
+    emoji: "📈",
+    title: "Make progress feel natural",
+    message: "Don't jump to the final goal immediately. Use progressive build-up habits and gradually increase difficulty so new routines stay comfortable.",
+  },
+  {
+    emoji: "📝",
+    title: "Need only a quick to-do?",
+    message: "Not everything needs to become a habit. If you just want a one-time task for today or tomorrow, use the To-Do List in the Overview tab.",
+  },
+  {
+    emoji: "🔥",
+    title: "Tiny steps beat burnout",
+    message: "Small goals done daily are more powerful than big goals abandoned. Stick to simple habits and let compound progress work for you.",
+  },
+];
+
 export interface ProgressiveBuildUp {
   enabled: boolean;
   startGoal: number;
@@ -73,7 +97,7 @@ interface AddHabitModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onSave: (habit: NewHabit) => void;
-  skipGuidance?: boolean; // Not used anymore, kept for compatibility
+  skipGuidance?: boolean; // Skip guidance slides when opening from goal flow or onboarding
 }
 
 const RAMP_DURATION_OPTIONS = [
@@ -83,7 +107,12 @@ const RAMP_DURATION_OPTIONS = [
   { value: "custom", label: "Custom" },
 ];
 
-export function AddHabitModal({ open, onOpenChange, onSave }: AddHabitModalProps) {
+export function AddHabitModal({ open, onOpenChange, onSave, skipGuidance = false }: AddHabitModalProps) {
+  // Total steps: 4 guidance + 5 habit creation = 9 steps (or 5 if skipping guidance)
+  const guidanceSteps = skipGuidance ? 0 : GUIDANCE_SLIDES.length;
+  const habitSteps = 5; // Icon → Name → Category → Frequency → Importance
+  const totalSteps = guidanceSteps + habitSteps;
+
   const [step, setStep] = useState(1);
   const [isComplete, setIsComplete] = useState(false);
 
@@ -104,9 +133,11 @@ export function AddHabitModal({ open, onOpenChange, onSave }: AddHabitModalProps
   const [progressiveRampDuration, setProgressiveRampDuration] = useState<"1-week" | "2-weeks" | "1-month" | "custom">("2-weeks");
   const [progressiveCustomWeeks, setProgressiveCustomWeeks] = useState(3);
 
-  const totalSteps = 5; // Icon → Name → Category → Frequency → Importance
-
   const selectedCategory = CATEGORIES.find(c => c.value === category);
+
+  // Check if we're in guidance phase or habit creation phase
+  const isGuidancePhase = !skipGuidance && step <= guidanceSteps;
+  const habitStep = isGuidancePhase ? 0 : (step - guidanceSteps);
 
   const getRampDurationLabel = () => {
     if (progressiveRampDuration === "custom") {
@@ -206,7 +237,11 @@ export function AddHabitModal({ open, onOpenChange, onSave }: AddHabitModalProps
   };
 
   const canProceed = () => {
-    switch (step) {
+    // During guidance phase, always can proceed
+    if (isGuidancePhase) return true;
+    
+    // During habit creation phase
+    switch (habitStep) {
       case 1: return icon.length > 0;
       case 2: return name.trim().length > 0;
       case 3: return category.length > 0;
@@ -217,6 +252,22 @@ export function AddHabitModal({ open, onOpenChange, onSave }: AddHabitModalProps
       case 5: return true;
       default: return false;
     }
+  };
+
+  // Get button text
+  const getNextButtonText = () => {
+    if (isGuidancePhase) {
+      // Last guidance slide shows "Add Habit"
+      if (step === guidanceSteps) {
+        return "Add Habit";
+      }
+      return "Next";
+    }
+    // In habit creation phase
+    if (step === totalSteps) {
+      return "Add Habit";
+    }
+    return "Next";
   };
 
   // Success screen
@@ -248,6 +299,9 @@ export function AddHabitModal({ open, onOpenChange, onSave }: AddHabitModalProps
     );
   }
 
+  // Guidance slide content
+  const currentGuidanceSlide = isGuidancePhase ? GUIDANCE_SLIDES[step - 1] : null;
+
   return (
     <Dialog open={open} onOpenChange={handleClose}>
       <DialogContent className="sm:max-w-lg p-0 overflow-hidden bg-gradient-to-br from-[hsl(30,100%,98%)] to-[hsl(25,80%,95%)] border-0" hideCloseButton>
@@ -270,8 +324,25 @@ export function AddHabitModal({ open, onOpenChange, onSave }: AddHabitModalProps
 
           {/* Step Content */}
           <div className="min-h-[300px]">
-            {/* Step 1: Choose an icon */}
-            {step === 1 && (
+            {/* Guidance Slides */}
+            {isGuidancePhase && currentGuidanceSlide && (
+              <div className="flex flex-col justify-center h-full min-h-[280px] text-center">
+                <div className="mb-6 flex justify-center">
+                  <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-primary/10 to-primary/5 flex items-center justify-center">
+                    <AppleEmoji emoji={currentGuidanceSlide.emoji} size="4xl" />
+                  </div>
+                </div>
+                <h2 className="font-display text-xl font-semibold text-foreground mb-3">
+                  {currentGuidanceSlide.title}
+                </h2>
+                <p className="text-muted-foreground text-sm leading-relaxed max-w-sm mx-auto">
+                  {currentGuidanceSlide.message}
+                </p>
+              </div>
+            )}
+
+            {/* Habit Step 1: Choose an icon */}
+            {!isGuidancePhase && habitStep === 1 && (
               <div className="space-y-4">
                 <div className="text-center mb-6">
                   <AppleEmoji emoji="🎨" size="3xl" className="mb-4" />
@@ -301,13 +372,13 @@ export function AddHabitModal({ open, onOpenChange, onSave }: AddHabitModalProps
               </div>
             )}
 
-            {/* Step 2: Name your habit */}
-            {step === 2 && (
+            {/* Habit Step 2: Name your habit */}
+            {!isGuidancePhase && habitStep === 2 && (
               <div className="flex flex-col justify-center h-full min-h-[280px]">
                 <div className="text-center mb-6">
                   <AppleEmoji emoji={icon} size="3xl" className="mb-4" />
                   <h2 className="font-display text-xl font-semibold text-foreground">
-                    Name your habit
+                    Name your habit or task
                   </h2>
                 </div>
                 <div>
@@ -325,8 +396,8 @@ export function AddHabitModal({ open, onOpenChange, onSave }: AddHabitModalProps
               </div>
             )}
 
-            {/* Step 3: Choose a category */}
-            {step === 3 && (
+            {/* Habit Step 3: Choose a category */}
+            {!isGuidancePhase && habitStep === 3 && (
               <div className="space-y-4">
                 <div className="text-center mb-6">
                   <AppleEmoji emoji="📂" size="3xl" className="mb-4" />
@@ -357,8 +428,8 @@ export function AddHabitModal({ open, onOpenChange, onSave }: AddHabitModalProps
               </div>
             )}
 
-            {/* Step 4: Choose frequency */}
-            {step === 4 && (
+            {/* Habit Step 4: Choose frequency */}
+            {!isGuidancePhase && habitStep === 4 && (
               <div className="space-y-4">
                 <div className="text-center mb-6">
                   <AppleEmoji emoji="📅" size="3xl" className="mb-4" />
@@ -569,8 +640,8 @@ export function AddHabitModal({ open, onOpenChange, onSave }: AddHabitModalProps
               </div>
             )}
 
-            {/* Step 5: Set importance */}
-            {step === 5 && (
+            {/* Habit Step 5: Set importance */}
+            {!isGuidancePhase && habitStep === 5 && (
               <div className="flex flex-col justify-center h-full min-h-[280px]">
                 <div className="text-center mb-8">
                   <AppleEmoji emoji="🎚️" size="3xl" className="mb-4" />
@@ -617,8 +688,8 @@ export function AddHabitModal({ open, onOpenChange, onSave }: AddHabitModalProps
               variant="gradient"
               className="rounded-xl h-11"
             >
-              {step === totalSteps ? "Add Habit" : "Next"}
-              {step !== totalSteps && <ChevronRight className="w-4 h-4 ml-1" />}
+              {getNextButtonText()}
+              {step !== totalSteps && step !== guidanceSteps && <ChevronRight className="w-4 h-4 ml-1" />}
             </Button>
           </div>
         </div>
