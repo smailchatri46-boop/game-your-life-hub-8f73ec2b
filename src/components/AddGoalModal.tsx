@@ -715,7 +715,7 @@ export function AddGoalModal({ open, onOpenChange }: AddGoalModalProps) {
               {createGoal.isPending 
                 ? "Creating..." 
                 : step === totalSteps
-                  ? "Sign and Create Goal" 
+                  ? "Sign & Create" 
                   : "Next"}
               {step !== totalSteps && (
                 <ChevronRight className="w-4 h-4 ml-1" />
