@@ -36,54 +36,20 @@ export interface CreateGoalInput {
   habit_ids: string[];
 }
 
-// Local storage key for demo goals
-const DEMO_GOALS_KEY = "demo_goals";
-const DEMO_GOAL_HABITS_KEY = "demo_goal_habits";
-
-// Default demo goal that's always present
-const getDefaultDemoGoal = (): Goal => ({
+// Default demo goal - static, no local storage
+const DEFAULT_DEMO_GOAL: Goal = {
   id: "demo-default-save-5k",
   user_id: "demo",
   name: "SAVE 5K",
   category: "Finance",
   category_emoji: "💰",
-  start_date: new Date().toISOString().split("T")[0],
-  end_date: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString().split("T")[0],
+  start_date: "2025-01-01",
+  end_date: "2025-12-31",
   target_count: 90,
   completed_count: 0,
   status: "active",
-  created_at: new Date().toISOString(),
-  updated_at: new Date().toISOString(),
-});
-
-// Helper functions for local storage
-const getDemoGoals = (): Goal[] => {
-  try {
-    const stored = localStorage.getItem(DEMO_GOALS_KEY);
-    const customGoals: Goal[] = stored ? JSON.parse(stored) : [];
-    // Always include the default goal
-    const hasDefault = customGoals.some((g) => g.id === "demo-default-10k-mrr");
-    return hasDefault ? customGoals : [getDefaultDemoGoal(), ...customGoals];
-  } catch {
-    return [getDefaultDemoGoal()];
-  }
-};
-
-const setDemoGoals = (goals: Goal[]) => {
-  localStorage.setItem(DEMO_GOALS_KEY, JSON.stringify(goals));
-};
-
-const getDemoGoalHabits = (): GoalHabit[] => {
-  try {
-    const stored = localStorage.getItem(DEMO_GOAL_HABITS_KEY);
-    return stored ? JSON.parse(stored) : [];
-  } catch {
-    return [];
-  }
-};
-
-const setDemoGoalHabits = (habits: GoalHabit[]) => {
-  localStorage.setItem(DEMO_GOAL_HABITS_KEY, JSON.stringify(habits));
+  created_at: "2025-01-01T00:00:00.000Z",
+  updated_at: "2025-01-01T00:00:00.000Z",
 };
 
 export function useGoals() {
@@ -91,9 +57,9 @@ export function useGoals() {
   const queryClient = useQueryClient();
   const isDemo = !user;
 
-  // Demo mode state
-  const [demoGoals, setDemoGoalsState] = useState<Goal[]>(() => getDemoGoals());
-  const [demoGoalHabits, setDemoGoalHabitsState] = useState<GoalHabit[]>(() => getDemoGoalHabits());
+  // Demo mode state - only use static default goal, no local storage
+  const [demoGoals, setDemoGoalsState] = useState<Goal[]>([DEFAULT_DEMO_GOAL]);
+  const [demoGoalHabits, setDemoGoalHabitsState] = useState<GoalHabit[]>([]);
 
   const goalsQuery = useQuery({
     queryKey: ["goals", user?.id],
@@ -126,7 +92,7 @@ export function useGoals() {
     enabled: !!user,
   });
 
-  // Demo mode create goal
+  // Demo mode create goal - only session storage, resets on reload
   const createDemoGoal = useCallback((input: CreateGoalInput) => {
     const newGoal: Goal = {
       id: crypto.randomUUID(),
@@ -144,7 +110,6 @@ export function useGoals() {
     };
 
     const updatedGoals = [newGoal, ...demoGoals];
-    setDemoGoals(updatedGoals);
     setDemoGoalsState(updatedGoals);
 
     // Link habits
@@ -156,22 +121,19 @@ export function useGoals() {
         user_id: "demo",
       }));
       const updatedLinks = [...demoGoalHabits, ...newLinks];
-      setDemoGoalHabits(updatedLinks);
       setDemoGoalHabitsState(updatedLinks);
     }
 
-    toast.success("Goal created! (Demo mode - data stored locally)");
+    toast.success("Goal created! (Demo mode - sign up to save)");
     return newGoal;
   }, [demoGoals, demoGoalHabits]);
 
   // Demo mode delete goal
   const deleteDemoGoal = useCallback((goalId: string) => {
     const updatedGoals = demoGoals.filter((g) => g.id !== goalId);
-    setDemoGoals(updatedGoals);
     setDemoGoalsState(updatedGoals);
 
     const updatedLinks = demoGoalHabits.filter((gh) => gh.goal_id !== goalId);
-    setDemoGoalHabits(updatedLinks);
     setDemoGoalHabitsState(updatedLinks);
 
     toast.success("Goal deleted (Demo mode)");
@@ -182,7 +144,6 @@ export function useGoals() {
     const updatedGoals = demoGoals.map((g) =>
       g.id === goalId ? { ...g, ...updates, updated_at: new Date().toISOString() } : g
     );
-    setDemoGoals(updatedGoals);
     setDemoGoalsState(updatedGoals);
     toast.success("Goal updated (Demo mode)");
   }, [demoGoals]);
