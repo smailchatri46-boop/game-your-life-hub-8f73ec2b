@@ -632,33 +632,41 @@ export function AddGoalModal({ open, onOpenChange }: AddGoalModalProps) {
                   </p>
                 </div>
                 <div className="space-y-3">
-                  {COMMITMENT_STATEMENTS.map((statement, index) => (
-                    <div
-                      key={index}
-                      onClick={() => toggleCommitment(index)}
-                      className={`w-full p-3 rounded-2xl flex items-start gap-3 text-left transition-all duration-200 cursor-pointer ${
-                        commitmentChecks[index]
-                          ? "bg-gradient-to-br from-primary/20 to-accent/20 border-2 border-primary/50"
-                          : "bg-white/80 hover:bg-white border-2 border-transparent"
-                      }`}
-                    >
-                      <Checkbox
-                        checked={commitmentChecks[index]}
-                        className="mt-0.5 pointer-events-none"
-                      />
-                      <span className="text-sm text-foreground">{statement}</span>
-                    </div>
-                  ))}
+                  {COMMITMENT_STATEMENTS.map((statement, index) => {
+                    const isChecked = commitmentChecks[index];
+                    return (
+                      <button
+                        key={index}
+                        onClick={() => toggleCommitment(index)}
+                        className={`w-full flex items-start gap-3 p-3 rounded-xl text-left transition-all ${
+                          isChecked
+                            ? "bg-gradient-to-r from-amber-50 to-orange-50 border-2 border-primary/30"
+                            : "bg-white/50 border-2 border-border/20 hover:bg-secondary/30 hover:border-border/30"
+                        }`}
+                      >
+                        <div className={`flex-shrink-0 w-5 h-5 rounded-md flex items-center justify-center mt-0.5 ${
+                          isChecked
+                            ? "bg-gradient-to-r from-amber-400 to-orange-500"
+                            : "border-2 border-muted-foreground/30"
+                        }`}>
+                          {isChecked && <Check className="w-3 h-3 text-white" />}
+                        </div>
+                        <span className={`text-sm ${isChecked ? "text-foreground" : "text-muted-foreground"}`}>
+                          {statement}
+                        </span>
+                      </button>
+                    );
+                  })}
                 </div>
                 <div className="pt-2">
-                  <label className="text-xs text-muted-foreground mb-2 block">
-                    Type your name to sign
+                  <label className="block text-sm font-medium text-foreground mb-2 text-center">
+                    Sign with your name
                   </label>
                   <Input
                     value={signatureName}
                     onChange={(e) => setSignatureName(e.target.value)}
                     placeholder="Your name"
-                    className="h-12 text-base bg-white/80 border-white/50 rounded-2xl"
+                    className="h-12 bg-white/50 border-border/30 rounded-xl text-center font-display text-lg italic"
                   />
                 </div>
               </div>
@@ -707,7 +715,7 @@ export function AddGoalModal({ open, onOpenChange }: AddGoalModalProps) {
               {createGoal.isPending 
                 ? "Creating..." 
                 : step === totalSteps
-                  ? "Create Goal" 
+                  ? "Sign and Create Goal" 
                   : "Next"}
               {step !== totalSteps && (
                 <ChevronRight className="w-4 h-4 ml-1" />
