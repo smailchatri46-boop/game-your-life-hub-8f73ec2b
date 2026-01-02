@@ -1,14 +1,34 @@
 import { Link, useLocation } from "react-router-dom";
+import { useState, useEffect } from "react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import neylerLogo from "@/assets/neyler-logo.png";
 
 export function LandingNavbar() {
   const location = useLocation();
+  const [isScrolled, setIsScrolled] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 20);
+    };
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    handleScroll(); // Check initial position
+    
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   return (
     <nav className="fixed top-6 left-1/2 -translate-x-1/2 z-50 w-full max-w-4xl px-4">
-      <div className="glass-card px-4 py-3 flex items-center justify-between">
+      <div 
+        className={cn(
+          "px-4 py-3 flex items-center justify-between rounded-2xl border transition-all duration-300 ease-out",
+          isScrolled 
+            ? "glass-card" 
+            : "bg-transparent border-transparent"
+        )}
+      >
         <Link to="/" className="px-2">
           <img src={neylerLogo} alt="Neyler" className="h-7 w-auto" />
         </Link>
