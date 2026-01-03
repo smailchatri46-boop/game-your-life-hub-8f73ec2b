@@ -8,6 +8,7 @@ import { AnalyticsCarousel } from "@/components/landing/AnalyticsCarousel";
 import { TodoShowcase } from "@/components/landing/TodoShowcase";
 import { HabitsShowcase } from "@/components/landing/HabitsShowcase";
 import { AIBuddyShowcase } from "@/components/landing/AIBuddyShowcase";
+import { GoalsShowcase } from "@/components/landing/GoalsShowcase";
 
 export default function Landing() {
   return (
@@ -57,6 +58,7 @@ export default function Landing() {
       <TodoShowcase />
       <HabitsShowcase />
       <AIBuddyShowcase />
+      <GoalsShowcase />
       
       {/* Value Proposition */}
       <section className="py-20 px-4">
