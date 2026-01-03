@@ -62,7 +62,7 @@ export default function Landing() {
                     <span className="w-6 h-6 bg-white rounded-full flex items-center justify-center">
                       <img src={googleLogo} alt="Google" className="w-4 h-4" />
                     </span>
-                    Sign up with Google
+                    Continue with Google
                   </Link>
                 </Button>
                 
