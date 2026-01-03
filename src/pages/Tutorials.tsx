@@ -10,82 +10,63 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 
-// YouTube video ID for all tutorials (extracted from https://youtu.be/E_sPvPHwpuk)
-const TUTORIAL_VIDEO_ID = "E_sPvPHwpuk";
-
 interface Tutorial {
   id: string;
   title: string;
   description: string;
   duration: string;
-  thumbnail: string;
+  videoId: string;
   category: string;
 }
 
 const tutorials: Tutorial[] = [
   {
     id: "1",
-    title: "Getting Started with Locked",
-    description: "Learn the basics of tracking your habits and setting up your first goals.",
-    duration: "5 min",
-    thumbnail: "🎯",
-    category: "Basics",
+    title: "How to add a to-do list on Neyler",
+    description: "Learn how to create and manage your daily to-do lists to stay organized and productive.",
+    duration: "2 min",
+    videoId: "mUnuNuWcKp4",
+    category: "To-Do",
   },
   {
     id: "2",
-    title: "Mastering the Dashboard",
-    description: "Understand all the stats, progress indicators, and how to interpret your data.",
-    duration: "7 min",
-    thumbnail: "📊",
-    category: "Dashboard",
-  },
-  {
-    id: "3",
-    title: "Building Effective Habits",
-    description: "Tips and strategies for creating habits that stick using the habits tracker.",
-    duration: "10 min",
-    thumbnail: "✅",
-    category: "Habits",
-  },
-  {
-    id: "4",
-    title: "Monthly Overview Guide",
-    description: "How to use the calendar view to track your progress over time.",
-    duration: "4 min",
-    thumbnail: "📅",
-    category: "Overview",
-  },
-  {
-    id: "5",
-    title: "Journaling for Growth",
-    description: "Make the most of the journal feature to reflect and improve.",
-    duration: "6 min",
-    thumbnail: "📝",
+    title: "How to write notes and journals on Neyler",
+    description: "Discover how to capture your thoughts and ideas using the notes and journal features.",
+    duration: "2 min",
+    videoId: "h8DVZF-HWkE",
     category: "Journal",
   },
   {
+    id: "3",
+    title: "How to write a daily reflection on Neyler",
+    description: "Master the daily reflection feature to track your progress and gain insights.",
+    duration: "2 min",
+    videoId: "XMB_0CMDNL4",
+    category: "Reflection",
+  },
+  {
+    id: "4",
+    title: "How to add a new habit or task on Neyler",
+    description: "Step-by-step guide to creating new habits and tasks to build your routine.",
+    duration: "2 min",
+    videoId: "gfq5_vW1H6w",
+    category: "Habits",
+  },
+  {
+    id: "5",
+    title: "How to track your mood and motivation on Neyler",
+    description: "Learn to monitor your emotional well-being and motivation levels over time.",
+    duration: "2 min",
+    videoId: "9fajFN68ZkQ",
+    category: "Mood",
+  },
+  {
     id: "6",
-    title: "AI Coach Features",
-    description: "Unlock the power of AI coaching for personalized insights and motivation.",
-    duration: "8 min",
-    thumbnail: "🤖",
-    category: "AI Chat",
-  },
-  {
-    id: "7",
-    title: "Leveling Up & Gamification",
-    description: "Understanding XP, levels, streaks, and how to stay motivated.",
-    duration: "5 min",
-    thumbnail: "🏆",
-    category: "Gamification",
-  },
-  {
-    id: "8",
-    title: "Pro Tips & Tricks",
-    description: "Advanced strategies from power users to maximize your productivity.",
-    duration: "12 min",
-    thumbnail: "💡",
-    category: "Advanced",
+    title: "Coming Soon",
+    description: "More tutorials are on the way. Stay tuned for additional guides and tips!",
+    duration: "—",
+    videoId: "mUnuNuWcKp4",
+    category: "More",
   },
 ];
 
@@ -118,7 +99,7 @@ export default function Tutorials() {
               style={{ animationDelay: `${index * 100}ms` } as React.CSSProperties}
             >
               <div className="relative">
-                <YouTubeEmbed videoId={TUTORIAL_VIDEO_ID} />
+                <YouTubeEmbed videoId={tutorial.videoId} />
                 <span className="absolute top-3 left-3 px-2 py-1 bg-card/80 backdrop-blur-sm rounded-lg text-xs font-body font-semibold z-10">
                   {tutorial.category}
                 </span>
