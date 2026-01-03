@@ -77,23 +77,19 @@ export function AIBuddyShowcase() {
               </div>
             </div>
 
-            {/* Suggested Questions Carousel */}
-            <div className="relative px-0 pb-2">
-              {/* LEFT FADE */}
-              <div 
-                className="absolute left-0 top-0 bottom-2 w-24 z-10 pointer-events-none" 
-                style={{ background: 'linear-gradient(to right, hsl(32 55% 93%) 0%, transparent 100%)' }} 
-              />
-              {/* RIGHT FADE */}
-              <div 
-                className="absolute right-0 top-0 bottom-2 w-24 z-10 pointer-events-none" 
-                style={{ background: 'linear-gradient(to left, hsl(40 30% 97%) 0%, transparent 100%)' }} 
-              />
-              
+            {/* Suggested Questions Carousel - with transparency mask fade */}
+            <div className="px-0 pb-2">
               <div 
                 ref={scrollRef}
                 className="flex gap-3 overflow-x-auto scrollbar-hide px-4"
-                style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+                style={{ 
+                  scrollbarWidth: 'none', 
+                  msOverflowStyle: 'none',
+                  maskImage: 'linear-gradient(to right, transparent 0%, black 12%, black 88%, transparent 100%)',
+                  WebkitMaskImage: 'linear-gradient(to right, transparent 0%, black 12%, black 88%, transparent 100%)',
+                  maskRepeat: 'no-repeat',
+                  maskSize: '100% 100%'
+                }}
               >
                 {duplicatedQuestions.map((q, index) => (
                   <button
