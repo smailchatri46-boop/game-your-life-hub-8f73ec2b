@@ -95,7 +95,7 @@ export default function Landing() {
             </div>
             
             <GlassCard className="px-5 py-3 flex items-center gap-2" glow>
-              <span className="font-display font-semibold gradient-text">Locked.</span>
+              <img src="/neyler-logo.png" alt="Neyler" className="h-6" />
             </GlassCard>
           </div>
         </div>
@@ -180,7 +180,7 @@ export default function Landing() {
               Ready to level up?
             </h2>
             <p className="text-muted-foreground mb-8">
-              Join thousands of people who have transformed their lives with Locked.
+              Join thousands of people who have transformed their lives with Neyler.
             </p>
             <Button variant="gradient" size="xl" asChild>
               <Link to="/signup" className="gap-3">
@@ -197,8 +197,8 @@ export default function Landing() {
       {/* Footer */}
       <footer className="py-8 px-4 border-t border-border/50">
         <div className="max-w-5xl mx-auto flex items-center justify-between">
-          <span className="font-display font-semibold gradient-text">Locked.</span>
-          <p className="text-sm text-muted-foreground">© 2025 Locked. All rights reserved.</p>
+          <img src="/neyler-logo.png" alt="Neyler" className="h-6" />
+          <p className="text-sm text-muted-foreground">© 2025 Neyler. All rights reserved.</p>
         </div>
       </footer>
     </div>

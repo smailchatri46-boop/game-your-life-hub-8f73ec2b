@@ -13,12 +13,12 @@ interface Review {
 
 const reviews: Review[] = [
   {
-    text: "Locked makes it so much easier to keep my habits, tasks, and goals together. I finally stopped jumping between five different apps",
+    text: "Neyler makes it so much easier to keep my habits, tasks, and goals together. I finally stopped jumping between five different apps",
     name: "Sara K.",
     avatar: "🧘",
     avatarBg: "bg-rose-100",
     stars: 5,
-    meta: "Using Locked for 6 months"
+    meta: "Using Neyler for 6 months"
   },
   {
     text: "I really like the AI reflections. It doesn't just show stats, it actually explains what my patterns mean",
@@ -43,7 +43,7 @@ const reviews: Review[] = [
     avatar: "🌿",
     avatarBg: "bg-green-100",
     stars: 4,
-    meta: "Using Locked for 2 months"
+    meta: "Using Neyler for 2 months"
   },
   {
     text: "The habit tracker and task manager being in one place is exactly what I needed. I hate separating those two",
@@ -77,7 +77,7 @@ const reviews: Review[] = [
     avatar: "🏃",
     avatarBg: "bg-orange-100",
     stars: 5,
-    meta: "Using Locked for 4 months"
+    meta: "Using Neyler for 4 months"
   },
   {
     text: "I appreciate that the app focuses on small steps instead of shouting about productivity all the time",
@@ -96,7 +96,7 @@ const reviews: Review[] = [
     meta: "Verified user"
   },
   {
-    text: "Locked helped me organize school work, personal habits, and health routines in one space",
+    text: "Neyler helped me organize school work, personal habits, and health routines in one space",
     name: "Lucas F.",
     avatar: "🎓",
     avatarBg: "bg-sky-100",
@@ -110,7 +110,7 @@ const reviews: Review[] = [
     avatar: "⚡",
     avatarBg: "bg-yellow-100",
     stars: 5,
-    meta: "Using Locked for 3 months"
+    meta: "Using Neyler for 3 months"
   },
   {
     text: "The onboarding experience was smooth and I felt guided without being overloaded with questions",
@@ -135,7 +135,7 @@ const reviews: Review[] = [
     avatar: "🌟",
     avatarBg: "bg-amber-100",
     stars: 5,
-    meta: "Using Locked for 5 months"
+    meta: "Using Neyler for 5 months"
   },
   {
     text: "I love how clean and minimal the interface looks. No distractions at all",
@@ -160,7 +160,7 @@ const reviews: Review[] = [
     avatar: "📈",
     avatarBg: "bg-emerald-100",
     stars: 4,
-    meta: "Using Locked for 2 months"
+    meta: "Using Neyler for 2 months"
   },
   {
     text: "I added my habits, some tasks, and started journaling in the same day and it instantly clicked for me",
