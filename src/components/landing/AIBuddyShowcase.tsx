@@ -1,81 +1,118 @@
-import { ArrowUp, Menu, Download, HelpCircle } from "lucide-react";
+import { useRef, useEffect } from "react";
+import { ArrowUp } from "lucide-react";
 import { AppleEmoji } from "@/components/AppleEmoji";
 import GlowOrb from "@/components/GlowOrb";
-import { Button } from "@/components/ui/button";
 
 const suggestedQuestions = [
   { text: "Which habit do I struggle with the most?", emoji: "🤔" },
   { text: "Analyze my last week and tell me what I should improve", emoji: "📊" },
   { text: "What's the single habit that would help me the most right now?", emoji: "💡" },
+  { text: "How can I build better morning routines?", emoji: "🌅" },
+  { text: "What patterns do you see in my productivity?", emoji: "⚡" },
 ];
 
 export function AIBuddyShowcase() {
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const animationRef = useRef<number>();
+
+  useEffect(() => {
+    const scrollContainer = scrollRef.current;
+    if (!scrollContainer) return;
+
+    let scrollPosition = 0;
+    const scrollSpeed = 0.5;
+
+    const animate = () => {
+      scrollPosition += scrollSpeed;
+      
+      // Reset when we've scrolled half (since content is duplicated)
+      if (scrollPosition >= scrollContainer.scrollWidth / 2) {
+        scrollPosition = 0;
+      }
+      
+      scrollContainer.scrollLeft = scrollPosition;
+      animationRef.current = requestAnimationFrame(animate);
+    };
+
+    animationRef.current = requestAnimationFrame(animate);
+
+    const handleMouseEnter = () => {
+      if (animationRef.current) {
+        cancelAnimationFrame(animationRef.current);
+      }
+    };
+
+    const handleMouseLeave = () => {
+      animationRef.current = requestAnimationFrame(animate);
+    };
+
+    scrollContainer.addEventListener('mouseenter', handleMouseEnter);
+    scrollContainer.addEventListener('mouseleave', handleMouseLeave);
+
+    return () => {
+      if (animationRef.current) {
+        cancelAnimationFrame(animationRef.current);
+      }
+      scrollContainer.removeEventListener('mouseenter', handleMouseEnter);
+      scrollContainer.removeEventListener('mouseleave', handleMouseLeave);
+    };
+  }, []);
+
+  // Duplicate questions for seamless loop
+  const duplicatedQuestions = [...suggestedQuestions, ...suggestedQuestions];
+
   return (
     <section className="py-20 px-4">
-      <div className="max-w-5xl mx-auto">
+      <div className="max-w-6xl mx-auto">
         <div className="grid md:grid-cols-2 gap-12 items-center">
-          {/* Exact AI Buddy Chat from Overview */}
+          {/* AI Buddy Chat - Wider and Taller */}
           <div>
             <div 
               className="w-full bg-card/40 backdrop-blur-xl rounded-3xl shadow-soft overflow-hidden flex flex-col relative border border-border/10" 
-              style={{ height: "450px", maxWidth: "100%" }}
+              style={{ height: "520px", maxWidth: "100%" }}
             >
-              {/* Chat Header - exactly like AIBuddyChat */}
-              <div className="flex items-center justify-between px-5 py-3 border-b border-border/10">
-                <div className="flex items-center gap-3">
-                  <button
-                    className="p-2 rounded-lg hover:bg-muted/50 text-muted-foreground transition-colors"
-                    aria-label="Toggle sidebar"
-                  >
-                    <Menu className="w-5 h-5" />
-                  </button>
-                  <div>
-                    <h3 className="font-display text-lg font-semibold text-foreground">AI Buddy</h3>
-                    <p className="text-xs text-muted-foreground">Your supportive motivation buddy</p>
-                  </div>
-                </div>
-
-                <div className="flex items-center gap-1">
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className="text-muted-foreground hover:text-foreground hover:bg-muted/50"
-                  >
-                    <Download className="w-4 h-4 mr-2" />
-                    Download data
-                  </Button>
-                  <button className="p-1.5 rounded-full hover:bg-muted/50 text-muted-foreground transition-colors">
-                    <HelpCircle className="w-3.5 h-3.5" />
-                  </button>
+              {/* Chat Header - Simplified */}
+              <div className="flex items-center px-6 py-4 border-b border-border/10">
+                <div>
+                  <h3 className="font-display text-lg font-semibold text-foreground">AI Buddy</h3>
+                  <p className="text-xs text-muted-foreground">Your supportive motivation buddy</p>
                 </div>
               </div>
 
               {/* Messages Area - Welcome state with GlowOrb */}
-              <div className="flex-1 overflow-y-auto px-4 md:px-6 py-6">
+              <div className="flex-1 overflow-y-auto px-6 py-8">
                 <div className="h-full flex flex-col items-center justify-center text-center px-4">
                   {/* Animated Glow Orb */}
-                  <div className="relative flex items-center justify-center mb-4">
-                    <div className="relative w-24 h-24 md:w-28 md:h-28 rounded-full overflow-hidden flex-shrink-0">
+                  <div className="relative flex items-center justify-center mb-6">
+                    <div className="relative w-28 h-28 md:w-32 md:h-32 rounded-full overflow-hidden flex-shrink-0">
                       <GlowOrb />
                     </div>
                   </div>
                   
-                  <h2 className="font-display text-lg font-medium text-foreground mb-2">
+                  <h2 className="font-display text-xl font-medium text-foreground mb-3">
                     Start a conversation
                   </h2>
-                  <p className="text-muted-foreground text-sm max-w-sm">
+                  <p className="text-muted-foreground text-sm max-w-sm leading-relaxed">
                     I'm your wellness buddy <AppleEmoji emoji="🙂" size="sm" className="inline align-middle mx-0.5" /> I turn your habits into insights to help you reach your goals.
                   </p>
                 </div>
               </div>
 
-              {/* Suggested Questions Carousel */}
-              <div className="px-4 pb-2">
-                <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-hide">
-                  {suggestedQuestions.map((q, index) => (
+              {/* Suggested Questions - Auto-scrolling with fade */}
+              <div className="relative px-0 pb-3">
+                {/* Fade edges */}
+                <div className="absolute left-0 top-0 bottom-3 w-12 bg-gradient-to-r from-card/40 to-transparent z-10 pointer-events-none" />
+                <div className="absolute right-0 top-0 bottom-3 w-12 bg-gradient-to-l from-card/40 to-transparent z-10 pointer-events-none" />
+                
+                <div 
+                  ref={scrollRef}
+                  className="flex gap-3 overflow-x-auto scrollbar-hide px-6"
+                  style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+                >
+                  {duplicatedQuestions.map((q, index) => (
                     <button
                       key={index}
-                      className="flex-shrink-0 flex items-center gap-2 px-4 py-2 rounded-full bg-secondary/60 hover:bg-secondary/80 transition-colors text-sm text-foreground whitespace-nowrap"
+                      className="flex-shrink-0 flex items-center gap-2 px-4 py-2.5 rounded-full bg-secondary/60 hover:bg-secondary/80 transition-colors text-sm text-foreground whitespace-nowrap"
                     >
                       <span>{q.text}</span>
                       <AppleEmoji emoji={q.emoji} size="sm" />
@@ -84,10 +121,10 @@ export function AIBuddyShowcase() {
                 </div>
               </div>
 
-              {/* Input Area - exactly like AIBuddyChat */}
-              <div className="p-4 pt-2">
+              {/* Input Area */}
+              <div className="p-5 pt-2">
                 <div 
-                  className="flex items-center gap-3 rounded-full px-5 py-3 transition-all border border-orange-100/60" 
+                  className="flex items-center gap-3 rounded-full px-5 py-3.5 transition-all border border-orange-100/60" 
                   style={{ background: 'hsl(35 30% 97%)' }}
                 >
                   <input
