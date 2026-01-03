@@ -188,11 +188,11 @@ export default function Landing() {
             
             <GlassCard className="p-6" hover>
               <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-accent/30 to-primary/30 flex items-center justify-center mb-4">
-                <AppleEmoji emoji="🎮" size="2xl" />
+                <AppleEmoji emoji="🎯" size="2xl" />
               </div>
-              <h3 className="font-display text-xl font-semibold mb-2">Level Up <span className="font-body">&</span> Earn Rewards</h3>
+              <h3 className="font-display text-xl font-semibold mb-2">Set Goals <span className="font-body">&</span> Track Them</h3>
               <p className="text-muted-foreground text-sm">
-                Turn self-improvement into a game. Earn XP for every habit completed, unlock achievements, and level up as you grow.
+                Create meaningful goals, connect them to your daily habits, and see your progress toward them in a clear visual way.
               </p>
             </GlassCard>
             
@@ -218,11 +218,11 @@ export default function Landing() {
             
             <GlassCard className="p-6" hover>
               <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-accent/30 to-primary/30 flex items-center justify-center mb-4">
-                <AppleEmoji emoji="🔥" size="2xl" />
+                <AppleEmoji emoji="📝" size="2xl" />
               </div>
-              <h3 className="font-display text-xl font-semibold mb-2">Streak Tracking</h3>
+              <h3 className="font-display text-xl font-semibold mb-2">Add One-Time Tasks Too</h3>
               <p className="text-muted-foreground text-sm">
-                Build unstoppable momentum with streak tracking. Watch your consistency grow and never break the chain.
+                Add to-do lists and one-time tasks, so you don't need any other app to track what you do throughout your day and your life.
               </p>
             </GlassCard>
             
