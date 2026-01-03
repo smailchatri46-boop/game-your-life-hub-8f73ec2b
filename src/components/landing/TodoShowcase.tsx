@@ -32,7 +32,7 @@ export function TodoShowcase() {
               <div className="space-y-2 mt-4">
                 {/* Call mom task - completed */}
                 <div className="flex items-center gap-3 p-3 rounded-2xl bg-white/80 shadow-sm">
-                  <AppleEmoji emoji="❤️" size="lg" />
+                  <AppleEmoji emoji="📞" size="lg" />
                   <span className="text-sm flex-1 text-muted-foreground line-through">
                     Call mom
                   </span>
