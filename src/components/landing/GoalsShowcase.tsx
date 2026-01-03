@@ -27,7 +27,7 @@ export function GoalsShowcase() {
           {/* Left side - Title and Description */}
           <div className="order-2 md:order-1">
             <h2 className="font-display text-3xl md:text-4xl font-semibold mb-4">
-              Set Goals <span className="font-body">&</span>{" "}
+              Set Goals <span className="font-body text-xl md:text-2xl">&</span>{" "}
               <span className="gradient-text italic">Achieve Them</span>
             </h2>
             <p className="text-muted-foreground text-lg leading-relaxed">
