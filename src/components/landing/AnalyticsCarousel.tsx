@@ -1,107 +1,169 @@
 import { useEffect, useRef } from "react";
-import { GlassCard } from "@/components/GlassCard";
+import { TrendingUp, Calendar, Target, Heart, BarChart3 } from "lucide-react";
 import { AppleEmoji } from "@/components/AppleEmoji";
+
+// Reusing exact StatCard design from the app
+function StatCardPreview({ 
+  title, 
+  subtitle, 
+  value, 
+  suffix = "%", 
+  icon: Icon,
+  iconColor = "text-primary",
+  progress 
+}: {
+  title: string;
+  subtitle?: string;
+  value: number | string;
+  suffix?: string;
+  icon: React.ElementType;
+  iconColor?: string;
+  progress?: number;
+}) {
+  return (
+    <div className="glass-card p-5 min-w-[200px] flex-shrink-0">
+      <div className="flex items-start justify-between mb-3">
+        <div>
+          <h3 className="text-sm font-semibold text-foreground">{title}</h3>
+          {subtitle && (
+            <p className="text-xs text-muted-foreground mt-0.5">{subtitle}</p>
+          )}
+        </div>
+        <div className={`p-2 rounded-xl bg-secondary ${iconColor}`}>
+          <Icon className="w-4 h-4" />
+        </div>
+      </div>
+      
+      <div className="flex items-baseline gap-0.5 mb-3">
+        <span className="text-3xl font-bold gradient-text">{value}</span>
+        <span className="text-lg font-medium text-primary/70">{suffix}</span>
+      </div>
+      
+      {progress !== undefined && (
+        <div className="h-1.5 bg-secondary rounded-full overflow-hidden">
+          <div 
+            className="h-full progress-bar-orange rounded-full transition-all duration-500"
+            style={{ width: `${progress}%` }}
+          />
+        </div>
+      )}
+    </div>
+  );
+}
+
+// Overview-style stat cards
+function OverviewStatCard({ 
+  title, 
+  value, 
+  suffix,
+  subtitle,
+  icon: Icon,
+  iconColor = "text-accent",
+  progress,
+  emoji
+}: {
+  title: string;
+  value?: number | string;
+  suffix?: string;
+  subtitle?: string;
+  icon: React.ElementType;
+  iconColor?: string;
+  progress?: number;
+  emoji?: string;
+}) {
+  return (
+    <div className="glass-card p-5 min-w-[200px] flex-shrink-0">
+      <div className="flex items-start justify-between mb-3">
+        <div>
+          <h3 className="text-base font-semibold text-foreground">{title}</h3>
+        </div>
+        <div className={`p-2 rounded-xl bg-secondary ${iconColor}`}>
+          <Icon className="w-4 h-4" />
+        </div>
+      </div>
+      
+      {emoji ? (
+        <div className="flex items-center gap-2 mb-2">
+          <AppleEmoji emoji={emoji} size="3xl" />
+        </div>
+      ) : (
+        <div className="flex items-baseline gap-0.5 mb-2">
+          <span className="text-3xl font-bold gradient-text">{value}</span>
+          {suffix && <span className="text-lg font-medium text-primary/70">{suffix}</span>}
+        </div>
+      )}
+      
+      {subtitle && <p className="text-xs text-muted-foreground">{subtitle}</p>}
+      
+      {progress !== undefined && (
+        <div className="mt-3 h-1.5 bg-secondary rounded-full overflow-hidden">
+          <div 
+            className="h-full progress-bar-orange rounded-full transition-all duration-500"
+            style={{ width: `${progress}%` }}
+          />
+        </div>
+      )}
+    </div>
+  );
+}
 
 const analyticsCards = [
   {
+    component: "stat",
     title: "This Month",
-    subtitle: "December Progress So Far",
-    value: "74%",
-    type: "progress" as const,
+    subtitle: "December progress so far",
+    value: 74,
+    icon: TrendingUp,
+    iconColor: "text-primary",
+    progress: 74,
   },
   {
+    component: "stat",
     title: "This Week Average",
-    value: "80%",
-    type: "progress" as const,
+    subtitle: "Last 7 days",
+    value: 80,
+    icon: Calendar,
+    iconColor: "text-accent",
+    progress: 80,
   },
   {
-    title: "Today's Progress",
-    value: "95%",
-    type: "progress" as const,
+    component: "stat",
+    title: "Today",
+    subtitle: "Today's progress",
+    value: 95,
+    icon: Target,
+    iconColor: "text-primary",
+    progress: 95,
   },
   {
+    component: "overview",
     title: "Perfect Days",
-    value: "5/7",
-    type: "stat" as const,
+    value: 5,
+    suffix: " / 7",
+    subtitle: "Days completed fully this week",
+    icon: Target,
+    iconColor: "text-accent",
+    progress: 71,
   },
   {
+    component: "overview",
     title: "Mood Average",
     emoji: "😊",
-    type: "emoji" as const,
+    subtitle: "Your average mood is Happy.",
+    icon: Heart,
+    iconColor: "text-primary",
   },
   {
+    component: "overview",
     title: "Mood Stability",
-    value: "7/10",
-    type: "stat" as const,
+    value: 7,
+    suffix: " / 10",
+    subtitle: "Consistency of mood",
+    icon: BarChart3,
+    iconColor: "text-accent",
+    progress: 70,
   },
 ];
-
-function ProgressRing({ value, size = 80 }: { value: number; size?: number }) {
-  const strokeWidth = 8;
-  const radius = (size - strokeWidth) / 2;
-  const circumference = radius * 2 * Math.PI;
-  const strokeDashoffset = circumference - (value / 100) * circumference;
-
-  return (
-    <svg width={size} height={size} className="transform -rotate-90">
-      <circle
-        cx={size / 2}
-        cy={size / 2}
-        r={radius}
-        fill="none"
-        stroke="hsl(var(--secondary))"
-        strokeWidth={strokeWidth}
-      />
-      <circle
-        cx={size / 2}
-        cy={size / 2}
-        r={radius}
-        fill="none"
-        stroke="url(#gradient)"
-        strokeWidth={strokeWidth}
-        strokeDasharray={circumference}
-        strokeDashoffset={strokeDashoffset}
-        strokeLinecap="round"
-        className="transition-all duration-1000"
-      />
-      <defs>
-        <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="0%">
-          <stop offset="0%" stopColor="hsl(38 100% 70%)" />
-          <stop offset="100%" stopColor="hsl(24 95% 53%)" />
-        </linearGradient>
-      </defs>
-    </svg>
-  );
-}
-
-function AnalyticsCard({ card }: { card: typeof analyticsCards[0] }) {
-  return (
-    <GlassCard className="min-w-[180px] p-5 flex flex-col items-center text-center">
-      {card.type === "progress" && (
-        <div className="relative mb-3">
-          <ProgressRing value={parseInt(card.value || "0")} />
-          <span className="absolute inset-0 flex items-center justify-center font-semibold text-lg text-foreground">
-            {card.value}
-          </span>
-        </div>
-      )}
-      {card.type === "emoji" && (
-        <div className="mb-3">
-          <AppleEmoji emoji={card.emoji || "😊"} size="3xl" />
-        </div>
-      )}
-      {card.type === "stat" && (
-        <div className="mb-3 w-20 h-20 rounded-full bg-secondary flex items-center justify-center">
-          <span className="font-display text-2xl font-semibold gradient-text">{card.value}</span>
-        </div>
-      )}
-      <h4 className="font-semibold text-foreground text-sm">{card.title}</h4>
-      {card.subtitle && (
-        <p className="text-xs text-muted-foreground mt-1">{card.subtitle}</p>
-      )}
-    </GlassCard>
-  );
-}
 
 export function AnalyticsCarousel() {
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -163,7 +225,29 @@ export function AnalyticsCarousel() {
         >
           {/* Duplicate cards for infinite scroll effect */}
           {[...analyticsCards, ...analyticsCards].map((card, index) => (
-            <AnalyticsCard key={index} card={card} />
+            card.component === "stat" ? (
+              <StatCardPreview 
+                key={index}
+                title={card.title}
+                subtitle={card.subtitle}
+                value={card.value!}
+                icon={card.icon}
+                iconColor={card.iconColor}
+                progress={card.progress}
+              />
+            ) : (
+              <OverviewStatCard
+                key={index}
+                title={card.title}
+                value={card.value}
+                suffix={card.suffix}
+                subtitle={card.subtitle}
+                icon={card.icon}
+                iconColor={card.iconColor}
+                progress={card.progress}
+                emoji={card.emoji}
+              />
+            )
           ))}
         </div>
       </div>
