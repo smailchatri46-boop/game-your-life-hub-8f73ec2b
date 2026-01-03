@@ -1,8 +1,40 @@
+import { useRef, useEffect } from "react";
 import { GlassCard } from "@/components/GlassCard";
 import { AppleEmoji } from "@/components/AppleEmoji";
 import { Calendar } from "lucide-react";
 
 export function GoalsShowcase() {
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const animationRef = useRef<number>();
+
+  useEffect(() => {
+    const scrollContainer = scrollRef.current;
+    if (!scrollContainer) return;
+
+    let scrollPosition = 0;
+    const scrollSpeed = 0.4;
+
+    const animate = () => {
+      scrollPosition += scrollSpeed;
+      
+      // Reset when we've scrolled half (since content is duplicated)
+      if (scrollPosition >= scrollContainer.scrollWidth / 2) {
+        scrollPosition = 0;
+      }
+      
+      scrollContainer.scrollLeft = scrollPosition;
+      animationRef.current = requestAnimationFrame(animate);
+    };
+
+    animationRef.current = requestAnimationFrame(animate);
+
+    return () => {
+      if (animationRef.current) {
+        cancelAnimationFrame(animationRef.current);
+      }
+    };
+  }, []);
+
   const demoGoals = [
     {
       name: "Complete 90-Day Fitness Challenge",
@@ -48,21 +80,76 @@ export function GoalsShowcase() {
         { id: "5", name: "No impulse buys", icon: "🛑" },
       ],
     },
+    {
+      name: "Learn Spanish Fluently",
+      category: "Personal Growth",
+      category_emoji: "🌍",
+      progress: 35,
+      completed_count: 105,
+      target_count: 300,
+      start_date: "Jan 1, 2025",
+      end_date: "Dec 31, 2025",
+      pace: "On track",
+      linkedHabits: [
+        { id: "6", name: "Practice 20 min", icon: "🗣️" },
+        { id: "7", name: "Flashcards", icon: "🃏" },
+      ],
+    },
+    {
+      name: "Meditate 100 Days",
+      category: "Mindfulness",
+      category_emoji: "🧘",
+      progress: 72,
+      completed_count: 72,
+      target_count: 100,
+      start_date: "Jan 1, 2025",
+      end_date: "Apr 10, 2025",
+      pace: "Ahead",
+      linkedHabits: [
+        { id: "8", name: "Morning meditation", icon: "🌅" },
+      ],
+    },
+    {
+      name: "Run a Half Marathon",
+      category: "Fitness",
+      category_emoji: "🏅",
+      progress: 55,
+      completed_count: 110,
+      target_count: 200,
+      start_date: "Feb 1, 2025",
+      end_date: "Jun 15, 2025",
+      pace: "On track",
+      linkedHabits: [
+        { id: "9", name: "Run 5km", icon: "🏃" },
+        { id: "10", name: "Stretch", icon: "🤸" },
+      ],
+    },
   ];
+
+  // Duplicate goals for seamless loop
+  const duplicatedGoals = [...demoGoals, ...demoGoals];
 
   return (
     <section className="py-14 px-4">
-      <div className="max-w-5xl mx-auto flex flex-col items-center text-center">
+      <div className="max-w-6xl mx-auto flex flex-col items-center text-center">
         {/* Title - centered at top */}
         <h2 className="font-display text-3xl md:text-4xl font-semibold mb-8">
           Set Goals and <span className="gradient-text italic">Track Them</span>
         </h2>
 
-        {/* Goal Cards - three side-by-side */}
-        <div className="w-full mb-8">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
-            {demoGoals.map((goal, index) => (
-              <GlassCard key={index} className="p-5 hover:shadow-large transition-all duration-300">
+        {/* Goal Cards - scrolling carousel with fade */}
+        <div className="w-full mb-8 relative">
+          {/* Fade edges */}
+          <div className="absolute left-0 top-0 bottom-0 w-20 md:w-32 z-10 pointer-events-none" style={{ background: 'linear-gradient(to right, hsl(30 60% 97%), hsl(30 40% 97% / 0.5), transparent)' }} />
+          <div className="absolute right-0 top-0 bottom-0 w-20 md:w-32 z-10 pointer-events-none" style={{ background: 'linear-gradient(to left, hsl(30 60% 97%), hsl(30 40% 97% / 0.5), transparent)' }} />
+          
+          <div 
+            ref={scrollRef}
+            className="flex gap-4 md:gap-6 overflow-x-auto scrollbar-hide py-2"
+            style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+          >
+            {duplicatedGoals.map((goal, index) => (
+              <GlassCard key={index} className="p-5 hover:shadow-large transition-all duration-300 flex-shrink-0 w-[300px] md:w-[320px]">
                 <div className="flex items-start justify-between mb-4">
                   <div className="flex items-center gap-3">
                     <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-primary/20 to-accent/20 flex items-center justify-center">
