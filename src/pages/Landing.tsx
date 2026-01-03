@@ -46,11 +46,11 @@ export default function Landing() {
               <div className="flex items-center gap-3 animate-fade-in delay-300">
                 {/* Overlapping Avatars */}
                 <div className="flex -space-x-2">
-                  <div className="w-9 h-9 rounded-full bg-rose-200 border-2 border-background" />
-                  <div className="w-9 h-9 rounded-full bg-sky-200 border-2 border-background" />
-                  <div className="w-9 h-9 rounded-full bg-amber-200 border-2 border-background" />
-                  <div className="w-9 h-9 rounded-full bg-emerald-200 border-2 border-background" />
-                  <div className="w-9 h-9 rounded-full bg-violet-200 border-2 border-background" />
+                  <img src="/images/user-1.png" alt="User" className="w-9 h-9 rounded-full border-2 border-background object-cover" />
+                  <img src="/images/user-2.png" alt="User" className="w-9 h-9 rounded-full border-2 border-background object-cover" />
+                  <img src="/images/user-3.png" alt="User" className="w-9 h-9 rounded-full border-2 border-background object-cover" />
+                  <img src="/images/user-4.png" alt="User" className="w-9 h-9 rounded-full border-2 border-background object-cover" />
+                  <img src="/images/user-5.png" alt="User" className="w-9 h-9 rounded-full border-2 border-background object-cover" />
                 </div>
                 <p className="text-sm text-muted-foreground">
                   Join over <span className="font-medium text-foreground">50,000+</span> people improving their life with Neyler

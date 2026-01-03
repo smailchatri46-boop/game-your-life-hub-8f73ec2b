@@ -7,6 +7,7 @@ interface Review {
   name: string;
   avatar: string;
   avatarBg: string;
+  avatarImage?: string;
   stars: number;
   meta: string;
 }
@@ -17,6 +18,7 @@ const reviews: Review[] = [
     name: "Sara K.",
     avatar: "🧘",
     avatarBg: "bg-rose-100",
+    avatarImage: "/images/user-1.png",
     stars: 5,
     meta: "Using Neyler for 6 months"
   },
@@ -26,6 +28,7 @@ const reviews: Review[] = [
     name: "Marcus L.",
     avatar: "💻",
     avatarBg: "bg-blue-100",
+    avatarImage: "/images/user-2.png",
     stars: 5,
     meta: "Verified user"
   },
@@ -34,6 +37,7 @@ const reviews: Review[] = [
     name: "Elena R.",
     avatar: "🎨",
     avatarBg: "bg-purple-100",
+    avatarImage: "/images/user-3.png",
     stars: 5,
     meta: "Designer"
   },
@@ -42,6 +46,7 @@ const reviews: Review[] = [
     name: "Jamie T.",
     avatar: "🌿",
     avatarBg: "bg-green-100",
+    avatarImage: "/images/user-4.png",
     stars: 4,
     meta: "Using Neyler for 2 months"
   },
@@ -50,6 +55,7 @@ const reviews: Review[] = [
     name: "Alex M.",
     avatar: "📚",
     avatarBg: "bg-amber-100",
+    avatarImage: "/images/user-5.png",
     stars: 5,
     meta: "Student"
   },
@@ -214,7 +220,11 @@ export function TestimonialsSection() {
             >
               {/* Header with avatar, name, and rating */}
               <div className="flex items-start gap-3 mb-3">
-                <div className={`w-10 h-10 rounded-full ${review.avatarBg} flex-shrink-0`} />
+                {review.avatarImage ? (
+                  <img src={review.avatarImage} alt={review.name} className="w-10 h-10 rounded-full object-cover flex-shrink-0" />
+                ) : (
+                  <div className={`w-10 h-10 rounded-full ${review.avatarBg} flex-shrink-0`} />
+                )}
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 flex-wrap">
                     <span className="font-medium text-foreground">{review.name}</span>
