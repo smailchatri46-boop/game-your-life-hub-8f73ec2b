@@ -4,14 +4,14 @@ import { Calendar } from "lucide-react";
 
 export function GoalsShowcase() {
   const demoGoal = {
-    name: "Complete 30-Day Fitness Challenge",
+    name: "Complete 90-Day Fitness Challenge",
     category: "Health & Fitness",
     category_emoji: "💪",
     progress: 68,
-    completed_count: 20,
-    target_count: 30,
+    completed_count: 61,
+    target_count: 90,
     start_date: "Jan 1, 2025",
-    end_date: "Jan 30, 2025",
+    end_date: "Mar 31, 2025",
     pace: "On track",
     linkedHabits: [
       { id: "1", name: "Exercise", icon: "🏃" },
@@ -27,7 +27,7 @@ export function GoalsShowcase() {
           {/* Left side - Title and Description */}
           <div className="order-2 md:order-1">
             <h2 className="font-display text-3xl md:text-4xl font-semibold mb-4">
-              Set Goals &{" "}
+              Set Goals <span className="font-body">&</span>{" "}
               <span className="gradient-text italic">Achieve Them</span>
             </h2>
             <p className="text-muted-foreground text-lg leading-relaxed">
