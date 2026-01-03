@@ -20,7 +20,7 @@ export function AIBuddyShowcase() {
     if (!scrollContainer) return;
 
     let scrollPosition = 0;
-    const scrollSpeed = 0.5;
+    const scrollSpeed = 0.3; // Slower scrolling
 
     const animate = () => {
       scrollPosition += scrollSpeed;
@@ -48,40 +48,32 @@ export function AIBuddyShowcase() {
 
   return (
     <section className="py-12 px-4">
-      <div className="max-w-md mx-auto flex flex-col items-center text-center">
+      <div className="max-w-xl mx-auto flex flex-col items-center text-center">
         {/* Title - centered at top */}
         <h2 className="font-display text-3xl md:text-4xl font-semibold mb-6">
-          Your Personal <span className="gradient-text italic">Wellness Coach</span>
+          Analyze your progress with the <span className="gradient-text italic">AI Buddy</span>
         </h2>
 
-        {/* AI Buddy Chat Card - centered in middle */}
+        {/* AI Buddy Chat Card - centered in middle, wider */}
         <div className="w-full mb-6">
           <div 
             className="w-full bg-card/40 backdrop-blur-xl rounded-3xl shadow-soft overflow-hidden flex flex-col relative border border-border/10" 
-            style={{ height: "460px", maxWidth: "100%" }}
+            style={{ height: "420px", maxWidth: "100%" }}
           >
-            {/* Chat Header - Simplified */}
-            <div className="flex items-center px-6 py-4 border-b border-border/10">
-              <div>
-                <h3 className="font-display text-lg font-semibold text-foreground">AI Buddy</h3>
-                <p className="text-xs text-muted-foreground">Your supportive motivation buddy</p>
-              </div>
-            </div>
-
             {/* Messages Area - Welcome state with GlowOrb */}
-            <div className="flex-1 overflow-y-auto px-6 py-6">
+            <div className="flex-1 overflow-y-auto px-6 py-8">
               <div className="h-full flex flex-col items-center justify-center text-center px-4">
-                {/* Animated Glow Orb - Smaller */}
-                <div className="relative flex items-center justify-center mb-4">
+                {/* Animated Glow Orb - Centered */}
+                <div className="relative flex items-center justify-center mb-5">
                   <div className="relative w-20 h-20 md:w-24 md:h-24 rounded-full overflow-hidden flex-shrink-0">
                     <GlowOrb />
                   </div>
                 </div>
                 
-                <h2 className="font-display text-lg font-medium text-foreground mb-2">
+                <h2 className="font-display text-lg font-medium text-foreground mb-3">
                   Start a conversation
                 </h2>
-                <p className="text-muted-foreground text-xs max-w-xs leading-relaxed">
+                <p className="text-muted-foreground text-sm max-w-sm leading-relaxed">
                   I'm your wellness buddy <AppleEmoji emoji="🙂" size="sm" className="inline align-middle mx-0.5" /> I turn your habits into insights to help you reach your goals.
                 </p>
               </div>
@@ -89,9 +81,9 @@ export function AIBuddyShowcase() {
 
             {/* Suggested Questions - Auto-scrolling with fade */}
             <div className="relative px-0 pb-3">
-              {/* Fade edges */}
-              <div className="absolute left-0 top-0 bottom-3 w-12 bg-gradient-to-r from-card/40 to-transparent z-10 pointer-events-none" />
-              <div className="absolute right-0 top-0 bottom-3 w-12 bg-gradient-to-l from-card/40 to-transparent z-10 pointer-events-none" />
+              {/* Fade edges - stronger gradient */}
+              <div className="absolute left-0 top-0 bottom-3 w-16 bg-gradient-to-r from-card to-transparent z-10 pointer-events-none" />
+              <div className="absolute right-0 top-0 bottom-3 w-16 bg-gradient-to-l from-card to-transparent z-10 pointer-events-none" />
               
               <div 
                 ref={scrollRef}
@@ -134,8 +126,8 @@ export function AIBuddyShowcase() {
         </div>
 
         {/* Description - centered below card */}
-        <p className="text-muted-foreground text-lg">
-          Meet AI Buddy - your supportive motivation buddy that turns your habits into insights to help you reach your goals.
+        <p className="text-muted-foreground text-lg leading-relaxed">
+          AI Buddy sees all your goals, tasks, habits, and daily reflections, analyzes them, and helps you see patterns, find weaknesses, and reach your goals faster.
         </p>
       </div>
     </section>
