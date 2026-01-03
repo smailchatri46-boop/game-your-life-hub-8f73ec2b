@@ -208,9 +208,9 @@ export function AnalyticsCarousel() {
       </div>
 
       <div className="relative">
-        {/* Fade edges - matching gradient-hero orange-tinted background */}
-        <div className="absolute left-0 top-0 bottom-0 w-24 z-10 pointer-events-none" style={{ background: 'linear-gradient(to right, hsl(30 60% 96%), transparent)' }} />
-        <div className="absolute right-0 top-0 bottom-0 w-24 z-10 pointer-events-none" style={{ background: 'linear-gradient(to left, hsl(30 60% 96%), transparent)' }} />
+        {/* Fade edges - matching the warm peachy gradient-hero background */}
+        <div className="absolute left-0 top-0 bottom-0 w-24 z-10 pointer-events-none" style={{ background: 'linear-gradient(to right, hsl(38 70% 92%), transparent)' }} />
+        <div className="absolute right-0 top-0 bottom-0 w-24 z-10 pointer-events-none" style={{ background: 'linear-gradient(to left, hsl(38 70% 92%), transparent)' }} />
 
         <div
           ref={scrollRef}
