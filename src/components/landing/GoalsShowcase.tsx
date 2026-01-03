@@ -139,9 +139,22 @@ export function GoalsShowcase() {
 
         {/* Goal Cards - scrolling carousel with fade */}
         <div className="w-full mb-8 relative">
-          {/* Fade edges - matching page gradient: orange left, white right */}
-          <div className="absolute left-0 top-0 bottom-0 w-20 md:w-32 z-10 pointer-events-none" style={{ background: 'linear-gradient(to right, hsl(32 55% 93%) 0%, transparent 100%)' }} />
-          <div className="absolute right-0 top-0 bottom-0 w-20 md:w-32 z-10 pointer-events-none" style={{ background: 'linear-gradient(to left, hsl(40 30% 97%) 0%, transparent 100%)' }} />
+          {/* Left fade - matches warm peachy left side of page background */}
+          <div 
+            className="absolute left-0 top-0 bottom-0 z-10 pointer-events-none"
+            style={{ 
+              width: '20%',
+              background: 'linear-gradient(to right, hsl(38 100% 85% / 0.9) 0%, hsl(38 100% 85% / 0.5) 40%, transparent 100%)'
+            }} 
+          />
+          {/* Right fade - matches near-white right side of page background */}
+          <div 
+            className="absolute right-0 top-0 bottom-0 z-10 pointer-events-none"
+            style={{ 
+              width: '20%',
+              background: 'linear-gradient(to left, hsl(30 100% 99%) 0%, hsl(30 100% 99% / 0.5) 40%, transparent 100%)'
+            }} 
+          />
           
           <div 
             ref={scrollRef}
