@@ -49,8 +49,8 @@ export function AIBuddyShowcase() {
   return (
     <section className="py-12 px-4">
       <div className="max-w-xl mx-auto flex flex-col items-center text-center">
-        {/* Title - centered at top */}
-        <h2 className="font-display text-3xl md:text-4xl font-semibold mb-6">
+        {/* Title - centered at top, single line */}
+        <h2 className="font-display text-2xl md:text-4xl font-semibold mb-6 whitespace-nowrap">
           Analyze your progress with the <span className="gradient-text italic">AI Buddy</span>
         </h2>
 
@@ -61,8 +61,8 @@ export function AIBuddyShowcase() {
             style={{ height: "420px", maxWidth: "100%" }}
           >
             {/* Messages Area - Welcome state with GlowOrb */}
-            <div className="flex-1 overflow-y-auto px-6 py-8">
-              <div className="h-full flex flex-col items-center justify-center text-center px-4">
+            <div className="flex-1 overflow-hidden px-6 py-10">
+              <div className="h-full flex flex-col items-center justify-center text-center px-6">
                 {/* Animated Glow Orb - Centered */}
                 <div className="relative flex items-center justify-center mb-5">
                   <div className="relative w-20 h-20 md:w-24 md:h-24 rounded-full overflow-hidden flex-shrink-0">
@@ -80,10 +80,10 @@ export function AIBuddyShowcase() {
             </div>
 
             {/* Suggested Questions - Auto-scrolling with fade */}
-            <div className="relative px-0 pb-3">
-              {/* Fade edges - stronger gradient */}
-              <div className="absolute left-0 top-0 bottom-3 w-16 bg-gradient-to-r from-card to-transparent z-10 pointer-events-none" />
-              <div className="absolute right-0 top-0 bottom-3 w-16 bg-gradient-to-l from-card to-transparent z-10 pointer-events-none" />
+            <div className="relative px-0 pb-4">
+              {/* Fade edges - left matches orange background */}
+              <div className="absolute left-0 top-0 bottom-4 w-16 z-10 pointer-events-none" style={{ background: 'linear-gradient(to right, hsl(35 30% 97%), transparent)' }} />
+              <div className="absolute right-0 top-0 bottom-4 w-16 z-10 pointer-events-none" style={{ background: 'linear-gradient(to left, hsl(35 30% 97%), transparent)' }} />
               
               <div 
                 ref={scrollRef}
