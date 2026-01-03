@@ -1,3 +1,4 @@
+import { useRef, useState, useEffect } from "react";
 import { LandingNavbar } from "@/components/LandingNavbar";
 import { Button } from "@/components/ui/button";
 import { GlassCard } from "@/components/GlassCard";
@@ -14,6 +15,25 @@ import { GoalsShowcase } from "@/components/landing/GoalsShowcase";
 import { TestimonialsSection } from "@/components/landing/TestimonialsSection";
 
 export default function Landing() {
+  const signUpButtonRef = useRef<HTMLDivElement>(null);
+  const [showStickyButton, setShowStickyButton] = useState(false);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        // Show sticky button when Sign Up button is NOT visible
+        setShowStickyButton(!entry.isIntersecting);
+      },
+      { threshold: 0 }
+    );
+
+    if (signUpButtonRef.current) {
+      observer.observe(signUpButtonRef.current);
+    }
+
+    return () => observer.disconnect();
+  }, []);
+
   return (
     <div className="min-h-screen gradient-hero overflow-hidden">
       <LandingNavbar />
@@ -35,7 +55,7 @@ export default function Landing() {
                 Track habits, level up your life, and stay consistent with the most beautiful habit tracker you've ever used.
               </p>
               
-              <div className="animate-fade-in delay-200 mb-6">
+              <div ref={signUpButtonRef} className="animate-fade-in delay-200 mb-6">
                 <Button variant="gradient" size="xl" asChild>
                   <Link to="/signup" className="gap-3">
                     <span className="w-6 h-6 bg-white rounded-full flex items-center justify-center">
@@ -207,6 +227,24 @@ export default function Landing() {
           <p className="text-sm text-muted-foreground">© 2025 Neyler. All rights reserved.</p>
         </div>
       </footer>
+
+      {/* Sticky CTA Button */}
+      <div 
+        className={`fixed bottom-6 left-1/2 -translate-x-1/2 z-50 transition-all duration-300 ${
+          showStickyButton 
+            ? 'opacity-100 translate-y-0' 
+            : 'opacity-0 translate-y-4 pointer-events-none'
+        }`}
+      >
+        <Button variant="gradient" size="lg" asChild className="shadow-lg">
+          <Link to="/signup" className="gap-2">
+            <span className="w-5 h-5 bg-white rounded-full flex items-center justify-center">
+              <img src={googleLogo} alt="Google" className="w-3.5 h-3.5" />
+            </span>
+            Try It For Free Now
+          </Link>
+        </Button>
+      </div>
     </div>
   );
 }
