@@ -1,12 +1,11 @@
-import { GlassCard } from "@/components/GlassCard";
-import { Plus, Circle, CheckCircle2 } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { AppleEmoji } from "@/components/AppleEmoji";
+import { Plus, Check } from "lucide-react";
 
 const demoTodos = [
-  { text: "Review quarterly goals", completed: true },
-  { text: "Call mom", completed: false },
-  { text: "Buy groceries", completed: false },
-  { text: "Prepare presentation", completed: true },
+  { id: "1", text: "Review quarterly goals", completed: true, emoji: "📋" },
+  { id: "2", text: "Call mom", completed: false, emoji: "📞" },
+  { id: "3", text: "Buy groceries", completed: false, emoji: "🛒" },
+  { id: "4", text: "Prepare presentation", completed: true, emoji: "💼" },
 ];
 
 export function TodoShowcase() {
@@ -24,44 +23,54 @@ export function TodoShowcase() {
             </p>
           </div>
 
-          {/* Todo List Preview */}
+          {/* Exact To-Do List from Overview - same styling */}
           <div className="order-1 md:order-2">
-            <GlassCard className="p-6" glow>
-              <div className="flex items-center justify-between mb-4">
-                <h3 className="font-semibold text-foreground">Today's Tasks</h3>
-                <Button variant="ghost" size="sm" className="gap-2 text-primary hover:text-primary">
-                  <Plus className="w-4 h-4" />
-                  Add task
-                </Button>
+            <div className="p-6 rounded-3xl bg-gradient-to-br from-[hsl(30,70%,96%)] to-[hsl(25,60%,92%)]">
+              <div className="flex items-start justify-between mb-1">
+                <div>
+                  <h3 className="font-display text-xl font-semibold text-foreground">To-Do List</h3>
+                  <p className="text-sm text-muted-foreground">
+                    1 décembre 2025
+                  </p>
+                </div>
+                <AppleEmoji emoji="😌" size="2xl" />
               </div>
-
-              <div className="space-y-3">
-                {demoTodos.map((todo, index) => (
-                  <div
-                    key={index}
-                    className="flex items-center gap-3 p-3 rounded-xl bg-secondary/50 transition-all hover:bg-secondary/70"
+              
+              <div className="space-y-2 mt-4">
+                {demoTodos.map((todo) => (
+                  <div 
+                    key={todo.id}
+                    className="flex items-center gap-3 p-3 rounded-2xl bg-white/80 shadow-sm"
                   >
-                    {todo.completed ? (
-                      <CheckCircle2 className="w-5 h-5 text-primary flex-shrink-0" />
-                    ) : (
-                      <Circle className="w-5 h-5 text-muted-foreground flex-shrink-0" />
-                    )}
-                    <span
-                      className={`text-sm ${
-                        todo.completed ? "line-through text-muted-foreground" : "text-foreground"
-                      }`}
-                    >
+                    <AppleEmoji emoji={todo.emoji} size="lg" />
+                    <span className={`text-sm flex-1 ${
+                      todo.completed 
+                        ? 'text-muted-foreground line-through' 
+                        : 'text-foreground'
+                    }`}>
                       {todo.text}
                     </span>
+                    <button
+                      className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-all ${
+                        todo.completed 
+                          ? 'bg-[hsl(25,60%,70%)] border-[hsl(25,60%,70%)]' 
+                          : 'border-[hsl(25,40%,80%)] hover:border-[hsl(25,50%,65%)]'
+                      }`}
+                    >
+                      {todo.completed && <Check className="w-4 h-4 text-white" />}
+                    </button>
                   </div>
                 ))}
+                
+                {/* Add task button - exactly like Overview */}
+                <button
+                  className="w-full flex items-center justify-center gap-2 p-3 rounded-2xl bg-white/50 hover:bg-white/70 transition-colors text-muted-foreground border-2 border-dashed border-muted-foreground/20"
+                >
+                  <Plus className="w-4 h-4" />
+                  <span className="text-sm">Add task</span>
+                </button>
               </div>
-
-              <div className="mt-4 pt-4 border-t border-border/50 flex items-center justify-between text-sm text-muted-foreground">
-                <span>2 of 4 completed</span>
-                <span className="text-primary font-medium">50%</span>
-              </div>
-            </GlassCard>
+            </div>
           </div>
         </div>
       </div>

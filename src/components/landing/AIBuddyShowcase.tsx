@@ -1,66 +1,110 @@
-import { GlassCard } from "@/components/GlassCard";
+import { ArrowUp, Menu, Download, HelpCircle } from "lucide-react";
 import { AppleEmoji } from "@/components/AppleEmoji";
-import { Send } from "lucide-react";
+import GlowOrb from "@/components/GlowOrb";
+import { Button } from "@/components/ui/button";
+
+const suggestedQuestions = [
+  { text: "Which habit do I struggle with the most?", emoji: "🤔" },
+  { text: "Analyze my last week and tell me what I should improve", emoji: "📊" },
+  { text: "What's the single habit that would help me the most right now?", emoji: "💡" },
+];
 
 export function AIBuddyShowcase() {
   return (
     <section className="py-20 px-4">
       <div className="max-w-5xl mx-auto">
         <div className="grid md:grid-cols-2 gap-12 items-center">
-          {/* AI Chat Preview */}
+          {/* Exact AI Buddy Chat from Overview */}
           <div>
-            <GlassCard className="p-6" glow>
-              {/* Header */}
-              <div className="flex items-center gap-3 mb-6">
-                <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-accent to-primary flex items-center justify-center">
-                  <AppleEmoji emoji="🌞" size="lg" />
-                </div>
-                <div>
-                  <h4 className="font-semibold text-foreground">AI Buddy</h4>
-                  <p className="text-xs text-muted-foreground">Your personal wellness coach</p>
-                </div>
-              </div>
-
-              {/* Chat Area */}
-              <div className="space-y-4 mb-6">
-                <div className="flex justify-start">
-                  <div className="max-w-[80%] p-3 rounded-2xl rounded-tl-sm bg-secondary/70">
-                    <p className="text-sm text-foreground">
-                      Hey there! 👋 I noticed you've been crushing your meditation habit this week. That's amazing progress!
-                    </p>
+            <div 
+              className="w-full bg-card/40 backdrop-blur-xl rounded-3xl shadow-soft overflow-hidden flex flex-col relative border border-border/10" 
+              style={{ height: "450px", maxWidth: "100%" }}
+            >
+              {/* Chat Header - exactly like AIBuddyChat */}
+              <div className="flex items-center justify-between px-5 py-3 border-b border-border/10">
+                <div className="flex items-center gap-3">
+                  <button
+                    className="p-2 rounded-lg hover:bg-muted/50 text-muted-foreground transition-colors"
+                    aria-label="Toggle sidebar"
+                  >
+                    <Menu className="w-5 h-5" />
+                  </button>
+                  <div>
+                    <h3 className="font-display text-lg font-semibold text-foreground">AI Buddy</h3>
+                    <p className="text-xs text-muted-foreground">Your supportive motivation buddy</p>
                   </div>
                 </div>
 
-                <div className="flex justify-end">
-                  <div className="max-w-[80%] p-3 rounded-2xl rounded-tr-sm bg-gradient-to-r from-accent/80 to-primary/80">
-                    <p className="text-sm text-white">
-                      Thanks! Any tips for staying consistent?
-                    </p>
-                  </div>
-                </div>
-
-                <div className="flex justify-start">
-                  <div className="max-w-[80%] p-3 rounded-2xl rounded-tl-sm bg-secondary/70">
-                    <p className="text-sm text-foreground">
-                      Based on your patterns, mornings work best for you. Try anchoring it to your coffee routine! ☕
-                    </p>
-                  </div>
+                <div className="flex items-center gap-1">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="text-muted-foreground hover:text-foreground hover:bg-muted/50"
+                  >
+                    <Download className="w-4 h-4 mr-2" />
+                    Download data
+                  </Button>
+                  <button className="p-1.5 rounded-full hover:bg-muted/50 text-muted-foreground transition-colors">
+                    <HelpCircle className="w-3.5 h-3.5" />
+                  </button>
                 </div>
               </div>
 
-              {/* Input Area */}
-              <div className="flex items-center gap-2 p-2 rounded-xl bg-secondary/50">
-                <input
-                  type="text"
-                  placeholder="Start a conversation..."
-                  className="flex-1 bg-transparent text-sm placeholder:text-muted-foreground focus:outline-none px-2"
-                  disabled
-                />
-                <button className="w-10 h-10 rounded-xl bg-gradient-to-r from-accent to-primary flex items-center justify-center">
-                  <Send className="w-4 h-4 text-white" />
-                </button>
+              {/* Messages Area - Welcome state with GlowOrb */}
+              <div className="flex-1 overflow-y-auto px-4 md:px-6 py-6">
+                <div className="h-full flex flex-col items-center justify-center text-center px-4">
+                  {/* Animated Glow Orb */}
+                  <div className="relative flex items-center justify-center mb-4">
+                    <div className="relative w-24 h-24 md:w-28 md:h-28 rounded-full overflow-hidden flex-shrink-0">
+                      <GlowOrb />
+                    </div>
+                  </div>
+                  
+                  <h2 className="font-display text-lg font-medium text-foreground mb-2">
+                    Start a conversation
+                  </h2>
+                  <p className="text-muted-foreground text-sm max-w-sm">
+                    I'm your wellness buddy <AppleEmoji emoji="🙂" size="sm" className="inline align-middle mx-0.5" /> I turn your habits into insights to help you reach your goals.
+                  </p>
+                </div>
               </div>
-            </GlassCard>
+
+              {/* Suggested Questions Carousel */}
+              <div className="px-4 pb-2">
+                <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-hide">
+                  {suggestedQuestions.map((q, index) => (
+                    <button
+                      key={index}
+                      className="flex-shrink-0 flex items-center gap-2 px-4 py-2 rounded-full bg-secondary/60 hover:bg-secondary/80 transition-colors text-sm text-foreground whitespace-nowrap"
+                    >
+                      <span>{q.text}</span>
+                      <AppleEmoji emoji={q.emoji} size="sm" />
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Input Area - exactly like AIBuddyChat */}
+              <div className="p-4 pt-2">
+                <div 
+                  className="flex items-center gap-3 rounded-full px-5 py-3 transition-all border border-orange-100/60" 
+                  style={{ background: 'hsl(35 30% 97%)' }}
+                >
+                  <input
+                    type="text"
+                    placeholder="Message AI Buddy..."
+                    className="flex-1 bg-transparent border-0 focus:outline-none text-sm text-foreground placeholder:text-muted-foreground"
+                    disabled
+                  />
+                  <button
+                    className="w-10 h-10 min-w-[2.5rem] min-h-[2.5rem] rounded-full text-primary-foreground flex-shrink-0 shadow-[0_2px_8px_hsl(var(--primary)/0.3)] flex items-center justify-center p-0"
+                    style={{ background: 'linear-gradient(135deg, hsl(38 100% 70%) 0%, hsl(24 95% 53%) 100%)' }}
+                  >
+                    <ArrowUp className="w-5 h-5 stroke-[2.5]" />
+                  </button>
+                </div>
+              </div>
+            </div>
           </div>
 
           {/* Text Content */}
