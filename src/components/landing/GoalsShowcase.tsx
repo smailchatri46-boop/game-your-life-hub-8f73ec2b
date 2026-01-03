@@ -2,6 +2,7 @@ import { useRef, useEffect } from "react";
 import { GlassCard } from "@/components/GlassCard";
 import { AppleEmoji } from "@/components/AppleEmoji";
 import { Calendar } from "lucide-react";
+import { ScrollReveal } from "@/components/ScrollReveal";
 
 export function GoalsShowcase() {
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -133,9 +134,11 @@ export function GoalsShowcase() {
     <section className="py-14 px-4">
       <div className="max-w-6xl mx-auto flex flex-col items-center text-center">
         {/* Title - centered at top */}
-        <h2 className="font-display text-3xl md:text-4xl font-semibold mb-8">
-          Set Goals and <span className="gradient-text italic">Track Them</span>
-        </h2>
+        <ScrollReveal animation="fade-up">
+          <h2 className="font-display text-3xl md:text-4xl font-semibold mb-8">
+            Set Goals and <span className="gradient-text italic">Track Them</span>
+          </h2>
+        </ScrollReveal>
 
         {/* Goal Cards - scrolling carousel with transparency mask fade */}
         <div className="w-full mb-8">
@@ -214,10 +217,12 @@ export function GoalsShowcase() {
         </div>
 
         {/* Description - centered below cards, wider */}
-        <p className="text-muted-foreground text-lg leading-relaxed max-w-3xl">
-          Create meaningful goals, link them to your daily habits, and watch your progress grow. 
-          Stay motivated with visual progress tracking and pace indicators.
-        </p>
+        <ScrollReveal animation="fade-up" delay={100}>
+          <p className="text-muted-foreground text-lg leading-relaxed max-w-3xl">
+            Create meaningful goals, link them to your daily habits, and watch your progress grow. 
+            Stay motivated with visual progress tracking and pace indicators.
+          </p>
+        </ScrollReveal>
       </div>
     </section>
   );

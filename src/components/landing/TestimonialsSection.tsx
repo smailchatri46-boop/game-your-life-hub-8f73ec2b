@@ -1,5 +1,6 @@
 import { GlassCard } from "@/components/GlassCard";
 import { AppleEmoji } from "@/components/AppleEmoji";
+import { ScrollReveal } from "@/components/ScrollReveal";
 
 interface Review {
   text: string;
@@ -205,19 +206,23 @@ export function TestimonialsSection() {
   return (
     <section className="py-10 px-4">
       <div className="max-w-6xl mx-auto">
-        <h2 className="font-display text-3xl md:text-4xl font-semibold text-center mb-4">
-          What people are <span className="gradient-text italic">saying</span>
-        </h2>
-        <p className="text-muted-foreground text-center mb-12 max-w-xl mx-auto">
-          Real feedback from real users building better habits every day.
-        </p>
+        <ScrollReveal animation="fade-up">
+          <h2 className="font-display text-3xl md:text-4xl font-semibold text-center mb-4">
+            What people are <span className="gradient-text italic">saying</span>
+          </h2>
+        </ScrollReveal>
+        <ScrollReveal animation="fade-up" delay={100}>
+          <p className="text-muted-foreground text-center mb-12 max-w-xl mx-auto">
+            Real feedback from real users building better habits every day.
+          </p>
+        </ScrollReveal>
 
         <div className="columns-1 md:columns-2 lg:columns-3 gap-6 space-y-6">
           {reviews.map((review, index) => (
-            <GlassCard
-              key={index}
-              className="p-5 break-inside-avoid"
-            >
+            <ScrollReveal key={index} animation="fade-up" delay={index * 50}>
+              <GlassCard
+                className="p-5 break-inside-avoid"
+              >
               {/* Header with avatar, name, and rating */}
               <div className="flex items-start gap-3 mb-3">
                 {review.avatarImage ? (
@@ -243,7 +248,8 @@ export function TestimonialsSection() {
                   </span>
                 )}
               </p>
-            </GlassCard>
+              </GlassCard>
+            </ScrollReveal>
           ))}
         </div>
       </div>

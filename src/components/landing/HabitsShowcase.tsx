@@ -1,6 +1,7 @@
 import { GlassCard } from "@/components/GlassCard";
 import { AppleEmoji } from "@/components/AppleEmoji";
 import { Check, GripVertical, Trash2 } from "lucide-react";
+import { ScrollReveal } from "@/components/ScrollReveal";
 
 const CATEGORY_COLORS: Record<string, string> = {
   Mind: "#8B5CF6",
@@ -62,16 +63,21 @@ export function HabitsShowcase() {
     <section className="py-8 px-4">
       <div className="max-w-6xl mx-auto">
         <div className="text-center mb-10">
-          <h2 className="font-display text-3xl md:text-4xl font-semibold mb-5">
-            Organize Your Daily Routine <span className="gradient-text italic">Effortlessly</span>
-          </h2>
-          <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-            Track habits and tasks in a beautiful clean style. See your progress at a glance.
-          </p>
+          <ScrollReveal animation="fade-up">
+            <h2 className="font-display text-3xl md:text-4xl font-semibold mb-5">
+              Organize Your Daily Routine <span className="gradient-text italic">Effortlessly</span>
+            </h2>
+          </ScrollReveal>
+          <ScrollReveal animation="fade-up" delay={100}>
+            <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
+              Track habits and tasks in a beautiful clean style. See your progress at a glance.
+            </p>
+          </ScrollReveal>
         </div>
 
         {/* Exact Habits Grid from Dashboard */}
-        <GlassCard className="p-2 sm:p-3 lg:p-4 overflow-x-auto">
+        <ScrollReveal animation="slide-up" delay={200}>
+          <GlassCard className="p-2 sm:p-3 lg:p-4 overflow-x-auto">
           <table className="w-full table-fixed" style={{ minWidth: '700px' }}>
             <thead>
               <tr>
@@ -147,7 +153,8 @@ export function HabitsShowcase() {
               ))}
             </tbody>
           </table>
-        </GlassCard>
+          </GlassCard>
+        </ScrollReveal>
       </div>
     </section>
   );
