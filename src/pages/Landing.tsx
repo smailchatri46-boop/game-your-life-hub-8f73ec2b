@@ -5,6 +5,7 @@ import { AppleEmoji } from "@/components/AppleEmoji";
 import { Link } from "react-router-dom";
 import { Check, Sparkles, TrendingUp, BookOpen } from "lucide-react";
 import { YouTubeEmbed } from "@/components/YouTubeEmbed";
+import googleLogo from "@/assets/google-logo.png";
 import { AnalyticsCarousel } from "@/components/landing/AnalyticsCarousel";
 import { TodoShowcase } from "@/components/landing/TodoShowcase";
 import { HabitsShowcase } from "@/components/landing/HabitsShowcase";
@@ -37,7 +38,9 @@ export default function Landing() {
               <div className="animate-fade-in delay-200 mb-6">
                 <Button variant="gradient" size="xl" asChild>
                   <Link to="/signup" className="gap-3">
-                    <AppleEmoji emoji="👤" size="md" />
+                    <span className="w-6 h-6 bg-white rounded-full flex items-center justify-center">
+                      <img src={googleLogo} alt="Google" className="w-4 h-4" />
+                    </span>
                     Sign up with Google
                   </Link>
                 </Button>
