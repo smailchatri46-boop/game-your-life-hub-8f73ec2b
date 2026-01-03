@@ -21,23 +21,16 @@ export function GoalsShowcase() {
   };
 
   return (
-    <section className="py-14 px-4">
-      <div className="max-w-5xl mx-auto">
-        <div className="grid md:grid-cols-2 gap-8 items-start">
-          {/* Left side - Title and Description - Aligned to top */}
-          <div className="order-2 md:order-1">
-            <h2 className="font-display text-3xl md:text-4xl font-semibold mb-4">
-              Set Goals <span className="font-body text-xl md:text-2xl">&</span>{" "}
-              <span className="gradient-text italic">Track Them</span>
-            </h2>
-            <p className="text-muted-foreground text-lg leading-relaxed">
-              Create meaningful goals, link them to your daily habits, and watch your progress grow. 
-              Stay motivated with visual progress tracking and pace indicators.
-            </p>
-          </div>
+<section className="py-14 px-4">
+      <div className="max-w-md mx-auto flex flex-col items-center text-center">
+        {/* Title - centered at top */}
+        <h2 className="font-display text-3xl md:text-4xl font-semibold mb-6">
+          Set Goals <span className="font-body text-xl md:text-2xl">&</span>{" "}
+          <span className="gradient-text italic">Track Them</span>
+        </h2>
 
-          {/* Right side - Goal Card Preview */}
-          <div className="order-1 md:order-2">
+        {/* Goal Card - centered in middle */}
+        <div className="w-full mb-6">
             <GlassCard className="p-5 hover:shadow-large transition-all duration-300">
               <div className="flex items-start justify-between mb-4">
                 <div className="flex items-center gap-3">
@@ -95,8 +88,13 @@ export function GoalsShowcase() {
                 </div>
               </div>
             </GlassCard>
-          </div>
         </div>
+
+        {/* Description - centered below card */}
+        <p className="text-muted-foreground text-lg leading-relaxed">
+          Create meaningful goals, link them to your daily habits, and watch your progress grow. 
+          Stay motivated with visual progress tracking and pace indicators.
+        </p>
       </div>
     </section>
   );
