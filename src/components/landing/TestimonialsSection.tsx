@@ -214,9 +214,7 @@ export function TestimonialsSection() {
             >
               {/* Header with avatar, name, and rating */}
               <div className="flex items-start gap-3 mb-3">
-                <div className={`w-10 h-10 rounded-full ${review.avatarBg} flex items-center justify-center flex-shrink-0`}>
-                  <AppleEmoji emoji={review.avatar} size="sm" />
-                </div>
+                <div className={`w-10 h-10 rounded-full ${review.avatarBg} flex-shrink-0`} />
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 flex-wrap">
                     <span className="font-medium text-foreground">{review.name}</span>
