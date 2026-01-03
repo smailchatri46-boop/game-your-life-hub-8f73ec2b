@@ -39,15 +39,29 @@ const demoHabits = [
     completions: [1, 4, 0, 0, 7, 3, 7, 8, 2, 8, 7, 1, 3, 1],
     progress: 16
   },
+  { 
+    name: "Journal Writing", 
+    icon: "📝", 
+    category: "Mind",
+    completions: [true, false, true, true, false, true, true, true, false, true, true, true, false, true],
+    progress: 71
+  },
+  { 
+    name: "Deep Work", 
+    icon: "🎯", 
+    category: "Focus",
+    completions: [true, true, false, true, true, true, false, true, true, true, false, true, true, true],
+    progress: 79
+  },
 ];
 
 const days = Array.from({ length: 14 }, (_, i) => i + 1);
 
 export function HabitsShowcase() {
   return (
-    <section className="py-20 px-4">
+    <section className="py-8 px-4">
       <div className="max-w-6xl mx-auto">
-        <div className="text-center mb-12">
+        <div className="text-center mb-8">
           <h2 className="font-display text-3xl md:text-4xl font-semibold mb-4">
             Organize Your Daily Routine <span className="gradient-text italic">Effortlessly</span>
           </h2>
@@ -82,7 +96,7 @@ export function HabitsShowcase() {
                 <tr key={habitIndex} className="border-t border-border/30">
                   <td className="p-1.5 lg:p-2">
                     <div className="flex items-center gap-1.5">
-                      <GripVertical className="w-3 h-3 text-muted-foreground/50 cursor-grab flex-shrink-0 hidden lg:block" />
+                      <GripVertical className="w-3 h-3 text-muted-foreground/50 flex-shrink-0 hidden lg:block" />
                       <AppleEmoji emoji={habit.icon} size="lg" />
                       <div className="min-w-0 flex-1">
                         <p className="text-xs lg:text-sm font-medium truncate">{habit.name}</p>
@@ -124,9 +138,10 @@ export function HabitsShowcase() {
                     <span className="text-xs lg:text-sm font-bold gradient-text">{habit.progress}%</span>
                   </td>
                   <td className="p-1 lg:p-2">
-                    <button className="p-1 rounded-lg hover:bg-destructive/10 text-muted-foreground hover:text-destructive transition-colors">
+                    {/* Non-clickable delete icon */}
+                    <div className="p-1 text-muted-foreground/40">
                       <Trash2 className="w-3.5 h-3.5 lg:w-4 lg:h-4" />
-                    </button>
+                    </div>
                   </td>
                 </tr>
               ))}

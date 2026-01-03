@@ -203,7 +203,7 @@ function StarRating({ rating }: { rating: number }) {
 
 export function TestimonialsSection() {
   return (
-    <section className="py-20 px-4">
+    <section className="py-10 px-4">
       <div className="max-w-6xl mx-auto">
         <h2 className="font-display text-3xl md:text-4xl font-semibold text-center mb-4">
           What people are <span className="gradient-text italic">saying</span>

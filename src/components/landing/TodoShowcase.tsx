@@ -10,13 +10,13 @@ const demoTodos = [
 
 export function TodoShowcase() {
   return (
-    <section className="py-20 px-4">
+    <section className="py-8 px-4">
       <div className="max-w-5xl mx-auto">
-        <div className="grid md:grid-cols-2 gap-12 items-center">
-          {/* Text Content */}
+        <div className="grid md:grid-cols-2 gap-8 items-start">
+          {/* Text Content - Aligned to top */}
           <div className="order-2 md:order-1">
             <h2 className="font-display text-3xl md:text-4xl font-semibold mb-4">
-              Everything in <span className="gradient-text italic">One App</span>
+              Everything in <span className="gradient-text italic">one app</span>, no need for multiple tools
             </h2>
             <p className="text-muted-foreground text-lg">
               No need for multiple tools. Add your one-time tasks and manage everything in one beautiful interface.
