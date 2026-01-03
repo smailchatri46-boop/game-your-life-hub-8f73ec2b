@@ -46,12 +46,15 @@ export function AIBuddyShowcase() {
 
   return (
     <section className="py-8 px-4">
-      <div className="max-w-2xl mx-auto flex flex-col items-center text-center">
-        {/* Title - centered at top, single line */}
-        <h2 className="font-display text-2xl md:text-4xl font-semibold mb-6 whitespace-nowrap">
-          Analyze your progress with the <span className="gradient-text italic">AI Buddy</span>
-        </h2>
+      {/* Title - outside chat box container, full section width */}
+      <h2 
+        className="font-display text-2xl md:text-4xl font-semibold mb-4 text-center max-w-4xl mx-auto"
+        style={{ textWrap: 'balance' } as React.CSSProperties}
+      >
+        Analyze your progress with the <span className="gradient-text italic">AI Buddy</span>
+      </h2>
 
+      <div className="max-w-2xl mx-auto flex flex-col items-center text-center">
         {/* AI Buddy Chat Card - matching dashboard style */}
         <div className="w-full mb-4">
           <div 
