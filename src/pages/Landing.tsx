@@ -17,40 +17,60 @@ export default function Landing() {
       <LandingNavbar />
       
       {/* Hero Section */}
-      <section className="pt-32 pb-20 px-4">
-        <div className="max-w-4xl mx-auto text-center">
-          <h1 className="font-display text-5xl md:text-6xl lg:text-7xl font-semibold mb-6 animate-fade-in">
-            <span className="italic gradient-text">Turn your life</span>
-            <br />
-            <span className="text-foreground">into a Game</span>
-            <span className="gradient-text"> for free</span>
-          </h1>
-          
-          <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto mb-10 animate-fade-in delay-100">
-            Track habits, level up your life, and stay consistent with the most beautiful habit tracker you've ever used.
-          </p>
-          
-          <div className="animate-fade-in delay-200">
-            <Button variant="gradient" size="xl" asChild>
-              <Link to="/signup" className="gap-3">
-                <AppleEmoji emoji="👤" size="md" />
-                Sign up with Google
-              </Link>
-            </Button>
-          </div>
-        </div>
-        
-        {/* Demo Preview */}
-        <div className="max-w-4xl mx-auto mt-16 animate-slide-up delay-300">
-          <GlassCard className="aspect-video flex items-center justify-center" glow>
-            <div className="text-center text-muted-foreground">
-              <div className="w-24 h-24 mx-auto mb-4 rounded-2xl bg-secondary flex items-center justify-center">
-                <Sparkles className="w-10 h-10 text-primary" />
+      <section className="pt-24 pb-16 px-4">
+        <div className="max-w-6xl mx-auto">
+          <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center">
+            {/* Left Column - Title, Description, CTA */}
+            <div className="order-2 lg:order-1">
+              <h1 className="font-display text-4xl md:text-5xl lg:text-6xl font-semibold mb-5 animate-fade-in">
+                <span className="italic gradient-text">Turn your life</span>
+                <br />
+                <span className="text-foreground">into a Game</span>
+                <span className="gradient-text"> for free</span>
+              </h1>
+              
+              <p className="text-lg text-muted-foreground max-w-lg mb-8 animate-fade-in delay-100">
+                Track habits, level up your life, and stay consistent with the most beautiful habit tracker you've ever used.
+              </p>
+              
+              <div className="animate-fade-in delay-200 mb-6">
+                <Button variant="gradient" size="xl" asChild>
+                  <Link to="/signup" className="gap-3">
+                    <AppleEmoji emoji="👤" size="md" />
+                    Sign up with Google
+                  </Link>
+                </Button>
               </div>
-              <p className="text-lg font-medium">App Demo</p>
-              <p className="text-sm">Interactive preview coming soon</p>
+
+              {/* Social Proof */}
+              <div className="flex items-center gap-3 animate-fade-in delay-300">
+                {/* Overlapping Avatars */}
+                <div className="flex -space-x-2">
+                  <div className="w-9 h-9 rounded-full bg-rose-200 border-2 border-background" />
+                  <div className="w-9 h-9 rounded-full bg-sky-200 border-2 border-background" />
+                  <div className="w-9 h-9 rounded-full bg-amber-200 border-2 border-background" />
+                  <div className="w-9 h-9 rounded-full bg-emerald-200 border-2 border-background" />
+                  <div className="w-9 h-9 rounded-full bg-violet-200 border-2 border-background" />
+                </div>
+                <p className="text-sm text-muted-foreground">
+                  Join over <span className="font-medium text-foreground">50,000+</span> people improving their life with Neyler
+                </p>
+              </div>
             </div>
-          </GlassCard>
+
+            {/* Right Column - Video/Demo */}
+            <div className="order-1 lg:order-2 animate-fade-in delay-100">
+              <GlassCard className="aspect-video flex items-center justify-center overflow-hidden" glow>
+                <div className="text-center text-muted-foreground">
+                  <div className="w-16 h-16 mx-auto mb-3 rounded-2xl bg-secondary flex items-center justify-center">
+                    <Sparkles className="w-8 h-8 text-primary" />
+                  </div>
+                  <p className="text-base font-medium">App Demo</p>
+                  <p className="text-sm">Interactive preview coming soon</p>
+                </div>
+              </GlassCard>
+            </div>
+          </div>
         </div>
       </section>
 
