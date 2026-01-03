@@ -61,12 +61,12 @@ export function HabitsShowcase() {
   return (
     <section className="py-8 px-4">
       <div className="max-w-6xl mx-auto">
-        <div className="text-center mb-8">
-          <h2 className="font-display text-3xl md:text-4xl font-semibold mb-4">
+        <div className="text-center mb-10">
+          <h2 className="font-display text-3xl md:text-4xl font-semibold mb-5">
             Organize Your Daily Routine <span className="gradient-text italic">Effortlessly</span>
           </h2>
           <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-            Track habits and tasks in a beautiful spreadsheet-style grid. See your progress at a glance.
+            Track habits and tasks in a beautiful clean style. See your progress at a glance.
           </p>
         </div>
 

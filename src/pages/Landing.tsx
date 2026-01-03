@@ -38,41 +38,24 @@ export default function Landing() {
       <LandingNavbar />
       
       {/* Hero Section */}
-      <section className="pt-24 pb-8 px-4">
+      <section className="pt-32 pb-16 px-4">
         <div className="max-w-6xl mx-auto">
-          <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-stretch">
+          <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-start">
             {/* Left Column - Title, Description, CTA */}
-            <div className="order-2 lg:order-1 flex flex-col justify-between">
-              <div className="flex-1 flex flex-col justify-center">
-                <h1 className="font-display text-4xl md:text-5xl lg:text-6xl font-semibold mb-5 animate-fade-in text-center lg:text-left">
-                  <span className="italic gradient-text">Turn your life</span>
-                  <br />
-                  <span className="text-foreground">into a Game</span>
-                  <span className="gradient-text"> for free</span>
-                </h1>
-                
-                <p className="text-lg text-muted-foreground max-w-lg mb-6 animate-fade-in delay-100 text-center lg:text-left mx-auto lg:mx-0">
-                  Track habits, level up your life, turn your data into insights, and analyze your life with AI using the most beautiful habit tracker you've ever used.
-                </p>
-
-                {/* Social Proof - Centered */}
-                <div className="flex items-center justify-center gap-3 animate-fade-in delay-200 mb-6">
-                  {/* Overlapping Avatars */}
-                  <div className="flex -space-x-2">
-                    <img src="/images/user-1.png" alt="User" className="w-9 h-9 rounded-full border-2 border-background object-cover" />
-                    <img src="/images/user-2.png" alt="User" className="w-9 h-9 rounded-full border-2 border-background object-cover" />
-                    <img src="/images/user-3.png" alt="User" className="w-9 h-9 rounded-full border-2 border-background object-cover" />
-                    <img src="/images/user-4.png" alt="User" className="w-9 h-9 rounded-full border-2 border-background object-cover" />
-                    <img src="/images/user-5.png" alt="User" className="w-9 h-9 rounded-full border-2 border-background object-cover" />
-                  </div>
-                  <p className="text-sm text-muted-foreground">
-                    Join over <span className="font-medium text-foreground">50,000+</span> people improving their lives with Neyler
-                  </p>
-                </div>
-              </div>
+            <div className="order-2 lg:order-1 flex flex-col">
+              <h1 className="font-display text-4xl md:text-5xl lg:text-6xl font-semibold mb-5 animate-fade-in text-center lg:text-left">
+                <span className="italic gradient-text">Turn your life</span>
+                <br />
+                <span className="text-foreground">into a Game</span>
+                <span className="gradient-text"> for free</span>
+              </h1>
               
-              {/* Sign Up Button - At bottom aligned with video */}
-              <div ref={signUpButtonRef} className="animate-fade-in delay-300 flex justify-center">
+              <p className="text-lg text-muted-foreground max-w-lg mb-6 animate-fade-in delay-100 text-center lg:text-left mx-auto lg:mx-0">
+                Track habits, level up your life, turn your data into insights, and analyze your life with AI using the most beautiful habit tracker you've ever used.
+              </p>
+
+              {/* Sign Up Button + Social Proof in same row */}
+              <div ref={signUpButtonRef} className="animate-fade-in delay-200 flex flex-col sm:flex-row items-center gap-4 justify-center lg:justify-start">
                 <Button variant="gradient" size="xl" asChild>
                   <Link to="/signup" className="gap-3">
                     <span className="w-6 h-6 bg-white rounded-full flex items-center justify-center">
@@ -81,17 +64,31 @@ export default function Landing() {
                     Sign up with Google
                   </Link>
                 </Button>
+                
+                {/* Social Proof */}
+                <div className="flex items-center gap-2">
+                  <div className="flex -space-x-2">
+                    <img src="/images/user-1.png" alt="User" className="w-8 h-8 rounded-full border-2 border-background object-cover" />
+                    <img src="/images/user-2.png" alt="User" className="w-8 h-8 rounded-full border-2 border-background object-cover" />
+                    <img src="/images/user-3.png" alt="User" className="w-8 h-8 rounded-full border-2 border-background object-cover" />
+                    <img src="/images/user-4.png" alt="User" className="w-8 h-8 rounded-full border-2 border-background object-cover" />
+                    <img src="/images/user-5.png" alt="User" className="w-8 h-8 rounded-full border-2 border-background object-cover" />
+                  </div>
+                  <p className="text-xs text-muted-foreground max-w-[180px]">
+                    Join over <span className="font-medium text-foreground">50,000+</span> people improving their lives with Neyler
+                  </p>
+                </div>
               </div>
             </div>
 
             {/* Right Column - Video/Demo */}
             <div className="order-1 lg:order-2 animate-fade-in delay-100">
-              <GlassCard className="overflow-hidden h-full" glow>
+              <div className="overflow-hidden rounded-3xl" style={{ background: 'transparent' }}>
                 <YouTubeEmbed 
                   videoId="pRht0GSYOh8" 
                   thumbnail="/images/app-demo-thumbnail.png"
                 />
-              </GlassCard>
+              </div>
             </div>
           </div>
         </div>
@@ -132,7 +129,7 @@ export default function Landing() {
       {/* Features Grid */}
       <section className="py-10 px-4">
         <div className="max-w-5xl mx-auto">
-          <h2 className="font-display text-3xl md:text-4xl font-semibold text-center mb-10">
+          <h2 className="font-display text-3xl md:text-4xl font-semibold text-center mb-12">
             Everything you need to <span className="gradient-text italic">succeed</span>
           </h2>
           
@@ -141,7 +138,7 @@ export default function Landing() {
               <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-accent/30 to-primary/30 flex items-center justify-center mb-4">
                 <AppleEmoji emoji="🎯" size="2xl" />
               </div>
-              <h3 className="font-display text-xl font-semibold mb-2">Habits & Tasks Tracking</h3>
+              <h3 className="font-display text-xl font-semibold mb-2">Habits <span className="font-body">&</span> Tasks Tracking</h3>
               <p className="text-muted-foreground text-sm">
                 Track your daily habits and tasks with a beautiful spreadsheet-style grid. See your progress and link them to your goals.
               </p>
@@ -151,7 +148,7 @@ export default function Landing() {
               <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-accent/30 to-primary/30 flex items-center justify-center mb-4">
                 <AppleEmoji emoji="🎮" size="2xl" />
               </div>
-              <h3 className="font-display text-xl font-semibold mb-2">Level Up & Earn Rewards</h3>
+              <h3 className="font-display text-xl font-semibold mb-2">Level Up <span className="font-body">&</span> Earn Rewards</h3>
               <p className="text-muted-foreground text-sm">
                 Turn self-improvement into a game. Earn XP for every habit completed, unlock achievements, and level up as you grow.
               </p>

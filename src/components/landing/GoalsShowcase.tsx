@@ -21,7 +21,7 @@ export function GoalsShowcase() {
   };
 
   return (
-    <section className="py-8 px-4">
+    <section className="py-14 px-4">
       <div className="max-w-5xl mx-auto">
         <div className="grid md:grid-cols-2 gap-8 items-start">
           {/* Left side - Title and Description - Aligned to top */}

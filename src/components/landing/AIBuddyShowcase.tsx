@@ -49,7 +49,7 @@ export function AIBuddyShowcase() {
   const duplicatedQuestions = [...suggestedQuestions, ...suggestedQuestions];
 
   return (
-    <section className="py-8 px-4">
+    <section className="py-12 px-4">
       <div className="max-w-6xl mx-auto">
         <div className="grid md:grid-cols-2 gap-8 items-start">
           {/* AI Buddy Chat - Wider and Taller */}
@@ -96,10 +96,10 @@ export function AIBuddyShowcase() {
                   className="flex gap-3 overflow-x-auto scrollbar-hide px-6"
                   style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
                 >
-                  {duplicatedQuestions.map((q, index) => (
+                {duplicatedQuestions.map((q, index) => (
                     <button
                       key={index}
-                      className="flex-shrink-0 flex items-center gap-2 px-4 py-2.5 rounded-full bg-secondary/60 hover:bg-secondary/80 transition-colors text-sm text-foreground whitespace-nowrap"
+                      className="flex-shrink-0 flex items-center gap-2 px-3 py-2 rounded-full bg-secondary/60 hover:bg-secondary/80 transition-colors text-xs text-foreground whitespace-nowrap"
                     >
                       <span>{q.text}</span>
                       <AppleEmoji emoji={q.emoji} size="sm" />

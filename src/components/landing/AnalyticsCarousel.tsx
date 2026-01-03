@@ -197,8 +197,8 @@ export function AnalyticsCarousel() {
   }, []);
 
   return (
-    <section className="py-10 px-4 overflow-hidden">
-      <div className="max-w-4xl mx-auto text-center mb-8">
+    <section className="pt-16 pb-10 px-4 overflow-hidden">
+      <div className="max-w-4xl mx-auto text-center mb-10">
         <h2 className="font-display text-3xl md:text-4xl font-semibold mb-4">
           Get Deep <span className="gradient-text italic">Insights</span> About Your Life
         </h2>
