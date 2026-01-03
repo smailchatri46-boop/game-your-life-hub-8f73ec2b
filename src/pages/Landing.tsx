@@ -9,6 +9,7 @@ import { TodoShowcase } from "@/components/landing/TodoShowcase";
 import { HabitsShowcase } from "@/components/landing/HabitsShowcase";
 import { AIBuddyShowcase } from "@/components/landing/AIBuddyShowcase";
 import { GoalsShowcase } from "@/components/landing/GoalsShowcase";
+import { TestimonialsSection } from "@/components/landing/TestimonialsSection";
 
 export default function Landing() {
   return (
@@ -189,6 +190,9 @@ export default function Landing() {
           </GlassCard>
         </div>
       </section>
+
+      {/* Testimonials */}
+      <TestimonialsSection />
       
       {/* Footer */}
       <footer className="py-8 px-4 border-t border-border/50">
