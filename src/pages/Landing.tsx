@@ -4,7 +4,6 @@ import { Button } from "@/components/ui/button";
 import { GlassCard } from "@/components/GlassCard";
 import { AppleEmoji } from "@/components/AppleEmoji";
 import { Link } from "react-router-dom";
-import { Check, Sparkles, TrendingUp, BookOpen } from "lucide-react";
 import { YouTubeEmbed } from "@/components/YouTubeEmbed";
 import googleLogo from "@/assets/google-logo.png";
 import { AnalyticsCarousel } from "@/components/landing/AnalyticsCarousel";
@@ -39,23 +38,41 @@ export default function Landing() {
       <LandingNavbar />
       
       {/* Hero Section */}
-      <section className="pt-24 pb-16 px-4">
+      <section className="pt-24 pb-8 px-4">
         <div className="max-w-6xl mx-auto">
-          <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center">
+          <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-stretch">
             {/* Left Column - Title, Description, CTA */}
-            <div className="order-2 lg:order-1">
-              <h1 className="font-display text-4xl md:text-5xl lg:text-6xl font-semibold mb-5 animate-fade-in">
-                <span className="italic gradient-text">Turn your life</span>
-                <br />
-                <span className="text-foreground">into a Game</span>
-                <span className="gradient-text"> for free</span>
-              </h1>
+            <div className="order-2 lg:order-1 flex flex-col justify-between">
+              <div className="flex-1 flex flex-col justify-center">
+                <h1 className="font-display text-4xl md:text-5xl lg:text-6xl font-semibold mb-5 animate-fade-in text-center lg:text-left">
+                  <span className="italic gradient-text">Turn your life</span>
+                  <br />
+                  <span className="text-foreground">into a Game</span>
+                  <span className="gradient-text"> for free</span>
+                </h1>
+                
+                <p className="text-lg text-muted-foreground max-w-lg mb-6 animate-fade-in delay-100 text-center lg:text-left mx-auto lg:mx-0">
+                  Track habits, level up your life, turn your data into insights, and analyze your life with AI using the most beautiful habit tracker you've ever used.
+                </p>
+
+                {/* Social Proof - Centered */}
+                <div className="flex items-center justify-center gap-3 animate-fade-in delay-200 mb-6">
+                  {/* Overlapping Avatars */}
+                  <div className="flex -space-x-2">
+                    <img src="/images/user-1.png" alt="User" className="w-9 h-9 rounded-full border-2 border-background object-cover" />
+                    <img src="/images/user-2.png" alt="User" className="w-9 h-9 rounded-full border-2 border-background object-cover" />
+                    <img src="/images/user-3.png" alt="User" className="w-9 h-9 rounded-full border-2 border-background object-cover" />
+                    <img src="/images/user-4.png" alt="User" className="w-9 h-9 rounded-full border-2 border-background object-cover" />
+                    <img src="/images/user-5.png" alt="User" className="w-9 h-9 rounded-full border-2 border-background object-cover" />
+                  </div>
+                  <p className="text-sm text-muted-foreground">
+                    Join over <span className="font-medium text-foreground">50,000+</span> people improving their lives with Neyler
+                  </p>
+                </div>
+              </div>
               
-              <p className="text-lg text-muted-foreground max-w-lg mb-8 animate-fade-in delay-100">
-                Track habits, level up your life, and stay consistent with the most beautiful habit tracker you've ever used.
-              </p>
-              
-              <div ref={signUpButtonRef} className="animate-fade-in delay-200 mb-6">
+              {/* Sign Up Button - At bottom aligned with video */}
+              <div ref={signUpButtonRef} className="animate-fade-in delay-300 flex justify-center">
                 <Button variant="gradient" size="xl" asChild>
                   <Link to="/signup" className="gap-3">
                     <span className="w-6 h-6 bg-white rounded-full flex items-center justify-center">
@@ -65,26 +82,11 @@ export default function Landing() {
                   </Link>
                 </Button>
               </div>
-
-              {/* Social Proof */}
-              <div className="flex items-center gap-3 animate-fade-in delay-300">
-                {/* Overlapping Avatars */}
-                <div className="flex -space-x-2">
-                  <img src="/images/user-1.png" alt="User" className="w-9 h-9 rounded-full border-2 border-background object-cover" />
-                  <img src="/images/user-2.png" alt="User" className="w-9 h-9 rounded-full border-2 border-background object-cover" />
-                  <img src="/images/user-3.png" alt="User" className="w-9 h-9 rounded-full border-2 border-background object-cover" />
-                  <img src="/images/user-4.png" alt="User" className="w-9 h-9 rounded-full border-2 border-background object-cover" />
-                  <img src="/images/user-5.png" alt="User" className="w-9 h-9 rounded-full border-2 border-background object-cover" />
-                </div>
-                <p className="text-sm text-muted-foreground">
-                  Join over <span className="font-medium text-foreground">50,000+</span> people improving their life with Neyler
-                </p>
-              </div>
             </div>
 
             {/* Right Column - Video/Demo */}
             <div className="order-1 lg:order-2 animate-fade-in delay-100">
-              <GlassCard className="overflow-hidden" glow>
+              <GlassCard className="overflow-hidden h-full" glow>
                 <YouTubeEmbed 
                   videoId="pRht0GSYOh8" 
                   thumbnail="/images/app-demo-thumbnail.png"
@@ -103,12 +105,12 @@ export default function Landing() {
       <GoalsShowcase />
       
       {/* Value Proposition */}
-      <section className="py-20 px-4">
+      <section className="py-10 px-4">
         <div className="max-w-4xl mx-auto text-center">
           <h2 className="font-display text-3xl md:text-4xl font-semibold mb-4">
             Your all in <span className="italic gradient-text">one tracker</span>
           </h2>
-          <p className="text-muted-foreground mb-12 max-w-xl mx-auto">
+          <p className="text-muted-foreground mb-8 max-w-xl mx-auto">
             Replace scattered spreadsheets, random apps, and messy notes with one beautiful solution.
           </p>
           
@@ -128,60 +130,40 @@ export default function Landing() {
       </section>
       
       {/* Features Grid */}
-      <section className="py-20 px-4">
+      <section className="py-10 px-4">
         <div className="max-w-5xl mx-auto">
-          <h2 className="font-display text-3xl md:text-4xl font-semibold text-center mb-12">
+          <h2 className="font-display text-3xl md:text-4xl font-semibold text-center mb-10">
             Everything you need to <span className="gradient-text italic">succeed</span>
           </h2>
           
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             <GlassCard className="p-6" hover>
               <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-accent/30 to-primary/30 flex items-center justify-center mb-4">
-                <Check className="w-6 h-6 text-primary" />
+                <AppleEmoji emoji="🎯" size="2xl" />
               </div>
-              <h3 className="font-display text-xl font-semibold mb-2">Habit Tracking</h3>
+              <h3 className="font-display text-xl font-semibold mb-2">Habits & Tasks Tracking</h3>
               <p className="text-muted-foreground text-sm">
-                Track daily habits with a beautiful spreadsheet-style grid. See your progress at a glance.
+                Track your daily habits and tasks with a beautiful spreadsheet-style grid. See your progress and link them to your goals.
               </p>
             </GlassCard>
             
             <GlassCard className="p-6" hover>
               <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-accent/30 to-primary/30 flex items-center justify-center mb-4">
-                <TrendingUp className="w-6 h-6 text-primary" />
+                <AppleEmoji emoji="🎮" size="2xl" />
               </div>
-              <h3 className="font-display text-xl font-semibold mb-2">Levels & XP</h3>
+              <h3 className="font-display text-xl font-semibold mb-2">Level Up & Earn Rewards</h3>
               <p className="text-muted-foreground text-sm">
-                Earn experience points for consistency. Level up and unlock achievements.
+                Turn self-improvement into a game. Earn XP for every habit completed, unlock achievements, and level up as you grow.
               </p>
             </GlassCard>
             
             <GlassCard className="p-6" hover>
               <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-accent/30 to-primary/30 flex items-center justify-center mb-4">
-                <BookOpen className="w-6 h-6 text-primary" />
+                <AppleEmoji emoji="🤖" size="2xl" />
               </div>
-              <h3 className="font-display text-xl font-semibold mb-2">Daily Journal</h3>
+              <h3 className="font-display text-xl font-semibold mb-2">AI-Powered Deep Analytics</h3>
               <p className="text-muted-foreground text-sm">
-                Reflect on your day with beautiful journal entries. Track mood and motivation.
-              </p>
-            </GlassCard>
-            
-            <GlassCard className="p-6" hover>
-              <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-accent/30 to-primary/30 flex items-center justify-center mb-4">
-                <Sparkles className="w-6 h-6 text-primary" />
-              </div>
-              <h3 className="font-display text-xl font-semibold mb-2">AI Coach</h3>
-              <p className="text-muted-foreground text-sm">
-                Get personalized insights and motivation from your AI-powered life coach.
-              </p>
-            </GlassCard>
-            
-            <GlassCard className="p-6" hover>
-              <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-accent/30 to-primary/30 flex items-center justify-center mb-4">
-                <AppleEmoji emoji="🔥" size="2xl" />
-              </div>
-              <h3 className="font-display text-xl font-semibold mb-2">Streaks</h3>
-              <p className="text-muted-foreground text-sm">
-                Build momentum with streak tracking. Don't break the chain!
+                AI analyzes all your goals, tasks, and habits to give you personalized structure, actionable insights, and expert guidance to achieve your goals faster.
               </p>
             </GlassCard>
             
@@ -194,23 +176,61 @@ export default function Landing() {
                 Beautiful charts and insights to understand your patterns and growth.
               </p>
             </GlassCard>
+            
+            <GlassCard className="p-6" hover>
+              <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-accent/30 to-primary/30 flex items-center justify-center mb-4">
+                <AppleEmoji emoji="🔥" size="2xl" />
+              </div>
+              <h3 className="font-display text-xl font-semibold mb-2">Streak Tracking</h3>
+              <p className="text-muted-foreground text-sm">
+                Build unstoppable momentum with streak tracking. Watch your consistency grow and never break the chain.
+              </p>
+            </GlassCard>
+            
+            <GlassCard className="p-6" hover>
+              <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-accent/30 to-primary/30 flex items-center justify-center mb-4">
+                <AppleEmoji emoji="💬" size="2xl" />
+              </div>
+              <h3 className="font-display text-xl font-semibold mb-2">AI Buddy</h3>
+              <p className="text-muted-foreground text-sm">
+                Your personal AI companion that understands your habits and provides personalized motivation and insights.
+              </p>
+            </GlassCard>
           </div>
         </div>
       </section>
       
       {/* CTA Section */}
-      <section className="py-20 px-4">
+      <section className="py-10 px-4">
         <div className="max-w-2xl mx-auto text-center">
           <GlassCard className="p-10" glow>
             <h2 className="font-display text-3xl font-semibold mb-4">
               Ready to level up?
             </h2>
-            <p className="text-muted-foreground mb-8">
+            <p className="text-muted-foreground mb-6">
               Join thousands of people who have transformed their lives with Neyler.
             </p>
+            
+            {/* Social Proof */}
+            <div className="flex items-center justify-center gap-3 mb-6">
+              <div className="flex -space-x-2">
+                <img src="/images/user-1.png" alt="User" className="w-9 h-9 rounded-full border-2 border-background object-cover" />
+                <img src="/images/user-2.png" alt="User" className="w-9 h-9 rounded-full border-2 border-background object-cover" />
+                <img src="/images/user-3.png" alt="User" className="w-9 h-9 rounded-full border-2 border-background object-cover" />
+                <img src="/images/user-4.png" alt="User" className="w-9 h-9 rounded-full border-2 border-background object-cover" />
+                <img src="/images/user-5.png" alt="User" className="w-9 h-9 rounded-full border-2 border-background object-cover" />
+              </div>
+              <p className="text-sm text-muted-foreground">
+                Join over <span className="font-medium text-foreground">50,000+</span> people improving their lives with Neyler
+              </p>
+            </div>
+            
             <Button variant="gradient" size="xl" asChild>
               <Link to="/signup" className="gap-3">
-                Start for free
+                <span className="w-6 h-6 bg-white rounded-full flex items-center justify-center">
+                  <img src={googleLogo} alt="Google" className="w-4 h-4" />
+                </span>
+                Start For Free
               </Link>
             </Button>
           </GlassCard>

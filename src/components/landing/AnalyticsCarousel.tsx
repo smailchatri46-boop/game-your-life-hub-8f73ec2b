@@ -167,12 +167,12 @@ const analyticsCards = [
 
 export function AnalyticsCarousel() {
   const scrollRef = useRef<HTMLDivElement>(null);
+  const animationRef = useRef<number>();
 
   useEffect(() => {
     const scrollContainer = scrollRef.current;
     if (!scrollContainer) return;
 
-    let animationId: number;
     let scrollPosition = 0;
     const speed = 0.5;
 
@@ -182,29 +182,23 @@ export function AnalyticsCarousel() {
         scrollPosition = 0;
       }
       scrollContainer.scrollLeft = scrollPosition;
-      animationId = requestAnimationFrame(animate);
+      animationRef.current = requestAnimationFrame(animate);
     };
 
-    animationId = requestAnimationFrame(animate);
+    animationRef.current = requestAnimationFrame(animate);
 
-    const handleMouseEnter = () => cancelAnimationFrame(animationId);
-    const handleMouseLeave = () => {
-      animationId = requestAnimationFrame(animate);
-    };
-
-    scrollContainer.addEventListener("mouseenter", handleMouseEnter);
-    scrollContainer.addEventListener("mouseleave", handleMouseLeave);
+    // Don't pause on hover - continue scrolling
 
     return () => {
-      cancelAnimationFrame(animationId);
-      scrollContainer.removeEventListener("mouseenter", handleMouseEnter);
-      scrollContainer.removeEventListener("mouseleave", handleMouseLeave);
+      if (animationRef.current) {
+        cancelAnimationFrame(animationRef.current);
+      }
     };
   }, []);
 
   return (
-    <section className="py-20 px-4 overflow-hidden">
-      <div className="max-w-4xl mx-auto text-center mb-12">
+    <section className="py-10 px-4 overflow-hidden">
+      <div className="max-w-4xl mx-auto text-center mb-8">
         <h2 className="font-display text-3xl md:text-4xl font-semibold mb-4">
           Get Deep <span className="gradient-text italic">Insights</span> About Your Life
         </h2>
@@ -214,9 +208,9 @@ export function AnalyticsCarousel() {
       </div>
 
       <div className="relative">
-        {/* Fade edges */}
-        <div className="absolute left-0 top-0 bottom-0 w-24 bg-gradient-to-r from-background to-transparent z-10 pointer-events-none" />
-        <div className="absolute right-0 top-0 bottom-0 w-24 bg-gradient-to-l from-background to-transparent z-10 pointer-events-none" />
+        {/* Fade edges - using gradient-hero background color */}
+        <div className="absolute left-0 top-0 bottom-0 w-24 z-10 pointer-events-none" style={{ background: 'linear-gradient(to right, hsl(30 50% 98%), transparent)' }} />
+        <div className="absolute right-0 top-0 bottom-0 w-24 z-10 pointer-events-none" style={{ background: 'linear-gradient(to left, hsl(30 50% 98%), transparent)' }} />
 
         <div
           ref={scrollRef}

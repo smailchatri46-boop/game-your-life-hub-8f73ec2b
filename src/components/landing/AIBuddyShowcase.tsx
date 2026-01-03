@@ -36,25 +36,12 @@ export function AIBuddyShowcase() {
 
     animationRef.current = requestAnimationFrame(animate);
 
-    const handleMouseEnter = () => {
-      if (animationRef.current) {
-        cancelAnimationFrame(animationRef.current);
-      }
-    };
-
-    const handleMouseLeave = () => {
-      animationRef.current = requestAnimationFrame(animate);
-    };
-
-    scrollContainer.addEventListener('mouseenter', handleMouseEnter);
-    scrollContainer.addEventListener('mouseleave', handleMouseLeave);
+    // Don't pause on hover - continue scrolling
 
     return () => {
       if (animationRef.current) {
         cancelAnimationFrame(animationRef.current);
       }
-      scrollContainer.removeEventListener('mouseenter', handleMouseEnter);
-      scrollContainer.removeEventListener('mouseleave', handleMouseLeave);
     };
   }, []);
 
@@ -62,14 +49,14 @@ export function AIBuddyShowcase() {
   const duplicatedQuestions = [...suggestedQuestions, ...suggestedQuestions];
 
   return (
-    <section className="py-20 px-4">
+    <section className="py-8 px-4">
       <div className="max-w-6xl mx-auto">
-        <div className="grid md:grid-cols-2 gap-12 items-center">
+        <div className="grid md:grid-cols-2 gap-8 items-start">
           {/* AI Buddy Chat - Wider and Taller */}
           <div>
             <div 
               className="w-full bg-card/40 backdrop-blur-xl rounded-3xl shadow-soft overflow-hidden flex flex-col relative border border-border/10" 
-              style={{ height: "520px", maxWidth: "100%" }}
+              style={{ height: "460px", maxWidth: "100%" }}
             >
               {/* Chat Header - Simplified */}
               <div className="flex items-center px-6 py-4 border-b border-border/10">
@@ -80,19 +67,19 @@ export function AIBuddyShowcase() {
               </div>
 
               {/* Messages Area - Welcome state with GlowOrb */}
-              <div className="flex-1 overflow-y-auto px-6 py-8">
+              <div className="flex-1 overflow-y-auto px-6 py-6">
                 <div className="h-full flex flex-col items-center justify-center text-center px-4">
-                  {/* Animated Glow Orb */}
-                  <div className="relative flex items-center justify-center mb-6">
-                    <div className="relative w-28 h-28 md:w-32 md:h-32 rounded-full overflow-hidden flex-shrink-0">
+                  {/* Animated Glow Orb - Smaller */}
+                  <div className="relative flex items-center justify-center mb-4">
+                    <div className="relative w-20 h-20 md:w-24 md:h-24 rounded-full overflow-hidden flex-shrink-0">
                       <GlowOrb />
                     </div>
                   </div>
                   
-                  <h2 className="font-display text-xl font-medium text-foreground mb-3">
+                  <h2 className="font-display text-lg font-medium text-foreground mb-2">
                     Start a conversation
                   </h2>
-                  <p className="text-muted-foreground text-sm max-w-sm leading-relaxed">
+                  <p className="text-muted-foreground text-xs max-w-xs leading-relaxed">
                     I'm your wellness buddy <AppleEmoji emoji="🙂" size="sm" className="inline align-middle mx-0.5" /> I turn your habits into insights to help you reach your goals.
                   </p>
                 </div>
@@ -144,7 +131,7 @@ export function AIBuddyShowcase() {
             </div>
           </div>
 
-          {/* Text Content */}
+          {/* Text Content - Aligned to top */}
           <div>
             <h2 className="font-display text-3xl md:text-4xl font-semibold mb-4">
               Your Personal <span className="gradient-text italic">Wellness Coach</span>
