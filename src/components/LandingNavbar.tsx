@@ -2,6 +2,7 @@ import { Link, useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import neylerLogo from "@/assets/neyler-logo.png";
+import googleLogo from "@/assets/google-logo.png";
 
 export function LandingNavbar() {
   const location = useLocation();
@@ -37,8 +38,10 @@ export function LandingNavbar() {
             className="rounded-full px-5 py-2 h-auto border-border/50 bg-card/50 hover:bg-card font-medium"
             asChild
           >
-            <Link to="/signup">
-              <span className="mr-2">👤</span>
+            <Link to="/signup" className="flex items-center gap-2">
+              <span className="w-5 h-5 bg-white rounded-full flex items-center justify-center">
+                <img src={googleLogo} alt="Google" className="w-3.5 h-3.5" />
+              </span>
               Sign Up
             </Link>
           </Button>
