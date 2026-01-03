@@ -16,6 +16,7 @@ import Goals from "./pages/Goals";
 import Tutorials from "./pages/Tutorials";
 import VideoTutorial from "./pages/VideoTutorial";
 import Settings from "./pages/Settings";
+import FAQ from "./pages/FAQ";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -30,6 +31,7 @@ const App = () => (
           <BrowserRouter>
             <Routes>
               <Route path="/" element={<Landing />} />
+              <Route path="/faq" element={<FAQ />} />
               <Route path="/onboarding" element={<Onboarding />} />
               <Route path="/auth" element={<Auth />} />
               <Route path="/signup" element={<Auth />} />
