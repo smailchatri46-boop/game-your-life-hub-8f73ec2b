@@ -54,9 +54,10 @@ export function AIBuddyShowcase() {
         Analyze your progress with the <span className="gradient-text italic">AI Buddy</span>
       </h2>
 
-      <div className="max-w-2xl mx-auto flex flex-col items-center text-center">
+      {/* Chat box container */}
+      <div className="max-w-2xl mx-auto mb-6">
         {/* AI Buddy Chat Card - matching dashboard style */}
-        <div className="w-full mb-4">
+        <div className="w-full">
           <div 
             className="w-full bg-card/40 backdrop-blur-xl rounded-3xl shadow-soft overflow-hidden flex flex-col relative border border-border/10" 
             style={{ height: "min(520px, 60vh)", maxWidth: "100%" }}
@@ -128,12 +129,12 @@ export function AIBuddyShowcase() {
             </div>
           </div>
         </div>
-
-        {/* Description - centered below card, 2 lines like Goals section */}
-        <p className="text-muted-foreground text-base md:text-lg leading-relaxed text-center max-w-3xl px-4">
-          AI Buddy sees all your goals, tasks, habits, and daily reflections, analyzes them, and helps you see patterns, find weaknesses, and reach your goals faster.
-        </p>
       </div>
+
+      {/* Description - outside chat box container, wide like Goals section */}
+      <p className="text-muted-foreground text-base md:text-lg leading-relaxed text-center max-w-4xl mx-auto px-4">
+        AI Buddy sees all your goals, tasks, habits, and daily reflections, analyzes them, and helps you see patterns, find weaknesses, and reach your goals faster.
+      </p>
     </section>
   );
 }
