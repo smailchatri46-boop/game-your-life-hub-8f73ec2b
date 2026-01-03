@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState } from "react";
 import { Play } from "lucide-react";
 
 interface YouTubeEmbedProps {
@@ -9,31 +9,21 @@ interface YouTubeEmbedProps {
 
 export function YouTubeEmbed({ videoId, thumbnail, className = "" }: YouTubeEmbedProps) {
   const [isPlaying, setIsPlaying] = useState(false);
-  const iframeRef = useRef<HTMLIFrameElement>(null);
 
   const handlePlay = () => {
     setIsPlaying(true);
   };
 
-  const handlePause = () => {
-    setIsPlaying(false);
-  };
-
   if (isPlaying) {
     return (
-      <div className={`aspect-video relative ${className}`}>
+      <div className={`aspect-video ${className}`}>
         <iframe
-          ref={iframeRef}
-          src={`https://www.youtube.com/embed/${videoId}?autoplay=1&controls=0&modestbranding=1&rel=0&showinfo=0&iv_load_policy=3&disablekb=1&fs=0&playsinline=1&loop=1&playlist=${videoId}`}
+          src={`https://www.youtube.com/embed/${videoId}?autoplay=1&modestbranding=1&rel=0&showinfo=0&controls=1&disablekb=0&fs=0&iv_load_policy=3&loop=0&playsinline=1`}
           title="YouTube video player"
           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-          className="w-full h-full rounded-t-xl pointer-events-none"
+          allowFullScreen
+          className="w-full h-full rounded-t-xl"
           style={{ border: 'none' }}
-        />
-        {/* Clickable overlay to pause */}
-        <div 
-          className="absolute inset-0 cursor-pointer z-10"
-          onClick={handlePause}
         />
       </div>
     );
@@ -48,8 +38,8 @@ export function YouTubeEmbed({ videoId, thumbnail, className = "" }: YouTubeEmbe
         src={thumbnail || `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`}
         alt="Video thumbnail"
         className="w-full h-full object-cover rounded-t-xl"
-        loading="lazy"
         onError={(e) => {
+          // Fallback to hqdefault if maxresdefault doesn't exist (only for YouTube thumbnails)
           if (!thumbnail) {
             (e.target as HTMLImageElement).src = `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`;
           }
