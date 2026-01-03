@@ -55,8 +55,7 @@ export function GoalsShowcase() {
       <div className="max-w-5xl mx-auto flex flex-col items-center text-center">
         {/* Title - centered at top */}
         <h2 className="font-display text-3xl md:text-4xl font-semibold mb-8">
-          Set Goals <span className="font-body text-2xl md:text-3xl">&</span>{" "}
-          <span className="gradient-text italic">Track Them</span>
+          Set Goals and <span className="gradient-text italic">Track Them</span>
         </h2>
 
         {/* Goal Cards - three side-by-side */}
