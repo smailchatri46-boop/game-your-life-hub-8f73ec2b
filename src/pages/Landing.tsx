@@ -241,7 +241,7 @@ export default function Landing() {
             <span className="w-5 h-5 bg-white rounded-full flex items-center justify-center">
               <img src={googleLogo} alt="Google" className="w-3.5 h-3.5" />
             </span>
-            Try It For Free Now
+            Start For Free Now
           </Link>
         </Button>
       </div>
