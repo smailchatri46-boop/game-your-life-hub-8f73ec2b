@@ -59,7 +59,7 @@ export function AIBuddyShowcase() {
 
       {/* Chat box container */}
       <ScrollReveal animation="zoom-in" delay={100}>
-        <div className="max-w-2xl mx-auto mb-6">
+        <div className="max-w-3xl mx-auto mb-6">
           {/* AI Buddy Chat Card - matching dashboard style */}
           <div className="w-full">
             <div 
