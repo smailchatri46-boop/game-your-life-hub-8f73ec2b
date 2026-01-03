@@ -5,8 +5,8 @@ export function TodoShowcase() {
   return (
     <section className="py-8 px-4">
       <div className="max-w-5xl mx-auto">
-        <div className="grid md:grid-cols-2 gap-12 items-end">
-          {/* Text Content - Aligned to bottom of card */}
+        <div className="grid md:grid-cols-2 gap-12 items-start">
+          {/* Text Content - Aligned to top */}
           <div className="order-2 md:order-1">
             <h2 className="font-display text-3xl md:text-4xl font-semibold mb-4">
               Everything in <span className="gradient-text italic">one app</span>, no need for multiple tools
@@ -16,7 +16,7 @@ export function TodoShowcase() {
             </p>
           </div>
 
-          {/* To-Do List */}
+          {/* To-Do List - exact same styling as Overview */}
           <div className="order-1 md:order-2">
             <div className="p-6 rounded-3xl bg-gradient-to-br from-[hsl(30,70%,96%)] to-[hsl(25,60%,92%)]">
               <div className="flex items-start justify-between mb-1">
