@@ -91,32 +91,17 @@ export default function Landing() {
             Replace scattered spreadsheets, random apps, and messy notes with one beautiful solution.
           </p>
           
-          <div className="flex flex-wrap items-center justify-center gap-6 mb-8">
-            <div className="flex items-center gap-3 px-4 py-3 bg-secondary/50 rounded-2xl">
-              <div className="w-8 h-8 rounded-lg bg-card flex items-center justify-center">
-                <Brain className="w-4 h-4 text-muted-foreground" />
-              </div>
-              <span className="text-sm text-muted-foreground">AI Tools</span>
-            </div>
-            
-            <div className="flex items-center gap-3 px-4 py-3 bg-secondary/50 rounded-2xl">
-              <div className="w-8 h-8 rounded-lg bg-card flex items-center justify-center">
-                <svg className="w-4 h-4 text-muted-foreground" viewBox="0 0 24 24" fill="currentColor">
-                  <rect x="3" y="3" width="18" height="18" rx="2" stroke="currentColor" strokeWidth="2" fill="none"/>
-                  <line x1="3" y1="9" x2="21" y2="9" stroke="currentColor" strokeWidth="2"/>
-                  <line x1="9" y1="21" x2="9" y2="9" stroke="currentColor" strokeWidth="2"/>
-                </svg>
-              </div>
-              <span className="text-sm text-muted-foreground">Excel</span>
-            </div>
-            
-            <div className="flex items-center justify-center w-12 h-12 rounded-full bg-secondary text-muted-foreground font-bold text-lg">
-              →
-            </div>
-            
-            <GlassCard className="px-5 py-3 flex items-center gap-2" glow>
-              <img src="/neyler-logo.png" alt="Neyler" className="h-6" />
-            </GlassCard>
+          <div className="flex items-center justify-center gap-4 md:gap-8">
+            <img 
+              src="/images/apps-arrows.png" 
+              alt="Apps flowing into Neyler" 
+              className="h-48 md:h-64 object-contain"
+            />
+            <img 
+              src="/images/neyler-logo-full.png" 
+              alt="Neyler" 
+              className="h-12 md:h-16 object-contain"
+            />
           </div>
         </div>
       </section>
