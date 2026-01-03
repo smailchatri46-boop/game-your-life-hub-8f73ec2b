@@ -81,9 +81,16 @@ export function AIBuddyShowcase() {
 
             {/* Suggested Questions - Auto-scrolling with fade */}
             <div className="relative px-0 pb-4">
-              {/* Fade edges - warmer cream/orange to match card background */}
-              <div className="absolute left-0 top-0 bottom-4 w-20 z-10 pointer-events-none" style={{ background: 'linear-gradient(to right, hsl(30 60% 94%), hsl(30 40% 95% / 0.5), transparent)' }} />
-              <div className="absolute right-0 top-0 bottom-4 w-20 z-10 pointer-events-none" style={{ background: 'linear-gradient(to left, hsl(30 60% 94%), hsl(30 40% 95% / 0.5), transparent)' }} />
+              {/* LEFT FADE - matches the peach/cream color on left side of card */}
+              <div 
+                className="absolute left-0 top-0 bottom-4 w-24 z-10 pointer-events-none" 
+                style={{ background: 'linear-gradient(to right, hsl(32 55% 93%) 0%, transparent 100%)' }} 
+              />
+              {/* RIGHT FADE - matches the near-white color on right side of card */}
+              <div 
+                className="absolute right-0 top-0 bottom-4 w-24 z-10 pointer-events-none" 
+                style={{ background: 'linear-gradient(to left, hsl(40 30% 97%) 0%, transparent 100%)' }} 
+              />
               
               <div 
                 ref={scrollRef}
