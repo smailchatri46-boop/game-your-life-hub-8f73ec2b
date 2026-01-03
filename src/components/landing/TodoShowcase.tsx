@@ -4,7 +4,6 @@ import { Plus, Check } from "lucide-react";
 const demoTodos = [
   { id: "1", text: "Review quarterly goals", completed: true, emoji: "📋" },
   { id: "2", text: "Call mom", completed: false, emoji: "📞" },
-  { id: "3", text: "Buy groceries", completed: false, emoji: "🛒" },
   { id: "4", text: "Prepare presentation", completed: true, emoji: "💼" },
 ];
 
@@ -12,14 +11,14 @@ export function TodoShowcase() {
   return (
     <section className="py-8 px-4">
       <div className="max-w-5xl mx-auto">
-        <div className="grid md:grid-cols-2 gap-8 items-start">
+        <div className="grid md:grid-cols-2 gap-12 items-start">
           {/* Text Content - Aligned to top */}
           <div className="order-2 md:order-1">
             <h2 className="font-display text-3xl md:text-4xl font-semibold mb-4">
               Everything in <span className="gradient-text italic">one app</span>, no need for multiple tools
             </h2>
             <p className="text-muted-foreground text-lg">
-              No need for multiple tools. Add your one-time tasks and manage everything in one beautiful interface.
+              No need for multiple tools. Add your one-time tasks and manage everything in a beautiful clean style.
             </p>
           </div>
 
