@@ -5,9 +5,9 @@ import { GlassCard } from "@/components/GlassCard";
 import { AppleEmoji } from "@/components/AppleEmoji";
 import { Link } from "react-router-dom";
 import { YouTubeEmbed } from "@/components/YouTubeEmbed";
+import { Plus, Check } from "lucide-react";
 import googleLogo from "@/assets/google-logo.png";
 import { AnalyticsCarousel } from "@/components/landing/AnalyticsCarousel";
-import { TodoShowcase } from "@/components/landing/TodoShowcase";
 import { HabitsShowcase } from "@/components/landing/HabitsShowcase";
 import { AIBuddyShowcase } from "@/components/landing/AIBuddyShowcase";
 import { GoalsShowcase } from "@/components/landing/GoalsShowcase";
@@ -100,33 +100,73 @@ export default function Landing() {
       <AIBuddyShowcase />
       <GoalsShowcase />
       
-      {/* Value Proposition */}
+      {/* Value Proposition - Combined section */}
       <section className="py-10 px-4">
-        <div className="max-w-4xl mx-auto text-center">
-          <h2 className="font-display text-3xl md:text-4xl font-semibold mb-4">
+        <div className="max-w-5xl mx-auto text-center">
+          {/* Single Title */}
+          <h2 className="font-display text-3xl md:text-4xl font-semibold mb-8">
             Your all in <span className="italic gradient-text">one tracker</span>
           </h2>
-          <p className="text-muted-foreground mb-8 max-w-xl mx-auto">
-            Replace scattered spreadsheets, random apps, and messy notes with one beautiful solution.
-          </p>
           
-          <div className="flex items-center justify-center gap-4 md:gap-8">
-            <img 
-              src="/images/apps-arrows.png" 
-              alt="Apps flowing into Neyler" 
-              className="h-48 md:h-64 object-contain"
-            />
-            <img 
-              src="/images/neyler-logo-full.png" 
-              alt="Neyler" 
-              className="h-12 md:h-16 object-contain"
-            />
+          {/* Image + To-Do Card side by side */}
+          <div className="flex flex-col md:flex-row items-center justify-center gap-6 md:gap-10 mb-8">
+            {/* Apps image - shifted slightly left */}
+            <div className="flex items-center gap-4 md:gap-8 flex-shrink-0">
+              <img 
+                src="/images/apps-arrows.png" 
+                alt="Apps flowing into Neyler" 
+                className="h-48 md:h-64 object-contain"
+              />
+              <img 
+                src="/images/neyler-logo-full.png" 
+                alt="Neyler" 
+                className="h-12 md:h-16 object-contain"
+              />
+            </div>
+            
+            {/* To-Do List Card - exact same card */}
+            <div className="w-full max-w-sm flex-shrink-0">
+              <div className="p-6 rounded-3xl bg-gradient-to-br from-[hsl(30,70%,96%)] to-[hsl(25,60%,92%)]">
+                <div className="flex items-start justify-between mb-1">
+                  <div>
+                    <h3 className="font-display text-xl font-semibold text-foreground">To-Do List</h3>
+                    <p className="text-sm text-muted-foreground">
+                      1 décembre 2025
+                    </p>
+                  </div>
+                  <AppleEmoji emoji="😌" size="2xl" />
+                </div>
+                
+                <div className="space-y-2 mt-4">
+                  {/* Call mom task - completed */}
+                  <div className="flex items-center gap-3 p-3 rounded-2xl bg-white/80 shadow-sm">
+                    <AppleEmoji emoji="💬" size="lg" />
+                    <span className="text-sm flex-1 text-muted-foreground line-through text-left">
+                      Call mom
+                    </span>
+                    <button className="w-6 h-6 rounded-full border-2 flex items-center justify-center bg-[hsl(25,60%,70%)] border-[hsl(25,60%,70%)]">
+                      <Check className="w-4 h-4 text-white" />
+                    </button>
+                  </div>
+
+                  {/* Add task button */}
+                  <button
+                    className="w-full flex items-center justify-center gap-2 p-3 rounded-2xl bg-white/50 hover:bg-white/70 transition-colors text-muted-foreground border-2 border-dashed border-muted-foreground/20"
+                  >
+                    <Plus className="w-4 h-4" />
+                    <span className="text-sm">Add task</span>
+                  </button>
+                </div>
+              </div>
+            </div>
           </div>
+          
+          {/* Single description paragraph */}
+          <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
+            Replace scattered spreadsheets, multiple AI apps, and messy notes with one beautiful solution.
+          </p>
         </div>
       </section>
-
-      {/* TodoShowcase moved here - between apps image and features grid */}
-      <TodoShowcase />
       
       {/* Features Grid */}
       <section className="py-10 px-4">
