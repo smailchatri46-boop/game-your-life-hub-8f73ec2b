@@ -18,7 +18,6 @@ const reviews: Review[] = [
     name: "Sara K.",
     avatar: "🧘",
     avatarBg: "bg-rose-100",
-    avatarImage: "/images/user-1.png",
     stars: 5,
     meta: "Using Neyler for 6 months"
   },
@@ -28,7 +27,7 @@ const reviews: Review[] = [
     name: "Marcus L.",
     avatar: "💻",
     avatarBg: "bg-blue-100",
-    avatarImage: "/images/user-2.png",
+    avatarImage: "/images/user-1.png",
     stars: 5,
     meta: "Verified user"
   },
@@ -37,7 +36,6 @@ const reviews: Review[] = [
     name: "Elena R.",
     avatar: "🎨",
     avatarBg: "bg-purple-100",
-    avatarImage: "/images/user-3.png",
     stars: 5,
     meta: "Designer"
   },
@@ -46,7 +44,6 @@ const reviews: Review[] = [
     name: "Jamie T.",
     avatar: "🌿",
     avatarBg: "bg-green-100",
-    avatarImage: "/images/user-4.png",
     stars: 4,
     meta: "Using Neyler for 2 months"
   },
@@ -55,7 +52,6 @@ const reviews: Review[] = [
     name: "Alex M.",
     avatar: "📚",
     avatarBg: "bg-amber-100",
-    avatarImage: "/images/user-5.png",
     stars: 5,
     meta: "Student"
   },
@@ -73,6 +69,7 @@ const reviews: Review[] = [
     name: "Noah B.",
     avatar: "✍️",
     avatarBg: "bg-indigo-100",
+    avatarImage: "/images/user-2.png",
     stars: 5,
     meta: "Writer"
   },
@@ -90,6 +87,7 @@ const reviews: Review[] = [
     name: "David H.",
     avatar: "🧠",
     avatarBg: "bg-teal-100",
+    avatarImage: "/images/user-3.png",
     stars: 4,
     meta: "Entrepreneur"
   },
@@ -106,6 +104,7 @@ const reviews: Review[] = [
     name: "Lucas F.",
     avatar: "🎓",
     avatarBg: "bg-sky-100",
+    avatarImage: "/images/user-4.png",
     stars: 5,
     meta: "Student"
   },
@@ -157,6 +156,7 @@ const reviews: Review[] = [
     name: "Omar A.",
     avatar: "💬",
     avatarBg: "bg-blue-100",
+    avatarImage: "/images/user-5.png",
     stars: 5,
     meta: "Verified user"
   },
