@@ -1,6 +1,7 @@
 import { useEffect, useRef } from "react";
 import { TrendingUp, Calendar, Target, Heart, BarChart3 } from "lucide-react";
 import { AppleEmoji } from "@/components/AppleEmoji";
+import { ScrollReveal } from "@/components/ScrollReveal";
 
 // Reusing exact StatCard design from the app
 function StatCardPreview({ 
@@ -199,12 +200,16 @@ export function AnalyticsCarousel() {
   return (
     <section className="pt-6 pb-10 px-4 overflow-hidden">
       <div className="max-w-4xl mx-auto text-center mb-10">
-        <h2 className="font-display text-3xl md:text-4xl font-semibold mb-4">
-          Get Deep <span className="gradient-text italic">Insights</span> About Your Life
-        </h2>
-        <p className="text-muted-foreground max-w-xl mx-auto">
-          Understand your progress and patterns with beautiful analytics that show you the full picture.
-        </p>
+        <ScrollReveal animation="fade-up">
+          <h2 className="font-display text-3xl md:text-4xl font-semibold mb-4">
+            Get Deep <span className="gradient-text italic">Insights</span> About Your Life
+          </h2>
+        </ScrollReveal>
+        <ScrollReveal animation="fade-up" delay={100}>
+          <p className="text-muted-foreground max-w-xl mx-auto">
+            Understand your progress and patterns with beautiful analytics that show you the full picture.
+          </p>
+        </ScrollReveal>
       </div>
 
       <div className="relative" style={{ background: 'transparent' }}>
