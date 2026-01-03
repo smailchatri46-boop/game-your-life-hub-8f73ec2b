@@ -35,12 +35,14 @@ export function YouTubeEmbed({ videoId, thumbnail, className = "" }: YouTubeEmbe
       onClick={handlePlay}
     >
       <img 
-        src={`https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`}
+        src={thumbnail || `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`}
         alt="Video thumbnail"
         className="w-full h-full object-cover rounded-t-xl"
         onError={(e) => {
-          // Fallback to hqdefault if maxresdefault doesn't exist
-          (e.target as HTMLImageElement).src = `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`;
+          // Fallback to hqdefault if maxresdefault doesn't exist (only for YouTube thumbnails)
+          if (!thumbnail) {
+            (e.target as HTMLImageElement).src = `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`;
+          }
         }}
       />
       <div className="absolute inset-0 bg-foreground/0 group-hover:bg-foreground/10 transition-colors flex items-center justify-center rounded-t-xl">

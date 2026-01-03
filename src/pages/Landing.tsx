@@ -3,7 +3,8 @@ import { Button } from "@/components/ui/button";
 import { GlassCard } from "@/components/GlassCard";
 import { AppleEmoji } from "@/components/AppleEmoji";
 import { Link } from "react-router-dom";
-import { Check, Sparkles, TrendingUp, BookOpen, Brain } from "lucide-react";
+import { Check, Sparkles, TrendingUp, BookOpen } from "lucide-react";
+import { YouTubeEmbed } from "@/components/YouTubeEmbed";
 import { AnalyticsCarousel } from "@/components/landing/AnalyticsCarousel";
 import { TodoShowcase } from "@/components/landing/TodoShowcase";
 import { HabitsShowcase } from "@/components/landing/HabitsShowcase";
@@ -60,14 +61,11 @@ export default function Landing() {
 
             {/* Right Column - Video/Demo */}
             <div className="order-1 lg:order-2 animate-fade-in delay-100">
-              <GlassCard className="aspect-video flex items-center justify-center overflow-hidden" glow>
-                <div className="text-center text-muted-foreground">
-                  <div className="w-16 h-16 mx-auto mb-3 rounded-2xl bg-secondary flex items-center justify-center">
-                    <Sparkles className="w-8 h-8 text-primary" />
-                  </div>
-                  <p className="text-base font-medium">App Demo</p>
-                  <p className="text-sm">Interactive preview coming soon</p>
-                </div>
+              <GlassCard className="overflow-hidden" glow>
+                <YouTubeEmbed 
+                  videoId="pRht0GSYOh8" 
+                  thumbnail="/images/app-demo-thumbnail.png"
+                />
               </GlassCard>
             </div>
           </div>
