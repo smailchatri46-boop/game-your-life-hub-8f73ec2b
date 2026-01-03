@@ -1,5 +1,5 @@
 import { AppleEmoji } from "@/components/AppleEmoji";
-import { Plus } from "lucide-react";
+import { Plus, Check } from "lucide-react";
 
 export function TodoShowcase() {
   return (
@@ -16,7 +16,7 @@ export function TodoShowcase() {
             </p>
           </div>
 
-          {/* To-Do List - only Add task button */}
+          {/* To-Do List */}
           <div className="order-1 md:order-2">
             <div className="p-6 rounded-3xl bg-gradient-to-br from-[hsl(30,70%,96%)] to-[hsl(25,60%,92%)]">
               <div className="flex items-start justify-between mb-1">
@@ -30,7 +30,18 @@ export function TodoShowcase() {
               </div>
               
               <div className="space-y-2 mt-4">
-                {/* Add task button only */}
+                {/* Call mom task - completed */}
+                <div className="flex items-center gap-3 p-3 rounded-2xl bg-white/80 shadow-sm">
+                  <AppleEmoji emoji="❤️" size="lg" />
+                  <span className="text-sm flex-1 text-muted-foreground line-through">
+                    Call mom
+                  </span>
+                  <button className="w-6 h-6 rounded-full border-2 flex items-center justify-center bg-[hsl(25,60%,70%)] border-[hsl(25,60%,70%)]">
+                    <Check className="w-4 h-4 text-white" />
+                  </button>
+                </div>
+
+                {/* Add task button */}
                 <button
                   className="w-full flex items-center justify-center gap-2 p-3 rounded-2xl bg-white/50 hover:bg-white/70 transition-colors text-muted-foreground border-2 border-dashed border-muted-foreground/20"
                 >
