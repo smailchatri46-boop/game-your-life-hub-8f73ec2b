@@ -20,12 +20,11 @@ export function AIBuddyShowcase() {
     if (!scrollContainer) return;
 
     let scrollPosition = 0;
-    const scrollSpeed = 0.5;
+    const scrollSpeed = 0.3;
 
     const animate = () => {
       scrollPosition += scrollSpeed;
       
-      // Reset when we've scrolled half (since content is duplicated)
       if (scrollPosition >= scrollContainer.scrollWidth / 2) {
         scrollPosition = 0;
       }
@@ -36,8 +35,6 @@ export function AIBuddyShowcase() {
 
     animationRef.current = requestAnimationFrame(animate);
 
-    // Don't pause on hover - continue scrolling
-
     return () => {
       if (animationRef.current) {
         cancelAnimationFrame(animationRef.current);
@@ -45,118 +42,98 @@ export function AIBuddyShowcase() {
     };
   }, []);
 
-  // Duplicate questions for seamless loop
   const duplicatedQuestions = [...suggestedQuestions, ...suggestedQuestions];
 
   return (
     <section className="py-12 px-4">
-      <div className="max-w-6xl mx-auto">
-        <div className="grid md:grid-cols-2 gap-8 items-start">
-          {/* AI Buddy Chat - Wider and Taller */}
-          <div>
-            <div 
-              className="w-full bg-card/40 backdrop-blur-xl rounded-3xl shadow-soft overflow-hidden flex flex-col relative border border-border/10" 
-              style={{ height: "460px", maxWidth: "100%" }}
-            >
-              {/* Chat Header - Simplified */}
-              <div className="flex items-center px-6 py-4 border-b border-border/10">
-                <div>
-                  <h3 className="font-display text-lg font-semibold text-foreground">AI Buddy</h3>
-                  <p className="text-xs text-muted-foreground">Your supportive motivation buddy</p>
-                </div>
-              </div>
+      <div className="max-w-4xl mx-auto">
+        {/* Title above the chat box */}
+        <h2 className="font-display text-3xl md:text-4xl font-semibold mb-8 text-center">
+          Your AI That <span className="gradient-text italic">Understands</span> Your Goals & Habits
+        </h2>
 
-              {/* Messages Area - Welcome state with GlowOrb */}
-              <div className="flex-1 overflow-y-auto px-6 py-6">
-                <div className="h-full flex flex-col items-center justify-center text-center px-4">
-                  {/* Animated Glow Orb - Smaller */}
-                  <div className="relative flex items-center justify-center mb-4">
-                    <div className="relative w-20 h-20 md:w-24 md:h-24 rounded-full overflow-hidden flex-shrink-0">
-                      <GlowOrb />
-                    </div>
+        {/* Centered Chat Box */}
+        <div className="flex justify-center">
+          <div 
+            className="w-full max-w-lg bg-card/40 backdrop-blur-xl rounded-3xl shadow-soft overflow-hidden flex flex-col relative border border-border/10" 
+            style={{ height: "420px" }}
+          >
+            {/* Messages Area - Welcome state with GlowOrb */}
+            <div className="flex-1 overflow-y-auto px-6 py-6">
+              <div className="h-full flex flex-col items-center justify-center text-center px-4">
+                {/* Animated Glow Orb */}
+                <div className="relative flex items-center justify-center mb-4">
+                  <div className="relative w-20 h-20 md:w-24 md:h-24 rounded-full overflow-hidden flex-shrink-0">
+                    <GlowOrb />
                   </div>
-                  
-                  <h2 className="font-display text-lg font-medium text-foreground mb-2">
-                    Start a conversation
-                  </h2>
-                  <p className="text-muted-foreground text-xs max-w-xs leading-relaxed">
-                    I'm your wellness buddy <AppleEmoji emoji="🙂" size="sm" className="inline align-middle mx-0.5" /> I turn your habits into insights to help you reach your goals.
-                  </p>
                 </div>
-              </div>
-
-              {/* Suggested Questions - Auto-scrolling with fade */}
-              <div className="relative px-0 pb-3">
-                {/* Fade edges */}
-                <div className="absolute left-0 top-0 bottom-3 w-12 bg-gradient-to-r from-card/40 to-transparent z-10 pointer-events-none" />
-                <div className="absolute right-0 top-0 bottom-3 w-12 bg-gradient-to-l from-card/40 to-transparent z-10 pointer-events-none" />
                 
-                <div 
-                  ref={scrollRef}
-                  className="flex gap-3 overflow-x-auto scrollbar-hide px-6"
-                  style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
-                >
-                {duplicatedQuestions.map((q, index) => (
-                    <button
-                      key={index}
-                      className="flex-shrink-0 flex items-center gap-2 px-3 py-2 rounded-full bg-secondary/60 hover:bg-secondary/80 transition-colors text-xs text-foreground whitespace-nowrap"
-                    >
-                      <span>{q.text}</span>
-                      <AppleEmoji emoji={q.emoji} size="sm" />
-                    </button>
-                  ))}
-                </div>
-              </div>
+                <h3 className="font-display text-lg font-medium text-foreground mb-2">
+                  Meet AI Buddy
+                </h3>
+                <p className="text-muted-foreground text-xs max-w-xs leading-relaxed mb-6">
+                  Your supportive motivation buddy that turns your habits into insights.
+                </p>
 
-              {/* Input Area */}
-              <div className="p-5 pt-2">
-                <div 
-                  className="flex items-center gap-3 rounded-full px-5 py-3.5 transition-all border border-orange-100/60" 
-                  style={{ background: 'hsl(35 30% 97%)' }}
-                >
-                  <input
-                    type="text"
-                    placeholder="Message AI Buddy..."
-                    className="flex-1 bg-transparent border-0 focus:outline-none text-sm text-foreground placeholder:text-muted-foreground"
-                    disabled
-                  />
-                  <button
-                    className="w-10 h-10 min-w-[2.5rem] min-h-[2.5rem] rounded-full text-primary-foreground flex-shrink-0 shadow-[0_2px_8px_hsl(var(--primary)/0.3)] flex items-center justify-center p-0"
-                    style={{ background: 'linear-gradient(135deg, hsl(38 100% 70%) 0%, hsl(24 95% 53%) 100%)' }}
-                  >
-                    <ArrowUp className="w-5 h-5 stroke-[2.5]" />
-                  </button>
+                {/* Features in one horizontal line */}
+                <div className="flex flex-wrap items-center justify-center gap-3">
+                  <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-secondary/60">
+                    <AppleEmoji emoji="📊" size="sm" />
+                    <span className="text-xs text-foreground">Analyzes patterns</span>
+                  </div>
+                  <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-secondary/60">
+                    <AppleEmoji emoji="💡" size="sm" />
+                    <span className="text-xs text-foreground">Personal tips</span>
+                  </div>
+                  <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-secondary/60">
+                    <AppleEmoji emoji="🎯" size="sm" />
+                    <span className="text-xs text-foreground">Keeps you motivated</span>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
 
-          {/* Text Content - Aligned to top */}
-          <div>
-            <h2 className="font-display text-3xl md:text-4xl font-semibold mb-4">
-              Your Personal <span className="gradient-text italic">Wellness Coach</span>
-            </h2>
-            <p className="text-muted-foreground text-lg mb-6">
-              Meet AI Buddy - your supportive motivation buddy that turns your habits into insights to help you reach your goals.
-            </p>
-            <div className="space-y-3">
-              <div className="flex items-center gap-3">
-                <div className="w-8 h-8 rounded-lg bg-secondary flex items-center justify-center">
-                  <AppleEmoji emoji="📊" size="sm" />
-                </div>
-                <span className="text-sm text-foreground">Analyzes your habit patterns</span>
+            {/* Suggested Questions - Auto-scrolling with fade */}
+            <div className="relative px-0 pb-3">
+              {/* Fade edges */}
+              <div className="absolute left-0 top-0 bottom-3 w-16 bg-gradient-to-r from-card/90 to-transparent z-10 pointer-events-none" />
+              <div className="absolute right-0 top-0 bottom-3 w-16 bg-gradient-to-l from-card/90 to-transparent z-10 pointer-events-none" />
+              
+              <div 
+                ref={scrollRef}
+                className="flex gap-3 overflow-x-auto scrollbar-hide px-6"
+                style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+              >
+                {duplicatedQuestions.map((q, index) => (
+                  <button
+                    key={index}
+                    className="flex-shrink-0 flex items-center gap-2 px-3 py-2 rounded-full bg-secondary/60 hover:bg-secondary/80 transition-colors text-xs text-foreground whitespace-nowrap"
+                  >
+                    <span>{q.text}</span>
+                    <AppleEmoji emoji={q.emoji} size="sm" />
+                  </button>
+                ))}
               </div>
-              <div className="flex items-center gap-3">
-                <div className="w-8 h-8 rounded-lg bg-secondary flex items-center justify-center">
-                  <AppleEmoji emoji="💡" size="sm" />
-                </div>
-                <span className="text-sm text-foreground">Provides personalized tips</span>
-              </div>
-              <div className="flex items-center gap-3">
-                <div className="w-8 h-8 rounded-lg bg-secondary flex items-center justify-center">
-                  <AppleEmoji emoji="🎯" size="sm" />
-                </div>
-                <span className="text-sm text-foreground">Helps you stay motivated</span>
+            </div>
+
+            {/* Input Area */}
+            <div className="p-5 pt-2">
+              <div 
+                className="flex items-center gap-3 rounded-full px-5 py-3.5 transition-all border border-orange-100/60" 
+                style={{ background: 'hsl(35 30% 97%)' }}
+              >
+                <input
+                  type="text"
+                  placeholder="Message AI Buddy..."
+                  className="flex-1 bg-transparent border-0 focus:outline-none text-sm text-foreground placeholder:text-muted-foreground"
+                  disabled
+                />
+                <button
+                  className="w-10 h-10 min-w-[2.5rem] min-h-[2.5rem] rounded-full text-primary-foreground flex-shrink-0 shadow-[0_2px_8px_hsl(var(--primary)/0.3)] flex items-center justify-center p-0"
+                  style={{ background: 'linear-gradient(135deg, hsl(38 100% 70%) 0%, hsl(24 95% 53%) 100%)' }}
+                >
+                  <ArrowUp className="w-5 h-5 stroke-[2.5]" />
+                </button>
               </div>
             </div>
           </div>
