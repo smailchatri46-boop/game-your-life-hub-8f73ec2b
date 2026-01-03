@@ -39,8 +39,8 @@ export default function Landing() {
       
       {/* Hero Section */}
       <section className="pt-32 pb-16 px-4">
-        <div className="max-w-6xl mx-auto">
-          <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-start">
+        <div className="max-w-7xl mx-auto">
+          <div className="grid lg:grid-cols-[5fr_7fr] gap-8 lg:gap-8 items-start">
             {/* Left Column - Title, Description, CTA */}
             <div className="order-2 lg:order-1 flex flex-col">
               <h1 className="font-display text-4xl md:text-5xl lg:text-6xl font-semibold mb-5 animate-fade-in text-center lg:text-left">
@@ -83,7 +83,7 @@ export default function Landing() {
 
             {/* Right Column - Video/Demo */}
             <div className="order-1 lg:order-2 animate-fade-in delay-100">
-              <div className="overflow-hidden rounded-3xl lg:h-[420px]" style={{ background: 'transparent' }}>
+              <div className="overflow-hidden rounded-3xl lg:h-[380px]" style={{ background: 'transparent' }}>
                 <YouTubeEmbed 
                   videoId="pRht0GSYOh8" 
                   thumbnail="/images/app-demo-thumbnail.png"
