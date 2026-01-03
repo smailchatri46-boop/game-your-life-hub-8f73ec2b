@@ -43,7 +43,7 @@ export default function Landing() {
           <div className="grid lg:grid-cols-[5fr_7fr] gap-8 lg:gap-8 items-start">
             {/* Left Column - Title, Description, CTA */}
             <div className="order-2 lg:order-1 flex flex-col">
-              <h1 className="font-display text-4xl md:text-5xl lg:text-6xl font-semibold mb-5 animate-fade-in text-center lg:text-left">
+              <h1 className="font-body text-4xl md:text-5xl lg:text-6xl font-semibold mb-5 animate-fade-in text-center lg:text-left">
                 <span className="italic gradient-text">Turn your life</span>
                 <br />
                 <span className="text-foreground">into a Game</span>
@@ -105,8 +105,8 @@ export default function Landing() {
       <section className="py-10 px-4">
         <div className="max-w-5xl mx-auto text-center">
           {/* Single Title */}
-          <h2 className="font-display text-3xl md:text-4xl font-semibold mb-8">
-            Your all in <span className="italic gradient-text">one tracker</span>
+          <h2 className="font-body text-3xl md:text-4xl font-semibold mb-8">
+            Your all in <span className="gradient-text">one tracker</span>
           </h2>
           
           {/* Image + To-Do Card side by side */}
@@ -130,7 +130,7 @@ export default function Landing() {
               <div className="p-6 rounded-3xl bg-gradient-to-br from-[hsl(30,70%,96%)] to-[hsl(25,60%,92%)]">
                 <div className="flex items-start justify-between mb-1">
                   <div>
-                    <h3 className="font-display text-xl font-semibold text-foreground">To-Do List</h3>
+                    <h3 className="font-body text-xl font-semibold text-foreground">To-Do List</h3>
                     <p className="text-sm text-muted-foreground">
                       1 décembre 2025
                     </p>
@@ -172,8 +172,8 @@ export default function Landing() {
       {/* Features Grid */}
       <section className="py-10 px-4">
         <div className="max-w-5xl mx-auto">
-          <h2 className="font-display text-3xl md:text-4xl font-semibold text-center mb-12">
-            Everything you need to <span className="gradient-text italic">succeed</span>
+          <h2 className="font-body text-3xl md:text-4xl font-semibold text-center mb-12">
+            Everything you need to <span className="gradient-text">succeed</span>
           </h2>
           
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -181,7 +181,7 @@ export default function Landing() {
               <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-accent/30 to-primary/30 flex items-center justify-center mb-4">
                 <AppleEmoji emoji="🎯" size="2xl" />
               </div>
-              <h3 className="font-display text-xl font-semibold mb-2">Habits <span className="font-body">&</span> Tasks Tracking</h3>
+              <h3 className="font-body text-xl font-semibold mb-2">Habits & Tasks Tracking</h3>
               <p className="text-muted-foreground text-sm">
                 Track your daily habits and tasks with a beautiful spreadsheet-style grid. See your progress and link them to your goals.
               </p>
@@ -191,7 +191,7 @@ export default function Landing() {
               <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-accent/30 to-primary/30 flex items-center justify-center mb-4">
                 <AppleEmoji emoji="🎯" size="2xl" />
               </div>
-              <h3 className="font-display text-xl font-semibold mb-2">Set Goals <span className="font-body">&</span> Track Them</h3>
+              <h3 className="font-body text-xl font-semibold mb-2">Set Goals & Track Them</h3>
               <p className="text-muted-foreground text-sm">
                 Create meaningful goals, connect them to your daily habits, and see your progress toward them in a clear visual way.
               </p>
@@ -201,7 +201,7 @@ export default function Landing() {
               <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-accent/30 to-primary/30 flex items-center justify-center mb-4">
                 <AppleEmoji emoji="🤖" size="2xl" />
               </div>
-              <h3 className="font-display text-xl font-semibold mb-2">AI-Powered Deep Analytics</h3>
+              <h3 className="font-body text-xl font-semibold mb-2">AI-Powered Deep Analytics</h3>
               <p className="text-muted-foreground text-sm">
                 AI analyzes all your goals, tasks, and habits to give you personalized structure, actionable insights, and expert guidance to achieve your goals faster.
               </p>
@@ -211,7 +211,7 @@ export default function Landing() {
               <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-accent/30 to-primary/30 flex items-center justify-center mb-4">
                 <AppleEmoji emoji="📊" size="2xl" />
               </div>
-              <h3 className="font-display text-xl font-semibold mb-2">Analytics</h3>
+              <h3 className="font-body text-xl font-semibold mb-2">Analytics</h3>
               <p className="text-muted-foreground text-sm">
                 Beautiful charts and insights to understand your patterns and growth.
               </p>
@@ -221,7 +221,7 @@ export default function Landing() {
               <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-accent/30 to-primary/30 flex items-center justify-center mb-4">
                 <AppleEmoji emoji="📝" size="2xl" />
               </div>
-              <h3 className="font-display text-xl font-semibold mb-2">Add One-Time Tasks Too</h3>
+              <h3 className="font-body text-xl font-semibold mb-2">Add One-Time Tasks Too</h3>
               <p className="text-muted-foreground text-sm">
                 Add to-do lists and one-time tasks, so you don't need any other app to track what you do throughout your day and your life.
               </p>
@@ -231,7 +231,7 @@ export default function Landing() {
               <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-accent/30 to-primary/30 flex items-center justify-center mb-4">
                 <AppleEmoji emoji="💬" size="2xl" />
               </div>
-              <h3 className="font-display text-xl font-semibold mb-2">AI Buddy</h3>
+              <h3 className="font-body text-xl font-semibold mb-2">AI Buddy</h3>
               <p className="text-muted-foreground text-sm">
                 Your personal AI companion that understands your habits and provides personalized motivation and insights.
               </p>
@@ -244,7 +244,7 @@ export default function Landing() {
       <section className="py-10 px-4">
         <div className="max-w-2xl mx-auto text-center">
           <GlassCard className="p-10" glow>
-            <h2 className="font-display text-3xl font-semibold mb-4">
+            <h2 className="font-body text-3xl font-semibold mb-4">
               Ready to level up?
             </h2>
             <p className="text-muted-foreground mb-6">

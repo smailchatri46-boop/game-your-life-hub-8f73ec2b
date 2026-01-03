@@ -48,10 +48,10 @@ export function AIBuddyShowcase() {
     <section className="py-8 px-4">
       {/* Title - outside chat box container, full section width */}
       <h2 
-        className="font-display text-2xl md:text-4xl font-semibold mb-10 text-center max-w-4xl mx-auto"
+        className="font-body text-2xl md:text-4xl font-semibold mb-10 text-center max-w-4xl mx-auto"
         style={{ textWrap: 'balance' } as React.CSSProperties}
       >
-        Analyze your progress with the <span className="gradient-text italic">AI Buddy</span>
+        Analyze your progress with the <span className="gradient-text">AI Buddy</span>
       </h2>
 
       {/* Chat box container */}
@@ -72,7 +72,7 @@ export function AIBuddyShowcase() {
                   </div>
                 </div>
                 
-                <h2 className="font-display text-lg font-medium text-foreground mb-2">
+                <h2 className="font-body text-lg font-medium text-foreground mb-2">
                   Start a conversation
                 </h2>
                 <p className="text-muted-foreground text-sm max-w-sm">
