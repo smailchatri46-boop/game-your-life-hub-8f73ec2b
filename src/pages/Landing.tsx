@@ -85,7 +85,7 @@ export default function Landing() {
       <section className="py-20 px-4">
         <div className="max-w-4xl mx-auto text-center">
           <h2 className="font-display text-3xl md:text-4xl font-semibold mb-4">
-            <span className="font-bold">Your</span> all in one tracker
+            Your all in <span className="gradient-text italic">one tracker</span>
           </h2>
           <p className="text-muted-foreground mb-12 max-w-xl mx-auto">
             Replace scattered spreadsheets, random apps, and messy notes with one beautiful solution.
