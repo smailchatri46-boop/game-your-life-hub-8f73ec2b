@@ -130,8 +130,8 @@ export function AIBuddyShowcase() {
           </div>
         </div>
 
-        {/* Description - centered below card, single line */}
-        <p className="text-muted-foreground text-base md:text-lg leading-relaxed whitespace-nowrap">
+        {/* Description - centered below card, 2 lines like Goals section */}
+        <p className="text-muted-foreground text-base md:text-lg leading-relaxed text-center max-w-3xl px-4">
           AI Buddy sees all your goals, tasks, habits, and daily reflections, analyzes them, and helps you see patterns, find weaknesses, and reach your goals faster.
         </p>
       </div>
