@@ -133,8 +133,8 @@ export function GoalsShowcase() {
     <section className="py-14 px-4">
       <div className="max-w-6xl mx-auto flex flex-col items-center text-center">
         {/* Title - centered at top */}
-        <h2 className="font-body text-3xl md:text-4xl font-semibold mb-8">
-          Set Goals and <span className="gradient-text">Track Them</span>
+        <h2 className="font-display text-3xl md:text-4xl font-semibold mb-8">
+          Set Goals and <span className="gradient-text italic">Track Them</span>
         </h2>
 
         {/* Goal Cards - scrolling carousel with transparency mask fade */}

@@ -205,8 +205,8 @@ export function TestimonialsSection() {
   return (
     <section className="py-10 px-4">
       <div className="max-w-6xl mx-auto">
-        <h2 className="font-body text-3xl md:text-4xl font-semibold text-center mb-4">
-          What people are <span className="gradient-text">saying</span>
+        <h2 className="font-display text-3xl md:text-4xl font-semibold text-center mb-4">
+          What people are <span className="gradient-text italic">saying</span>
         </h2>
         <p className="text-muted-foreground text-center mb-12 max-w-xl mx-auto">
           Real feedback from real users building better habits every day.
