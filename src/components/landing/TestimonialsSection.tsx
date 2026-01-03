@@ -37,7 +37,7 @@ const reviews: Review[] = [
     avatar: "🎨",
     avatarBg: "bg-purple-100",
     stars: 5,
-    meta: "Designer"
+    meta: "Using Neyler for 3 months"
   },
   {
     text: "I'm surprised by how calming the design is. Soft colors, rounded cards, it feels nice to use",
@@ -53,7 +53,7 @@ const reviews: Review[] = [
     avatar: "📚",
     avatarBg: "bg-amber-100",
     stars: 5,
-    meta: "Student"
+    meta: "Verified user"
   },
   {
     text: "Analytics helped me notice that weekends are my worst days for consistency",
@@ -62,7 +62,7 @@ const reviews: Review[] = [
     avatar: "🔬",
     avatarBg: "bg-cyan-100",
     stars: 4,
-    meta: "Verified user"
+    meta: "Using Neyler for 1 month"
   },
   {
     text: "I use the journaling feature every night. It's simple and quick and the AI responses sometimes make me think deeper",
@@ -71,7 +71,7 @@ const reviews: Review[] = [
     avatarBg: "bg-indigo-100",
     avatarImage: "/images/user-2.png",
     stars: 5,
-    meta: "Writer"
+    meta: "Verified user"
   },
   {
     text: "Goal tracking feels very natural here. Short term and long term both work well",
@@ -89,7 +89,7 @@ const reviews: Review[] = [
     avatarBg: "bg-teal-100",
     avatarImage: "/images/user-3.png",
     stars: 4,
-    meta: "Entrepreneur"
+    meta: "Using Neyler for 5 months"
   },
   {
     text: "The reminders actually feel friendly instead of stressful",
@@ -106,7 +106,7 @@ const reviews: Review[] = [
     avatarBg: "bg-sky-100",
     avatarImage: "/images/user-4.png",
     stars: 5,
-    meta: "Student"
+    meta: "Using Neyler for 2 months"
   },
   {
     text: "I like seeing my streaks grow. It gives me motivation in a way checklists never did",
@@ -132,7 +132,7 @@ const reviews: Review[] = [
     avatar: "📅",
     avatarBg: "bg-lime-100",
     stars: 5,
-    meta: "Freelancer"
+    meta: "Using Neyler for 1 month"
   },
   {
     text: "This feels like a life tracker more than just a habit app. Tasks, journaling, goals, everything fits together",
@@ -148,7 +148,7 @@ const reviews: Review[] = [
     avatar: "✨",
     avatarBg: "bg-rose-100",
     stars: 5,
-    meta: "Designer"
+    meta: "Verified user"
   },
   {
     text: "AI chat feels supportive. It reacts to my entries like a real coach sometimes",
@@ -158,7 +158,7 @@ const reviews: Review[] = [
     avatarBg: "bg-blue-100",
     avatarImage: "/images/user-5.png",
     stars: 5,
-    meta: "Verified user"
+    meta: "Using Neyler for 4 months"
   },
   {
     text: "The progress charts made me realize how often I underestimate my own consistency",
@@ -175,7 +175,7 @@ const reviews: Review[] = [
     avatar: "🌻",
     avatarBg: "bg-green-100",
     stars: 5,
-    meta: "Student"
+    meta: "Verified user"
   },
   {
     text: "The best part for me is seeing long term progress instead of just checking boxes every day. It feels meaningful",
@@ -183,7 +183,7 @@ const reviews: Review[] = [
     avatar: "🎯",
     avatarBg: "bg-purple-100",
     stars: 5,
-    meta: "Entrepreneur"
+    meta: "Using Neyler for 6 months"
   },
 ];
 
