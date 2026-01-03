@@ -46,7 +46,7 @@ export function AIBuddyShowcase() {
 
   return (
     <section className="py-8 px-4">
-      <div className="max-w-xl mx-auto flex flex-col items-center text-center">
+      <div className="max-w-2xl mx-auto flex flex-col items-center text-center">
         {/* Title - centered at top, single line */}
         <h2 className="font-display text-2xl md:text-4xl font-semibold mb-6 whitespace-nowrap">
           Analyze your progress with the <span className="gradient-text italic">AI Buddy</span>
@@ -130,17 +130,8 @@ export function AIBuddyShowcase() {
           </div>
         </div>
 
-        {/* Description - centered below card, exactly 2 lines */}
-        <p 
-          className="text-muted-foreground text-lg leading-relaxed"
-          style={{
-            maxWidth: '900px',
-            display: '-webkit-box',
-            WebkitLineClamp: 2,
-            WebkitBoxOrient: 'vertical',
-            overflow: 'hidden'
-          }}
-        >
+        {/* Description - centered below card, single line */}
+        <p className="text-muted-foreground text-base md:text-lg leading-relaxed whitespace-nowrap">
           AI Buddy sees all your goals, tasks, habits, and daily reflections, analyzes them, and helps you see patterns, find weaknesses, and reach your goals faster.
         </p>
       </div>
