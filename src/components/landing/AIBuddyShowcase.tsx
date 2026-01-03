@@ -45,7 +45,7 @@ export function AIBuddyShowcase() {
   const duplicatedQuestions = [...suggestedQuestions, ...suggestedQuestions];
 
   return (
-    <section className="py-12 px-4">
+    <section className="py-8 px-4">
       <div className="max-w-xl mx-auto flex flex-col items-center text-center">
         {/* Title - centered at top, single line */}
         <h2 className="font-display text-2xl md:text-4xl font-semibold mb-6 whitespace-nowrap">
@@ -53,10 +53,10 @@ export function AIBuddyShowcase() {
         </h2>
 
         {/* AI Buddy Chat Card - matching dashboard style */}
-        <div className="w-full mb-6">
+        <div className="w-full mb-4">
           <div 
             className="w-full bg-card/40 backdrop-blur-xl rounded-3xl shadow-soft overflow-hidden flex flex-col relative border border-border/10" 
-            style={{ height: "min(600px, 70vh)", maxWidth: "100%" }}
+            style={{ height: "min(520px, 60vh)", maxWidth: "100%" }}
           >
             {/* Messages Area - Welcome state with GlowOrb */}
             <div className="flex-1 overflow-y-auto px-4 md:px-6 py-6">
@@ -130,8 +130,17 @@ export function AIBuddyShowcase() {
           </div>
         </div>
 
-        {/* Description - centered below card */}
-        <p className="text-muted-foreground text-lg leading-relaxed max-w-4xl px-4">
+        {/* Description - centered below card, exactly 2 lines */}
+        <p 
+          className="text-muted-foreground text-lg leading-relaxed"
+          style={{
+            maxWidth: '900px',
+            display: '-webkit-box',
+            WebkitLineClamp: 2,
+            WebkitBoxOrient: 'vertical',
+            overflow: 'hidden'
+          }}
+        >
           AI Buddy sees all your goals, tasks, habits, and daily reflections, analyzes them, and helps you see patterns, find weaknesses, and reach your goals faster.
         </p>
       </div>
