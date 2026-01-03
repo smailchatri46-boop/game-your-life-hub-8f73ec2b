@@ -137,29 +137,19 @@ export function GoalsShowcase() {
           Set Goals and <span className="gradient-text italic">Track Them</span>
         </h2>
 
-        {/* Goal Cards - scrolling carousel with fade */}
-        <div className="w-full mb-8 relative">
-          {/* Left fade - matches warm peachy left side of page background */}
-          <div 
-            className="absolute left-0 top-0 bottom-0 z-10 pointer-events-none"
-            style={{ 
-              width: '20%',
-              background: 'linear-gradient(to right, hsl(38 100% 85% / 0.9) 0%, hsl(38 100% 85% / 0.5) 40%, transparent 100%)'
-            }} 
-          />
-          {/* Right fade - matches near-white right side of page background */}
-          <div 
-            className="absolute right-0 top-0 bottom-0 z-10 pointer-events-none"
-            style={{ 
-              width: '20%',
-              background: 'linear-gradient(to left, hsl(30 100% 99%) 0%, hsl(30 100% 99% / 0.5) 40%, transparent 100%)'
-            }} 
-          />
-          
+        {/* Goal Cards - scrolling carousel with transparency mask fade */}
+        <div className="w-full mb-8">
           <div 
             ref={scrollRef}
             className="flex gap-4 md:gap-6 overflow-x-auto scrollbar-hide py-2"
-            style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+            style={{ 
+              scrollbarWidth: 'none', 
+              msOverflowStyle: 'none',
+              maskImage: 'linear-gradient(to right, transparent 0%, black 12%, black 88%, transparent 100%)',
+              WebkitMaskImage: 'linear-gradient(to right, transparent 0%, black 12%, black 88%, transparent 100%)',
+              maskRepeat: 'no-repeat',
+              maskSize: '100% 100%'
+            }}
           >
             {duplicatedGoals.map((goal, index) => (
               <GlassCard key={index} className="p-5 hover:shadow-large transition-all duration-300 flex-shrink-0 w-[300px] md:w-[320px]">
