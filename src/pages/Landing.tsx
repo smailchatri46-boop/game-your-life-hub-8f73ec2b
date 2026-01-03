@@ -54,8 +54,8 @@ export default function Landing() {
                 Track habits, level up your life, turn your data into insights, and analyze your life with AI using the most beautiful habit tracker you've ever used.
               </p>
 
-              {/* Sign Up Button + Social Proof in same row */}
-              <div ref={signUpButtonRef} className="animate-fade-in delay-200 flex flex-col sm:flex-row items-center gap-4 justify-center lg:justify-start">
+              {/* Sign Up Button */}
+              <div ref={signUpButtonRef} className="animate-fade-in delay-200 flex flex-col items-center lg:items-start gap-4">
                 <Button variant="gradient" size="xl" asChild>
                   <Link to="/signup" className="gap-3">
                     <span className="w-6 h-6 bg-white rounded-full flex items-center justify-center">
@@ -65,16 +65,16 @@ export default function Landing() {
                   </Link>
                 </Button>
                 
-                {/* Social Proof */}
-                <div className="flex items-center gap-2">
+                {/* Social Proof - below button */}
+                <div className="flex items-center gap-3">
                   <div className="flex -space-x-2">
-                    <img src="/images/user-1.png" alt="User" className="w-8 h-8 rounded-full border-2 border-background object-cover" />
-                    <img src="/images/user-2.png" alt="User" className="w-8 h-8 rounded-full border-2 border-background object-cover" />
-                    <img src="/images/user-3.png" alt="User" className="w-8 h-8 rounded-full border-2 border-background object-cover" />
-                    <img src="/images/user-4.png" alt="User" className="w-8 h-8 rounded-full border-2 border-background object-cover" />
-                    <img src="/images/user-5.png" alt="User" className="w-8 h-8 rounded-full border-2 border-background object-cover" />
+                    <img src="/images/user-1.png" alt="User" className="w-9 h-9 rounded-full border-2 border-background object-cover" />
+                    <img src="/images/user-2.png" alt="User" className="w-9 h-9 rounded-full border-2 border-background object-cover" />
+                    <img src="/images/user-3.png" alt="User" className="w-9 h-9 rounded-full border-2 border-background object-cover" />
+                    <img src="/images/user-4.png" alt="User" className="w-9 h-9 rounded-full border-2 border-background object-cover" />
+                    <img src="/images/user-5.png" alt="User" className="w-9 h-9 rounded-full border-2 border-background object-cover" />
                   </div>
-                  <p className="text-xs text-muted-foreground max-w-[180px]">
+                  <p className="text-sm text-muted-foreground">
                     Join over <span className="font-medium text-foreground">50,000+</span> people improving their lives with Neyler
                   </p>
                 </div>
@@ -96,7 +96,6 @@ export default function Landing() {
 
       {/* Feature Showcases */}
       <AnalyticsCarousel />
-      <TodoShowcase />
       <HabitsShowcase />
       <AIBuddyShowcase />
       <GoalsShowcase />
@@ -125,6 +124,9 @@ export default function Landing() {
           </div>
         </div>
       </section>
+
+      {/* TodoShowcase moved here - between apps image and features grid */}
+      <TodoShowcase />
       
       {/* Features Grid */}
       <section className="py-10 px-4">
