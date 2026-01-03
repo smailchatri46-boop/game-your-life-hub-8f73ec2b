@@ -4,15 +4,20 @@ import { Plus, Check } from "lucide-react";
 export function TodoShowcase() {
   return (
     <section className="py-8 px-4">
-      <div className="max-w-4xl mx-auto">
-        {/* Title above the card */}
-        <h2 className="font-display text-3xl md:text-4xl font-semibold mb-8 text-center">
-          Everything in <span className="gradient-text italic">One Place</span>
-        </h2>
+      <div className="max-w-5xl mx-auto">
+        <div className="grid md:grid-cols-2 gap-12 items-start">
+          {/* Text Content - Aligned to top */}
+          <div className="order-2 md:order-1">
+            <h2 className="font-display text-3xl md:text-4xl font-semibold mb-4">
+              Everything in <span className="gradient-text italic">one app</span>, no need for multiple tools
+            </h2>
+            <p className="text-muted-foreground text-lg">
+              No need for multiple tools. Add your one-time tasks and manage everything in a beautiful clean style.
+            </p>
+          </div>
 
-        {/* Centered To-Do List */}
-        <div className="flex justify-center">
-          <div className="w-full max-w-md">
+          {/* To-Do List - exact same styling as Overview */}
+          <div className="order-1 md:order-2">
             <div className="p-6 rounded-3xl bg-gradient-to-br from-[hsl(30,70%,96%)] to-[hsl(25,60%,92%)]">
               <div className="flex items-start justify-between mb-1">
                 <div>
@@ -45,11 +50,6 @@ export function TodoShowcase() {
                 </button>
               </div>
             </div>
-
-            {/* Text underneath the card */}
-            <p className="text-muted-foreground text-center mt-6 text-lg">
-              Add your one-time tasks and manage everything in a beautiful, clean style.
-            </p>
           </div>
         </div>
       </div>
