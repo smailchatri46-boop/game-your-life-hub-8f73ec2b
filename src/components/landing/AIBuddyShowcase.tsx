@@ -20,12 +20,11 @@ export function AIBuddyShowcase() {
     if (!scrollContainer) return;
 
     let scrollPosition = 0;
-    const scrollSpeed = 0.3; // Slower scrolling
+    const scrollSpeed = 0.3;
 
     const animate = () => {
       scrollPosition += scrollSpeed;
       
-      // Reset when we've scrolled half (since content is duplicated)
       if (scrollPosition >= scrollContainer.scrollWidth / 2) {
         scrollPosition = 0;
       }
@@ -43,7 +42,6 @@ export function AIBuddyShowcase() {
     };
   }, []);
 
-  // Duplicate questions for seamless loop
   const duplicatedQuestions = [...suggestedQuestions, ...suggestedQuestions];
 
   return (
@@ -54,47 +52,47 @@ export function AIBuddyShowcase() {
           Analyze your progress with the <span className="gradient-text italic">AI Buddy</span>
         </h2>
 
-        {/* AI Buddy Chat Card - centered in middle, wider */}
+        {/* AI Buddy Chat Card - matching dashboard style */}
         <div className="w-full mb-6">
           <div 
             className="w-full bg-card/40 backdrop-blur-xl rounded-3xl shadow-soft overflow-hidden flex flex-col relative border border-border/10" 
-            style={{ height: "420px", maxWidth: "100%" }}
+            style={{ height: "min(600px, 70vh)", maxWidth: "100%" }}
           >
             {/* Messages Area - Welcome state with GlowOrb */}
-            <div className="flex-1 overflow-hidden px-6 py-10">
-              <div className="h-full flex flex-col items-center justify-center text-center px-6">
-                {/* Animated Glow Orb - Centered */}
-                <div className="relative flex items-center justify-center mb-5">
-                  <div className="relative w-20 h-20 md:w-24 md:h-24 rounded-full overflow-hidden flex-shrink-0">
+            <div className="flex-1 overflow-y-auto px-4 md:px-6 py-6">
+              <div className="h-full flex flex-col items-center justify-center text-center px-4">
+                {/* Animated Glow Orb - perfectly centered */}
+                <div className="relative flex items-center justify-center mb-4">
+                  <div className="relative w-24 h-24 md:w-28 md:h-28 rounded-full overflow-hidden flex-shrink-0">
                     <GlowOrb />
                   </div>
                 </div>
                 
-                <h2 className="font-display text-lg font-medium text-foreground mb-3">
+                <h2 className="font-display text-lg font-medium text-foreground mb-2">
                   Start a conversation
                 </h2>
-                <p className="text-muted-foreground text-sm max-w-sm leading-relaxed">
+                <p className="text-muted-foreground text-sm max-w-sm">
                   I'm your wellness buddy <AppleEmoji emoji="🙂" size="sm" className="inline align-middle mx-0.5" /> I turn your habits into insights to help you reach your goals.
                 </p>
               </div>
             </div>
 
-            {/* Suggested Questions - Auto-scrolling with fade */}
-            <div className="relative px-0 pb-4">
-              {/* LEFT FADE - matches the peach/cream color on left side of card */}
+            {/* Suggested Questions Carousel */}
+            <div className="relative px-0 pb-2">
+              {/* LEFT FADE */}
               <div 
-                className="absolute left-0 top-0 bottom-4 w-24 z-10 pointer-events-none" 
+                className="absolute left-0 top-0 bottom-2 w-24 z-10 pointer-events-none" 
                 style={{ background: 'linear-gradient(to right, hsl(32 55% 93%) 0%, transparent 100%)' }} 
               />
-              {/* RIGHT FADE - matches the near-white color on right side of card */}
+              {/* RIGHT FADE */}
               <div 
-                className="absolute right-0 top-0 bottom-4 w-24 z-10 pointer-events-none" 
+                className="absolute right-0 top-0 bottom-2 w-24 z-10 pointer-events-none" 
                 style={{ background: 'linear-gradient(to left, hsl(40 30% 97%) 0%, transparent 100%)' }} 
               />
               
               <div 
                 ref={scrollRef}
-                className="flex gap-3 overflow-x-auto scrollbar-hide px-6"
+                className="flex gap-3 overflow-x-auto scrollbar-hide px-4"
                 style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
               >
                 {duplicatedQuestions.map((q, index) => (
@@ -109,10 +107,10 @@ export function AIBuddyShowcase() {
               </div>
             </div>
 
-            {/* Input Area */}
-            <div className="p-5 pt-2">
+            {/* Input Area - matching dashboard style */}
+            <div className="p-4 pt-2">
               <div 
-                className="flex items-center gap-3 rounded-full px-5 py-3.5 transition-all border border-orange-100/60" 
+                className="flex items-center gap-3 rounded-full px-5 py-3 transition-all border border-orange-100/60" 
                 style={{ background: 'hsl(35 30% 97%)' }}
               >
                 <input
@@ -132,7 +130,7 @@ export function AIBuddyShowcase() {
           </div>
         </div>
 
-        {/* Description - centered below card, wider to fit 2 lines */}
+        {/* Description - centered below card */}
         <p className="text-muted-foreground text-lg leading-relaxed max-w-4xl px-4">
           AI Buddy sees all your goals, tasks, habits, and daily reflections, analyzes them, and helps you see patterns, find weaknesses, and reach your goals faster.
         </p>
