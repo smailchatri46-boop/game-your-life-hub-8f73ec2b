@@ -4,6 +4,10 @@ import { GlassCard } from "@/components/GlassCard";
 import { AppleEmoji } from "@/components/AppleEmoji";
 import { Link } from "react-router-dom";
 import { Check, Sparkles, TrendingUp, BookOpen, Brain } from "lucide-react";
+import { AnalyticsCarousel } from "@/components/landing/AnalyticsCarousel";
+import { TodoShowcase } from "@/components/landing/TodoShowcase";
+import { HabitsShowcase } from "@/components/landing/HabitsShowcase";
+import { AIBuddyShowcase } from "@/components/landing/AIBuddyShowcase";
 
 export default function Landing() {
   return (
@@ -47,6 +51,12 @@ export default function Landing() {
           </GlassCard>
         </div>
       </section>
+
+      {/* Feature Showcases */}
+      <AnalyticsCarousel />
+      <TodoShowcase />
+      <HabitsShowcase />
+      <AIBuddyShowcase />
       
       {/* Value Proposition */}
       <section className="py-20 px-4">
