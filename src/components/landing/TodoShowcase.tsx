@@ -6,8 +6,8 @@ export function TodoShowcase() {
     <section className="py-8 px-4">
       <div className="max-w-md mx-auto flex flex-col items-center text-center">
         {/* Title - centered at top */}
-        <h2 className="font-display text-3xl md:text-4xl font-semibold mb-6">
-          Everything in <span className="gradient-text italic">one place</span>
+        <h2 className="font-body text-3xl md:text-4xl font-semibold mb-6">
+          Everything in <span className="gradient-text">one place</span>
         </h2>
 
         {/* To-Do List Card - centered in middle */}
@@ -15,7 +15,7 @@ export function TodoShowcase() {
           <div className="p-6 rounded-3xl bg-gradient-to-br from-[hsl(30,70%,96%)] to-[hsl(25,60%,92%)]">
             <div className="flex items-start justify-between mb-1">
               <div>
-                <h3 className="font-display text-xl font-semibold text-foreground">To-Do List</h3>
+                <h3 className="font-body text-xl font-semibold text-foreground">To-Do List</h3>
                 <p className="text-sm text-muted-foreground">
                   1 décembre 2025
                 </p>

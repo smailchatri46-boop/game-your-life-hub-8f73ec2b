@@ -199,8 +199,8 @@ export function AnalyticsCarousel() {
   return (
     <section className="pt-6 pb-10 px-4 overflow-hidden">
       <div className="max-w-4xl mx-auto text-center mb-10">
-        <h2 className="font-display text-3xl md:text-4xl font-semibold mb-4">
-          Get Deep <span className="gradient-text italic">Insights</span> About Your Life
+        <h2 className="font-body text-3xl md:text-4xl font-semibold mb-4">
+          Get Deep <span className="gradient-text">Insights</span> About Your Life
         </h2>
         <p className="text-muted-foreground max-w-xl mx-auto">
           Understand your progress and patterns with beautiful analytics that show you the full picture.
