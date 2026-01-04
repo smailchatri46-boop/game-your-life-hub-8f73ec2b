@@ -19,6 +19,26 @@ interface Tutorial {
   category: string;
 }
 
+interface OverviewVideo {
+  id: string;
+  title: string;
+  description: string;
+  duration: string;
+  videoId: string;
+  category: string;
+  featured?: boolean;
+}
+
+const overviewVideo: OverviewVideo = {
+  id: "overview",
+  title: "Overview of Neyler",
+  description: "A walkthrough of the app showing all the features and how they work together.",
+  duration: "2 min",
+  videoId: "A-o52DwuWSg",
+  category: "Overview",
+  featured: true,
+};
+
 const tutorials: Tutorial[] = [
   {
     id: "1",
@@ -92,11 +112,48 @@ export default function Tutorials() {
         
         {/* Tutorial Grid */}
         <div className="grid md:grid-cols-2 gap-6">
+          {/* Featured Overview Video */}
+          <div 
+            className="md:col-span-2 relative rounded-2xl overflow-hidden animate-fade-in"
+          >
+            {/* Gradient border */}
+            <div 
+              className="absolute inset-0 rounded-2xl -z-10 p-[2px]"
+              style={{
+                background: 'linear-gradient(135deg, hsl(25 95% 60%), hsl(35 100% 65%), hsl(25 95% 55%))',
+              }}
+            >
+              <div className="w-full h-full rounded-2xl bg-card" />
+            </div>
+            
+            <div className="bg-card/95 backdrop-blur-sm rounded-2xl overflow-hidden">
+              <div className="relative">
+                <YouTubeEmbed videoId={overviewVideo.videoId} />
+                <span className="absolute top-3 left-3 px-2 py-1 bg-card/80 backdrop-blur-sm rounded-lg text-xs font-body font-semibold z-20 pointer-events-none">
+                  {overviewVideo.category}
+                </span>
+              </div>
+              <div className="p-5">
+                <h3 className="font-body text-xl font-bold mb-2">
+                  {overviewVideo.title}
+                </h3>
+                <p className="font-body text-sm text-muted-foreground mb-3">
+                  {overviewVideo.description}
+                </p>
+                <div className="flex items-center gap-2 text-xs font-body font-medium text-muted-foreground">
+                  <Clock className="w-3.5 h-3.5" />
+                  <span>{overviewVideo.duration}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Regular Tutorials */}
           {tutorials.map((tutorial, index) => (
             <GlassCard 
               key={tutorial.id} 
               className="overflow-hidden animate-fade-in"
-              style={{ animationDelay: `${index * 100}ms` } as React.CSSProperties}
+              style={{ animationDelay: `${(index + 1) * 100}ms` } as React.CSSProperties}
             >
               <div className="relative">
                 <YouTubeEmbed videoId={tutorial.videoId} />
