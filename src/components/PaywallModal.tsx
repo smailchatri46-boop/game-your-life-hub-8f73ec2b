@@ -115,24 +115,24 @@ export function PaywallModal({ open, onOpenChange, limitType, limitMessage }: Pa
   return (
     <Dialog open={open} onOpenChange={canClose ? onOpenChange : () => {}}>
       <DialogContent 
-        className="sm:max-w-3xl p-0 overflow-hidden bg-gradient-to-br from-[hsl(30,100%,98%)] to-[hsl(25,80%,95%)] border-0 max-h-[90vh] overflow-y-auto" 
+        className="sm:max-w-2xl p-0 overflow-hidden bg-gradient-to-br from-[hsl(30,100%,98%)] to-[hsl(25,80%,95%)] border-0" 
         hideCloseButton={!canClose}
       >
-        <div className="p-6 md:p-8">
+        <div className="p-4 md:p-6">
           {/* Header */}
-          <div className="text-center mb-6">
-            <h2 className="font-display text-2xl md:text-3xl font-bold text-foreground mb-2">
+          <div className="text-center mb-4">
+            <h2 className="font-display text-xl md:text-2xl font-bold text-foreground mb-1">
               Subscribe to unlock more
             </h2>
-            <p className="text-muted-foreground text-sm md:text-base max-w-md mx-auto">
+            <p className="text-muted-foreground text-xs md:text-sm max-w-md mx-auto">
               {limitMessage}
             </p>
 
             {/* Monthly/Yearly Toggle */}
-            <div className="flex items-center justify-center gap-4 mt-5">
+            <div className="flex items-center justify-center gap-3 mt-3">
               <span
                 className={cn(
-                  "text-sm font-medium transition-colors",
+                  "text-xs font-medium transition-colors",
                   !isYearly ? "text-foreground" : "text-muted-foreground"
                 )}
               >
@@ -141,7 +141,7 @@ export function PaywallModal({ open, onOpenChange, limitType, limitMessage }: Pa
               <Switch
                 checked={isYearly}
                 onCheckedChange={setIsYearly}
-                className="data-[state=checked]:bg-transparent [&[data-state=checked]>span]:bg-white"
+                className="data-[state=checked]:bg-transparent [&[data-state=checked]>span]:bg-white scale-90"
                 style={{
                   background: isYearly 
                     ? 'linear-gradient(135deg, hsl(25 95% 60%), hsl(35 100% 65%), hsl(25 95% 55%))'
@@ -150,12 +150,12 @@ export function PaywallModal({ open, onOpenChange, limitType, limitMessage }: Pa
               />
               <span
                 className={cn(
-                  "text-sm font-medium transition-colors",
+                  "text-xs font-medium transition-colors",
                   isYearly ? "text-foreground" : "text-muted-foreground"
                 )}
               >
                 Yearly
-                <span className="ml-1.5 text-xs text-primary font-semibold">
+                <span className="ml-1 text-[10px] text-primary font-semibold">
                   Save more
                 </span>
               </span>
@@ -163,12 +163,12 @@ export function PaywallModal({ open, onOpenChange, limitType, limitMessage }: Pa
           </div>
 
           {/* Pricing Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-5">
+          <div className="grid grid-cols-2 gap-3">
             {plans.map((plan) => (
               <div
                 key={plan.name}
                 className={cn(
-                  "relative rounded-2xl p-5 transition-all duration-300 bg-white/80 backdrop-blur-sm flex flex-col",
+                  "relative rounded-xl p-3 transition-all duration-300 bg-white/80 backdrop-blur-sm flex flex-col",
                   plan.popular
                     ? "shadow-lg"
                     : "hover:shadow-md"
@@ -177,20 +177,20 @@ export function PaywallModal({ open, onOpenChange, limitType, limitMessage }: Pa
                 {/* Gradient border for Pro plan */}
                 {plan.popular && (
                   <div 
-                    className="absolute inset-0 rounded-2xl -z-10 p-[2px]"
+                    className="absolute inset-0 rounded-xl -z-10 p-[2px]"
                     style={{
                       background: 'linear-gradient(135deg, hsl(25 95% 60%), hsl(35 100% 65%), hsl(25 95% 55%))',
                     }}
                   >
-                    <div className="w-full h-full rounded-2xl bg-white" />
+                    <div className="w-full h-full rounded-xl bg-white" />
                   </div>
                 )}
 
                 {/* Most Popular Badge */}
                 {plan.popular && (
-                  <div className="absolute -top-3 left-1/2 -translate-x-1/2">
+                  <div className="absolute -top-2 left-1/2 -translate-x-1/2">
                     <div 
-                      className="flex items-center justify-center text-primary-foreground px-3 py-1 rounded-full text-xs font-semibold shadow-md"
+                      className="flex items-center justify-center text-primary-foreground px-2 py-0.5 rounded-full text-[10px] font-semibold shadow-md"
                       style={{
                         background: 'linear-gradient(135deg, hsl(25 95% 60%), hsl(35 100% 65%), hsl(25 95% 55%))',
                       }}
@@ -201,49 +201,49 @@ export function PaywallModal({ open, onOpenChange, limitType, limitMessage }: Pa
                 )}
 
                 {/* Plan Header */}
-                <div className="text-center mb-4 pt-2">
-                  <h3 className="text-xl font-bold text-foreground mb-1">
+                <div className="text-center mb-2 pt-1">
+                  <h3 className="text-base font-bold text-foreground">
                     {plan.name}
                   </h3>
-                  <p className="text-muted-foreground text-xs">{plan.subtitle}</p>
+                  <p className="text-muted-foreground text-[10px] leading-tight">{plan.subtitle}</p>
                 </div>
 
                 {/* Price */}
-                <div className="text-center mb-4">
-                  <div className="flex items-baseline justify-center gap-1">
-                    <span className="text-3xl font-bold text-foreground">
+                <div className="text-center mb-2">
+                  <div className="flex items-baseline justify-center gap-0.5">
+                    <span className="text-2xl font-bold text-foreground">
                       ${getPrice(plan)}
                     </span>
-                    <span className="text-muted-foreground text-sm">
-                      / month
+                    <span className="text-muted-foreground text-xs">
+                      /mo
                     </span>
                   </div>
                   {getYearlyTotal(plan) && (
-                    <p className="text-primary text-xs font-medium mt-1">
+                    <p className="text-primary text-[10px] font-medium">
                       {getYearlyTotal(plan)}
                     </p>
                   )}
                 </div>
 
                 {/* Divider */}
-                <div className="w-full h-px bg-gradient-to-r from-transparent via-border to-transparent mb-4" />
+                <div className="w-full h-px bg-gradient-to-r from-transparent via-border to-transparent mb-2" />
 
                 {/* Features */}
-                <ul className="space-y-2 mb-4 flex-grow">
+                <ul className="space-y-1 mb-2 flex-grow">
                   {plan.features.map((feature, index) => (
-                    <li key={index} className="flex items-start gap-2">
+                    <li key={index} className="flex items-start gap-1.5">
                       {feature.included ? (
-                        <div className="flex-shrink-0 w-4 h-4 rounded-full bg-primary/20 flex items-center justify-center mt-0.5">
-                          <Check className="w-2.5 h-2.5 text-primary" />
+                        <div className="flex-shrink-0 w-3 h-3 rounded-full bg-primary/20 flex items-center justify-center mt-0.5">
+                          <Check className="w-2 h-2 text-primary" />
                         </div>
                       ) : (
-                        <div className="flex-shrink-0 w-4 h-4 rounded-full bg-muted flex items-center justify-center mt-0.5">
-                          <X className="w-2.5 h-2.5 text-muted-foreground" />
+                        <div className="flex-shrink-0 w-3 h-3 rounded-full bg-muted flex items-center justify-center mt-0.5">
+                          <X className="w-2 h-2 text-muted-foreground" />
                         </div>
                       )}
                       <span
                         className={cn(
-                          "text-xs leading-tight",
+                          "text-[10px] leading-tight",
                           feature.included
                             ? "text-foreground"
                             : "text-muted-foreground"
@@ -258,8 +258,9 @@ export function PaywallModal({ open, onOpenChange, limitType, limitMessage }: Pa
                 {/* CTA Button */}
                 <Button
                   variant={plan.popular ? "gradient" : "outline"}
+                  size="sm"
                   className={cn(
-                    "w-full mt-auto",
+                    "w-full mt-auto text-xs h-8",
                     plan.popular
                       ? "shadow-md hover:shadow-lg hover:opacity-90"
                       : "hover:bg-muted hover:border-muted-foreground/30"
@@ -272,12 +273,13 @@ export function PaywallModal({ open, onOpenChange, limitType, limitMessage }: Pa
           </div>
 
           {/* Close button with countdown */}
-          <div className="mt-6 text-center">
+          <div className="mt-3 text-center">
             <Button
               variant="ghost"
+              size="sm"
               onClick={handleClose}
               disabled={!canClose}
-              className="text-muted-foreground hover:text-foreground"
+              className="text-muted-foreground hover:text-foreground text-xs h-7"
             >
               {canClose ? "Close" : `Wait ${countdown}s to close`}
             </Button>
