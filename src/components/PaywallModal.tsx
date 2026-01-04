@@ -156,13 +156,18 @@ export function PaywallModal({ open, onOpenChange, limitType, limitMessage }: Pa
               />
               <span
                 className={cn(
-                  "text-xs font-medium transition-colors",
+                  "text-xs font-medium transition-colors flex items-center gap-1.5",
                   isYearly ? "text-foreground" : "text-muted-foreground"
                 )}
               >
                 Yearly
-                <span className="ml-1 text-[10px] text-primary font-semibold">
-                  Save more
+                <span 
+                  className="text-[10px] text-white font-semibold px-2 py-0.5 rounded-full"
+                  style={{
+                    background: 'linear-gradient(135deg, hsl(25 95% 60%), hsl(35 100% 65%), hsl(25 95% 55%))',
+                  }}
+                >
+                  Save 55%
                 </span>
               </span>
             </div>
