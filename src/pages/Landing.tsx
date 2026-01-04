@@ -88,7 +88,7 @@ export default function Landing() {
             <div className="order-1 lg:order-2 animate-fade-in delay-100">
               <div className="overflow-hidden rounded-3xl lg:h-[380px]" style={{ background: 'transparent' }}>
                 <YouTubeEmbed 
-                  videoId="pRht0GSYOh8" 
+                  videoId="A-o52DwuWSg" 
                   thumbnail="/images/app-demo-thumbnail.png"
                   className="h-full"
                 />
