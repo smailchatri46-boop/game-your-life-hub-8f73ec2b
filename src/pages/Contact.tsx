@@ -2,8 +2,33 @@ import { LandingNavbar } from "@/components/LandingNavbar";
 import { Helmet } from "react-helmet-async";
 import { Mail } from "lucide-react";
 import neylerLogo from "@/assets/neyler-logo.png";
+import { toast } from "sonner";
 
 export default function Contact() {
+  const email = "support@neyler.com";
+
+  const handleCopyEmail = async () => {
+    try {
+      await navigator.clipboard.writeText(email);
+      toast("Email copied to clipboard", {
+        className: "glass-card !bg-card/90 !backdrop-blur-xl !border-white/50 !text-muted-foreground !text-sm !font-medium",
+        duration: 2000,
+      });
+    } catch (err) {
+      // Fallback for older browsers
+      const textArea = document.createElement("textarea");
+      textArea.value = email;
+      document.body.appendChild(textArea);
+      textArea.select();
+      document.execCommand("copy");
+      document.body.removeChild(textArea);
+      toast("Email copied to clipboard", {
+        className: "glass-card !bg-card/90 !backdrop-blur-xl !border-white/50 !text-muted-foreground !text-sm !font-medium",
+        duration: 2000,
+      });
+    }
+  };
+
   return (
     <>
       <Helmet>
@@ -40,13 +65,13 @@ export default function Contact() {
               
               <div className="py-4">
                 <p className="text-sm text-muted-foreground mb-2">You can contact us at:</p>
-                <a 
-                  href="mailto:support@neyler.com" 
-                  className="inline-flex items-center gap-2 text-primary text-lg font-semibold hover:opacity-80 transition-opacity"
+                <button 
+                  onClick={handleCopyEmail}
+                  className="inline-flex items-center gap-2 text-primary text-lg font-semibold hover:opacity-80 transition-opacity cursor-pointer"
                 >
                   <Mail className="w-5 h-5" />
-                  support@neyler.com
-                </a>
+                  {email}
+                </button>
               </div>
               
               <p className="text-muted-foreground text-sm">
