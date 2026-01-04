@@ -18,10 +18,12 @@ import { ScrollReveal } from "@/components/ScrollReveal";
 
 export default function Landing() {
   const signUpButtonRef = useRef<HTMLDivElement>(null);
+  const finalCtaRef = useRef<HTMLDivElement>(null);
   const [showStickyButton, setShowStickyButton] = useState(false);
+  const [nearFinalCta, setNearFinalCta] = useState(false);
 
   useEffect(() => {
-    const observer = new IntersectionObserver(
+    const signUpObserver = new IntersectionObserver(
       ([entry]) => {
         // Show sticky button when Sign Up button is NOT visible
         setShowStickyButton(!entry.isIntersecting);
@@ -29,11 +31,26 @@ export default function Landing() {
       { threshold: 0 }
     );
 
+    const ctaObserver = new IntersectionObserver(
+      ([entry]) => {
+        // Hide sticky button when final CTA is visible
+        setNearFinalCta(entry.isIntersecting);
+      },
+      { threshold: 0, rootMargin: '100px 0px 0px 0px' }
+    );
+
     if (signUpButtonRef.current) {
-      observer.observe(signUpButtonRef.current);
+      signUpObserver.observe(signUpButtonRef.current);
     }
 
-    return () => observer.disconnect();
+    if (finalCtaRef.current) {
+      ctaObserver.observe(finalCtaRef.current);
+    }
+
+    return () => {
+      signUpObserver.disconnect();
+      ctaObserver.disconnect();
+    };
   }, []);
 
   return (
@@ -312,7 +329,7 @@ export default function Landing() {
       <LandingFAQ />
       
       {/* Final CTA Section - Duplicate of "Ready to level up" */}
-      <section className="py-10 px-4">
+      <section className="py-10 px-4" ref={finalCtaRef}>
         <ScrollReveal animation="zoom-in" duration={800}>
           <div className="max-w-2xl mx-auto text-center">
             <GlassCard className="p-10" glow>
@@ -360,8 +377,8 @@ export default function Landing() {
 
       {/* Sticky CTA Button */}
       <div 
-        className={`fixed bottom-6 left-1/2 -translate-x-1/2 z-50 transition-all duration-300 ${
-          showStickyButton 
+        className={`fixed bottom-6 left-1/2 -translate-x-1/2 z-50 transition-all duration-500 ease-out ${
+          showStickyButton && !nearFinalCta
             ? 'opacity-100 translate-y-0' 
             : 'opacity-0 translate-y-4 pointer-events-none'
         }`}
