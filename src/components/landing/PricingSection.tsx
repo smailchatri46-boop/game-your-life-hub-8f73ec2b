@@ -78,7 +78,12 @@ export function PricingSection() {
   const [isYearly, setIsYearly] = useState(true);
 
   const getPrice = (plan: Plan) => {
-    return isYearly ? plan.yearlyPrice : plan.monthlyPrice;
+    if (plan.monthlyPrice === 0) return 0;
+    // When yearly is selected, show the monthly equivalent as the main price
+    if (isYearly) {
+      return Math.floor(plan.yearlyPrice / 12);
+    }
+    return plan.monthlyPrice;
   };
 
   const getPriceLabel = (plan: Plan) => {
@@ -88,13 +93,12 @@ export function PricingSection() {
 
   const getPeriodLabel = (plan: Plan) => {
     if (plan.monthlyPrice === 0) return "forever";
-    return isYearly ? "/ year" : "/ month";
+    return "/ month";
   };
 
-  const getMonthlyEquivalent = (plan: Plan) => {
+  const getYearlyTotal = (plan: Plan) => {
     if (plan.monthlyPrice === 0 || !isYearly) return null;
-    const monthlyEquivalent = (plan.yearlyPrice / 12).toFixed(2);
-    return `Pay only $${monthlyEquivalent}/month`;
+    return `Pay only $${plan.yearlyPrice}/year`;
   };
 
   return (
@@ -201,9 +205,9 @@ export function PricingSection() {
                     {getPeriodLabel(plan)}
                   </span>
                 </div>
-                {getMonthlyEquivalent(plan) && (
+                {getYearlyTotal(plan) && (
                   <p className="text-primary text-sm font-medium mt-1.5">
-                    {getMonthlyEquivalent(plan)}
+                    {getYearlyTotal(plan)}
                   </p>
                 )}
               </div>
