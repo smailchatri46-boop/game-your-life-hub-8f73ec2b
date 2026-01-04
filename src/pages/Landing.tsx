@@ -64,7 +64,7 @@ export default function Landing() {
                     <span className="w-6 h-6 bg-white rounded-full flex items-center justify-center">
                       <img src={googleLogo} alt="Google" className="w-4 h-4" />
                     </span>
-                    Continue with Google
+                    Continue for free
                   </Link>
                 </Button>
                 
@@ -86,11 +86,11 @@ export default function Landing() {
 
             {/* Right Column - Video/Demo */}
             <div className="order-1 lg:order-2 animate-fade-in delay-100">
-              <div className="overflow-hidden rounded-3xl lg:h-[380px]" style={{ background: 'transparent' }}>
+              <div className="overflow-hidden rounded-3xl lg:h-[380px]">
                 <YouTubeEmbed 
                   videoId="A-o52DwuWSg" 
                   thumbnail="/images/app-demo-thumbnail.jpg"
-                  className="h-full"
+                  className="h-full [&_img]:rounded-none [&>div]:rounded-none"
                 />
               </div>
             </div>
