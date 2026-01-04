@@ -14,9 +14,8 @@ import { SurveyQuestionStep } from "./steps/SurveyQuestionStep";
 
 const SURVEY_QUESTIONS = {
   "survey-1": {
-    emoji: "📱",
+    emoji: "👋",
     title: "Do you currently use an app to track your goals?",
-    description: "Help us understand your current habits",
     options: [
       { label: "Yes" },
       { label: "No" },
@@ -26,7 +25,7 @@ const SURVEY_QUESTIONS = {
   },
   "survey-2": {
     emoji: "🎯",
-    title: "Can your current app combine everything in one place?",
+    title: "Do your current apps combine everything in one place?",
     description: "Habits, to-dos, journaling, reflections, progress & AI guidance",
     options: [
       { label: "I use different apps for each thing" },
@@ -46,8 +45,8 @@ const SURVEY_QUESTIONS = {
     ],
   },
   "survey-4": {
-    emoji: "🤖",
-    title: "Do you use AI to help analyze your life or goals?",
+    emoji: "💬",
+    title: "Do you sometimes use AI to help you analyze your life, goals, or give you motivation?",
     description: "Like ChatGPT or similar tools",
     options: [
       { label: "Yes, regularly" },
@@ -58,8 +57,7 @@ const SURVEY_QUESTIONS = {
   },
   "survey-5": {
     emoji: "🧠",
-    title: "Would you like an AI that knows your habits and goals?",
-    description: "An AI that tells you exactly what you're missing to reach your goals faster",
+    title: "Would you like an AI that sees all your daily reflections, goals, daily progress, and gives you a personalized experience to change your life?",
     options: [
       { label: "Yes, this would change my life" },
       { label: "Yes, that sounds very helpful" },
@@ -237,7 +235,6 @@ export function OnboardingFlow() {
           <IdentityStep
             variant={1}
             onNext={goToNext}
-            onSkip={handleSkipToWhyWeExist}
           />
         );
 
@@ -246,7 +243,6 @@ export function OnboardingFlow() {
           <IdentityStep
             variant={2}
             onNext={goToNext}
-            onSkip={handleSkip}
           />
         );
 
