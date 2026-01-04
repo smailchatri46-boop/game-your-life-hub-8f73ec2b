@@ -115,7 +115,7 @@ export default function Tutorials() {
           {/* Overview Video */}
           <GlassCard className="overflow-hidden animate-fade-in">
             <div className="relative">
-              <YouTubeEmbed videoId={overviewVideo.videoId} />
+              <YouTubeEmbed videoId={overviewVideo.videoId} thumbnailClassName="scale-110 object-[50%_35%]" showThumbnailBottomFade />
               <span className="absolute top-3 left-3 px-2 py-1 bg-card/80 backdrop-blur-sm rounded-lg text-xs font-body font-semibold z-20 pointer-events-none">
                 {overviewVideo.category}
               </span>
@@ -142,7 +142,7 @@ export default function Tutorials() {
               style={{ animationDelay: `${(index + 1) * 100}ms` } as React.CSSProperties}
             >
               <div className="relative">
-                <YouTubeEmbed videoId={tutorial.videoId} />
+                <YouTubeEmbed videoId={tutorial.videoId} thumbnailClassName="scale-110 object-[50%_35%]" showThumbnailBottomFade />
                 <span className="absolute top-3 left-3 px-2 py-1 bg-card/80 backdrop-blur-sm rounded-lg text-xs font-body font-semibold z-20 pointer-events-none">
                   {tutorial.category}
                 </span>
