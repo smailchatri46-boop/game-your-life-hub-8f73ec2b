@@ -113,12 +113,8 @@ export default function Tutorials() {
         {/* Tutorial Grid */}
         <div className="grid md:grid-cols-2 gap-6">
           {/* Featured Overview Video */}
-          <div 
-            className="md:col-span-2 flex justify-center animate-fade-in"
-          >
-            <div 
-              className="relative rounded-2xl overflow-hidden w-full max-w-[520px]"
-            >
+          <div className="relative rounded-2xl overflow-hidden animate-fade-in">
+            {/* Gradient border */}
             <div 
               className="absolute inset-0 rounded-2xl -z-10 p-[2px]"
               style={{
@@ -147,7 +143,6 @@ export default function Tutorials() {
                   <span>{overviewVideo.duration}</span>
                 </div>
               </div>
-            </div>
             </div>
           </div>
 
