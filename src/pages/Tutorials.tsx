@@ -112,39 +112,27 @@ export default function Tutorials() {
         
         {/* Tutorial Grid */}
         <div className="grid md:grid-cols-2 gap-6">
-          {/* Featured Overview Video */}
-          <div className="relative rounded-2xl overflow-hidden animate-fade-in">
-            {/* Gradient border */}
-            <div 
-              className="absolute inset-0 rounded-2xl -z-10 p-[2px]"
-              style={{
-                background: 'linear-gradient(135deg, hsl(25 95% 60%), hsl(35 100% 65%), hsl(25 95% 55%))',
-              }}
-            >
-              <div className="w-full h-full rounded-2xl bg-card" />
+          {/* Overview Video */}
+          <GlassCard className="overflow-hidden animate-fade-in">
+            <div className="relative">
+              <YouTubeEmbed videoId={overviewVideo.videoId} />
+              <span className="absolute top-3 left-3 px-2 py-1 bg-card/80 backdrop-blur-sm rounded-lg text-xs font-body font-semibold z-20 pointer-events-none">
+                {overviewVideo.category}
+              </span>
             </div>
-            
-            <div className="bg-card/95 backdrop-blur-sm rounded-2xl overflow-hidden">
-              <div className="relative">
-                <YouTubeEmbed videoId={overviewVideo.videoId} />
-                <span className="absolute top-3 left-3 px-2 py-1 bg-card/80 backdrop-blur-sm rounded-lg text-xs font-body font-semibold z-20 pointer-events-none">
-                  {overviewVideo.category}
-                </span>
-              </div>
-              <div className="p-5">
-                <h3 className="font-body text-xl font-bold mb-2">
-                  {overviewVideo.title}
-                </h3>
-                <p className="font-body text-sm text-muted-foreground mb-3">
-                  {overviewVideo.description}
-                </p>
-                <div className="flex items-center gap-2 text-xs font-body font-medium text-muted-foreground">
-                  <Clock className="w-3.5 h-3.5" />
-                  <span>{overviewVideo.duration}</span>
-                </div>
+            <div className="p-5">
+              <h3 className="font-body text-xl font-bold mb-2">
+                {overviewVideo.title}
+              </h3>
+              <p className="font-body text-sm text-muted-foreground mb-3">
+                {overviewVideo.description}
+              </p>
+              <div className="flex items-center gap-2 text-xs font-body font-medium text-muted-foreground">
+                <Clock className="w-3.5 h-3.5" />
+                <span>{overviewVideo.duration}</span>
               </div>
             </div>
-          </div>
+          </GlassCard>
 
           {/* Regular Tutorials */}
           {tutorials.map((tutorial, index) => (
