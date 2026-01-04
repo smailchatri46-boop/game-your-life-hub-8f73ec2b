@@ -121,10 +121,10 @@ export function PaywallModal({ open, onOpenChange, limitType, limitMessage }: Pa
   return (
     <Dialog open={open} onOpenChange={canClose ? onOpenChange : () => {}}>
       <DialogContent 
-        className="w-[90vw] max-w-[720px] max-h-[85vh] p-0 overflow-hidden bg-gradient-to-br from-[hsl(30,100%,98%)] to-[hsl(25,80%,95%)] border-0" 
+        className="w-[90vw] max-w-[720px] max-h-[90vh] p-0 overflow-hidden bg-gradient-to-br from-[hsl(30,100%,98%)] to-[hsl(25,80%,95%)] border-0" 
         hideCloseButton={!canClose}
       >
-        <div className="p-5 md:p-6">
+        <div className="p-5 md:p-7 flex flex-col min-h-[580px]">
           {/* Header */}
           <div className="text-center mb-4">
             <h2 className="font-display text-xl md:text-2xl font-bold text-foreground mb-1">
@@ -175,9 +175,9 @@ export function PaywallModal({ open, onOpenChange, limitType, limitMessage }: Pa
 
           {/* Pro Plan - Primary View */}
           {!showOtherPlans ? (
-            <div className="max-w-sm mx-auto">
+            <div className="max-w-sm mx-auto flex-1 flex flex-col">
               <div
-                className="relative rounded-xl p-5 transition-all duration-300 bg-white/80 backdrop-blur-sm flex flex-col shadow-lg min-h-[400px]"
+                className="relative rounded-xl p-6 transition-all duration-300 bg-white/80 backdrop-blur-sm flex flex-col shadow-lg h-[420px]"
               >
                 {/* Gradient border for Pro plan */}
                 <div 
@@ -201,7 +201,6 @@ export function PaywallModal({ open, onOpenChange, limitType, limitMessage }: Pa
                   </div>
                 </div>
 
-
                 {/* Plan Header */}
                 <div className="text-center mb-3 pt-2">
                   <h3 className="text-lg font-bold text-foreground">
@@ -210,39 +209,29 @@ export function PaywallModal({ open, onOpenChange, limitType, limitMessage }: Pa
                   <p className="text-muted-foreground text-xs leading-tight">{proPlan.subtitle}</p>
                 </div>
 
-                {/* Price */}
-                <div className="text-center mb-3 min-h-[52px] flex flex-col justify-center">
-                  {isYearly ? (
-                    <>
-                      <div className="flex items-baseline justify-center gap-0.5">
-                        <span className="text-3xl font-bold text-foreground">
-                          $4
-                        </span>
-                        <span className="text-muted-foreground text-sm">
-                          /month
-                        </span>
-                      </div>
-                      <p className="text-primary text-xs font-medium mt-1">
-                        Just $49/year
-                      </p>
-                    </>
-                  ) : (
-                    <div className="flex items-baseline justify-center gap-0.5">
-                      <span className="text-3xl font-bold text-foreground">
-                        ${proPlan.monthlyPrice}
-                      </span>
-                      <span className="text-muted-foreground text-sm">
-                        /mo
-                      </span>
-                    </div>
-                  )}
+                {/* Price - fixed height container */}
+                <div className="text-center mb-4 h-[56px] flex flex-col justify-center">
+                  <div className="flex items-baseline justify-center gap-0.5">
+                    <span className="text-3xl font-bold text-foreground">
+                      {isYearly ? "$4" : `$${proPlan.monthlyPrice}`}
+                    </span>
+                    <span className="text-muted-foreground text-sm">
+                      /{isYearly ? "month" : "mo"}
+                    </span>
+                  </div>
+                  <p className={cn(
+                    "text-primary text-xs font-medium mt-1",
+                    isYearly ? "visible" : "invisible"
+                  )}>
+                    Pay only $49/year
+                  </p>
                 </div>
 
                 {/* Divider */}
-                <div className="w-full h-px bg-gradient-to-r from-transparent via-border to-transparent mb-3" />
+                <div className="w-full h-px bg-gradient-to-r from-transparent via-border to-transparent mb-4" />
 
                 {/* Features */}
-                <ul className="space-y-1.5 mb-4 flex-grow">
+                <ul className="space-y-2 mb-5 flex-grow">
                   {proPlan.features.map((feature, index) => (
                     <li key={index} className="flex items-start gap-2">
                       <div className="flex-shrink-0 w-4 h-4 rounded-full bg-primary/20 flex items-center justify-center mt-0.5">
@@ -256,30 +245,41 @@ export function PaywallModal({ open, onOpenChange, limitType, limitMessage }: Pa
                 </ul>
 
                 {/* CTA Button */}
-                <Button
-                  variant="gradient"
-                  size="default"
-                  className="w-full mt-auto shadow-md hover:shadow-lg hover:opacity-90"
-                >
-                  Unlock Pro
-                </Button>
+                <div className="py-3">
+                  <Button
+                    variant="gradient"
+                    size="default"
+                    className="w-full shadow-md hover:shadow-lg hover:opacity-90"
+                  >
+                    Unlock Pro
+                  </Button>
+                </div>
 
                 {/* Trust Line */}
-                <p className="text-center text-[10px] text-muted-foreground mt-2">
-                  Cancel anytime. No payment due now.
+                <p className="text-center text-[10px] text-muted-foreground">
+                  Cancel anytime.
                 </p>
               </div>
 
+              {/* View other plans - centered in remaining space */}
+              <div className="flex-1 flex items-center justify-center min-h-[48px]">
+                <button
+                  onClick={() => setShowOtherPlans(true)}
+                  className="text-sm text-muted-foreground hover:font-semibold transition-all px-4 py-2"
+                >
+                  View other plans
+                </button>
+              </div>
             </div>
           ) : (
             /* Both Plans View */
-            <>
+            <div className="flex-1 flex flex-col">
               <div className="grid grid-cols-2 gap-4">
                 {plans.map((plan) => (
                   <div
                     key={plan.name}
                     className={cn(
-                      "relative rounded-xl p-4 transition-all duration-300 bg-white/80 backdrop-blur-sm flex flex-col",
+                      "relative rounded-xl p-4 transition-all duration-300 bg-white/80 backdrop-blur-sm flex flex-col h-[380px]",
                       plan.popular
                         ? "shadow-lg"
                         : "hover:shadow-md"
@@ -311,7 +311,6 @@ export function PaywallModal({ open, onOpenChange, limitType, limitMessage }: Pa
                       </div>
                     )}
 
-
                     {/* Plan Header */}
                     <div className="text-center mb-2 pt-1">
                       <h3 className="text-base font-bold text-foreground">
@@ -320,39 +319,29 @@ export function PaywallModal({ open, onOpenChange, limitType, limitMessage }: Pa
                       <p className="text-muted-foreground text-[10px] leading-tight">{plan.subtitle}</p>
                     </div>
 
-                    {/* Price */}
-                    <div className="text-center mb-2">
-                      {isYearly ? (
-                        <>
-                          <div className="flex items-baseline justify-center gap-0.5">
-                            <span className="text-2xl font-bold text-foreground">
-                              ${plan.yearlyPrice}
-                            </span>
-                            <span className="text-muted-foreground text-xs">
-                              /yr
-                            </span>
-                          </div>
-                          <p className="text-primary text-[10px] font-medium">
-                            Just ${getPrice(plan)}/mo
-                          </p>
-                        </>
-                      ) : (
-                        <div className="flex items-baseline justify-center gap-0.5">
-                          <span className="text-2xl font-bold text-foreground">
-                            ${plan.monthlyPrice}
-                          </span>
-                          <span className="text-muted-foreground text-xs">
-                            /mo
-                          </span>
-                        </div>
-                      )}
+                    {/* Price - fixed height */}
+                    <div className="text-center mb-3 h-[48px] flex flex-col justify-center">
+                      <div className="flex items-baseline justify-center gap-0.5">
+                        <span className="text-2xl font-bold text-foreground">
+                          {isYearly ? `$${Math.round(plan.yearlyPrice / 12)}` : `$${plan.monthlyPrice}`}
+                        </span>
+                        <span className="text-muted-foreground text-xs">
+                          /{isYearly ? "mo" : "mo"}
+                        </span>
+                      </div>
+                      <p className={cn(
+                        "text-primary text-[10px] font-medium",
+                        isYearly ? "visible" : "invisible"
+                      )}>
+                        Pay only ${plan.yearlyPrice}/year
+                      </p>
                     </div>
 
                     {/* Divider */}
-                    <div className="w-full h-px bg-gradient-to-r from-transparent via-border to-transparent mb-2" />
+                    <div className="w-full h-px bg-gradient-to-r from-transparent via-border to-transparent mb-3" />
 
                     {/* Features */}
-                    <ul className="space-y-1 mb-3 flex-grow">
+                    <ul className="space-y-1.5 mb-4 flex-grow">
                       {plan.features.map((feature, index) => (
                         <li key={index} className="flex items-start gap-1.5">
                           {feature.included ? (
@@ -379,43 +368,43 @@ export function PaywallModal({ open, onOpenChange, limitType, limitMessage }: Pa
                     </ul>
 
                     {/* CTA Button */}
-                    <Button
-                      variant={plan.popular ? "gradient" : "outline"}
-                      size="sm"
-                      className={cn(
-                        "w-full mt-auto text-xs h-9",
-                        plan.popular
-                          ? "shadow-md hover:shadow-lg hover:opacity-90"
-                          : "hover:bg-muted hover:border-muted-foreground/30"
-                      )}
-                    >
-                      {plan.popular ? "Unlock Pro" : "Get Core"}
-                    </Button>
+                    <div className="py-2">
+                      <Button
+                        variant={plan.popular ? "gradient" : "outline"}
+                        size="sm"
+                        className={cn(
+                          "w-full text-xs h-9",
+                          plan.popular
+                            ? "shadow-md hover:shadow-lg hover:opacity-90"
+                            : "hover:bg-muted hover:border-muted-foreground/30"
+                        )}
+                      >
+                        {plan.popular ? "Unlock Pro" : "Get Core"}
+                      </Button>
+                    </div>
 
-                    {/* Trust Line for Pro */}
-                    {plan.popular && (
-                      <p className="text-center text-[9px] text-muted-foreground mt-1.5">
-                        Cancel anytime. No payment due now.
-                      </p>
-                    )}
+                    {/* Trust Line */}
+                    <p className={cn(
+                      "text-center text-[9px] text-muted-foreground",
+                      plan.popular ? "visible" : "invisible"
+                    )}>
+                      Cancel anytime.
+                    </p>
                   </div>
                 ))}
               </div>
 
-            </>
+              {/* Back link - centered in remaining space */}
+              <div className="flex-1 flex items-center justify-center min-h-[48px]">
+                <button
+                  onClick={() => setShowOtherPlans(false)}
+                  className="text-sm text-muted-foreground hover:font-semibold transition-all px-4 py-2"
+                >
+                  ← Back
+                </button>
+              </div>
+            </div>
           )}
-
-          {/* View other plans / Back link - centered at bottom */}
-          <div className="mt-4 text-center">
-            <button
-              onClick={() => setShowOtherPlans(!showOtherPlans)}
-              className="text-xs text-muted-foreground hover:font-semibold transition-all"
-            >
-              {showOtherPlans ? "← Back" : "View other plans"}
-            </button>
-          </div>
-
-          {/* Close button removed - X icon at top is sufficient */}
         </div>
       </DialogContent>
     </Dialog>
