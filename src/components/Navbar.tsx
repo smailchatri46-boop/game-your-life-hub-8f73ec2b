@@ -43,7 +43,8 @@ export function Navbar() {
           {/* Centered tabs */}
           <div className="flex-1 flex items-center justify-center gap-1">
             {navItems.map((item) => {
-              const isActive = location.pathname === item.path;
+              const isActive = location.pathname === item.path || 
+                (item.path === "/tutorials" && location.pathname === "/video-tutorial");
               return (
                 <Link
                   key={item.path}
