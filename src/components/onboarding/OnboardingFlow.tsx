@@ -68,7 +68,7 @@ const SURVEY_QUESTIONS = {
   },
   "survey-6": {
     emoji: "🧠",
-    title: "Would you like an AI that sees all your daily reflections, goals, daily progress, and gives you a personalized experience to change your life?",
+    title: "Would you like an AI that sees all your daily reflections, goals, daily progress, and gives you a personalized experience to achieve your goals faster?",
     options: [
       { label: "Yes, this would change my life" },
       { label: "Yes, that sounds very helpful" },
