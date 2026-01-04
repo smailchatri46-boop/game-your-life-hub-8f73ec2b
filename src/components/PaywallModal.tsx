@@ -118,12 +118,52 @@ export function PaywallModal({ open, onOpenChange, limitType, limitMessage }: Pa
     return Math.round(savings);
   };
 
+  // Calculate progress for circular animation (0 to 1)
+  const progress = (5 - countdown) / 5;
+
   return (
     <Dialog open={open} onOpenChange={canClose ? onOpenChange : () => {}}>
       <DialogContent 
         className="w-[90vw] max-w-[720px] max-h-[90vh] p-0 overflow-hidden bg-gradient-to-br from-[hsl(30,100%,98%)] to-[hsl(25,80%,95%)] border-0" 
-        hideCloseButton={!canClose}
+        hideCloseButton
       >
+        {/* Custom Close Button with Circular Countdown */}
+        <button
+          onClick={handleClose}
+          disabled={!canClose}
+          className="absolute right-4 top-4 w-6 h-6 flex items-center justify-center rounded-full transition-all duration-300"
+          aria-label="Close"
+        >
+          {canClose ? (
+            <X className="w-4 h-4 text-muted-foreground hover:text-foreground transition-colors" />
+          ) : (
+            <svg className="w-6 h-6 -rotate-90" viewBox="0 0 24 24">
+              {/* Background circle */}
+              <circle
+                cx="12"
+                cy="12"
+                r="10"
+                fill="none"
+                stroke="hsl(var(--muted))"
+                strokeWidth="2"
+              />
+              {/* Progress circle */}
+              <circle
+                cx="12"
+                cy="12"
+                r="10"
+                fill="none"
+                stroke="hsl(25 95% 60%)"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeDasharray={2 * Math.PI * 10}
+                strokeDashoffset={2 * Math.PI * 10 * (1 - progress)}
+                className="transition-[stroke-dashoffset] duration-1000 ease-linear"
+              />
+            </svg>
+          )}
+        </button>
+
         <div className="p-5 md:p-6">
           {/* Header */}
           <div className="text-center mb-4">
