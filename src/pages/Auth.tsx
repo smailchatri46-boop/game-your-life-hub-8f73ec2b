@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { LandingNavbar } from "@/components/LandingNavbar";
 import { Button } from "@/components/ui/button";
@@ -9,6 +9,7 @@ import { toast } from "sonner";
 export default function Auth() {
   const navigate = useNavigate();
   const { user, loading, signInWithGoogle } = useAuth();
+  const [isSignUp, setIsSignUp] = useState(true);
 
   useEffect(() => {
     if (!loading && user) {
@@ -38,18 +39,23 @@ export default function Auth() {
   }
 
   return (
-    <div className="min-h-screen gradient-hero overflow-hidden">
+    <div className="min-h-screen gradient-hero overflow-hidden flex flex-col">
       <LandingNavbar />
       
-      <section className="pt-32 pb-20 px-4">
-        <div className="max-w-md mx-auto">
+      <section className="flex-1 flex items-center justify-center px-4">
+        <div className="max-w-md w-full">
           <GlassCard className="p-8" glow>
             <div className="text-center mb-8">
-              <h1 className="font-display text-3xl font-semibold mb-2">
-                Welcome to <span className="gradient-text">Locked.</span>
-              </h1>
+              <div className="flex items-center justify-center gap-2 mb-2">
+                <span className="font-display text-3xl font-semibold">Welcome to</span>
+                <img 
+                  src="/images/neyler-logo-full.png" 
+                  alt="Neyler" 
+                  className="h-8"
+                />
+              </div>
               <p className="text-muted-foreground">
-                Sign in to start your journey to a better life
+                {isSignUp ? "Sign up to start your journey to a better life" : "Sign in to continue your journey"}
               </p>
             </div>
             
@@ -94,6 +100,20 @@ export default function Auth() {
             <p className="text-center text-xs text-muted-foreground mt-6">
               By continuing, you agree to our Terms of Service and Privacy Policy
             </p>
+            
+            <div className="text-center mt-4">
+              <button
+                type="button"
+                onClick={() => setIsSignUp(!isSignUp)}
+                className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+              >
+                {isSignUp ? (
+                  <>Already have an account? <span className="text-primary font-medium">Sign In</span></>
+                ) : (
+                  <>Don't have an account? <span className="text-primary font-medium">Sign Up</span></>
+                )}
+              </button>
+            </div>
           </GlassCard>
         </div>
       </section>
