@@ -1,7 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { useOnboarding } from "@/hooks/use-onboarding";
 import { OnboardingProgress } from "./OnboardingProgress";
-import { WelcomeStep } from "./steps/WelcomeStep";
 import { IdentityStep } from "./steps/IdentityStep";
 import { WhyWeExistStep } from "./steps/WhyWeExistStep";
 import { TellUsAboutYouStep } from "./steps/TellUsAboutYouStep";
@@ -62,48 +61,6 @@ export function OnboardingFlow() {
 
   const renderStep = () => {
     switch (currentStep) {
-      case "welcome":
-        return (
-          <WelcomeStep
-            onNext={goToNext}
-          />
-        );
-
-      case "identity-1":
-        return (
-          <IdentityStep
-            variant={1}
-            onNext={goToNext}
-            onSkip={handleSkipToWhyWeExist}
-          />
-        );
-
-      case "identity-2":
-        return (
-          <IdentityStep
-            variant={2}
-            onNext={goToNext}
-            onSkip={handleSkip}
-          />
-        );
-
-      case "why-we-exist":
-        return (
-          <WhyWeExistStep
-            onNext={goToNext}
-          />
-        );
-
-      case "tell-us-about-you":
-        return (
-          <TellUsAboutYouStep
-            uniqueAbout={data.uniqueAbout}
-            onSetUniqueAbout={(value) => updateData({ uniqueAbout: value })}
-            onNext={goToNext}
-            onBack={goToPrevious}
-          />
-        );
-
       case "about-focus":
         return (
           <AboutYourselfStep
@@ -142,6 +99,49 @@ export function OnboardingFlow() {
           />
         );
 
+      case "tell-us-about-you":
+        return (
+          <TellUsAboutYouStep
+            uniqueAbout={data.uniqueAbout}
+            onSetUniqueAbout={(value) => updateData({ uniqueAbout: value })}
+            onNext={goToNext}
+            onBack={goToPrevious}
+          />
+        );
+
+      case "why-we-exist":
+        return (
+          <WhyWeExistStep
+            onNext={goToNext}
+          />
+        );
+
+      case "goals":
+        return (
+          <GoalsStep
+            onNext={goToNext}
+            onBack={goToPrevious}
+          />
+        );
+
+      case "identity-1":
+        return (
+          <IdentityStep
+            variant={1}
+            onNext={goToNext}
+            onSkip={handleSkipToWhyWeExist}
+          />
+        );
+
+      case "identity-2":
+        return (
+          <IdentityStep
+            variant={2}
+            onNext={goToNext}
+            onSkip={handleSkip}
+          />
+        );
+
       case "habit-suggestions":
         return (
           <HabitSuggestionsStep
@@ -151,14 +151,6 @@ export function OnboardingFlow() {
             onToggleHabit={toggleHabit}
             onAddCustomHabit={addCustomHabit}
             onRemoveCustomHabit={removeCustomHabit}
-            onNext={goToNext}
-            onBack={goToPrevious}
-          />
-        );
-
-      case "goals":
-        return (
-          <GoalsStep
             onNext={goToNext}
             onBack={goToPrevious}
           />
@@ -194,7 +186,7 @@ export function OnboardingFlow() {
     }
   };
 
-  const showProgress = currentStep !== "welcome" && currentStep !== "loading" && currentStep !== "success";
+  const showProgress = currentStep !== "loading" && currentStep !== "success";
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center p-4">

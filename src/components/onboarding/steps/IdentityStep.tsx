@@ -13,7 +13,7 @@ const IDENTITY_CONTENT: Record<1 | 2, { emoji: string; title: string; subtitle: 
   1: {
     emoji: "🎯",
     title: "Take control over your life.",
-    subtitle: "Locked gives you habits, tasks, to-do lists, journals, and goal tracking. Everything you need to organize your life.",
+    subtitle: "Neyler gives you habits, tasks, to-do lists, journals, and goal tracking. Everything you need to organize your life.",
     skipLabel: "Skip",
   },
   2: {
