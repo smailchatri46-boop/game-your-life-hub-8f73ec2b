@@ -18,6 +18,7 @@ import VideoTutorial from "./pages/VideoTutorial";
 import Settings from "./pages/Settings";
 import FAQ from "./pages/FAQ";
 import Pricing from "./pages/Pricing";
+import Contact from "./pages/Contact";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -34,6 +35,7 @@ const App = () => (
               <Route path="/" element={<Landing />} />
               <Route path="/faq" element={<FAQ />} />
               <Route path="/pricing" element={<Pricing />} />
+              <Route path="/contact" element={<Contact />} />
               <Route path="/onboarding" element={<Onboarding />} />
               <Route path="/auth" element={<Auth />} />
               <Route path="/signup" element={<Auth />} />
