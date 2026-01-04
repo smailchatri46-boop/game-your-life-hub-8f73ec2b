@@ -45,9 +45,15 @@ export function YouTubeEmbed({ videoId, thumbnail, className = "" }: YouTubeEmbe
           }
         }}
       />
-      <div className="absolute inset-0 bg-foreground/0 group-hover:bg-foreground/10 transition-colors flex items-center justify-center rounded-t-xl">
-        <div className="w-14 h-14 rounded-full bg-primary/90 flex items-center justify-center shadow-large transition-transform group-hover:scale-110">
-          <Play className="w-6 h-6 text-primary-foreground ml-1" />
+      <div className="absolute inset-0 bg-foreground/0 group-hover:bg-foreground/5 transition-colors duration-300 flex items-center justify-center rounded-t-xl">
+        <div 
+          className="w-16 h-16 rounded-full flex items-center justify-center shadow-xl transition-all duration-300 ease-out group-hover:scale-110 group-hover:shadow-2xl"
+          style={{
+            background: 'linear-gradient(135deg, hsl(25 95% 53%) 0%, hsl(35 100% 55%) 50%, hsl(25 95% 50%) 100%)',
+            boxShadow: '0 8px 32px rgba(245, 130, 32, 0.4), 0 4px 16px rgba(245, 130, 32, 0.3)'
+          }}
+        >
+          <Play className="w-7 h-7 text-white ml-1 drop-shadow-sm transition-transform duration-300 group-hover:scale-105" fill="white" />
         </div>
       </div>
     </div>

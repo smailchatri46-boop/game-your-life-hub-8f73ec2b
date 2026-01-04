@@ -89,7 +89,7 @@ export default function Landing() {
               <div className="overflow-hidden rounded-3xl lg:h-[380px]" style={{ background: 'transparent' }}>
                 <YouTubeEmbed 
                   videoId="A-o52DwuWSg" 
-                  thumbnail="/images/app-demo-thumbnail.png"
+                  thumbnail="/images/app-demo-thumbnail.jpg"
                   className="h-full"
                 />
               </div>
