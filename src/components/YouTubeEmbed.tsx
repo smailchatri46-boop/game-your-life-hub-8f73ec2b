@@ -5,9 +5,17 @@ interface YouTubeEmbedProps {
   videoId: string;
   thumbnail?: string;
   className?: string;
+  thumbnailClassName?: string;
+  showThumbnailBottomFade?: boolean;
 }
 
-export function YouTubeEmbed({ videoId, thumbnail, className = "" }: YouTubeEmbedProps) {
+export function YouTubeEmbed({
+  videoId,
+  thumbnail,
+  className = "",
+  thumbnailClassName = "",
+  showThumbnailBottomFade = false,
+}: YouTubeEmbedProps) {
   const [isPlaying, setIsPlaying] = useState(false);
 
   const handlePlay = () => {
@@ -37,7 +45,7 @@ export function YouTubeEmbed({ videoId, thumbnail, className = "" }: YouTubeEmbe
       <img 
         src={thumbnail || `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`}
         alt="Video thumbnail"
-        className="w-full h-full object-cover object-center scale-110"
+        className={`w-full h-full object-cover ${thumbnailClassName}`}
         onError={(e) => {
           // Fallback to hqdefault if maxresdefault doesn't exist (only for YouTube thumbnails)
           if (!thumbnail) {
@@ -45,6 +53,10 @@ export function YouTubeEmbed({ videoId, thumbnail, className = "" }: YouTubeEmbe
           }
         }}
       />
+
+      {showThumbnailBottomFade && (
+        <div className="pointer-events-none absolute inset-x-0 bottom-0 h-20 bg-gradient-to-t from-foreground/45 to-transparent" />
+      )}
       <div className="absolute inset-0 bg-foreground/0 group-hover:bg-foreground/5 transition-colors duration-300 flex items-center justify-center">
         <div 
           className="w-16 h-16 rounded-full flex items-center justify-center shadow-xl transition-all duration-300 ease-out group-hover:scale-110 group-hover:shadow-2xl"
