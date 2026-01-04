@@ -41,7 +41,7 @@ const plans: Plan[] = [
     name: "Pro",
     monthlyPrice: 9,
     yearlyPrice: 49,
-    subtitle: "Unlock the full AI experience",
+    subtitle: "Build lasting habits with AI coaching",
     popular: true,
     features: [
       { text: "Unlimited habits & tasks", included: true },
@@ -66,14 +66,19 @@ interface PaywallModalProps {
 
 export function PaywallModal({ open, onOpenChange, limitType, limitMessage }: PaywallModalProps) {
   const [isYearly, setIsYearly] = useState(true);
+  const [showOtherPlans, setShowOtherPlans] = useState(false);
   const [countdown, setCountdown] = useState(5);
   const [canClose, setCanClose] = useState(false);
 
-  // Reset countdown when modal opens
+  const proPlan = plans.find(p => p.name === "Pro")!;
+  const corePlan = plans.find(p => p.name === "Core")!;
+
+  // Reset countdown and state when modal opens
   useEffect(() => {
     if (open) {
       setCountdown(5);
       setCanClose(false);
+      setShowOtherPlans(false);
     }
   }, [open]);
 
@@ -102,14 +107,15 @@ export function PaywallModal({ open, onOpenChange, limitType, limitMessage }: Pa
 
   const getPrice = (plan: Plan) => {
     if (isYearly) {
-      return Math.floor(plan.yearlyPrice / 12);
+      return (plan.yearlyPrice / 12).toFixed(2);
     }
     return plan.monthlyPrice;
   };
 
-  const getYearlyTotal = (plan: Plan) => {
-    if (!isYearly) return null;
-    return `Pay only $${plan.yearlyPrice}/year`;
+  const getSavingsPercent = (plan: Plan) => {
+    const monthlyTotal = plan.monthlyPrice * 12;
+    const savings = ((monthlyTotal - plan.yearlyPrice) / monthlyTotal) * 100;
+    return Math.round(savings);
   };
 
   return (
@@ -162,93 +168,90 @@ export function PaywallModal({ open, onOpenChange, limitType, limitMessage }: Pa
             </div>
           </div>
 
-          {/* Pricing Cards */}
-          <div className="grid grid-cols-2 gap-4">
-            {plans.map((plan) => (
+          {/* Pro Plan - Primary View */}
+          {!showOtherPlans ? (
+            <div className="max-w-sm mx-auto">
               <div
-                key={plan.name}
-                className={cn(
-                  "relative rounded-xl p-4 transition-all duration-300 bg-white/80 backdrop-blur-sm flex flex-col",
-                  plan.popular
-                    ? "shadow-lg"
-                    : "hover:shadow-md"
-                )}
+                className="relative rounded-xl p-5 transition-all duration-300 bg-white/80 backdrop-blur-sm flex flex-col shadow-lg"
               >
                 {/* Gradient border for Pro plan */}
-                {plan.popular && (
+                <div 
+                  className="absolute inset-0 rounded-xl -z-10 p-[2px]"
+                  style={{
+                    background: 'linear-gradient(135deg, hsl(25 95% 60%), hsl(35 100% 65%), hsl(25 95% 55%))',
+                  }}
+                >
+                  <div className="w-full h-full rounded-xl bg-white" />
+                </div>
+
+                {/* Best Value Badge */}
+                <div className="absolute -top-2.5 left-1/2 -translate-x-1/2">
                   <div 
-                    className="absolute inset-0 rounded-xl -z-10 p-[2px]"
+                    className="flex items-center justify-center text-primary-foreground px-2.5 py-0.5 rounded-full text-[10px] font-semibold shadow-md"
                     style={{
                       background: 'linear-gradient(135deg, hsl(25 95% 60%), hsl(35 100% 65%), hsl(25 95% 55%))',
                     }}
                   >
-                    <div className="w-full h-full rounded-xl bg-white" />
+                    Best Value
                   </div>
-                )}
+                </div>
 
-                {/* Most Popular Badge */}
-                {plan.popular && (
-                  <div className="absolute -top-2.5 left-1/2 -translate-x-1/2">
-                    <div 
-                      className="flex items-center justify-center text-primary-foreground px-2.5 py-0.5 rounded-full text-[10px] font-semibold shadow-md"
-                      style={{
-                        background: 'linear-gradient(135deg, hsl(25 95% 60%), hsl(35 100% 65%), hsl(25 95% 55%))',
-                      }}
-                    >
-                      Most Popular
+                {/* Savings Badge - Only show for yearly */}
+                {isYearly && (
+                  <div className="absolute -top-2.5 right-3">
+                    <div className="bg-green-500 text-white px-2 py-0.5 rounded-full text-[10px] font-semibold shadow-md">
+                      Save {getSavingsPercent(proPlan)}%
                     </div>
                   </div>
                 )}
 
                 {/* Plan Header */}
-                <div className="text-center mb-2 pt-1">
-                  <h3 className="text-base font-bold text-foreground">
-                    {plan.name}
+                <div className="text-center mb-3 pt-2">
+                  <h3 className="text-lg font-bold text-foreground">
+                    {proPlan.name}
                   </h3>
-                  <p className="text-muted-foreground text-[10px] leading-tight">{plan.subtitle}</p>
+                  <p className="text-muted-foreground text-xs leading-tight">{proPlan.subtitle}</p>
                 </div>
 
                 {/* Price */}
-                <div className="text-center mb-2">
-                  <div className="flex items-baseline justify-center gap-0.5">
-                    <span className="text-2xl font-bold text-foreground">
-                      ${getPrice(plan)}
-                    </span>
-                    <span className="text-muted-foreground text-xs">
-                      /mo
-                    </span>
-                  </div>
-                  {getYearlyTotal(plan) && (
-                    <p className="text-primary text-[10px] font-medium">
-                      {getYearlyTotal(plan)}
-                    </p>
+                <div className="text-center mb-3">
+                  {isYearly ? (
+                    <>
+                      <div className="flex items-baseline justify-center gap-0.5">
+                        <span className="text-3xl font-bold text-foreground">
+                          ${proPlan.yearlyPrice}
+                        </span>
+                        <span className="text-muted-foreground text-sm">
+                          /year
+                        </span>
+                      </div>
+                      <p className="text-primary text-xs font-medium mt-1">
+                        Just ${getPrice(proPlan)}/mo
+                      </p>
+                    </>
+                  ) : (
+                    <div className="flex items-baseline justify-center gap-0.5">
+                      <span className="text-3xl font-bold text-foreground">
+                        ${proPlan.monthlyPrice}
+                      </span>
+                      <span className="text-muted-foreground text-sm">
+                        /mo
+                      </span>
+                    </div>
                   )}
                 </div>
 
                 {/* Divider */}
-                <div className="w-full h-px bg-gradient-to-r from-transparent via-border to-transparent mb-2" />
+                <div className="w-full h-px bg-gradient-to-r from-transparent via-border to-transparent mb-3" />
 
                 {/* Features */}
-                <ul className="space-y-1 mb-3 flex-grow">
-                  {plan.features.map((feature, index) => (
-                    <li key={index} className="flex items-start gap-1.5">
-                      {feature.included ? (
-                        <div className="flex-shrink-0 w-3.5 h-3.5 rounded-full bg-primary/20 flex items-center justify-center mt-0.5">
-                          <Check className="w-2 h-2 text-primary" />
-                        </div>
-                      ) : (
-                        <div className="flex-shrink-0 w-3.5 h-3.5 rounded-full bg-muted flex items-center justify-center mt-0.5">
-                          <X className="w-2 h-2 text-muted-foreground" />
-                        </div>
-                      )}
-                      <span
-                        className={cn(
-                          "text-[11px] leading-tight",
-                          feature.included
-                            ? "text-foreground"
-                            : "text-muted-foreground"
-                        )}
-                      >
+                <ul className="space-y-1.5 mb-4 flex-grow">
+                  {proPlan.features.map((feature, index) => (
+                    <li key={index} className="flex items-start gap-2">
+                      <div className="flex-shrink-0 w-4 h-4 rounded-full bg-primary/20 flex items-center justify-center mt-0.5">
+                        <Check className="w-2.5 h-2.5 text-primary" />
+                      </div>
+                      <span className="text-xs leading-tight text-foreground">
                         {feature.text}
                       </span>
                     </li>
@@ -257,20 +260,175 @@ export function PaywallModal({ open, onOpenChange, limitType, limitMessage }: Pa
 
                 {/* CTA Button */}
                 <Button
-                  variant={plan.popular ? "gradient" : "outline"}
-                  size="sm"
-                  className={cn(
-                    "w-full mt-auto text-xs h-9",
-                    plan.popular
-                      ? "shadow-md hover:shadow-lg hover:opacity-90"
-                      : "hover:bg-muted hover:border-muted-foreground/30"
-                  )}
+                  variant="gradient"
+                  size="default"
+                  className="w-full mt-auto shadow-md hover:shadow-lg hover:opacity-90"
                 >
-                  Get started
+                  Unlock Pro
                 </Button>
+
+                {/* Trust Line */}
+                <p className="text-center text-[10px] text-muted-foreground mt-2">
+                  Cancel anytime. No payment due now.
+                </p>
               </div>
-            ))}
-          </div>
+
+              {/* View other plans link */}
+              <button
+                onClick={() => setShowOtherPlans(true)}
+                className="w-full text-center text-xs text-muted-foreground hover:text-foreground mt-3 underline-offset-2 hover:underline transition-colors"
+              >
+                View other plans
+              </button>
+            </div>
+          ) : (
+            /* Both Plans View */
+            <>
+              <div className="grid grid-cols-2 gap-4">
+                {plans.map((plan) => (
+                  <div
+                    key={plan.name}
+                    className={cn(
+                      "relative rounded-xl p-4 transition-all duration-300 bg-white/80 backdrop-blur-sm flex flex-col",
+                      plan.popular
+                        ? "shadow-lg"
+                        : "hover:shadow-md"
+                    )}
+                  >
+                    {/* Gradient border for Pro plan */}
+                    {plan.popular && (
+                      <div 
+                        className="absolute inset-0 rounded-xl -z-10 p-[2px]"
+                        style={{
+                          background: 'linear-gradient(135deg, hsl(25 95% 60%), hsl(35 100% 65%), hsl(25 95% 55%))',
+                        }}
+                      >
+                        <div className="w-full h-full rounded-xl bg-white" />
+                      </div>
+                    )}
+
+                    {/* Best Value Badge for Pro */}
+                    {plan.popular && (
+                      <div className="absolute -top-2.5 left-1/2 -translate-x-1/2">
+                        <div 
+                          className="flex items-center justify-center text-primary-foreground px-2.5 py-0.5 rounded-full text-[10px] font-semibold shadow-md"
+                          style={{
+                            background: 'linear-gradient(135deg, hsl(25 95% 60%), hsl(35 100% 65%), hsl(25 95% 55%))',
+                          }}
+                        >
+                          Best Value
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Savings Badge - Only show for yearly on Pro */}
+                    {plan.popular && isYearly && (
+                      <div className="absolute -top-2.5 right-2">
+                        <div className="bg-green-500 text-white px-1.5 py-0.5 rounded-full text-[9px] font-semibold shadow-md">
+                          Save {getSavingsPercent(plan)}%
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Plan Header */}
+                    <div className="text-center mb-2 pt-1">
+                      <h3 className="text-base font-bold text-foreground">
+                        {plan.name}
+                      </h3>
+                      <p className="text-muted-foreground text-[10px] leading-tight">{plan.subtitle}</p>
+                    </div>
+
+                    {/* Price */}
+                    <div className="text-center mb-2">
+                      {isYearly ? (
+                        <>
+                          <div className="flex items-baseline justify-center gap-0.5">
+                            <span className="text-2xl font-bold text-foreground">
+                              ${plan.yearlyPrice}
+                            </span>
+                            <span className="text-muted-foreground text-xs">
+                              /yr
+                            </span>
+                          </div>
+                          <p className="text-primary text-[10px] font-medium">
+                            Just ${getPrice(plan)}/mo
+                          </p>
+                        </>
+                      ) : (
+                        <div className="flex items-baseline justify-center gap-0.5">
+                          <span className="text-2xl font-bold text-foreground">
+                            ${plan.monthlyPrice}
+                          </span>
+                          <span className="text-muted-foreground text-xs">
+                            /mo
+                          </span>
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Divider */}
+                    <div className="w-full h-px bg-gradient-to-r from-transparent via-border to-transparent mb-2" />
+
+                    {/* Features */}
+                    <ul className="space-y-1 mb-3 flex-grow">
+                      {plan.features.map((feature, index) => (
+                        <li key={index} className="flex items-start gap-1.5">
+                          {feature.included ? (
+                            <div className="flex-shrink-0 w-3.5 h-3.5 rounded-full bg-primary/20 flex items-center justify-center mt-0.5">
+                              <Check className="w-2 h-2 text-primary" />
+                            </div>
+                          ) : (
+                            <div className="flex-shrink-0 w-3.5 h-3.5 rounded-full bg-muted flex items-center justify-center mt-0.5">
+                              <X className="w-2 h-2 text-muted-foreground" />
+                            </div>
+                          )}
+                          <span
+                            className={cn(
+                              "text-[11px] leading-tight",
+                              feature.included
+                                ? "text-foreground"
+                                : "text-muted-foreground"
+                            )}
+                          >
+                            {feature.text}
+                          </span>
+                        </li>
+                      ))}
+                    </ul>
+
+                    {/* CTA Button */}
+                    <Button
+                      variant={plan.popular ? "gradient" : "outline"}
+                      size="sm"
+                      className={cn(
+                        "w-full mt-auto text-xs h-9",
+                        plan.popular
+                          ? "shadow-md hover:shadow-lg hover:opacity-90"
+                          : "hover:bg-muted hover:border-muted-foreground/30"
+                      )}
+                    >
+                      {plan.popular ? "Unlock Pro" : "Get Core"}
+                    </Button>
+
+                    {/* Trust Line for Pro */}
+                    {plan.popular && (
+                      <p className="text-center text-[9px] text-muted-foreground mt-1.5">
+                        Cancel anytime. No payment due now.
+                      </p>
+                    )}
+                  </div>
+                ))}
+              </div>
+
+              {/* Back to Pro only link */}
+              <button
+                onClick={() => setShowOtherPlans(false)}
+                className="w-full text-center text-xs text-muted-foreground hover:text-foreground mt-3 underline-offset-2 hover:underline transition-colors"
+              >
+                ← Back
+              </button>
+            </>
+          )}
 
           {/* Close button with countdown */}
           <div className="mt-3 text-center">
