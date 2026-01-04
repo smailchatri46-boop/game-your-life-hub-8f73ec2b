@@ -6,6 +6,7 @@ export type OnboardingStep =
   | "survey-3"
   | "survey-4"
   | "survey-5"
+  | "survey-6"
   | "about-focus"
   | "about-struggle"
   | "about-time"
@@ -36,6 +37,7 @@ export interface OnboardingData {
     survey3: string | null;
     survey4: string | null;
     survey5: string | null;
+    survey6: string | null;
   };
 }
 
@@ -56,6 +58,7 @@ const INITIAL_DATA: OnboardingData = {
     survey3: null,
     survey4: null,
     survey5: null,
+    survey6: null,
   },
 };
 
@@ -65,6 +68,7 @@ const STEP_ORDER: OnboardingStep[] = [
   "survey-3",
   "survey-4",
   "survey-5",
+  "survey-6",
   "about-focus",
   "about-struggle",
   "about-time",
