@@ -18,7 +18,7 @@ export function YouTubeEmbed({ videoId, thumbnail, className = "" }: YouTubeEmbe
     return (
       <div className={`aspect-video ${className}`}>
         <iframe
-          src={`https://www.youtube.com/embed/${videoId}?autoplay=1&modestbranding=1&rel=0&showinfo=0&controls=1&disablekb=0&fs=0&iv_load_policy=3&loop=0&playsinline=1`}
+          src={`https://www.youtube.com/embed/${videoId}?autoplay=1&modestbranding=1&rel=0&showinfo=0&controls=1&disablekb=0&fs=0&iv_load_policy=3&playsinline=1&playlist=${videoId}&loop=1`}
           title="YouTube video player"
           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
           allowFullScreen
