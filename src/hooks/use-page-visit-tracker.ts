@@ -32,9 +32,13 @@ export function usePageVisitTracker() {
   const [shouldShowReviewModal, setShouldShowReviewModal] = useState(false);
 
   // Check if a week has passed since last shown
+  // TODO: Re-enable weekly check after testing
   const hasWeekPassed = useCallback(() => {
-    if (!reviewData) return true;
-    return Date.now() - reviewData.shownAt >= WEEK_IN_MS;
+    // For testing: always return true to show modal every time
+    return true;
+    // Production logic:
+    // if (!reviewData) return true;
+    // return Date.now() - reviewData.shownAt >= WEEK_IN_MS;
   }, [reviewData]);
 
   const markPageVisited = useCallback((route: string) => {
