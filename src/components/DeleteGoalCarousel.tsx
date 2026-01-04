@@ -14,13 +14,13 @@ interface DeleteGoalCarouselProps {
 const SLIDES = [
   {
     emoji: "🌱",
-    title: "Update goals — don't delete them too fast",
-    message: "Many people delete goals when they really just need to adjust them. Instead of deleting this goal completely, consider updating the time frame or reducing the target. Progress is rarely linear, and small adjustments keep you moving forward.",
+    title: "Pause habits and tasks — don't delete too quickly",
+    message: "Sometimes you just need a break. Instead of deleting a habit or task completely, try pausing it or lowering the frequency. Progress happens over time — perfection is not required.",
   },
   {
-    emoji: "🎯",
-    title: "Small goals beat no goals",
-    message: "A smaller goal still builds momentum. If this goal feels too big right now, replace it with something simpler for the next three months. Tiny consistent wins matter more than starting over.",
+    emoji: "💪",
+    title: "Small steps still count",
+    message: "If a habit or task feels too hard right now, make it easier instead of removing it. Smaller, realistic steps still build momentum. Consistent wins beat starting over.",
   },
 ];
 
@@ -99,12 +99,11 @@ export function DeleteGoalCarousel({ goalName, onConfirmDelete, onClose }: Delet
                   </div>
 
                   <h2 className="text-xl font-semibold text-foreground mb-3 font-display">
-                    Are you sure you want to delete this goal?
+                    Are you sure you want to delete this habit or task?
                   </h2>
 
                   <p className="text-muted-foreground text-sm leading-relaxed mb-6 max-w-sm mx-auto">
-                    This will permanently remove <span className="font-medium text-foreground">"{goalName}"</span> and its progress.
-                    To confirm, please type <span className="font-medium text-foreground">delete</span> in the box below.
+                    This will permanently remove <span className="font-medium text-foreground">"{goalName}"</span> and all its progress. If you're sure, please type <span className="font-medium text-foreground">delete</span> in the box below to confirm.
                   </p>
 
                   <Input
@@ -162,7 +161,7 @@ export function DeleteGoalCarousel({ goalName, onConfirmDelete, onClose }: Delet
                   disabled={!canDelete}
                   className="px-6 py-3 rounded-xl shadow-lg hover:shadow-xl transition-all text-base font-medium disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  Delete Goal
+                  Delete habit or task
                 </Button>
               </div>
             )}
