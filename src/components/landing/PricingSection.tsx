@@ -75,7 +75,7 @@ const plans: Plan[] = [
 ];
 
 export function PricingSection() {
-  const [isYearly, setIsYearly] = useState(false);
+  const [isYearly, setIsYearly] = useState(true);
 
   const getPrice = (plan: Plan) => {
     return isYearly ? plan.yearlyPrice : plan.monthlyPrice;
@@ -124,7 +124,12 @@ export function PricingSection() {
             <Switch
               checked={isYearly}
               onCheckedChange={setIsYearly}
-              className="data-[state=checked]:bg-primary"
+              className="data-[state=checked]:bg-transparent [&[data-state=checked]>span]:bg-white"
+              style={{
+                background: isYearly 
+                  ? 'linear-gradient(135deg, hsl(25 95% 60%), hsl(35 100% 65%), hsl(25 95% 55%))'
+                  : undefined,
+              }}
             />
             <span
               className={cn(
