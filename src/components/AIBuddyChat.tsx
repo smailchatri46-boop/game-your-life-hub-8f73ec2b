@@ -9,22 +9,16 @@ import { AppleEmoji } from "@/components/AppleEmoji";
 import { parseTextWithEmojis } from "@/utils/parseTextWithEmojis";
 import GlowOrb from "@/components/GlowOrb";
 import { SuggestedQuestions } from "@/components/SuggestedQuestions";
-import { UpgradeModal } from "@/components/UpgradeModal";
-
-// TODO: Replace with actual subscription check from your backend
-const useIsSubscribed = () => {
-  // For now, return false to test the modal. 
-  // Replace with real subscription status check.
-  return false;
-};
+import { PaywallModal } from "@/components/PaywallModal";
+import { usePlanLimits } from "@/hooks/use-plan-limits";
 
 export function AIBuddyChat() {
   const [message, setMessage] = useState("");
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [showUpgradeModal, setShowUpgradeModal] = useState(false);
+  const [showPaywall, setShowPaywall] = useState(false);
   const { user } = useAuth();
   const messagesEndRef = useRef<HTMLDivElement>(null);
-  const isSubscribed = useIsSubscribed();
+  const { limits } = usePlanLimits();
 
   const {
     messages,
@@ -51,8 +45,8 @@ export function AIBuddyChat() {
     e.preventDefault();
     if (!message.trim() || isLoading) return;
 
-    if (!isSubscribed) {
-      setShowUpgradeModal(true);
+    if (!limits.hasAIAccess) {
+      setShowPaywall(true);
       return;
     }
 
@@ -64,8 +58,8 @@ export function AIBuddyChat() {
   const handleSuggestionSelect = async (question: string) => {
     if (isLoading) return;
 
-    if (!isSubscribed) {
-      setShowUpgradeModal(true);
+    if (!limits.hasAIAccess) {
+      setShowPaywall(true);
       return;
     }
 
@@ -225,8 +219,13 @@ export function AIBuddyChat() {
         </form>
       </div>
 
-      {/* Upgrade Modal */}
-      <UpgradeModal open={showUpgradeModal} onClose={() => setShowUpgradeModal(false)} />
+      {/* Paywall Modal */}
+      <PaywallModal 
+        open={showPaywall} 
+        onOpenChange={setShowPaywall}
+        limitType="habits"
+        limitMessage="AI Buddy is a Pro feature. Upgrade to Pro to get personalized AI coaching, habit insights, and unlimited conversations."
+      />
     </div>
   );
 }
