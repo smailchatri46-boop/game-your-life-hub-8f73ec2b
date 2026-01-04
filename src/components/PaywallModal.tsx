@@ -25,7 +25,7 @@ const plans: Plan[] = [
     name: "Core",
     monthlyPrice: 5,
     yearlyPrice: 25,
-    subtitle: "Great for people getting serious about tracking their lives",
+    subtitle: "Ideal for tracking your whole life",
     features: [
       { text: "Up to 6 habits & tasks", included: true },
       { text: "Unlimited to-do lists", included: true },
