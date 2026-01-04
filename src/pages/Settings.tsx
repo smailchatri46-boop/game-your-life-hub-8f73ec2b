@@ -8,7 +8,6 @@ import { EditProfileModal } from "@/components/EditProfileModal";
 import { DeleteAccountModal } from "@/components/DeleteAccountModal";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
-import { exportUserData, downloadTextFile } from "@/utils/exportChatData";
 import { toast } from "sonner";
 import { 
   User, 
@@ -44,7 +43,7 @@ export default function Settings() {
     email: null, 
     avatar_url: null 
   });
-  const [exporting, setExporting] = useState(false);
+  
 
   // For demo purposes - in real app this would come from subscription data
   const isPro = false;
@@ -79,25 +78,6 @@ export default function Settings() {
     toast.success("Account deletion initiated");
   };
 
-  const handleDownloadData = async () => {
-    if (!isPro) {
-      setShowUpgradeModal(true);
-      return;
-    }
-
-    if (!user) return;
-    
-    setExporting(true);
-    try {
-      const data = await exportUserData(user.id);
-      downloadTextFile(data, `locked-wellness-export-${new Date().toISOString().split('T')[0]}.txt`);
-      toast.success("Data exported successfully!");
-    } catch (error) {
-      toast.error("Failed to export data");
-    } finally {
-      setExporting(false);
-    }
-  };
 
   return (
     <>
@@ -176,16 +156,6 @@ export default function Settings() {
           </GlassCard>
         )}
 
-        {/* Download Data */}
-        <Button
-          variant="secondary"
-          onClick={handleDownloadData}
-          disabled={exporting}
-          className="w-full rounded-full mb-6 h-12 bg-white hover:bg-white/90 text-foreground border-0"
-        >
-          {exporting ? "Exporting..." : "Download my data"}
-        </Button>
-        
         {/* Privacy & Security */}
         <GlassCard className="divide-y divide-border/30 mb-6">
           <div className="p-5 flex items-center gap-3">

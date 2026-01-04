@@ -1,14 +1,10 @@
 import { Button } from "@/components/ui/button";
-import { ArrowUp, Download, Loader2, Menu, HelpCircle } from "lucide-react";
-import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+import { ArrowUp, Loader2, Menu } from "lucide-react";
 import { useState, useEffect, useRef } from "react";
-import { useToast } from "@/hooks/use-toast";
 import { useAIChat } from "@/hooks/use-ai-chat";
 import { useAuth } from "@/contexts/AuthContext";
 import { TypingIndicator } from "@/components/TypingIndicator";
 import { ChatSidebar } from "@/components/ChatSidebar";
-import { exportUserData, downloadTextFile } from "@/utils/exportChatData";
-import { format } from "date-fns";
 import { AppleEmoji } from "@/components/AppleEmoji";
 import { parseTextWithEmojis } from "@/utils/parseTextWithEmojis";
 import GlowOrb from "@/components/GlowOrb";
@@ -24,10 +20,8 @@ const useIsSubscribed = () => {
 
 export function AIBuddyChat() {
   const [message, setMessage] = useState("");
-  const [isExporting, setIsExporting] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [showUpgradeModal, setShowUpgradeModal] = useState(false);
-  const { toast } = useToast();
   const { user } = useAuth();
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const isSubscribed = useIsSubscribed();
@@ -78,41 +72,6 @@ export function AIBuddyChat() {
     await sendMessage(question);
   };
 
-  const handleExport = async () => {
-    if (!user) {
-      toast({
-        title: "Sign in required",
-        description: "Please sign in to export your data.",
-        variant: "destructive",
-      });
-      return;
-    }
-
-    if (!isSubscribed) {
-      setShowUpgradeModal(true);
-      return;
-    }
-
-    setIsExporting(true);
-    try {
-      const content = await exportUserData(user.id);
-      const filename = `wellness-export-${format(new Date(), "yyyy-MM-dd")}.txt`;
-      downloadTextFile(content, filename);
-      toast({
-        title: "Export complete",
-        description: "Your data has been downloaded.",
-      });
-    } catch (error) {
-      toast({
-        title: "Export failed",
-        description: "Could not export your data. Please try again.",
-        variant: "destructive",
-      });
-    } finally {
-      setIsExporting(false);
-    }
-  };
-
   const handleNewChat = async () => {
     clearMessages();
     await startNewConversation();
@@ -140,35 +99,6 @@ export function AIBuddyChat() {
             <h3 className="font-display text-lg font-semibold text-foreground">AI Buddy</h3>
             <p className="text-xs text-muted-foreground">Your supportive motivation buddy</p>
           </div>
-        </div>
-
-        <div className="flex items-center gap-1">
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={handleExport}
-            disabled={isExporting}
-            className="text-muted-foreground hover:text-foreground hover:bg-muted/50"
-          >
-            {isExporting ? (
-              <Loader2 className="w-4 h-4 animate-spin mr-2" />
-            ) : (
-              <Download className="w-4 h-4 mr-2" />
-            )}
-            Download data
-          </Button>
-          <Tooltip delayDuration={200}>
-            <TooltipTrigger asChild>
-              <button className="p-1.5 rounded-full hover:bg-muted/50 text-muted-foreground transition-colors">
-                <HelpCircle className="w-3.5 h-3.5" />
-              </button>
-            </TooltipTrigger>
-            <TooltipContent side="bottom" align="end" sideOffset={8} className="max-w-[240px] text-center p-2.5 bg-card border border-border/20 shadow-lg z-50">
-              <p className="text-xs leading-relaxed">
-                Download your analytics to upload to ChatGPT, Gemini, Grok, or your favorite AI. Your data is yours and safe here.
-              </p>
-            </TooltipContent>
-          </Tooltip>
         </div>
       </div>
 
