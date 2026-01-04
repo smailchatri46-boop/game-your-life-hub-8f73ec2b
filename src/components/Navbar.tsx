@@ -33,7 +33,7 @@ export function Navbar() {
         <div className="navbar-glass relative h-full px-5 flex items-center w-full">
           {/* Logo - fixed left */}
           <Link 
-            to="/" 
+            to="/dashboard" 
             className="flex-shrink-0"
             style={{ width: '100px', minWidth: '100px' }}
           >
