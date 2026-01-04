@@ -37,7 +37,7 @@ export function YouTubeEmbed({ videoId, thumbnail, className = "" }: YouTubeEmbe
       <img 
         src={thumbnail || `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`}
         alt="Video thumbnail"
-        className="w-full h-full object-cover"
+        className="w-full h-full object-cover scale-110"
         onError={(e) => {
           // Fallback to hqdefault if maxresdefault doesn't exist (only for YouTube thumbnails)
           if (!thumbnail) {
