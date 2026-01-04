@@ -62,11 +62,11 @@ const tutorials: Tutorial[] = [
   },
   {
     id: "6",
-    title: "Coming Soon",
-    description: "More tutorials are on the way. Stay tuned for additional guides and tips!",
-    duration: "—",
-    videoId: "mUnuNuWcKp4",
-    category: "More",
+    title: "How to add a new goal on Neyler",
+    description: "Learn how to set meaningful goals and track your progress towards achieving them.",
+    duration: "2 min",
+    videoId: "Ud6fX0mgX6Y",
+    category: "Goals",
   },
 ];
 
