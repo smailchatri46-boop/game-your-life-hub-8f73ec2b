@@ -1,16 +1,15 @@
 import { useState, useCallback } from "react";
 
 export type OnboardingStep = 
-  | "welcome"
-  | "identity-1"
-  | "identity-2"
-  | "why-we-exist"
-  | "tell-us-about-you"
   | "about-focus"
   | "about-struggle"
   | "about-time"
-  | "habit-suggestions"
+  | "tell-us-about-you"
+  | "why-we-exist"
   | "goals"
+  | "identity-1"
+  | "identity-2"
+  | "habit-suggestions"
   | "commitment"
   | "loading"
   | "success";
@@ -42,23 +41,22 @@ const INITIAL_DATA: OnboardingData = {
 };
 
 const STEP_ORDER: OnboardingStep[] = [
-  "welcome",
-  "identity-1",
-  "identity-2",
-  "why-we-exist",
-  "tell-us-about-you",
   "about-focus",
   "about-struggle",
   "about-time",
-  "habit-suggestions",
+  "tell-us-about-you",
+  "why-we-exist",
   "goals",
+  "identity-1",
+  "identity-2",
+  "habit-suggestions",
   "commitment",
   "loading",
   "success",
 ];
 
 export function useOnboarding() {
-  const [currentStep, setCurrentStep] = useState<OnboardingStep>("welcome");
+  const [currentStep, setCurrentStep] = useState<OnboardingStep>("about-focus");
   const [data, setData] = useState<OnboardingData>(INITIAL_DATA);
   const [isComplete, setIsComplete] = useState(false);
 
@@ -163,7 +161,7 @@ export function useOnboarding() {
   }, []);
 
   const resetOnboarding = useCallback(() => {
-    setCurrentStep("welcome");
+    setCurrentStep("about-focus");
     setData(INITIAL_DATA);
     setIsComplete(false);
   }, []);

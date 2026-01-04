@@ -15,10 +15,10 @@ export function WhyWeExistStep({ onNext }: WhyWeExistStepProps) {
           <AppleEmoji emoji="🚀" size="3xl" />
         </div>
         <h2 className="text-2xl font-bold font-display text-foreground mb-4">
-          Why Locked exists
+          Why Neyler exists
         </h2>
         <p className="text-muted-foreground text-base leading-relaxed">
-          Locked is an AI-powered habit, task, and goals tracker. Everything in one place with meaningful insights built for you.
+          Neyler is an AI-powered habit, task, and goals tracker. Everything in one place with meaningful insights built for you.
         </p>
       </div>
 
