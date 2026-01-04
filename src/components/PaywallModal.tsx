@@ -135,7 +135,7 @@ export function PaywallModal({ open, onOpenChange, limitType, limitMessage }: Pa
             </p>
 
             {/* Monthly/Yearly Toggle */}
-            <div className="flex items-center justify-center gap-3 mt-3">
+            <div className="flex items-center justify-center gap-3 mt-3 mb-2">
               <span
                 className={cn(
                   "text-xs font-medium transition-colors",
@@ -156,19 +156,11 @@ export function PaywallModal({ open, onOpenChange, limitType, limitMessage }: Pa
               />
               <span
                 className={cn(
-                  "text-xs font-medium transition-colors flex items-center gap-1.5",
+                  "text-xs font-medium transition-colors",
                   isYearly ? "text-foreground" : "text-muted-foreground"
                 )}
               >
                 Yearly
-                <span 
-                  className="text-[10px] text-white font-semibold px-2 py-0.5 rounded-full"
-                  style={{
-                    background: 'linear-gradient(135deg, hsl(25 95% 60%), hsl(35 100% 65%), hsl(25 95% 55%))',
-                  }}
-                >
-                  Save 55%
-                </span>
               </span>
             </div>
           </div>
@@ -201,14 +193,6 @@ export function PaywallModal({ open, onOpenChange, limitType, limitMessage }: Pa
                   </div>
                 </div>
 
-                {/* Savings Badge - Only show for yearly */}
-                {isYearly && (
-                  <div className="absolute -top-2.5 right-3">
-                    <div className="bg-green-500 text-white px-2 py-0.5 rounded-full text-[10px] font-semibold shadow-md">
-                      Save {getSavingsPercent(proPlan)}%
-                    </div>
-                  </div>
-                )}
 
                 {/* Plan Header */}
                 <div className="text-center mb-3 pt-2">
@@ -278,13 +262,6 @@ export function PaywallModal({ open, onOpenChange, limitType, limitMessage }: Pa
                 </p>
               </div>
 
-              {/* View other plans link */}
-              <button
-                onClick={() => setShowOtherPlans(true)}
-                className="w-full text-center text-xs text-muted-foreground hover:text-foreground mt-3 underline-offset-2 hover:underline transition-colors"
-              >
-                View other plans
-              </button>
             </div>
           ) : (
             /* Both Plans View */
@@ -326,14 +303,6 @@ export function PaywallModal({ open, onOpenChange, limitType, limitMessage }: Pa
                       </div>
                     )}
 
-                    {/* Savings Badge - Only show for yearly on Pro */}
-                    {plan.popular && isYearly && (
-                      <div className="absolute -top-2.5 right-2">
-                        <div className="bg-green-500 text-white px-1.5 py-0.5 rounded-full text-[9px] font-semibold shadow-md">
-                          Save {getSavingsPercent(plan)}%
-                        </div>
-                      </div>
-                    )}
 
                     {/* Plan Header */}
                     <div className="text-center mb-2 pt-1">
@@ -425,31 +394,30 @@ export function PaywallModal({ open, onOpenChange, limitType, limitMessage }: Pa
                 ))}
               </div>
 
-              {/* Back to Pro only link */}
-              <button
-                onClick={() => setShowOtherPlans(false)}
-                className="w-full text-center text-xs text-muted-foreground hover:text-foreground mt-3 underline-offset-2 hover:underline transition-colors"
-              >
-                ← Back
-              </button>
             </>
           )}
 
-          {/* Close button with countdown */}
-          <div className="mt-3 text-center">
+          {/* View other plans / Back link - centered at bottom */}
+          <div className="mt-4 text-center">
             <button
-              onClick={handleClose}
-              disabled={!canClose}
-              className={cn(
-                "text-sm transition-all px-3 py-1.5",
-                canClose 
-                  ? "text-muted-foreground hover:text-foreground hover:font-semibold cursor-pointer" 
-                  : "text-muted-foreground/50 cursor-not-allowed"
-              )}
+              onClick={() => setShowOtherPlans(!showOtherPlans)}
+              className="text-xs text-muted-foreground hover:font-semibold transition-all"
             >
-              {canClose ? "Close" : `Wait ${countdown}s to close`}
+              {showOtherPlans ? "← Back" : "View other plans"}
             </button>
           </div>
+
+          {/* Close button - only visible when timer complete */}
+          {canClose && (
+            <div className="mt-2 text-center">
+              <button
+                onClick={handleClose}
+                className="text-sm text-muted-foreground hover:font-semibold transition-all cursor-pointer"
+              >
+                Close
+              </button>
+            </div>
+          )}
         </div>
       </DialogContent>
     </Dialog>
