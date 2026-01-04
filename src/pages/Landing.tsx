@@ -12,6 +12,7 @@ import { HabitsShowcase } from "@/components/landing/HabitsShowcase";
 import { AIBuddyShowcase } from "@/components/landing/AIBuddyShowcase";
 import { GoalsShowcase } from "@/components/landing/GoalsShowcase";
 import { TestimonialsSection } from "@/components/landing/TestimonialsSection";
+import { PricingSection } from "@/components/landing/PricingSection";
 import { ScrollReveal } from "@/components/ScrollReveal";
 
 export default function Landing() {
@@ -299,6 +300,11 @@ export default function Landing() {
           </div>
         </ScrollReveal>
       </section>
+
+      {/* Pricing */}
+      <ScrollReveal animation="fade-up">
+        <PricingSection />
+      </ScrollReveal>
 
       {/* Testimonials */}
       <TestimonialsSection />
