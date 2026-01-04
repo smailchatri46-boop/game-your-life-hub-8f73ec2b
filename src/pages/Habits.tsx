@@ -12,11 +12,13 @@ import { AppleEmoji as MoodEmoji } from "@/components/AppleEmoji";
 import { useFirstTimeTips } from "@/hooks/use-first-time-tips";
 import { FirstTimeTip } from "@/components/FirstTimeTip";
 import { GoalProgressOverview } from "@/components/GoalProgressOverview";
+import { PaywallModal } from "@/components/PaywallModal";
+import { usePlanLimits, LimitType } from "@/hooks/use-plan-limits";
 
 import { Button } from "@/components/ui/button";
 import { Plus, Trash2, GripVertical, Check, Target, Calendar, TrendingUp, FileText } from "lucide-react";
 import { MonthSelector } from "@/components/MonthSelector";
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
 import { useSelectedMonth } from "@/hooks/use-selected-month";
 import { format } from "date-fns";
 
@@ -106,6 +108,20 @@ export default function Habits() {
   const [moodMotivationModalOpen, setMoodMotivationModalOpen] = useState(false);
   const [selectedMoodMotivationDay, setSelectedMoodMotivationDay] = useState<number | null>(null);
   
+  // Paywall state
+  const [paywallOpen, setPaywallOpen] = useState(false);
+  const [paywallLimitType, setPaywallLimitType] = useState<LimitType>('habits');
+  
+  // Plan limits
+  const { 
+    canAddHabit, 
+    incrementHabits, 
+    decrementHabits, 
+    setHabitsCount,
+    getLimitMessage,
+    usage 
+  } = usePlanLimits();
+  
   // First-time tips
   const { activeTip, tipMessage, triggerTip, dismissTip, shouldShowTip } = useFirstTimeTips();
   const {
@@ -128,6 +144,11 @@ export default function Habits() {
       completions: generateCompletions(year, month, currentDay, template.target),
     }));
   });
+  
+  // Sync habits count with plan limits on mount and when habits change
+  useEffect(() => {
+    setHabitsCount(allHabits.length);
+  }, [allHabits.length, setHabitsCount]);
 
   // Regenerate completions when month changes
   const displayHabits = useMemo<Habit[]>(() => {
@@ -185,10 +206,22 @@ export default function Habits() {
       completions: {},
     };
     setAllHabits(prev => [...prev, habit]);
+    // Note: setHabitsCount is synced via useEffect
   };
 
   const handleDeleteHabit = (habitId: string) => {
     setAllHabits(prev => prev.filter(h => h.id !== habitId));
+    // Note: setHabitsCount is synced via useEffect
+  };
+
+  // Handle FAB click - check limits first
+  const handleFabClick = () => {
+    if (!canAddHabit) {
+      setPaywallLimitType('habits');
+      setPaywallOpen(true);
+      return;
+    }
+    setIsModalOpen(true);
   };
 
   // Toggle habit completion for a specific day
@@ -690,7 +723,7 @@ export default function Habits() {
         variant="gradient" 
         size="icon" 
         className="fixed bottom-6 right-6 w-14 h-14 rounded-full shadow-large z-50"
-        onClick={() => setIsModalOpen(true)}
+        onClick={handleFabClick}
       >
         <Plus className="w-6 h-6" />
       </Button>
@@ -733,6 +766,14 @@ export default function Habits() {
         title={tipMessage?.title || ""}
         message={tipMessage?.message || ""}
         onDismiss={dismissTip}
+      />
+      
+      {/* Paywall Modal */}
+      <PaywallModal
+        open={paywallOpen}
+        onOpenChange={setPaywallOpen}
+        limitType={paywallLimitType}
+        limitMessage={getLimitMessage(paywallLimitType)}
       />
     </>
   );
