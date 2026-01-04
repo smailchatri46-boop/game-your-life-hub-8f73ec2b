@@ -29,13 +29,13 @@ export default function Contact() {
             
             {/* Intro paragraph */}
             <p className="text-muted-foreground text-lg mb-10">
-              This page is still simple for now — but we're always here to help.
+              We're always here to help.
             </p>
             
             {/* Main content card */}
             <div className="glass-card p-8 md:p-10 rounded-2xl space-y-5">
               <p className="text-foreground/90 text-base md:text-lg leading-relaxed">
-                We're happy to hear from you. If you have questions, feedback, or partnership ideas, feel free to reach out.
+                We're happy to hear from you. If you have questions, feedback, partnership ideas, or are facing any issues with the app, feel free to reach out.
               </p>
               
               <div className="py-4">
@@ -50,7 +50,7 @@ export default function Contact() {
               </div>
               
               <p className="text-muted-foreground text-sm">
-                We usually respond within a few business days.
+                We usually respond within a few hours.
               </p>
             </div>
           </div>
