@@ -47,14 +47,6 @@ export const faqs: FAQ[] = [
     ),
   },
   {
-    question: "Can I download my data?",
-    answer: (
-      <>
-        Yes! Go to the <strong>Dashboard</strong> or <strong>Overview</strong> page, open the AI chat box, and click on "Download Data." This includes your habits, journal entries, mood logs, and chat history—everything you need to keep a personal backup or use with other tools.
-      </>
-    ),
-  },
-  {
     question: "Can I track my mood and emotions?",
     answer: (
       <>
