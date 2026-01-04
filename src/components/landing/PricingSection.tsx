@@ -40,7 +40,7 @@ const plans: Plan[] = [
     name: "Core",
     monthlyPrice: 5,
     yearlyPrice: 25,
-    subtitle: "Great for people getting serious about their habits",
+    subtitle: "Great for people getting serious about tracking their lives",
     benefitText: "Great if you want more structure and motivation day-to-day.",
     features: [
       { text: "Up to 6 habits & tasks", included: true },
