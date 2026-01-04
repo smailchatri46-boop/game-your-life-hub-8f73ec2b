@@ -27,8 +27,8 @@ const getCategoryBorderColor = (color: string) => {
 
 // Curated unique Apple emoji set - 21 emojis for 3 rows of 7
 const EMOJI_OPTIONS = [
-  "📖", "💪", "💼", "🏃", "💧", "🧘", "✍️",
-  "🎯", "🥗", "😴", "🚶", "📝", "🎨", "🎵",
+  "📖", "💪", "💼", "🏃", "💧", "🧘", "☕",
+  "🎯", "🥗", "😴", "🚶", "🏆", "🎨", "🎵",
   "💡", "🧠", "🌸", "🌟", "🔥", "🍎", "🌙",
 ];
 
