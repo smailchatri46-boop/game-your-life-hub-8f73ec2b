@@ -39,7 +39,10 @@ export function ReviewRequestModal({ open, onOpenChange, onDismiss }: ReviewRequ
         background: 'hsl(35 40% 92%)',
         color: 'hsl(var(--foreground))',
         border: 'none',
+        backdropFilter: 'blur(12px)',
+        boxShadow: '0 4px 20px rgba(0, 0, 0, 0.08)',
       },
+      descriptionClassName: 'text-muted-foreground',
     });
     
     onDismiss();
