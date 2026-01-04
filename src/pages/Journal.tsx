@@ -4,6 +4,7 @@ import { AppleEmoji } from "@/components/AppleEmoji";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { DeleteJournalModal } from "@/components/DeleteJournalModal";
 
 import { Plus, Pencil, Trash2 } from "lucide-react";
 import { useState, useMemo, useEffect } from "react";
@@ -95,6 +96,7 @@ export default function Journal() {
   const [selectedEmoji, setSelectedEmoji] = useState("😊");
   const [editingEntry, setEditingEntry] = useState<JournalEntry | null>(null);
   const [currentSlideIndex, setCurrentSlideIndex] = useState(0);
+  const [deleteConfirmEntry, setDeleteConfirmEntry] = useState<JournalEntry | null>(null);
 
   const modalBgClass = useMemo(() => getModalBgClass(selectedEmoji), [selectedEmoji]);
   const modalTintClass = useMemo(() => getModalTintClass(selectedEmoji), [selectedEmoji]);
@@ -103,6 +105,11 @@ export default function Journal() {
 
   const deleteEntry = (id: string) => {
     setEntries(entries.filter(e => e.id !== id));
+    setDeleteConfirmEntry(null);
+  };
+
+  const handleDeleteClick = (entry: JournalEntry) => {
+    setDeleteConfirmEntry(entry);
   };
 
   const handleEdit = (entry: JournalEntry) => {
@@ -257,7 +264,7 @@ export default function Journal() {
                           <Pencil className="w-3.5 h-3.5" />
                         </button>
                         <button 
-                          onClick={() => deleteEntry(entry.id)}
+                          onClick={() => handleDeleteClick(entry)}
                           className="p-1.5 rounded-xl hover:bg-destructive/10 text-muted-foreground hover:text-destructive transition-colors"
                         >
                           <Trash2 className="w-3.5 h-3.5" />
@@ -373,6 +380,15 @@ export default function Journal() {
           </div>
         </DialogContent>
       </Dialog>
+
+      {/* Delete Confirmation Modal */}
+      {deleteConfirmEntry && (
+        <DeleteJournalModal
+          journalPreview={deleteConfirmEntry.content}
+          onConfirmDelete={() => deleteEntry(deleteConfirmEntry.id)}
+          onClose={() => setDeleteConfirmEntry(null)}
+        />
+      )}
 
     </>
   );
