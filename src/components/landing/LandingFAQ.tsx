@@ -33,7 +33,7 @@ export function LandingFAQ() {
                 value={`item-${index}`}
                 className="bg-background/60 backdrop-blur-sm border border-border/50 rounded-2xl px-5 overflow-hidden"
               >
-                <AccordionTrigger className="text-left font-medium text-foreground py-4 hover:no-underline">
+                <AccordionTrigger className="text-left font-medium text-foreground py-4 hover:no-underline font-['Inter',sans-serif]">
                   {faq.question}
                 </AccordionTrigger>
                 <AccordionContent className="text-muted-foreground pb-4">
