@@ -6,25 +6,22 @@ import { ChevronRight } from "lucide-react";
 interface IdentityStepProps {
   variant: 1 | 2;
   onNext: () => void;
-  onSkip: () => void;
 }
 
-const IDENTITY_CONTENT: Record<1 | 2, { emoji: string; title: string; subtitle: string; skipLabel: string }> = {
+const IDENTITY_CONTENT: Record<1 | 2, { emoji: string; title: string; subtitle: string }> = {
   1: {
     emoji: "🎯",
     title: "Take control over your life.",
     subtitle: "Neyler gives you habits, tasks, to-do lists, journals, and goal tracking. Everything you need to organize your life.",
-    skipLabel: "Skip",
   },
   2: {
     emoji: "💪",
-    title: "You're ready to stay consistent.",
-    subtitle: "Start with small steps today. Let momentum compound over the next months.",
-    skipLabel: "Skip",
+    title: "Be ready to stay consistent.",
+    subtitle: "Neyler offers you everything you need to track your goals. An AI buddy to help you on your low days. Journaling, tasks, and habits—all in one simple place to achieve your goals.",
   },
 };
 
-export function IdentityStep({ variant, onNext, onSkip }: IdentityStepProps) {
+export function IdentityStep({ variant, onNext }: IdentityStepProps) {
   const content = IDENTITY_CONTENT[variant];
 
   return (
@@ -49,13 +46,6 @@ export function IdentityStep({ variant, onNext, onSkip }: IdentityStepProps) {
         Next
         <ChevronRight className="w-4 h-4 ml-1" />
       </Button>
-
-      <button
-        onClick={onSkip}
-        className="mt-4 text-sm text-muted-foreground hover:text-foreground transition-colors"
-      >
-        {content.skipLabel}
-      </button>
     </OnboardingCard>
   );
 }

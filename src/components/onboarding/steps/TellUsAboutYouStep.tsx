@@ -23,13 +23,13 @@ export function TellUsAboutYouStep({
     <OnboardingCard className="text-center">
       <div className="mb-6">
         <div className="flex justify-center mb-4">
-          <AppleEmoji emoji="🌟" size="3xl" />
+          <AppleEmoji emoji="🚀" size="3xl" />
         </div>
         <h2 className="text-2xl font-bold font-display text-foreground mb-3">
-          Tell us something unique about you.
+          What's your biggest mission?
         </h2>
         <p className="text-muted-foreground text-base leading-relaxed">
-          What makes you different? Share something important so we can personalize your experience.
+          What do you think you were born for? Write something you truly believe you want to achieve so we can personalize your experience.
         </p>
       </div>
 

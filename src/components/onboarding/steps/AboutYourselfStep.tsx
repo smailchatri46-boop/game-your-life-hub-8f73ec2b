@@ -47,14 +47,15 @@ const CONTENT = {
     ],
   },
   time: {
-    emoji: "⏰",
-    title: "When do you feel most active?",
-    subtitle: "Choose your preferred time",
+    emoji: "📊",
+    title: "What's the thing you're struggling with the most to track?",
+    subtitle: "Choose the one thing you're struggling with the most",
     options: [
-      { label: "Morning", emoji: "🌅" },
-      { label: "Afternoon", emoji: "🌞" },
-      { label: "Evening", emoji: "🌙" },
-      { label: "No specific time", emoji: "🤷" },
+      { label: "Tracking my progress towards my yearly goals", emoji: "🎯" },
+      { label: "Tracking my mood", emoji: "😊" },
+      { label: "Motivation", emoji: "🔥" },
+      { label: "Organizing", emoji: "📋" },
+      { label: "Having everything in one place", emoji: "📦" },
     ],
   },
 };

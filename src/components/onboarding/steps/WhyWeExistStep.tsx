@@ -12,10 +12,10 @@ export function WhyWeExistStep({ onNext }: WhyWeExistStepProps) {
     <OnboardingCard className="text-center">
       <div className="mb-8">
         <div className="flex justify-center mb-5">
-          <AppleEmoji emoji="🚀" size="3xl" />
+          <AppleEmoji emoji="💪" size="3xl" />
         </div>
         <h2 className="text-2xl font-bold font-display text-foreground mb-4">
-          Why Neyler exists
+          Neyler got your back
         </h2>
         <p className="text-muted-foreground text-base leading-relaxed">
           Neyler is an AI-powered habit, task, and goals tracker. Everything in one place with meaningful insights built for you.
