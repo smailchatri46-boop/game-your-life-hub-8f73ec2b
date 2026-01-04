@@ -14,6 +14,8 @@ import { FirstTimeTip } from "@/components/FirstTimeTip";
 import { GoalProgressOverview } from "@/components/GoalProgressOverview";
 import { PaywallModal } from "@/components/PaywallModal";
 import { usePlanLimits, LimitType } from "@/hooks/use-plan-limits";
+import { DeleteHabitModal } from "@/components/DeleteHabitModal";
+import { useToast } from "@/hooks/use-toast";
 
 import { Button } from "@/components/ui/button";
 import { Plus, Trash2, GripVertical, Check, Target, Calendar, TrendingUp, FileText } from "lucide-react";
@@ -111,6 +113,12 @@ export default function Habits() {
   // Paywall state
   const [paywallOpen, setPaywallOpen] = useState(false);
   const [paywallLimitType, setPaywallLimitType] = useState<LimitType>('habits');
+  
+  // Delete habit modal state
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [habitToDelete, setHabitToDelete] = useState<Habit | null>(null);
+  
+  const { toast } = useToast();
   
   // Plan limits
   const { 
@@ -211,7 +219,17 @@ export default function Habits() {
 
   const handleDeleteHabit = (habitId: string) => {
     setAllHabits(prev => prev.filter(h => h.id !== habitId));
+    toast({
+      title: "Habit deleted",
+      description: "Your habit has been permanently removed.",
+    });
     // Note: setHabitsCount is synced via useEffect
+  };
+  
+  // Open delete modal for a habit
+  const openDeleteModal = (habit: Habit) => {
+    setHabitToDelete(habit);
+    setDeleteModalOpen(true);
   };
 
   // Handle FAB click - check limits first
@@ -498,7 +516,10 @@ export default function Habits() {
                     <span className="text-xs lg:text-sm font-bold gradient-text">{getHabitProgress(habit)}%</span>
                   </td>
                   <td className="p-1 lg:p-2">
-                    <button className="p-1 rounded-lg hover:bg-destructive/10 text-muted-foreground hover:text-destructive transition-colors">
+                    <button 
+                      onClick={() => openDeleteModal(habit)}
+                      className="p-1 rounded-lg hover:bg-destructive/10 text-muted-foreground hover:text-destructive transition-colors"
+                    >
                       <Trash2 className="w-3.5 h-3.5 lg:w-4 lg:h-4" />
                     </button>
                   </td>
@@ -775,6 +796,23 @@ export default function Habits() {
         limitType={paywallLimitType}
         limitMessage={getLimitMessage(paywallLimitType)}
       />
+      
+      {/* Delete Habit Modal */}
+      {deleteModalOpen && habitToDelete && (
+        <DeleteHabitModal
+          habitName={habitToDelete.name}
+          habitIcon={habitToDelete.icon}
+          onClose={() => {
+            setDeleteModalOpen(false);
+            setHabitToDelete(null);
+          }}
+          onConfirmDelete={() => {
+            handleDeleteHabit(habitToDelete.id);
+            setDeleteModalOpen(false);
+            setHabitToDelete(null);
+          }}
+        />
+      )}
     </>
   );
 }
