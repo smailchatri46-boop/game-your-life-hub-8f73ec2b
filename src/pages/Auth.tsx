@@ -97,23 +97,22 @@ export default function Auth() {
               </Button>
             </div>
             
-            <p className="text-center text-xs text-muted-foreground mt-6">
-              By continuing, you agree to our Terms of Service and Privacy Policy
-            </p>
-            
-            <div className="text-center mt-4">
+            <div className="text-center mt-6">
+              <span className="text-sm text-muted-foreground">
+                {isSignUp ? "Already have an account? " : "Don't have an account? "}
+              </span>
               <button
                 type="button"
                 onClick={() => setIsSignUp(!isSignUp)}
-                className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+                className="text-sm text-primary font-medium hover:text-primary/80 transition-colors"
               >
-                {isSignUp ? (
-                  <>Already have an account? <span className="text-primary font-medium">Sign In</span></>
-                ) : (
-                  <>Don't have an account? <span className="text-primary font-medium">Sign Up</span></>
-                )}
+                {isSignUp ? "Sign In" : "Sign Up"}
               </button>
             </div>
+            
+            <p className="text-center text-xs text-muted-foreground mt-4">
+              By continuing, you agree to our Terms of Service and Privacy Policy
+            </p>
           </GlassCard>
         </div>
       </section>
