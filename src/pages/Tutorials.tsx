@@ -75,14 +75,16 @@ export default function Tutorials() {
   return (
     <>
       
-      {/* Sticky Video Tutorial Button */}
-      <Link 
-        to="/video-tutorial"
+{/* Sticky Video Tutorial Button */}
+      <a 
+        href="https://youtu.be/eX6Tn66IXCM"
+        target="_blank"
+        rel="noopener noreferrer"
         className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 btn-primary-gradient px-5 py-3 rounded-full flex items-center gap-2 shadow-lg hover:shadow-xl hover:-translate-x-1/2 hover:-translate-y-0.5 transition-all duration-300"
       >
         <Play className="w-5 h-5 fill-current" />
         <span className="font-body font-semibold">Watch a full tutorial</span>
-      </Link>
+      </a>
       
       <main className="pt-28 pb-12 px-4 max-w-5xl mx-auto">
         <div className="mb-8">

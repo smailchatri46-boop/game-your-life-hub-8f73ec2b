@@ -1,6 +1,6 @@
 import { YouTubeEmbed } from "@/components/YouTubeEmbed";
 
-const TUTORIAL_VIDEO_ID = "E_sPvPHwpuk";
+const TUTORIAL_VIDEO_ID = "eX6Tn66IXCM";
 
 export default function VideoTutorial() {
   return (
