@@ -35,6 +35,17 @@ const SURVEY_QUESTIONS = {
     ],
   },
   "survey-3": {
+    emoji: "📣",
+    title: "Where did you hear about us?",
+    options: [
+      { label: "TikTok" },
+      { label: "Instagram" },
+      { label: "YouTube" },
+      { label: "Snapchat" },
+      { label: "Pinterest" },
+    ],
+  },
+  "survey-4": {
     emoji: "✨",
     title: "Would you like one app to track your entire life?",
     description: "Keep everything organized in one place",
@@ -44,7 +55,7 @@ const SURVEY_QUESTIONS = {
       { label: "I prefer using multiple apps" },
     ],
   },
-  "survey-4": {
+  "survey-5": {
     emoji: "💬",
     title: "Do you sometimes use AI to help you analyze your life, goals, or give you motivation?",
     description: "Like ChatGPT or similar tools",
@@ -55,7 +66,7 @@ const SURVEY_QUESTIONS = {
       { label: "No, and I'm not interested" },
     ],
   },
-  "survey-5": {
+  "survey-6": {
     emoji: "🧠",
     title: "Would you like an AI that sees all your daily reflections, goals, daily progress, and gives you a personalized experience to change your life?",
     options: [
@@ -163,6 +174,16 @@ export function OnboardingFlow() {
             {...SURVEY_QUESTIONS["survey-5"]}
             selectedOption={data.surveyAnswers.survey5}
             onSelectOption={(answer) => setSurveyAnswer("survey5", answer)}
+            onNext={goToNext}
+          />
+        );
+
+      case "survey-6":
+        return (
+          <SurveyQuestionStep
+            {...SURVEY_QUESTIONS["survey-6"]}
+            selectedOption={data.surveyAnswers.survey6}
+            onSelectOption={(answer) => setSurveyAnswer("survey6", answer)}
             onNext={goToNext}
           />
         );
