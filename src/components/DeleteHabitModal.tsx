@@ -15,13 +15,13 @@ interface DeleteHabitModalProps {
 const SLIDES = [
   {
     emoji: "🌱",
-    title: "Pause habits — don't delete them too fast",
-    message: "Many people delete habits when they really just need a break. Instead of removing this habit completely, consider reducing its frequency or importance. Consistency over time matters more than perfection.",
+    title: "Pause habits and tasks — don't delete too quickly",
+    message: "Sometimes you just need a break. Instead of deleting a habit or task completely, try pausing it or lowering the frequency. Progress happens over time — perfection is not required.",
   },
   {
     emoji: "💪",
     title: "Small steps still count",
-    message: "A smaller habit still builds momentum. If this habit feels too hard right now, try making it easier instead of deleting it. Tiny consistent wins matter more than starting over.",
+    message: "If a habit or task feels too hard right now, make it easier instead of removing it. Smaller, realistic steps still build momentum. Consistent wins beat starting over.",
   },
 ];
 
@@ -100,12 +100,11 @@ export function DeleteHabitModal({ habitName, habitIcon, onConfirmDelete, onClos
                   </div>
 
                   <h2 className="text-xl font-semibold text-foreground mb-3 font-display">
-                    Are you sure you want to delete this habit?
+                    Are you sure you want to delete this habit or task?
                   </h2>
 
                   <p className="text-muted-foreground text-sm leading-relaxed mb-6 max-w-sm mx-auto">
-                    This will permanently remove <span className="font-medium text-foreground">"{habitName}"</span> {habitIcon} and all its progress.
-                    To confirm, please type <span className="font-medium text-foreground">delete</span> in the box below.
+                    This will permanently remove <span className="font-medium text-foreground">"{habitName}"</span> and all its progress. If you're sure, please type <span className="font-medium text-foreground">delete</span> in the box below to confirm.
                   </p>
 
                   <Input
@@ -163,7 +162,7 @@ export function DeleteHabitModal({ habitName, habitIcon, onConfirmDelete, onClos
                   disabled={!canDelete}
                   className="px-6 py-3 rounded-xl shadow-lg hover:shadow-xl transition-all text-base font-medium disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  Delete Habit
+                  Delete habit or task
                 </Button>
               </div>
             )}
