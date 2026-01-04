@@ -1,6 +1,11 @@
 import { useState, useCallback } from "react";
 
 export type OnboardingStep = 
+  | "survey-1"
+  | "survey-2"
+  | "survey-3"
+  | "survey-4"
+  | "survey-5"
   | "about-focus"
   | "about-struggle"
   | "about-time"
@@ -25,6 +30,13 @@ export interface OnboardingData {
   commitmentName: string;
   checkedAffirmations: string[];
   uniqueAbout: string;
+  surveyAnswers: {
+    survey1: string | null;
+    survey2: string | null;
+    survey3: string | null;
+    survey4: string | null;
+    survey5: string | null;
+  };
 }
 
 const INITIAL_DATA: OnboardingData = {
@@ -38,9 +50,21 @@ const INITIAL_DATA: OnboardingData = {
   commitmentName: "",
   checkedAffirmations: [],
   uniqueAbout: "",
+  surveyAnswers: {
+    survey1: null,
+    survey2: null,
+    survey3: null,
+    survey4: null,
+    survey5: null,
+  },
 };
 
 const STEP_ORDER: OnboardingStep[] = [
+  "survey-1",
+  "survey-2",
+  "survey-3",
+  "survey-4",
+  "survey-5",
   "about-focus",
   "about-struggle",
   "about-time",
@@ -56,7 +80,7 @@ const STEP_ORDER: OnboardingStep[] = [
 ];
 
 export function useOnboarding() {
-  const [currentStep, setCurrentStep] = useState<OnboardingStep>("about-focus");
+  const [currentStep, setCurrentStep] = useState<OnboardingStep>("survey-1");
   const [data, setData] = useState<OnboardingData>(INITIAL_DATA);
   const [isComplete, setIsComplete] = useState(false);
 
@@ -139,6 +163,16 @@ export function useOnboarding() {
     }));
   }, []);
 
+  const setSurveyAnswer = useCallback((surveyKey: keyof OnboardingData['surveyAnswers'], answer: string) => {
+    setData(prev => ({
+      ...prev,
+      surveyAnswers: {
+        ...prev.surveyAnswers,
+        [surveyKey]: answer,
+      },
+    }));
+  }, []);
+
   const completeOnboarding = useCallback(() => {
     setIsComplete(true);
     localStorage.setItem("locked_onboarding_complete", "true");
@@ -161,7 +195,7 @@ export function useOnboarding() {
   }, []);
 
   const resetOnboarding = useCallback(() => {
-    setCurrentStep("about-focus");
+    setCurrentStep("survey-1");
     setData(INITIAL_DATA);
     setIsComplete(false);
   }, []);
@@ -183,6 +217,7 @@ export function useOnboarding() {
     addCustomHabit,
     removeCustomHabit,
     toggleAffirmation,
+    setSurveyAnswer,
     completeOnboarding,
     skipOnboarding,
     getTotalSelectedHabits,

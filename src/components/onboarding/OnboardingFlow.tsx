@@ -10,6 +10,63 @@ import { GoalsStep } from "./steps/GoalsStep";
 import { CommitmentStep } from "./steps/CommitmentStep";
 import { LoadingStep } from "./steps/LoadingStep";
 import { SuccessStep } from "./steps/SuccessStep";
+import { SurveyQuestionStep } from "./steps/SurveyQuestionStep";
+
+const SURVEY_QUESTIONS = {
+  "survey-1": {
+    emoji: "📱",
+    title: "Do you currently use an app to track your goals?",
+    description: "Help us understand your current habits",
+    options: [
+      { label: "Yes" },
+      { label: "No" },
+      { label: "Yes, but I don't like it" },
+      { label: "I tried before but stopped using it" },
+    ],
+  },
+  "survey-2": {
+    emoji: "🎯",
+    title: "Can your current app combine everything in one place?",
+    description: "Habits, to-dos, journaling, reflections, progress & AI guidance",
+    options: [
+      { label: "I use different apps for each thing" },
+      { label: "No, my app doesn't do all of that" },
+      { label: "Yes, but it's not perfect" },
+      { label: "I don't track these things yet" },
+    ],
+  },
+  "survey-3": {
+    emoji: "✨",
+    title: "Would you like one app to track your entire life?",
+    description: "Keep everything organized in one place",
+    options: [
+      { label: "Yes, that would be perfect" },
+      { label: "Maybe, I'd like to try it" },
+      { label: "I prefer using multiple apps" },
+    ],
+  },
+  "survey-4": {
+    emoji: "🤖",
+    title: "Do you use AI to help analyze your life or goals?",
+    description: "Like ChatGPT or similar tools",
+    options: [
+      { label: "Yes, regularly" },
+      { label: "Sometimes" },
+      { label: "No, but I'd like to" },
+      { label: "No, and I'm not interested" },
+    ],
+  },
+  "survey-5": {
+    emoji: "🧠",
+    title: "Would you like an AI that knows your habits and goals?",
+    description: "An AI that tells you exactly what you're missing to reach your goals faster",
+    options: [
+      { label: "Yes, this would change my life" },
+      { label: "Yes, that sounds very helpful" },
+      { label: "Maybe, I'd like to see how it works" },
+    ],
+  },
+};
 
 export function OnboardingFlow() {
   const navigate = useNavigate();
@@ -27,6 +84,7 @@ export function OnboardingFlow() {
     addCustomHabit,
     removeCustomHabit,
     toggleAffirmation,
+    setSurveyAnswer,
     completeOnboarding,
     skipOnboarding,
   } = useOnboarding();
@@ -61,6 +119,56 @@ export function OnboardingFlow() {
 
   const renderStep = () => {
     switch (currentStep) {
+      case "survey-1":
+        return (
+          <SurveyQuestionStep
+            {...SURVEY_QUESTIONS["survey-1"]}
+            selectedOption={data.surveyAnswers.survey1}
+            onSelectOption={(answer) => setSurveyAnswer("survey1", answer)}
+            onNext={goToNext}
+          />
+        );
+
+      case "survey-2":
+        return (
+          <SurveyQuestionStep
+            {...SURVEY_QUESTIONS["survey-2"]}
+            selectedOption={data.surveyAnswers.survey2}
+            onSelectOption={(answer) => setSurveyAnswer("survey2", answer)}
+            onNext={goToNext}
+          />
+        );
+
+      case "survey-3":
+        return (
+          <SurveyQuestionStep
+            {...SURVEY_QUESTIONS["survey-3"]}
+            selectedOption={data.surveyAnswers.survey3}
+            onSelectOption={(answer) => setSurveyAnswer("survey3", answer)}
+            onNext={goToNext}
+          />
+        );
+
+      case "survey-4":
+        return (
+          <SurveyQuestionStep
+            {...SURVEY_QUESTIONS["survey-4"]}
+            selectedOption={data.surveyAnswers.survey4}
+            onSelectOption={(answer) => setSurveyAnswer("survey4", answer)}
+            onNext={goToNext}
+          />
+        );
+
+      case "survey-5":
+        return (
+          <SurveyQuestionStep
+            {...SURVEY_QUESTIONS["survey-5"]}
+            selectedOption={data.surveyAnswers.survey5}
+            onSelectOption={(answer) => setSurveyAnswer("survey5", answer)}
+            onNext={goToNext}
+          />
+        );
+
       case "about-focus":
         return (
           <AboutYourselfStep
