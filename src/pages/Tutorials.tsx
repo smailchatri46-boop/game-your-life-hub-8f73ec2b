@@ -24,7 +24,7 @@ const tutorials: Tutorial[] = [
     id: "1",
     title: "How to add a to-do list on Neyler",
     description: "Learn how to create and manage your daily to-do lists to stay organized and productive.",
-    duration: "2 min",
+    duration: "< 1 min",
     videoId: "mUnuNuWcKp4",
     category: "To-Do",
   },
@@ -32,7 +32,7 @@ const tutorials: Tutorial[] = [
     id: "2",
     title: "How to write notes and journals on Neyler",
     description: "Discover how to capture your thoughts and ideas using the notes and journal features.",
-    duration: "2 min",
+    duration: "< 1 min",
     videoId: "h8DVZF-HWkE",
     category: "Journal",
   },
@@ -40,7 +40,7 @@ const tutorials: Tutorial[] = [
     id: "3",
     title: "How to write a daily reflection on Neyler",
     description: "Master the daily reflection feature to track your progress and gain insights.",
-    duration: "2 min",
+    duration: "< 1 min",
     videoId: "XMB_0CMDNL4",
     category: "Reflection",
   },
@@ -48,7 +48,7 @@ const tutorials: Tutorial[] = [
     id: "4",
     title: "How to add a new habit or task on Neyler",
     description: "Step-by-step guide to creating new habits and tasks to build your routine.",
-    duration: "2 min",
+    duration: "< 1 min",
     videoId: "gfq5_vW1H6w",
     category: "Habits",
   },
@@ -56,7 +56,7 @@ const tutorials: Tutorial[] = [
     id: "5",
     title: "How to track your mood and motivation on Neyler",
     description: "Learn to monitor your emotional well-being and motivation levels over time.",
-    duration: "2 min",
+    duration: "< 1 min",
     videoId: "9fajFN68ZkQ",
     category: "Mood",
   },
@@ -64,7 +64,7 @@ const tutorials: Tutorial[] = [
     id: "6",
     title: "How to add a new goal on Neyler",
     description: "Learn how to set meaningful goals and track your progress towards achieving them.",
-    duration: "2 min",
+    duration: "1 min",
     videoId: "Ud6fX0mgX6Y",
     category: "Goals",
   },
@@ -100,7 +100,7 @@ export default function Tutorials() {
             >
               <div className="relative">
                 <YouTubeEmbed videoId={tutorial.videoId} />
-                <span className="absolute top-3 left-3 px-2 py-1 bg-card/80 backdrop-blur-sm rounded-lg text-xs font-body font-semibold z-10">
+                <span className="absolute top-3 left-3 px-2 py-1 bg-card/80 backdrop-blur-sm rounded-lg text-xs font-body font-semibold z-20 pointer-events-none">
                   {tutorial.category}
                 </span>
               </div>
