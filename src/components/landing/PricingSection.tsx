@@ -146,7 +146,7 @@ export function PricingSection() {
             <div
               key={plan.name}
               className={cn(
-                "relative rounded-3xl p-6 lg:p-8 transition-all duration-300 glass-card",
+                "relative rounded-3xl p-6 lg:p-8 transition-all duration-300 glass-card flex flex-col",
                 plan.popular
                   ? "shadow-xl scale-[1.02] md:scale-105"
                   : "hover:shadow-lg"
@@ -206,8 +206,8 @@ export function PricingSection() {
               {/* Divider */}
               <div className="w-full h-px bg-gradient-to-r from-transparent via-border to-transparent mb-5" />
 
-              {/* Features */}
-              <ul className="space-y-3 mb-5">
+              {/* Features - flex-grow to push content below to bottom */}
+              <ul className="space-y-3 mb-5 flex-grow">
                 {plan.features.map((feature, index) => (
                   <li key={index} className="flex items-start gap-2.5">
                     {feature.included ? (
@@ -242,10 +242,10 @@ export function PricingSection() {
               <Button
                 variant={plan.popular ? "gradient" : "outline"}
                 className={cn(
-                  "w-full",
+                  "w-full mt-auto",
                   plan.popular
-                    ? "shadow-md hover:shadow-lg"
-                    : "hover:bg-primary/10 hover:border-primary/50"
+                    ? "shadow-md hover:shadow-lg hover:opacity-90"
+                    : "hover:bg-muted hover:border-muted-foreground/30"
                 )}
               >
                 {plan.monthlyPrice === 0 ? "Start for free" : "Get started"}
