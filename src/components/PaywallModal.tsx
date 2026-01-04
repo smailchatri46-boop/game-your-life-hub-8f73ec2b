@@ -135,7 +135,7 @@ export function PaywallModal({ open, onOpenChange, limitType, limitMessage }: Pa
             </p>
 
             {/* Monthly/Yearly Toggle */}
-            <div className="flex items-center justify-center gap-3 mt-3 mb-2">
+            <div className="flex items-center justify-center gap-3 mt-3 mb-6">
               <span
                 className={cn(
                   "text-xs font-medium transition-colors",
@@ -156,11 +156,19 @@ export function PaywallModal({ open, onOpenChange, limitType, limitMessage }: Pa
               />
               <span
                 className={cn(
-                  "text-xs font-medium transition-colors",
+                  "text-xs font-medium transition-colors flex items-center gap-1.5",
                   isYearly ? "text-foreground" : "text-muted-foreground"
                 )}
               >
                 Yearly
+                <span 
+                  className="text-[10px] text-white font-semibold px-2 py-0.5 rounded-full"
+                  style={{
+                    background: 'linear-gradient(135deg, hsl(25 95% 60%), hsl(35 100% 65%), hsl(25 95% 55%))',
+                  }}
+                >
+                  55% off
+                </span>
               </span>
             </div>
           </div>
@@ -169,7 +177,7 @@ export function PaywallModal({ open, onOpenChange, limitType, limitMessage }: Pa
           {!showOtherPlans ? (
             <div className="max-w-sm mx-auto">
               <div
-                className="relative rounded-xl p-5 transition-all duration-300 bg-white/80 backdrop-blur-sm flex flex-col shadow-lg"
+                className="relative rounded-xl p-5 transition-all duration-300 bg-white/80 backdrop-blur-sm flex flex-col shadow-lg min-h-[400px]"
               >
                 {/* Gradient border for Pro plan */}
                 <div 
@@ -203,19 +211,19 @@ export function PaywallModal({ open, onOpenChange, limitType, limitMessage }: Pa
                 </div>
 
                 {/* Price */}
-                <div className="text-center mb-3">
+                <div className="text-center mb-3 min-h-[52px] flex flex-col justify-center">
                   {isYearly ? (
                     <>
                       <div className="flex items-baseline justify-center gap-0.5">
                         <span className="text-3xl font-bold text-foreground">
-                          ${proPlan.yearlyPrice}
+                          $4
                         </span>
                         <span className="text-muted-foreground text-sm">
-                          /year
+                          /month
                         </span>
                       </div>
                       <p className="text-primary text-xs font-medium mt-1">
-                        Just ${getPrice(proPlan)}/mo
+                        Just $49/year
                       </p>
                     </>
                   ) : (
@@ -407,17 +415,7 @@ export function PaywallModal({ open, onOpenChange, limitType, limitMessage }: Pa
             </button>
           </div>
 
-          {/* Close button - only visible when timer complete */}
-          {canClose && (
-            <div className="mt-2 text-center">
-              <button
-                onClick={handleClose}
-                className="text-sm text-muted-foreground hover:font-semibold transition-all cursor-pointer"
-              >
-                Close
-              </button>
-            </div>
-          )}
+          {/* Close button removed - X icon at top is sufficient */}
         </div>
       </DialogContent>
     </Dialog>
