@@ -14,6 +14,8 @@ import { useState, useMemo, useEffect } from "react";
 import { useSelectedMonth } from "@/hooks/use-selected-month";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
+import { PaywallModal } from "@/components/PaywallModal";
+import { usePlanLimits, LimitType } from "@/hooks/use-plan-limits";
 
 interface TodoItem {
   id: string;
@@ -78,6 +80,13 @@ export default function Overview() {
   const [showOnboarding, setShowOnboarding] = useState(false);
   const habitStats = useHabitStats();
   
+  // Paywall state
+  const [paywallOpen, setPaywallOpen] = useState(false);
+  const [paywallLimitType, setPaywallLimitType] = useState<LimitType>('todos');
+  
+  // Plan limits
+  const { canAddTodo, incrementTodos, setTodosCount, getLimitMessage, usage } = usePlanLimits();
+  
   // To-Do List state
   const [todos, setTodos] = useState<TodoItem[]>([]);
   const [newTodoText, setNewTodoText] = useState("");
@@ -117,10 +126,21 @@ export default function Overview() {
       emoji: selectedEmoji
     };
     setTodos(prev => [...prev, newTodo]);
+    incrementTodos(); // Track in plan limits
     setNewTodoText("");
     setIsAddingTodo(false);
     setSelectedEmoji(null);
     setHasSelectedEmoji(false);
+  };
+  
+  // Handle "Add task" button click - check limits first
+  const handleStartAddTodo = () => {
+    if (!canAddTodo) {
+      setPaywallLimitType('todos');
+      setPaywallOpen(true);
+      return;
+    }
+    setIsAddingTodo(true);
   };
   
   const handleToggleTodo = (todoId: string) => {
@@ -396,7 +416,7 @@ export default function Overview() {
                   </div>
                 ) : (
                   <button
-                    onClick={() => setIsAddingTodo(true)}
+                    onClick={handleStartAddTodo}
                     className="w-full flex items-center justify-center gap-2 p-3 rounded-2xl bg-white/50 hover:bg-white/70 transition-colors text-muted-foreground border-2 border-dashed border-muted-foreground/20"
                   >
                     <Plus className="w-4 h-4" />
@@ -484,6 +504,14 @@ export default function Overview() {
         <OnboardingQuestionsModal 
           open={showOnboarding} 
           onOpenChange={setShowOnboarding} 
+        />
+        
+        {/* Paywall Modal */}
+        <PaywallModal
+          open={paywallOpen}
+          onOpenChange={setPaywallOpen}
+          limitType={paywallLimitType}
+          limitMessage={getLimitMessage(paywallLimitType)}
         />
       </main>
     </>

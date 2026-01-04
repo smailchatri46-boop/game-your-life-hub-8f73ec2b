@@ -1,11 +1,13 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 import { GlassCard } from "@/components/GlassCard";
 import { AppleEmoji } from "@/components/AppleEmoji";
 import { Button } from "@/components/ui/button";
 import { GoalCard } from "@/components/GoalCard";
 import { AddGoalModal } from "@/components/AddGoalModal";
+import { PaywallModal } from "@/components/PaywallModal";
 import { useGoals } from "@/hooks/use-goals";
+import { usePlanLimits, LimitType } from "@/hooks/use-plan-limits";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
@@ -19,6 +21,18 @@ export default function Goals() {
   const { goals, activeGoals, completedGoals, goalHabits, isLoading } = useGoals();
   const [showAddModal, setShowAddModal] = useState(false);
   const [filter, setFilter] = useState<FilterType>("active");
+  
+  // Paywall state
+  const [paywallOpen, setPaywallOpen] = useState(false);
+  const [paywallLimitType, setPaywallLimitType] = useState<LimitType>('goals');
+  
+  // Plan limits
+  const { canAddGoal, setGoalsCount, getLimitMessage } = usePlanLimits();
+  
+  // Sync goals count with plan limits
+  useEffect(() => {
+    setGoalsCount(goals.length);
+  }, [goals.length, setGoalsCount]);
 
   // Fetch habits for linking
   const { data: habits = [] } = useQuery({
@@ -93,7 +107,14 @@ export default function Goals() {
                 Small consistent actions lead to big changes. Define what matters and start tracking your journey.
               </p>
               <Button
-                onClick={() => setShowAddModal(true)}
+                onClick={() => {
+                  if (!canAddGoal) {
+                    setPaywallLimitType('goals');
+                    setPaywallOpen(true);
+                    return;
+                  }
+                  setShowAddModal(true);
+                }}
                 variant="gradient"
                 size="lg"
                 className="px-8"
@@ -192,13 +213,28 @@ export default function Goals() {
         variant="gradient" 
         size="icon" 
         className="fixed bottom-6 right-6 w-14 h-14 rounded-full shadow-large z-50"
-        onClick={() => setShowAddModal(true)}
+        onClick={() => {
+          if (!canAddGoal) {
+            setPaywallLimitType('goals');
+            setPaywallOpen(true);
+            return;
+          }
+          setShowAddModal(true);
+        }}
       >
         <Plus className="w-6 h-6" />
       </Button>
 
       {/* Add Goal Modal */}
       <AddGoalModal open={showAddModal} onOpenChange={setShowAddModal} />
+      
+      {/* Paywall Modal */}
+      <PaywallModal
+        open={paywallOpen}
+        onOpenChange={setPaywallOpen}
+        limitType={paywallLimitType}
+        limitMessage={getLimitMessage(paywallLimitType)}
+      />
     </>
   );
 }
