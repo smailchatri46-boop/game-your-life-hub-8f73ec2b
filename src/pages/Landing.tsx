@@ -12,6 +12,8 @@ import { HabitsShowcase } from "@/components/landing/HabitsShowcase";
 import { AIBuddyShowcase } from "@/components/landing/AIBuddyShowcase";
 import { GoalsShowcase } from "@/components/landing/GoalsShowcase";
 import { TestimonialsSection } from "@/components/landing/TestimonialsSection";
+import { LandingPricing } from "@/components/landing/LandingPricing";
+import { LandingFAQ } from "@/components/landing/LandingFAQ";
 import { ScrollReveal } from "@/components/ScrollReveal";
 
 export default function Landing() {
@@ -302,6 +304,51 @@ export default function Landing() {
 
       {/* Testimonials */}
       <TestimonialsSection />
+
+      {/* Pricing */}
+      <LandingPricing />
+
+      {/* FAQ */}
+      <LandingFAQ />
+      
+      {/* Final CTA Section - Duplicate of "Ready to level up" */}
+      <section className="py-10 px-4">
+        <ScrollReveal animation="zoom-in" duration={800}>
+          <div className="max-w-2xl mx-auto text-center">
+            <GlassCard className="p-10" glow>
+              <h2 className="font-display text-3xl font-semibold mb-4">
+                Ready to level up?
+              </h2>
+              <p className="text-muted-foreground mb-6">
+                Join thousands of people who have transformed their lives with Neyler.
+              </p>
+              
+              {/* Social Proof */}
+              <div className="flex items-center justify-center gap-3 mb-6">
+                <div className="flex -space-x-2">
+                  <img src="/images/user-1.png" alt="User" className="w-9 h-9 rounded-full border-2 border-background object-cover" />
+                  <img src="/images/user-2.png" alt="User" className="w-9 h-9 rounded-full border-2 border-background object-cover" />
+                  <img src="/images/user-3.png" alt="User" className="w-9 h-9 rounded-full border-2 border-background object-cover" />
+                  <img src="/images/user-4.png" alt="User" className="w-9 h-9 rounded-full border-2 border-background object-cover" />
+                  <img src="/images/user-5.png" alt="User" className="w-9 h-9 rounded-full border-2 border-background object-cover" />
+                </div>
+                <p className="text-sm text-muted-foreground">
+                  Join over <span className="font-medium text-foreground">50,000+</span> people improving their lives with Neyler
+                </p>
+              </div>
+              
+              <Button variant="gradient" size="xl" asChild>
+                <Link to="/signup" className="gap-3">
+                  <span className="w-6 h-6 bg-white rounded-full flex items-center justify-center">
+                    <img src={googleLogo} alt="Google" className="w-4 h-4" />
+                  </span>
+                  Start For Free
+                </Link>
+              </Button>
+            </GlassCard>
+          </div>
+        </ScrollReveal>
+      </section>
       
       {/* Footer */}
       <footer className="py-8 px-4 border-t border-border/50">
