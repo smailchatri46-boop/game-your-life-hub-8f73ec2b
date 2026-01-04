@@ -380,10 +380,7 @@ export function PaywallModal({ open, onOpenChange, limitType, limitMessage }: Pa
                     </Button>
 
                     {/* Trust Line */}
-                    <p className={cn(
-                      "text-center text-[9px] text-muted-foreground mt-2",
-                      plan.popular ? "visible" : "invisible"
-                    )}>
+                    <p className="text-center text-[9px] text-muted-foreground mt-2">
                       Cancel anytime.
                     </p>
                   </div>
@@ -396,7 +393,7 @@ export function PaywallModal({ open, onOpenChange, limitType, limitMessage }: Pa
                   onClick={() => setShowOtherPlans(false)}
                   className="text-sm text-muted-foreground hover:font-semibold transition-all px-4 py-2"
                 >
-                  ← Back
+                  Back
                 </button>
               </div>
             </div>
