@@ -14,8 +14,8 @@ interface DeleteGoalCarouselProps {
 const SLIDES = [
   {
     emoji: "🌱",
-    title: "Pause habits and tasks — don't delete too quickly",
-    message: "Sometimes you just need a break. Instead of deleting a habit or task completely, try pausing it or lowering the frequency. Progress happens over time — perfection is not required.",
+    title: "Pause habits and tasks, don't delete too quickly",
+    message: "Sometimes you just need a break. Instead of deleting a habit or task completely, try pausing it or lowering the frequency. Progress happens over time, perfection is not required.",
   },
   {
     emoji: "💪",
