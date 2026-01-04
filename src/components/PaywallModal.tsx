@@ -124,7 +124,7 @@ export function PaywallModal({ open, onOpenChange, limitType, limitMessage }: Pa
         className="w-[90vw] max-w-[720px] max-h-[90vh] p-0 overflow-hidden bg-gradient-to-br from-[hsl(30,100%,98%)] to-[hsl(25,80%,95%)] border-0" 
         hideCloseButton={!canClose}
       >
-        <div className="p-5 md:p-7 flex flex-col min-h-[580px]">
+        <div className="p-5 md:p-6">
           {/* Header */}
           <div className="text-center mb-4">
             <h2 className="font-display text-xl md:text-2xl font-bold text-foreground mb-1">
@@ -175,9 +175,9 @@ export function PaywallModal({ open, onOpenChange, limitType, limitMessage }: Pa
 
           {/* Pro Plan - Primary View */}
           {!showOtherPlans ? (
-            <div className="max-w-sm mx-auto flex-1 flex flex-col">
+            <div className="max-w-sm mx-auto">
               <div
-                className="relative rounded-xl p-6 transition-all duration-300 bg-white/80 backdrop-blur-sm flex flex-col shadow-lg h-[420px]"
+                className="relative rounded-xl p-5 transition-all duration-300 bg-white/80 backdrop-blur-sm flex flex-col shadow-lg"
               >
                 {/* Gradient border for Pro plan */}
                 <div 
@@ -202,7 +202,7 @@ export function PaywallModal({ open, onOpenChange, limitType, limitMessage }: Pa
                 </div>
 
                 {/* Plan Header */}
-                <div className="text-center mb-3 pt-2">
+                <div className="text-center mb-2 pt-2">
                   <h3 className="text-lg font-bold text-foreground">
                     {proPlan.name}
                   </h3>
@@ -210,7 +210,7 @@ export function PaywallModal({ open, onOpenChange, limitType, limitMessage }: Pa
                 </div>
 
                 {/* Price - fixed height container */}
-                <div className="text-center mb-4 h-[56px] flex flex-col justify-center">
+                <div className="text-center mb-3 h-[52px] flex flex-col justify-center">
                   <div className="flex items-baseline justify-center gap-0.5">
                     <span className="text-3xl font-bold text-foreground">
                       {isYearly ? "$4" : `$${proPlan.monthlyPrice}`}
@@ -220,7 +220,7 @@ export function PaywallModal({ open, onOpenChange, limitType, limitMessage }: Pa
                     </span>
                   </div>
                   <p className={cn(
-                    "text-primary text-xs font-medium mt-1",
+                    "text-primary text-xs font-medium mt-0.5",
                     isYearly ? "visible" : "invisible"
                   )}>
                     Pay only $49/year
@@ -228,10 +228,10 @@ export function PaywallModal({ open, onOpenChange, limitType, limitMessage }: Pa
                 </div>
 
                 {/* Divider */}
-                <div className="w-full h-px bg-gradient-to-r from-transparent via-border to-transparent mb-4" />
+                <div className="w-full h-px bg-gradient-to-r from-transparent via-border to-transparent mb-3" />
 
                 {/* Features */}
-                <ul className="space-y-2 mb-5 flex-grow">
+                <ul className="space-y-1.5 mb-4">
                   {proPlan.features.map((feature, index) => (
                     <li key={index} className="flex items-start gap-2">
                       <div className="flex-shrink-0 w-4 h-4 rounded-full bg-primary/20 flex items-center justify-center mt-0.5">
@@ -245,24 +245,22 @@ export function PaywallModal({ open, onOpenChange, limitType, limitMessage }: Pa
                 </ul>
 
                 {/* CTA Button */}
-                <div className="py-3">
-                  <Button
-                    variant="gradient"
-                    size="default"
-                    className="w-full shadow-md hover:shadow-lg hover:opacity-90"
-                  >
-                    Unlock Pro
-                  </Button>
-                </div>
+                <Button
+                  variant="gradient"
+                  size="default"
+                  className="w-full shadow-md hover:shadow-lg hover:opacity-90"
+                >
+                  Unlock Pro
+                </Button>
 
-                {/* Trust Line */}
-                <p className="text-center text-[10px] text-muted-foreground">
+                {/* Trust Line - closer to button */}
+                <p className="text-center text-[10px] text-muted-foreground mt-2">
                   Cancel anytime.
                 </p>
               </div>
 
-              {/* View other plans - centered in remaining space */}
-              <div className="flex-1 flex items-center justify-center min-h-[48px]">
+              {/* View other plans - always visible below card */}
+              <div className="text-center mt-5 pb-2">
                 <button
                   onClick={() => setShowOtherPlans(true)}
                   className="text-sm text-muted-foreground hover:font-semibold transition-all px-4 py-2"
@@ -273,13 +271,13 @@ export function PaywallModal({ open, onOpenChange, limitType, limitMessage }: Pa
             </div>
           ) : (
             /* Both Plans View */
-            <div className="flex-1 flex flex-col">
+            <div>
               <div className="grid grid-cols-2 gap-4">
                 {plans.map((plan) => (
                   <div
                     key={plan.name}
                     className={cn(
-                      "relative rounded-xl p-4 transition-all duration-300 bg-white/80 backdrop-blur-sm flex flex-col h-[380px]",
+                      "relative rounded-xl p-4 transition-all duration-300 bg-white/80 backdrop-blur-sm flex flex-col",
                       plan.popular
                         ? "shadow-lg"
                         : "hover:shadow-md"
@@ -320,7 +318,7 @@ export function PaywallModal({ open, onOpenChange, limitType, limitMessage }: Pa
                     </div>
 
                     {/* Price - fixed height */}
-                    <div className="text-center mb-3 h-[48px] flex flex-col justify-center">
+                    <div className="text-center mb-2 h-[44px] flex flex-col justify-center">
                       <div className="flex items-baseline justify-center gap-0.5">
                         <span className="text-2xl font-bold text-foreground">
                           {isYearly ? `$${Math.round(plan.yearlyPrice / 12)}` : `$${plan.monthlyPrice}`}
@@ -338,10 +336,10 @@ export function PaywallModal({ open, onOpenChange, limitType, limitMessage }: Pa
                     </div>
 
                     {/* Divider */}
-                    <div className="w-full h-px bg-gradient-to-r from-transparent via-border to-transparent mb-3" />
+                    <div className="w-full h-px bg-gradient-to-r from-transparent via-border to-transparent mb-2" />
 
                     {/* Features */}
-                    <ul className="space-y-1.5 mb-4 flex-grow">
+                    <ul className="space-y-1 mb-3 flex-grow">
                       {plan.features.map((feature, index) => (
                         <li key={index} className="flex items-start gap-1.5">
                           {feature.included ? (
@@ -368,24 +366,22 @@ export function PaywallModal({ open, onOpenChange, limitType, limitMessage }: Pa
                     </ul>
 
                     {/* CTA Button */}
-                    <div className="py-2">
-                      <Button
-                        variant={plan.popular ? "gradient" : "outline"}
-                        size="sm"
-                        className={cn(
-                          "w-full text-xs h-9",
-                          plan.popular
-                            ? "shadow-md hover:shadow-lg hover:opacity-90"
-                            : "hover:bg-muted hover:border-muted-foreground/30"
-                        )}
-                      >
-                        {plan.popular ? "Unlock Pro" : "Get Core"}
-                      </Button>
-                    </div>
+                    <Button
+                      variant={plan.popular ? "gradient" : "outline"}
+                      size="sm"
+                      className={cn(
+                        "w-full text-xs h-9",
+                        plan.popular
+                          ? "shadow-md hover:shadow-lg hover:opacity-90"
+                          : "hover:bg-muted hover:border-muted-foreground/30"
+                      )}
+                    >
+                      {plan.popular ? "Unlock Pro" : "Get Core"}
+                    </Button>
 
                     {/* Trust Line */}
                     <p className={cn(
-                      "text-center text-[9px] text-muted-foreground",
+                      "text-center text-[9px] text-muted-foreground mt-2",
                       plan.popular ? "visible" : "invisible"
                     )}>
                       Cancel anytime.
@@ -394,8 +390,8 @@ export function PaywallModal({ open, onOpenChange, limitType, limitMessage }: Pa
                 ))}
               </div>
 
-              {/* Back link - centered in remaining space */}
-              <div className="flex-1 flex items-center justify-center min-h-[48px]">
+              {/* Back link */}
+              <div className="text-center mt-5 pb-2">
                 <button
                   onClick={() => setShowOtherPlans(false)}
                   className="text-sm text-muted-foreground hover:font-semibold transition-all px-4 py-2"
