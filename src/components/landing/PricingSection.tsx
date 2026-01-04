@@ -58,7 +58,7 @@ const plans: Plan[] = [
     monthlyPrice: 9,
     yearlyPrice: 49,
     subtitle: "Unlock the full AI experience",
-    benefitText: "Everything in Neyler unlocked, plus full AI guidance.",
+    benefitText: "Everything in Neyler unlocked.",
     popular: true,
     features: [
       { text: "Unlimited habits & tasks", included: true },
@@ -146,33 +146,33 @@ export function PricingSection() {
             <div
               key={plan.name}
               className={cn(
-                "relative rounded-3xl p-5 lg:p-6 transition-all duration-300",
+                "relative rounded-3xl p-5 lg:p-6 transition-all duration-300 glass-card",
                 plan.popular
-                  ? "bg-gradient-to-br from-primary/20 via-primary/10 to-accent/20 shadow-xl scale-[1.02] md:scale-105"
-                  : "glass-card hover:shadow-lg"
+                  ? "shadow-xl scale-[1.02] md:scale-105"
+                  : "hover:shadow-lg"
               )}
-              style={plan.popular ? {
-                border: '2px solid transparent',
-                backgroundClip: 'padding-box',
-                position: 'relative',
-              } : undefined}
             >
               {/* Gradient border for Pro plan */}
               {plan.popular && (
                 <div 
-                  className="absolute inset-0 rounded-3xl -z-10"
+                  className="absolute inset-0 rounded-3xl -z-10 p-[2px]"
                   style={{
                     background: 'linear-gradient(135deg, hsl(25 95% 60%), hsl(35 100% 65%), hsl(25 95% 55%))',
-                    margin: '-2px',
-                    borderRadius: 'calc(1.5rem + 2px)',
                   }}
-                />
+                >
+                  <div className="w-full h-full rounded-3xl bg-background" />
+                </div>
               )}
 
               {/* Most Popular Badge */}
               {plan.popular && (
                 <div className="absolute -top-4 left-1/2 -translate-x-1/2">
-                  <div className="flex items-center justify-center bg-primary text-primary-foreground px-4 py-1.5 rounded-full text-sm font-semibold shadow-md">
+                  <div 
+                    className="flex items-center justify-center text-primary-foreground px-4 py-1.5 rounded-full text-sm font-semibold shadow-md"
+                    style={{
+                      background: 'linear-gradient(135deg, hsl(25 95% 60%), hsl(35 100% 65%), hsl(25 95% 55%))',
+                    }}
+                  >
                     Most Popular
                   </div>
                 </div>
