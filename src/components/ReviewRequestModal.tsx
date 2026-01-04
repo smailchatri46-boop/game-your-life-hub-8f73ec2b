@@ -1,6 +1,10 @@
+import { useState } from "react";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
 import { AppleEmoji } from "@/components/AppleEmoji";
+import { toast } from "sonner";
+import { Loader2 } from "lucide-react";
 
 interface ReviewRequestModalProps {
   open: boolean;
@@ -9,14 +13,41 @@ interface ReviewRequestModalProps {
 }
 
 export function ReviewRequestModal({ open, onOpenChange, onDismiss }: ReviewRequestModalProps) {
-  const handleReview = () => {
-    // Open app store or review link - placeholder for now
-    window.open("https://www.trustpilot.com", "_blank");
+  const [feedback, setFeedback] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const handleSubmit = async () => {
+    if (!feedback.trim()) {
+      toast.error("Please write some feedback before submitting.");
+      return;
+    }
+
+    setIsSubmitting(true);
+    
+    // TODO: Send feedback to backend
+    // For now, simulate a delay
+    await new Promise(resolve => setTimeout(resolve, 1000));
+    
+    console.log("Feedback submitted:", feedback);
+    
+    setIsSubmitting(false);
+    setFeedback("");
+    
+    toast.success("Thank you for your feedback!", {
+      description: "Your input helps us build a better product.",
+      style: {
+        background: 'hsl(35 40% 92%)',
+        color: 'hsl(var(--foreground))',
+        border: 'none',
+      },
+    });
+    
     onDismiss();
     onOpenChange(false);
   };
 
   const handleMaybeLater = () => {
+    setFeedback("");
     onDismiss();
     onOpenChange(false);
   };
@@ -40,33 +71,50 @@ export function ReviewRequestModal({ open, onOpenChange, onDismiss }: ReviewRequ
 
           {/* Description */}
           <p className="text-muted-foreground text-sm mb-6 leading-relaxed max-w-sm mx-auto">
-            You have explored Neyler and we hope you are enjoying it! Your feedback helps us improve and create a better experience for everyone.
+            We would love to hear from you! Share your suggestions, what you like, or what you think is missing.
           </p>
 
-          {/* Additional message */}
-          <div className="bg-white/60 rounded-2xl p-4 mb-6">
-            <p className="text-foreground/80 text-sm leading-relaxed">
-              <AppleEmoji emoji="🙏" className="inline mr-1" />
-              A quick review means the world to us and helps others discover Neyler too.
+          {/* Feedback textarea */}
+          <div className="mb-6">
+            <Textarea
+              value={feedback}
+              onChange={(e) => setFeedback(e.target.value)}
+              placeholder="What features would you like to see? What do you love about Neyler? Any suggestions..."
+              className="min-h-[120px] bg-white/60 border-border/30 focus:border-primary/50 resize-none text-sm"
+              maxLength={1000}
+            />
+            <p className="text-right text-xs text-muted-foreground mt-1">
+              {feedback.length}/1000
             </p>
           </div>
 
           {/* Buttons */}
           <div className="space-y-3">
             <Button 
-              onClick={handleReview} 
+              onClick={handleSubmit} 
               variant="gradient" 
               size="lg" 
               className="w-full"
+              disabled={isSubmitting || !feedback.trim()}
             >
-              <AppleEmoji emoji="⭐" className="mr-2" />
-              Leave a Review
+              {isSubmitting ? (
+                <>
+                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                  Sending...
+                </>
+              ) : (
+                <>
+                  <AppleEmoji emoji="📨" className="mr-2" />
+                  Send Feedback
+                </>
+              )}
             </Button>
             <Button 
               onClick={handleMaybeLater} 
               variant="outline" 
               size="lg" 
               className="w-full text-muted-foreground bg-muted/30 border-muted/50 hover:bg-muted/50"
+              disabled={isSubmitting}
             >
               Maybe Later
             </Button>
