@@ -3,20 +3,19 @@ import { useNavigate } from "react-router-dom";
 
 import { GlassCard } from "@/components/GlassCard";
 import { Button } from "@/components/ui/button";
-import { UpgradeModal } from "@/components/UpgradeModal";
+import { PaywallModal } from "@/components/PaywallModal";
 import { EditProfileModal } from "@/components/EditProfileModal";
-import { DeleteAccountModal } from "@/components/DeleteAccountModal";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { usePlanLimits } from "@/hooks/use-plan-limits";
 import { 
   User, 
   CreditCard, 
   LogOut, 
   ChevronRight, 
   Shield,
-  Smartphone,
-  Trash2
+  Smartphone
 } from "lucide-react";
 import {
   AlertDialog,
@@ -34,9 +33,9 @@ import { SettingsChecklist } from "@/components/SettingsChecklist";
 export default function Settings() {
   const navigate = useNavigate();
   const { user, signOut } = useAuth();
-  const [showUpgradeModal, setShowUpgradeModal] = useState(false);
+  const { currentPlan } = usePlanLimits();
+  const [showPaywall, setShowPaywall] = useState(false);
   const [showEditProfile, setShowEditProfile] = useState(false);
-  const [showDeleteAccount, setShowDeleteAccount] = useState(false);
   const [showSignOutConfirm, setShowSignOutConfirm] = useState(false);
   const [profile, setProfile] = useState<{ full_name: string | null; email: string | null; avatar_url: string | null }>({ 
     full_name: null, 
@@ -44,9 +43,9 @@ export default function Settings() {
     avatar_url: null 
   });
   
-
-  // For demo purposes - in real app this would come from subscription data
-  const isPro = false;
+  const isPro = currentPlan === 'pro';
+  const isCore = currentPlan === 'core';
+  const isFree = currentPlan === 'free';
 
   useEffect(() => {
     if (user) {
@@ -73,9 +72,17 @@ export default function Settings() {
     navigate("/auth");
   };
 
-  const handleDeleteAccount = async () => {
-    // TODO: Implement actual account deletion
-    toast.success("Account deletion initiated");
+  const handleSubscriptionClick = () => {
+    if (isFree) {
+      setShowPaywall(true);
+    } else {
+      // For paid users, show toast with current plan info
+      toast.info(
+        isPro 
+          ? "You're on the Pro plan. Contact support to manage your subscription." 
+          : "You're on the Core plan. Upgrade to Pro for AI coaching!"
+      );
+    }
   };
 
 
@@ -118,7 +125,7 @@ export default function Settings() {
         {/* Subscription Card */}
         <GlassCard className="mb-6">
           <button 
-            onClick={() => setShowUpgradeModal(true)}
+            onClick={handleSubscriptionClick}
             className="w-full p-5 flex items-center justify-between hover:bg-secondary/30 transition-colors rounded-3xl"
           >
             <span className="flex items-center gap-3">
@@ -126,7 +133,7 @@ export default function Settings() {
               <div className="text-left">
                 <span className="font-medium block text-foreground">Subscription</span>
                 <span className="text-sm text-muted-foreground">
-                  {isPro ? "Pro Plan" : "Free Plan"}
+                  {isPro ? "Pro Plan" : isCore ? "Core Plan" : "Free Plan"}
                 </span>
               </div>
             </span>
@@ -147,7 +154,7 @@ export default function Settings() {
               </div>
             </div>
             <Button 
-              onClick={() => setShowUpgradeModal(true)}
+              onClick={() => setShowPaywall(true)}
               className="w-full rounded-full text-primary-foreground font-medium"
               style={{ background: 'linear-gradient(135deg, hsl(38 100% 70%) 0%, hsl(24 95% 53%) 100%)' }}
             >
@@ -163,7 +170,7 @@ export default function Settings() {
             <span className="font-sans font-semibold text-foreground">Privacy and Security</span>
           </div>
           
-          <button className="w-full p-5 flex items-center justify-between opacity-50 cursor-not-allowed">
+          <button className="w-full p-5 flex items-center justify-between opacity-50 cursor-not-allowed rounded-b-3xl">
             <span className="flex items-center gap-3">
               <Smartphone className="w-5 h-5 text-muted-foreground" />
               <div className="text-left">
@@ -172,17 +179,6 @@ export default function Settings() {
               </div>
             </span>
             <ChevronRight className="w-5 h-5 text-muted-foreground" />
-          </button>
-          
-          <button 
-            onClick={() => setShowDeleteAccount(true)}
-            className="w-full p-5 flex items-center justify-between hover:bg-destructive/5 transition-colors rounded-b-3xl"
-          >
-            <span className="flex items-center gap-3">
-              <Trash2 className="w-5 h-5 text-destructive" />
-              <span className="font-medium text-destructive">Delete Account</span>
-            </span>
-            <ChevronRight className="w-5 h-5 text-destructive/50" />
           </button>
         </GlassCard>
         
@@ -199,20 +195,16 @@ export default function Settings() {
       </main>
 
       {/* Modals */}
-      <UpgradeModal 
-        open={showUpgradeModal} 
-        onClose={() => setShowUpgradeModal(false)} 
+      <PaywallModal 
+        open={showPaywall} 
+        onOpenChange={setShowPaywall}
+        limitType="habits"
+        limitMessage="Upgrade your plan to unlock all features"
       />
       
       <EditProfileModal 
         open={showEditProfile} 
         onClose={() => setShowEditProfile(false)} 
-      />
-      
-      <DeleteAccountModal
-        open={showDeleteAccount} 
-        onClose={() => setShowDeleteAccount(false)}
-        onConfirm={handleDeleteAccount}
       />
 
       {/* Sign Out Confirmation */}
