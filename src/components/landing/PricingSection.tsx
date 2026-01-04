@@ -146,7 +146,7 @@ export function PricingSection() {
             <div
               key={plan.name}
               className={cn(
-                "relative rounded-3xl p-5 lg:p-6 transition-all duration-300 glass-card",
+                "relative rounded-3xl p-6 lg:p-8 transition-all duration-300 glass-card",
                 plan.popular
                   ? "shadow-xl scale-[1.02] md:scale-105"
                   : "hover:shadow-lg"
@@ -179,15 +179,15 @@ export function PricingSection() {
               )}
 
               {/* Plan Header */}
-              <div className="text-center mb-4">
-                <h3 className="text-xl lg:text-2xl font-bold text-foreground mb-1">
+              <div className="text-center mb-5">
+                <h3 className="text-xl lg:text-2xl font-bold text-foreground mb-1.5">
                   {plan.name}
                 </h3>
                 <p className="text-muted-foreground text-sm">{plan.subtitle}</p>
               </div>
 
               {/* Price */}
-              <div className="text-center mb-4">
+              <div className="text-center mb-5">
                 <div className="flex items-baseline justify-center gap-1">
                   <span className="text-3xl lg:text-4xl font-bold text-foreground">
                     {getPriceLabel(plan)}
@@ -204,10 +204,10 @@ export function PricingSection() {
               </div>
 
               {/* Divider */}
-              <div className="w-full h-px bg-gradient-to-r from-transparent via-border to-transparent mb-4" />
+              <div className="w-full h-px bg-gradient-to-r from-transparent via-border to-transparent mb-5" />
 
               {/* Features */}
-              <ul className="space-y-2 mb-4">
+              <ul className="space-y-3 mb-5">
                 {plan.features.map((feature, index) => (
                   <li key={index} className="flex items-start gap-2.5">
                     {feature.included ? (
@@ -234,7 +234,7 @@ export function PricingSection() {
               </ul>
 
               {/* Benefit Text */}
-              <p className="text-xs text-muted-foreground text-center mb-4 italic">
+              <p className="text-xs text-muted-foreground text-center mb-5 italic">
                 {plan.benefitText}
               </p>
 
