@@ -79,7 +79,7 @@ const plans: Plan[] = [
 
 export function LandingPricing() {
   const [isYearly, setIsYearly] = useState(true);
-  const { openCheckout, isLoading } = usePolarCheckout({ theme: "dark" });
+  const { openCheckout, isLoading } = usePolarCheckout({ theme: "light" });
 
   const getPrice = (plan: Plan) => {
     if (plan.monthlyPrice === 0) return 0;

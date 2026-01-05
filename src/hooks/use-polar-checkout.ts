@@ -11,7 +11,7 @@ interface UsePolarCheckoutOptions {
 
 export function usePolarCheckout(options: UsePolarCheckoutOptions = {}) {
   const [isLoading, setIsLoading] = useState(false);
-  const { theme = "dark", onSuccess, onError } = options;
+  const { theme = "light", onSuccess, onError } = options;
 
   const openCheckout = useCallback(
     async (plan: PlanType, period: BillingPeriod) => {
