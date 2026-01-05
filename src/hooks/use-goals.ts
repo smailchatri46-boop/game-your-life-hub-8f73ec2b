@@ -99,67 +99,41 @@ export function useGoals() {
     staleTime: 1000 * 60 * 5,
   });
 
-  // Demo mode create goal - only session storage, resets on reload
-  const createDemoGoal = useCallback((input: CreateGoalInput) => {
-    const newGoal: Goal = {
-      id: crypto.randomUUID(),
-      user_id: "demo",
-      name: input.name,
-      category: input.category,
-      category_emoji: input.category_emoji,
-      start_date: input.start_date,
-      end_date: input.end_date,
-      target_count: input.target_count,
-      completed_count: 0,
-      status: "active",
-      created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString(),
-    };
-
-    const updatedGoals = [newGoal, ...demoGoals];
-    setDemoGoalsState(updatedGoals);
-
-    // Link habits
-    if (input.habit_ids.length > 0) {
-      const newLinks: GoalHabit[] = input.habit_ids.map((habit_id) => ({
-        id: crypto.randomUUID(),
-        goal_id: newGoal.id,
-        habit_id,
-        user_id: "demo",
-      }));
-      const updatedLinks = [...demoGoalHabits, ...newLinks];
-      setDemoGoalHabitsState(updatedLinks);
-    }
-
-    toast.success("Goal created! (Demo mode - sign up to save)");
-    return newGoal;
-  }, [demoGoals, demoGoalHabits]);
-
-  // Demo mode delete goal
-  const deleteDemoGoal = useCallback((goalId: string) => {
-    const updatedGoals = demoGoals.filter((g) => g.id !== goalId);
-    setDemoGoalsState(updatedGoals);
-
-    const updatedLinks = demoGoalHabits.filter((gh) => gh.goal_id !== goalId);
-    setDemoGoalHabitsState(updatedLinks);
-
-    toast.success("Goal deleted (Demo mode)");
-  }, [demoGoals, demoGoalHabits]);
-
-  // Demo mode update goal
-  const updateDemoGoal = useCallback((goalId: string, updates: Partial<Goal>) => {
-    const updatedGoals = demoGoals.map((g) =>
-      g.id === goalId ? { ...g, ...updates, updated_at: new Date().toISOString() } : g
-    );
-    setDemoGoalsState(updatedGoals);
-    toast.success("Goal updated (Demo mode)");
-  }, [demoGoals]);
-
-  // Create goal mutation
+  // Create goal mutation - ALL mutations defined BEFORE any useCallback that uses them
   const createGoal = useMutation({
     mutationFn: async (input: CreateGoalInput) => {
       if (isDemo) {
-        return createDemoGoal(input);
+        // Handle demo mode inline
+        const newGoal: Goal = {
+          id: crypto.randomUUID(),
+          user_id: "demo",
+          name: input.name,
+          category: input.category,
+          category_emoji: input.category_emoji,
+          start_date: input.start_date,
+          end_date: input.end_date,
+          target_count: input.target_count,
+          completed_count: 0,
+          status: "active",
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString(),
+        };
+
+        setDemoGoalsState(prev => [newGoal, ...prev]);
+
+        // Link habits
+        if (input.habit_ids.length > 0) {
+          const newLinks: GoalHabit[] = input.habit_ids.map((habit_id) => ({
+            id: crypto.randomUUID(),
+            goal_id: newGoal.id,
+            habit_id,
+            user_id: "demo",
+          }));
+          setDemoGoalHabitsState(prev => [...prev, ...newLinks]);
+        }
+
+        toast.success("Goal created! (Demo mode - sign up to save)");
+        return newGoal;
       }
 
       const { data, error } = await supabase
@@ -193,7 +167,7 @@ export function useGoals() {
       
       return data;
     },
-    onSuccess: () => {
+    onSuccess: (_, __, context) => {
       if (!isDemo) {
         queryClient.invalidateQueries({ queryKey: ["goals"] });
         queryClient.invalidateQueries({ queryKey: ["goal_habits"] });
@@ -210,7 +184,9 @@ export function useGoals() {
   const deleteGoal = useMutation({
     mutationFn: async (goalId: string) => {
       if (isDemo) {
-        deleteDemoGoal(goalId);
+        setDemoGoalsState(prev => prev.filter((g) => g.id !== goalId));
+        setDemoGoalHabitsState(prev => prev.filter((gh) => gh.goal_id !== goalId));
+        toast.success("Goal deleted (Demo mode)");
         return;
       }
 
@@ -246,7 +222,10 @@ export function useGoals() {
   const updateGoal = useMutation({
     mutationFn: async ({ id, ...updates }: { id: string } & Partial<Omit<Goal, 'id' | 'user_id' | 'created_at'>>) => {
       if (isDemo) {
-        updateDemoGoal(id, updates);
+        setDemoGoalsState(prev => prev.map((g) =>
+          g.id === id ? { ...g, ...updates, updated_at: new Date().toISOString() } : g
+        ));
+        toast.success("Goal updated (Demo mode)");
         return;
       }
 
@@ -273,12 +252,15 @@ export function useGoals() {
   const incrementGoalProgress = useMutation({
     mutationFn: async ({ goalId, amount = 1 }: { goalId: string; amount?: number }) => {
       if (isDemo) {
-        const goal = demoGoals.find(g => g.id === goalId);
-        if (goal) {
-          updateDemoGoal(goalId, { 
-            completed_count: Math.min(goal.completed_count + amount, goal.target_count) 
-          });
-        }
+        setDemoGoalsState(prev => {
+          const goal = prev.find(g => g.id === goalId);
+          if (!goal) return prev;
+          return prev.map(g => 
+            g.id === goalId 
+              ? { ...g, completed_count: Math.min(g.completed_count + amount, g.target_count) }
+              : g
+          );
+        });
         return;
       }
 
