@@ -1,6 +1,6 @@
 import { useState, useCallback } from "react";
 import { PolarEmbedCheckout } from "@polar-sh/checkout/embed";
-import { getProductId, type PlanType, type BillingPeriod } from "@/lib/polar";
+import { getCheckoutLink, type PlanType, type BillingPeriod } from "@/lib/polar";
 import { toast } from "sonner";
 
 interface UsePolarCheckoutOptions {
@@ -18,18 +18,23 @@ export function usePolarCheckout(options: UsePolarCheckoutOptions = {}) {
       setIsLoading(true);
 
       try {
-        const productId = getProductId(plan, period);
-        // Polar checkout link format
-        const checkoutLink = `https://polar.sh/checkout/${productId}`;
+        const checkoutLink = getCheckoutLink(plan, period);
+        const checkout = await PolarEmbedCheckout.create(checkoutLink, theme);
+        
+        // Listen for successful payment
+        checkout.addEventListener("success", () => {
+          toast.success("Payment successful! Welcome to your new plan.");
+          onSuccess?.();
+        });
 
-        await PolarEmbedCheckout.create(checkoutLink, theme);
-        onSuccess?.();
+        checkout.addEventListener("close", () => {
+          setIsLoading(false);
+        });
       } catch (error) {
         console.error("Failed to open checkout:", error);
         const err = error instanceof Error ? error : new Error("Checkout failed");
         toast.error("Failed to open checkout. Please try again.");
         onError?.(err);
-      } finally {
         setIsLoading(false);
       }
     },
