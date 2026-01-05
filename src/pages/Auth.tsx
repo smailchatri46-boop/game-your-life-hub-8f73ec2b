@@ -62,7 +62,9 @@ export default function Auth() {
                 className="w-full gap-3"
                 onClick={handleGoogleSignIn}
               >
-                <img src={googleLogo} alt="Google" className="w-5 h-5" />
+                <span className="w-6 h-6 bg-white rounded-full flex items-center justify-center">
+                  <img src={googleLogo} alt="Google" className="w-4 h-4" />
+                </span>
                 Continue with Google
               </Button>
             </div>
