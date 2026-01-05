@@ -43,8 +43,8 @@ export default function Contact() {
         <div className="flex-1 flex items-center justify-center px-4 pt-24 pb-12">
           <div className="max-w-xl mx-auto text-center">
             {/* Icon */}
-            <div className="mb-6 inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-primary/20 to-primary/5 border border-primary/10">
-              <Mail className="w-7 h-7 text-primary" />
+            <div className="mb-6 inline-flex items-center justify-center w-16 h-16 rounded-2xl btn-primary-gradient shadow-lg">
+              <Mail className="w-7 h-7 text-white" />
             </div>
             
             {/* Title */}
