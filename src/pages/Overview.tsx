@@ -12,7 +12,6 @@ import { Input } from "@/components/ui/input";
 import { Link } from "react-router-dom";
 import { useState, useMemo, useEffect } from "react";
 import { useSelectedMonth } from "@/hooks/use-selected-month";
-import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { PaywallModal } from "@/components/PaywallModal";
 import { usePlanLimits, LimitType } from "@/hooks/use-plan-limits";
@@ -95,25 +94,9 @@ export default function Overview() {
   const [hasSelectedEmoji, setHasSelectedEmoji] = useState(false);
   
   // Fetch todos for selected date
+  // TODO: Replace with Firebase Firestore query
   useEffect(() => {
-    if (!user || selectedDate === null) return;
-    
-    const dateString = `${year}-${String(month + 1).padStart(2, '0')}-${String(selectedDate).padStart(2, '0')}`;
-    
-    const fetchTodos = async () => {
-      const { data, error } = await supabase
-        .from('daily_todos')
-        .select('*')
-        .eq('user_id', user.id)
-        .eq('date', dateString)
-        .order('created_at', { ascending: true });
-      
-      if (!error && data) {
-        setTodos(data.map(t => ({ id: t.id, text: t.text, completed: t.completed, emoji: "📝" })));
-      }
-    };
-    
-    fetchTodos();
+    // Currently using local state only - Firebase not configured
   }, [user, selectedDate, year, month]);
   
   const handleAddTodo = () => {

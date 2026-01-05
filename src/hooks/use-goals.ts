@@ -1,5 +1,4 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner";
 import { useState, useCallback } from "react";
@@ -65,14 +64,8 @@ export function useGoals() {
     queryKey: ["goals", user?.id],
     queryFn: async () => {
       if (!user) return [];
-      const { data, error } = await supabase
-        .from("goals")
-        .select("*")
-        .eq("user_id", user.id)
-        .order("created_at", { ascending: false });
-      
-      if (error) throw error;
-      return data as Goal[];
+      // TODO: Replace with Firebase Firestore query
+      return [];
     },
     enabled: !!user,
   });
@@ -81,13 +74,8 @@ export function useGoals() {
     queryKey: ["goal_habits", user?.id],
     queryFn: async () => {
       if (!user) return [];
-      const { data, error } = await supabase
-        .from("goal_habits")
-        .select("*")
-        .eq("user_id", user.id);
-      
-      if (error) throw error;
-      return data as GoalHabit[];
+      // TODO: Replace with Firebase Firestore query
+      return [];
     },
     enabled: !!user,
   });
@@ -150,44 +138,14 @@ export function useGoals() {
 
   const createGoal = useMutation({
     mutationFn: async (input: CreateGoalInput) => {
-      // Demo mode - use local storage
+      // Demo mode - use local state
       if (isDemo) {
         return createDemoGoal(input);
       }
 
-      // Authenticated mode - use Supabase
-      const { data: goal, error: goalError } = await supabase
-        .from("goals")
-        .insert({
-          user_id: user!.id,
-          name: input.name,
-          category: input.category,
-          category_emoji: input.category_emoji,
-          start_date: input.start_date,
-          end_date: input.end_date,
-          target_count: input.target_count,
-        })
-        .select()
-        .single();
-
-      if (goalError) throw goalError;
-
-      // Link habits to the goal
-      if (input.habit_ids.length > 0) {
-        const habitLinks = input.habit_ids.map((habit_id) => ({
-          goal_id: goal.id,
-          habit_id,
-          user_id: user!.id,
-        }));
-
-        const { error: linkError } = await supabase
-          .from("goal_habits")
-          .insert(habitLinks);
-
-        if (linkError) throw linkError;
-      }
-
-      return goal;
+      // TODO: Replace with Firebase Firestore
+      toast.error("Firebase not configured yet");
+      return null;
     },
     onSuccess: () => {
       if (!isDemo) {
@@ -210,12 +168,8 @@ export function useGoals() {
         return;
       }
 
-      const { error } = await supabase
-        .from("goals")
-        .delete()
-        .eq("id", goalId);
-      
-      if (error) throw error;
+      // TODO: Replace with Firebase Firestore
+      toast.error("Firebase not configured yet");
     },
     onSuccess: () => {
       if (!isDemo) {
@@ -237,12 +191,8 @@ export function useGoals() {
         return;
       }
 
-      const { error } = await supabase
-        .from("goals")
-        .update(updates)
-        .eq("id", id);
-      
-      if (error) throw error;
+      // TODO: Replace with Firebase Firestore
+      toast.error("Firebase not configured yet");
     },
     onSuccess: () => {
       if (!isDemo) {

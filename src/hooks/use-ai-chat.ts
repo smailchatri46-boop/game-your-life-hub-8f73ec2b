@@ -1,5 +1,4 @@
 import { useCallback, useRef, useState } from "react";
-import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 
 export type Message = {
@@ -15,10 +14,6 @@ export type Conversation = {
   createdAt: Date;
   updatedAt: Date;
 };
-
-// Dev/test mode: allow chat without login.
-// IMPORTANT: This uses a fixed UUID so the backend can apply usage limits.
-const DEV_USER_ID = "00000000-0000-0000-0000-000000000001";
 
 // Generate a smart 2-5 word title from the conversation
 function generateSmartTitle(userMessage: string, aiResponse: string): string {
@@ -75,34 +70,15 @@ export function useAIChat() {
   const currentConvIdRef = useRef<string | null>(null);
 
   const isAuthed = !!user;
-  const effectiveUserId = user?.id ?? DEV_USER_ID;
 
   const loadConversations = useCallback(async () => {
     if (!isAuthed) {
       setConversations([]);
       return;
     }
-
-    const { data, error } = await supabase
-      .from("chat_conversations")
-      .select("*")
-      .eq("user_id", user!.id)
-      .order("updated_at", { ascending: false });
-
-    if (error) {
-      console.error("Failed to load conversations:", error);
-      return;
-    }
-
-    setConversations(
-      (data ?? []).map((c) => ({
-        id: c.id,
-        title: c.title,
-        createdAt: new Date(c.created_at),
-        updatedAt: new Date(c.updated_at),
-      }))
-    );
-  }, [isAuthed, user]);
+    // TODO: Replace with Firebase Firestore query
+    setConversations([]);
+  }, [isAuthed]);
 
   const loadConversation = useCallback(
     async (conversationId: string) => {
@@ -114,134 +90,53 @@ export function useAIChat() {
         return;
       }
 
-      const { data, error } = await supabase
-        .from("chat_messages")
-        .select("*")
-        .eq("user_id", user!.id)
-        .eq("conversation_id", conversationId)
-        .order("created_at", { ascending: true });
-
-      if (error) {
-        console.error("Failed to load conversation messages:", error);
-        return;
-      }
-
-      setMessages(
-        (data ?? []).map((m) => ({
-          id: m.id,
-          role: m.role as "user" | "assistant",
-          content: m.content,
-          timestamp: new Date(m.created_at),
-        }))
-      );
+      // TODO: Replace with Firebase Firestore query
+      setMessages([]);
     },
-    [isAuthed, user]
+    [isAuthed]
   );
 
   const startNewConversation = useCallback(async (): Promise<string | null> => {
     const now = new Date();
-
-    if (!isAuthed) {
-      const id = crypto.randomUUID();
-      const newConv: Conversation = {
-        id,
-        title: "New chat",
-        createdAt: now,
-        updatedAt: now,
-      };
-      setConversations((prev) => [newConv, ...prev]);
-      setCurrentConversationId(id);
-      currentConvIdRef.current = id;
-      setMessages([]);
-      return id;
-    }
-
-    const { data, error } = await supabase
-      .from("chat_conversations")
-      .insert({ user_id: user!.id, title: "New conversation" })
-      .select()
-      .single();
-
-    if (error || !data) {
-      console.error("Failed to create conversation:", error);
-      return null;
-    }
-
+    const id = crypto.randomUUID();
     const newConv: Conversation = {
-      id: data.id,
-      title: data.title,
-      createdAt: new Date(data.created_at),
-      updatedAt: new Date(data.updated_at),
+      id,
+      title: "New chat",
+      createdAt: now,
+      updatedAt: now,
     };
-
     setConversations((prev) => [newConv, ...prev]);
-    setCurrentConversationId(data.id);
-    currentConvIdRef.current = data.id;
+    setCurrentConversationId(id);
+    currentConvIdRef.current = id;
     setMessages([]);
-
-    return data.id;
-  }, [isAuthed, user]);
+    return id;
+  }, []);
 
   const updateConversationTitle = useCallback(
     async (conversationId: string, title: string) => {
       if (!title.trim()) return;
 
-      if (!isAuthed) {
-        setConversations((prev) =>
-          prev.map((c) => (c.id === conversationId ? { ...c, title: title.trim(), updatedAt: new Date() } : c))
-        );
-        return;
-      }
-
-      const { error } = await supabase
-        .from("chat_conversations")
-        .update({ title: title.trim() })
-        .eq("id", conversationId)
-        .eq("user_id", user!.id);
-
-      if (error) {
-        console.error("Failed to update conversation title:", error);
-        return;
-      }
-
       setConversations((prev) =>
-        prev.map((c) => (c.id === conversationId ? { ...c, title: title.trim() } : c))
+        prev.map((c) => (c.id === conversationId ? { ...c, title: title.trim(), updatedAt: new Date() } : c))
       );
+      
+      // TODO: Persist to Firebase if authenticated
     },
-    [isAuthed, user]
+    []
   );
 
   const deleteConversation = useCallback(
     async (conversationId: string) => {
-      if (!isAuthed) {
-        setConversations((prev) => prev.filter((c) => c.id !== conversationId));
-        if (currentConvIdRef.current === conversationId) {
-          setCurrentConversationId(null);
-          currentConvIdRef.current = null;
-          setMessages([]);
-        }
-        return;
-      }
-
-      const { error } = await supabase
-        .from("chat_conversations")
-        .delete()
-        .eq("id", conversationId)
-        .eq("user_id", user!.id);
-
-      if (error) {
-        console.error("Failed to delete conversation:", error);
-        return;
-      }
-
       setConversations((prev) => prev.filter((c) => c.id !== conversationId));
       if (currentConvIdRef.current === conversationId) {
         setCurrentConversationId(null);
         currentConvIdRef.current = null;
         setMessages([]);
       }
+      
+      // TODO: Delete from Firebase if authenticated
     },
-    [isAuthed, user]
+    []
   );
 
   const sendMessage = useCallback(
@@ -266,113 +161,19 @@ export function useAIChat() {
       setMessages((prev) => [...prev, userMessage]);
       setIsLoading(true);
 
-      // Persist only when authed
-      if (isAuthed) {
-        await supabase.from("chat_messages").insert({
-          user_id: user!.id,
-          role: "user",
-          content: trimmed,
-          conversation_id: convId,
-        });
-
-      }
-
       try {
-        const CHAT_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/ai-coach`;
-
-        const response = await fetch(CHAT_URL, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
-          },
-          body: JSON.stringify({
-            messages: [...messages, userMessage].map((m) => ({ role: m.role, content: m.content })),
-            userId: effectiveUserId,
-          }),
-        });
-
-        if (!response.ok) {
-          const errorData = await response.json().catch(() => ({}));
-
-          if (
-            response.status === 429 &&
-            (errorData.error === "limit_reached" || errorData.error === "daily_limit_reached")
-          ) {
-            setMessages((prev) => [
-              ...prev,
-              {
-                id: crypto.randomUUID(),
-                role: "assistant",
-                content: errorData.message || "Usage limit reached.",
-                timestamp: new Date(),
-              },
-            ]);
-            return;
-          }
-
-          throw new Error(errorData.error || errorData.message || `Request failed (${response.status})`);
-        }
-
-        if (!response.body) throw new Error("No response body");
-
-        const reader = response.body.getReader();
-        const decoder = new TextDecoder();
-        let assistantContent = "";
+        // TODO: Replace with Gemini API call via Firebase Cloud Function or direct API
+        // For now, show a placeholder response
+        const assistantContent = "AI chat is not configured yet. Please provide your Firebase config and Gemini API key to enable this feature.";
+        
         const assistantId = crypto.randomUUID();
-
         setMessages((prev) => [
           ...prev,
-          { id: assistantId, role: "assistant", content: "", timestamp: new Date() },
+          { id: assistantId, role: "assistant", content: assistantContent, timestamp: new Date() },
         ]);
 
-        let buffer = "";
-        while (true) {
-          const { done, value } = await reader.read();
-          if (done) break;
-
-          buffer += decoder.decode(value, { stream: true });
-
-          let newlineIndex: number;
-          while ((newlineIndex = buffer.indexOf("\n")) !== -1) {
-            let line = buffer.slice(0, newlineIndex);
-            buffer = buffer.slice(newlineIndex + 1);
-
-            if (line.endsWith("\r")) line = line.slice(0, -1);
-            if (line.startsWith(":") || line.trim() === "") continue;
-            if (!line.startsWith("data: ")) continue;
-
-            const jsonStr = line.slice(6).trim();
-            if (jsonStr === "[DONE]") break;
-
-            try {
-              const parsed = JSON.parse(jsonStr);
-              const delta = parsed.choices?.[0]?.delta?.content;
-              if (delta) {
-                assistantContent += delta;
-                setMessages((prev) =>
-                  prev.map((m) => (m.id === assistantId ? { ...m, content: assistantContent } : m))
-                );
-              }
-            } catch {
-              buffer = line + "\n" + buffer;
-              break;
-            }
-          }
-        }
-
-        // Persist assistant only when authed
-        if (assistantContent && isAuthed) {
-          await supabase.from("chat_messages").insert({
-            user_id: user!.id,
-            role: "assistant",
-            content: assistantContent,
-            conversation_id: convId,
-          });
-        }
-
-        // Auto-generate smart title from first AI response (2-5 words summary)
-        if (messages.length === 0 && assistantContent) {
+        // Auto-generate smart title from first AI response
+        if (messages.length === 0) {
           const smartTitle = generateSmartTitle(trimmed, assistantContent);
           await updateConversationTitle(convId, smartTitle);
         }
@@ -391,7 +192,7 @@ export function useAIChat() {
         setIsLoading(false);
       }
     },
-    [effectiveUserId, isAuthed, messages, startNewConversation, updateConversationTitle, user, isLoading]
+    [isLoading, messages, startNewConversation, updateConversationTitle]
   );
 
   const clearMessages = useCallback(() => {
