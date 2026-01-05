@@ -24,6 +24,11 @@ const Settings = lazy(() => import("./pages/Settings"));
 const FAQ = lazy(() => import("./pages/FAQ"));
 const Pricing = lazy(() => import("./pages/Pricing"));
 const Contact = lazy(() => import("./pages/Contact"));
+const About = lazy(() => import("./pages/About"));
+const Privacy = lazy(() => import("./pages/Privacy"));
+const Terms = lazy(() => import("./pages/Terms"));
+const Cookies = lazy(() => import("./pages/Cookies"));
+const Refund = lazy(() => import("./pages/Refund"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 
 const queryClient = new QueryClient({
@@ -56,6 +61,11 @@ const App = () => (
                 <Route path="/" element={<Landing />} />
                 <Route path="/faq" element={<FAQ />} />
                 <Route path="/pricing" element={<Pricing />} />
+                <Route path="/about" element={<About />} />
+                <Route path="/privacy" element={<Privacy />} />
+                <Route path="/terms" element={<Terms />} />
+                <Route path="/cookies" element={<Cookies />} />
+                <Route path="/refund" element={<Refund />} />
                 <Route path="/contact" element={<Contact />} />
                 <Route path="/onboarding" element={<Onboarding />} />
                 <Route path="/auth" element={<Auth />} />

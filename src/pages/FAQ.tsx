@@ -1,4 +1,5 @@
 import { LandingNavbar } from "@/components/LandingNavbar";
+import { Footer } from "@/components/Footer";
 import { GlassCard } from "@/components/GlassCard";
 import { faqs } from "@/data/faqData";
 import {
@@ -10,10 +11,10 @@ import {
 
 export default function FAQ() {
   return (
-    <div className="min-h-screen gradient-hero overflow-hidden">
+    <div className="min-h-screen gradient-hero flex flex-col">
       <LandingNavbar />
       
-      <main className="pt-28 pb-12 px-4 max-w-5xl mx-auto">
+      <main className="flex-1 pt-28 pb-12 px-4 max-w-5xl mx-auto w-full">
         <div className="mb-8 text-center">
           <h1 className="text-3xl md:text-4xl font-semibold mb-2" style={{ fontFamily: "'Inter', sans-serif" }}>Frequently Asked Questions</h1>
           <p className="font-body text-muted-foreground">Find answers to common questions about using Neyler</p>
@@ -41,6 +42,8 @@ export default function FAQ() {
           </Accordion>
         </GlassCard>
       </main>
+      
+      <Footer />
     </div>
   );
 }
