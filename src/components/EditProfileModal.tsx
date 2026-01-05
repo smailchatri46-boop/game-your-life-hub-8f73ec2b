@@ -9,7 +9,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useAuth } from "@/contexts/AuthContext";
-import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 
 interface EditProfileModalProps {
@@ -36,21 +35,7 @@ export function EditProfileModal({ open, onClose }: EditProfileModalProps) {
   useEffect(() => {
     if (user) {
       setEmail(user.email || "");
-      // Fetch profile data
-      supabase
-        .from("profiles")
-        .select("full_name, avatar_url")
-        .eq("id", user.id)
-        .single()
-        .then(({ data }) => {
-          if (data) {
-            setFullName(data.full_name || "");
-            if (data.avatar_url) {
-              const colorIndex = avatarColors.indexOf(data.avatar_url);
-              if (colorIndex >= 0) setSelectedColor(colorIndex);
-            }
-          }
-        });
+      setFullName(user.user_metadata?.full_name || "");
     }
   }, [user, open]);
 
@@ -59,19 +44,8 @@ export function EditProfileModal({ open, onClose }: EditProfileModalProps) {
     setSaving(true);
 
     try {
-      const { error } = await supabase
-        .from("profiles")
-        .upsert({
-          id: user.id,
-          full_name: fullName,
-          email: email,
-          avatar_url: avatarColors[selectedColor],
-          updated_at: new Date().toISOString(),
-        });
-
-      if (error) throw error;
-
-      toast.success("Profile updated successfully!");
+      // TODO: Replace with Firebase Firestore update
+      toast.info("Firebase not configured yet - profile changes won't be saved");
       onClose();
     } catch (error) {
       toast.error("Failed to update profile");
