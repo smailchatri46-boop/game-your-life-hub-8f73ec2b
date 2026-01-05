@@ -19,33 +19,33 @@ export function MarqueeText({ text, className = "", index = 0 }: MarqueeTextProp
   }, []);
 
   useEffect(() => {
-    checkOverflow();
+    // Use requestAnimationFrame to ensure DOM is ready
+    const raf = requestAnimationFrame(() => {
+      checkOverflow();
+    });
     window.addEventListener("resize", checkOverflow);
-    return () => window.removeEventListener("resize", checkOverflow);
+    return () => {
+      cancelAnimationFrame(raf);
+      window.removeEventListener("resize", checkOverflow);
+    };
   }, [text, checkOverflow]);
 
-  if (!isOverflowing) {
-    return (
-      <div ref={containerRef} className={`overflow-hidden ${className}`}>
-        <span ref={textRef} className="whitespace-nowrap block">
-          {text}
-        </span>
-      </div>
-    );
-  }
+  const animationClass = isOverflowing ? `animate-marquee-single-${index % 6}` : "";
 
   return (
     <div
       ref={containerRef}
       className={`relative overflow-hidden ${className}`}
     >
-      {/* Fade edges */}
-      <div className="pointer-events-none absolute inset-y-0 left-0 w-3 bg-gradient-to-r from-card to-transparent z-10" />
-      <div className="pointer-events-none absolute inset-y-0 right-0 w-3 bg-gradient-to-l from-card to-transparent z-10" />
-
-      {/* Single text that scrolls out completely then reappears with staggered timing */}
+      {isOverflowing && (
+        <>
+          <div className="pointer-events-none absolute inset-y-0 left-0 w-3 bg-gradient-to-r from-card to-transparent z-10" />
+          <div className="pointer-events-none absolute inset-y-0 right-0 w-3 bg-gradient-to-l from-card to-transparent z-10" />
+        </>
+      )}
       <span 
-        className={`whitespace-nowrap block animate-marquee-single-${index % 6}`}
+        ref={textRef}
+        className={`whitespace-nowrap block ${animationClass}`}
       >
         {text}
       </span>
