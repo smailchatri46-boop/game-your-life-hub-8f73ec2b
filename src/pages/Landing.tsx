@@ -75,7 +75,7 @@ export default function Landing() {
               </h1>
               
               <p className="text-lg text-muted-foreground max-w-lg mb-6 animate-fade-in delay-100 text-center lg:text-left mx-auto lg:mx-0">
-                Track tasks and habits, level up your life, turn your data into insights, and analyze your life with AI using the most beautiful tracker you've ever used.
+                Analyze your life with AI using the most beautiful tracker you've ever used. Track tasks and habits, level up your life, and turn your data into insights.
               </p>
 
               {/* Sign Up Button */}
