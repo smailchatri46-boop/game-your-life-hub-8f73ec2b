@@ -60,7 +60,7 @@ export default function Privacy() {
               </section>
 
               <section>
-                <h2 className="font-display text-xl font-semibold text-foreground mb-3">Analytics & Cookies</h2>
+                <h2 className="font-display text-xl font-semibold text-foreground mb-3">Analytics <span className="font-inter">&</span> Cookies</h2>
                 <p className="text-foreground/90 leading-relaxed">
                   We use analytics tools to understand how people use Neyler, which helps us improve the app. 
                   We also use cookies for essential functionality like keeping you logged in and remembering 
