@@ -74,9 +74,6 @@ export function PaywallModal({ open, onOpenChange, limitType, limitMessage }: Pa
 
   const { openCheckout, isLoading } = usePolarCheckout({
     theme: "light",
-    onSuccess: () => {
-      onOpenChange(false);
-    },
   });
 
   const proPlan = plans.find(p => p.name === "Pro")!;
@@ -116,7 +113,12 @@ export function PaywallModal({ open, onOpenChange, limitType, limitMessage }: Pa
   const handleUpgrade = (planName: string) => {
     const plan = planName.toLowerCase() as PlanType;
     const period: BillingPeriod = isYearly ? "yearly" : "monthly";
-    openCheckout(plan, period);
+    // Close the paywall modal first, then open checkout
+    onOpenChange(false);
+    // Small delay to let the modal close before opening checkout
+    setTimeout(() => {
+      openCheckout(plan, period);
+    }, 100);
   };
 
   // Calculate progress for circular animation (0 to 1)
