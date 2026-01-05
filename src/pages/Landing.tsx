@@ -67,7 +67,7 @@ export default function Landing() {
                 <span className="italic gradient-text">Turn your life</span>
                 <br />
                 <span className="text-foreground">into a Game</span>
-                <span className="gradient-text"> for free</span>
+                <span className="gradient-text"> with AI</span>
               </h1>
               
               <p className="text-lg text-muted-foreground max-w-lg mb-6 animate-fade-in delay-100 text-center lg:text-left mx-auto lg:mx-0">
