@@ -6,6 +6,16 @@ interface MarqueeTextProps {
   index?: number;
 }
 
+// Staggered animation configs for variety
+const ANIMATION_CONFIGS = [
+  { duration: 18, delay: 0 },
+  { duration: 20, delay: 1.5 },
+  { duration: 17, delay: 3 },
+  { duration: 21, delay: 0.8 },
+  { duration: 19, delay: 4 },
+  { duration: 16, delay: 2.2 },
+];
+
 export function MarqueeText({ text, className = "", index = 0 }: MarqueeTextProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const textRef = useRef<HTMLSpanElement>(null);
@@ -19,7 +29,6 @@ export function MarqueeText({ text, className = "", index = 0 }: MarqueeTextProp
   }, []);
 
   useEffect(() => {
-    // Use requestAnimationFrame to ensure DOM is ready
     const raf = requestAnimationFrame(() => {
       checkOverflow();
     });
@@ -30,7 +39,7 @@ export function MarqueeText({ text, className = "", index = 0 }: MarqueeTextProp
     };
   }, [text, checkOverflow]);
 
-  const animationClass = isOverflowing ? `animate-marquee-single-${index % 6}` : "";
+  const config = ANIMATION_CONFIGS[index % ANIMATION_CONFIGS.length];
 
   return (
     <div
@@ -45,7 +54,10 @@ export function MarqueeText({ text, className = "", index = 0 }: MarqueeTextProp
       )}
       <span 
         ref={textRef}
-        className={`whitespace-nowrap block ${animationClass}`}
+        className="whitespace-nowrap block"
+        style={isOverflowing ? {
+          animation: `marquee-scroll ${config.duration}s ease-in-out ${config.delay}s infinite`,
+        } : undefined}
       >
         {text}
       </span>

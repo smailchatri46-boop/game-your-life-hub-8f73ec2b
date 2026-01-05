@@ -211,4 +211,40 @@
   .delay-200 { animation-delay: 200ms; }
   .delay-300 { animation-delay: 300ms; }
   .delay-500 { animation-delay: 500ms; }
+
+  /* Marquee scroll animation for overflowing text */
+  @keyframes marquee-scroll {
+    0% {
+      transform: translateX(0%);
+      opacity: 1;
+    }
+    40% {
+      transform: translateX(-60%);
+      opacity: 1;
+    }
+    48% {
+      transform: translateX(-80%);
+      opacity: 0.5;
+    }
+    52% {
+      transform: translateX(-100%);
+      opacity: 0;
+    }
+    53% {
+      transform: translateX(100%);
+      opacity: 0;
+    }
+    60% {
+      transform: translateX(60%);
+      opacity: 0.5;
+    }
+    70% {
+      transform: translateX(30%);
+      opacity: 1;
+    }
+    100% {
+      transform: translateX(0%);
+      opacity: 1;
+    }
+  }
 }
