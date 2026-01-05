@@ -22,10 +22,10 @@ export function Footer() {
   return (
     <footer className="mt-16 py-8 px-6 bg-white/90 backdrop-blur-sm w-full">
       <div className="max-w-6xl mx-auto">
-        {/* Three column grid - left/center/right aligned */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
-          {/* Resources - Center aligned */}
-          <div className="text-center">
+        {/* Three column layout with space-between */}
+        <div className="flex flex-col md:flex-row md:justify-between gap-8 mb-8">
+          {/* Resources - Left */}
+          <div className="text-center flex-1">
             <h4 className="font-body text-sm font-semibold text-foreground mb-3">Resources</h4>
             <ul className="space-y-2">
               {resourceLinks.map((link) => (
@@ -42,7 +42,7 @@ export function Footer() {
           </div>
 
           {/* Company - Center */}
-          <div className="text-center">
+          <div className="text-center flex-1">
             <h4 className="font-body text-sm font-semibold text-foreground mb-3">Company</h4>
             <ul className="space-y-2">
               {companyLinks.map((link) => (
@@ -58,8 +58,8 @@ export function Footer() {
             </ul>
           </div>
 
-          {/* Legal - Right aligned */}
-          <div className="text-center md:text-right">
+          {/* Legal - Right */}
+          <div className="text-center flex-1">
             <h4 className="font-body text-sm font-semibold text-foreground mb-3">Legal</h4>
             <ul className="space-y-2">
               {legalLinks.map((link) => (
