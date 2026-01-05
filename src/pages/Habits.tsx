@@ -16,6 +16,7 @@ import { PaywallModal } from "@/components/PaywallModal";
 import { usePlanLimits, LimitType } from "@/hooks/use-plan-limits";
 import { DeleteHabitModal } from "@/components/DeleteHabitModal";
 import { useToast } from "@/hooks/use-toast";
+import { MarqueeText } from "@/components/MarqueeText";
 
 import { Button } from "@/components/ui/button";
 import { Plus, Trash2, GripVertical, Check, Target, Calendar, TrendingUp, FileText } from "lucide-react";
@@ -467,7 +468,7 @@ export default function Habits() {
                       <GripVertical className="w-3 h-3 text-muted-foreground/50 cursor-grab flex-shrink-0 hidden lg:block" />
                       <AppleEmoji emoji={habit.icon} size="lg" />
                       <div className="min-w-0 flex-1">
-                        <p className="text-xs lg:text-sm font-medium truncate">{habit.name}</p>
+                        <MarqueeText text={habit.name} className="text-xs lg:text-sm font-medium" />
                         <div className="flex items-center gap-1.5">
                           <span 
                             className="w-2 h-2 rounded-full flex-shrink-0"
