@@ -92,10 +92,8 @@ export default function Auth() {
                 <img 
                   src="/images/neyler-logo-full.png" 
                   alt="Neyler" 
-                  className="h-8"
+                  className="h-8 w-auto object-contain"
                   loading="eager"
-                  width={120}
-                  height={32}
                 />
               </div>
               <p className="text-muted-foreground">
