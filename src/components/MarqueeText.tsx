@@ -8,12 +8,12 @@ interface MarqueeTextProps {
 
 // Staggered animation configs for variety
 const ANIMATION_CONFIGS = [
-  { duration: 18, delay: 0 },
-  { duration: 20, delay: 1.5 },
-  { duration: 17, delay: 3 },
-  { duration: 21, delay: 0.8 },
-  { duration: 19, delay: 4 },
-  { duration: 16, delay: 2.2 },
+  { duration: 12, delay: 0 },
+  { duration: 14, delay: 1.5 },
+  { duration: 11, delay: 3 },
+  { duration: 15, delay: 0.8 },
+  { duration: 13, delay: 4 },
+  { duration: 10, delay: 2.2 },
 ];
 
 export function MarqueeText({ text, className = "", index = 0 }: MarqueeTextProps) {
@@ -56,7 +56,7 @@ export function MarqueeText({ text, className = "", index = 0 }: MarqueeTextProp
         ref={textRef}
         className="whitespace-nowrap block"
         style={isOverflowing ? {
-          animation: `marquee-scroll ${config.duration}s ease-in-out ${config.delay}s infinite`,
+          animation: `marquee-scroll ${config.duration}s linear ${config.delay}s infinite`,
         } : undefined}
       >
         {text}
