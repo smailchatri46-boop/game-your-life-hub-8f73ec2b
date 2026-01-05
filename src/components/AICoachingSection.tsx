@@ -9,7 +9,7 @@ interface AICoachingSectionProps {
 }
 
 export function AICoachingSection({ onUpgrade, onDismiss }: AICoachingSectionProps) {
-  const { openCheckout, isLoading } = usePolarCheckout({ theme: "dark" });
+  const { openCheckout, isLoading } = usePolarCheckout({ theme: "light" });
 
   const handleUpgrade = () => {
     openCheckout("pro", "yearly");

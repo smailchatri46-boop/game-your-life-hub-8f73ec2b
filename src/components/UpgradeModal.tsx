@@ -15,7 +15,7 @@ interface UpgradeModalProps {
 
 export function UpgradeModal({ open, onClose }: UpgradeModalProps) {
   const { openCheckout, isLoading } = usePolarCheckout({ 
-    theme: "dark",
+    theme: "light",
     onSuccess: onClose 
   });
 
