@@ -219,7 +219,7 @@ export function GoalsShowcase() {
         {/* Description - centered below cards, wider */}
         <ScrollReveal animation="fade-up" delay={100}>
           <p className="text-muted-foreground text-lg leading-relaxed max-w-3xl">
-            Create meaningful goals, link them to your daily habits, and watch your progress grow. 
+            Create meaningful goals, link them to your daily tasks and habits, and watch your progress grow. 
             Stay motivated with visual progress tracking and pace indicators.
           </p>
         </ScrollReveal>
