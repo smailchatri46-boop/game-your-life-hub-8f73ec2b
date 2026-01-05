@@ -15,7 +15,7 @@ export default function FAQ() {
       
       <main className="pt-28 pb-12 px-4 max-w-5xl mx-auto">
         <div className="mb-8 text-center">
-          <h1 className="font-display text-3xl md:text-4xl font-semibold mb-2">Frequently Asked Questions</h1>
+          <h1 className="text-3xl md:text-4xl font-semibold mb-2" style={{ fontFamily: "'Inter', sans-serif" }}>Frequently Asked Questions</h1>
           <p className="font-body text-muted-foreground">Find answers to common questions about using Neyler</p>
         </div>
 
