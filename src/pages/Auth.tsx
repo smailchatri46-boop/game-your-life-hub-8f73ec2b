@@ -4,19 +4,64 @@ import { LandingNavbar } from "@/components/LandingNavbar";
 import { Button } from "@/components/ui/button";
 import { GlassCard } from "@/components/GlassCard";
 import { useAuth } from "@/contexts/AuthContext";
+import { usePolarCheckout } from "@/hooks/use-polar-checkout";
 import { toast } from "sonner";
 import googleLogo from "@/assets/google-logo.png";
+import type { PlanType, BillingPeriod } from "@/lib/polar";
+
+interface PendingPlan {
+  plan: PlanType | "starter";
+  period: BillingPeriod;
+}
 
 export default function Auth() {
   const navigate = useNavigate();
   const { user, loading, signInWithGoogle } = useAuth();
   const [isSignUp, setIsSignUp] = useState(true);
+  const [checkoutShown, setCheckoutShown] = useState(false);
+  
+  const { openCheckout } = usePolarCheckout({ 
+    theme: "light",
+    onSuccess: () => {
+      // After successful payment, clear pending plan and go to onboarding
+      localStorage.removeItem("neyler_pending_plan");
+      navigate("/onboarding");
+    }
+  });
 
   useEffect(() => {
-    if (!loading && user) {
-      navigate("/dashboard");
+    if (!loading && user && !checkoutShown) {
+      // User just logged in - check for pending plan
+      const pendingPlanStr = localStorage.getItem("neyler_pending_plan");
+      
+      if (pendingPlanStr) {
+        try {
+          const pendingPlan: PendingPlan = JSON.parse(pendingPlanStr);
+          
+          if (pendingPlan.plan === "starter") {
+            // Free plan - just go to onboarding
+            localStorage.setItem("neyler_current_plan", "free");
+            localStorage.removeItem("neyler_pending_plan");
+            navigate("/onboarding");
+          } else {
+            // Paid plan - show checkout
+            setCheckoutShown(true);
+            // Update the plan in localStorage based on selection
+            const planType = pendingPlan.plan === "core" ? "core" : "pro";
+            localStorage.setItem("neyler_current_plan", planType);
+            openCheckout(pendingPlan.plan, pendingPlan.period);
+          }
+        } catch {
+          // Invalid pending plan, go to onboarding
+          localStorage.removeItem("neyler_pending_plan");
+          navigate("/onboarding");
+        }
+      } else {
+        // No pending plan, go to dashboard
+        navigate("/dashboard");
+      }
     }
-  }, [user, loading, navigate]);
+  }, [user, loading, navigate, openCheckout, checkoutShown]);
 
   const handleGoogleSignIn = async () => {
     const { error } = await signInWithGoogle();
