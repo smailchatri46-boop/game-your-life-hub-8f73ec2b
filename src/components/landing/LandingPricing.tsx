@@ -4,6 +4,8 @@ import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { cn } from "@/lib/utils";
 import { ScrollReveal } from "@/components/ScrollReveal";
+import { usePolarCheckout } from "@/hooks/use-polar-checkout";
+import type { PlanType, BillingPeriod } from "@/lib/polar";
 
 interface PlanFeature {
   text: string;
@@ -77,6 +79,7 @@ const plans: Plan[] = [
 
 export function LandingPricing() {
   const [isYearly, setIsYearly] = useState(true);
+  const { openCheckout, isLoading } = usePolarCheckout({ theme: "dark" });
 
   const getPrice = (plan: Plan) => {
     if (plan.monthlyPrice === 0) return 0;
@@ -99,6 +102,16 @@ export function LandingPricing() {
   const getYearlyTotal = (plan: Plan) => {
     if (plan.monthlyPrice === 0 || !isYearly) return null;
     return `Pay only $${plan.yearlyPrice}/year`;
+  };
+
+  const handleGetStarted = (planName: string) => {
+    if (planName === "Starter") {
+      window.location.href = "/signup";
+      return;
+    }
+    const plan = planName.toLowerCase() as PlanType;
+    const period: BillingPeriod = isYearly ? "yearly" : "monthly";
+    openCheckout(plan, period);
   };
 
   return (
@@ -258,6 +271,8 @@ export function LandingPricing() {
                       ? "shadow-md hover:shadow-lg hover:opacity-90"
                       : "hover:bg-muted hover:border-muted-foreground/30"
                   )}
+                  onClick={() => handleGetStarted(plan.name)}
+                  disabled={isLoading}
                 >
                   {plan.monthlyPrice === 0 ? "Start for free" : "Get started"}
                 </Button>

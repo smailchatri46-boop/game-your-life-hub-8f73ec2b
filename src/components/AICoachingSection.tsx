@@ -1,6 +1,7 @@
 import { Lock, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { GlassCard } from "@/components/GlassCard";
+import { usePolarCheckout } from "@/hooks/use-polar-checkout";
 
 interface AICoachingSectionProps {
   onUpgrade?: () => void;
@@ -8,6 +9,12 @@ interface AICoachingSectionProps {
 }
 
 export function AICoachingSection({ onUpgrade, onDismiss }: AICoachingSectionProps) {
+  const { openCheckout, isLoading } = usePolarCheckout({ theme: "dark" });
+
+  const handleUpgrade = () => {
+    openCheckout("pro", "yearly");
+    onUpgrade?.();
+  };
   return (
     <GlassCard className="p-8 text-center relative overflow-hidden">
       {/* Background decorative elements */}
@@ -37,7 +44,8 @@ export function AICoachingSection({ onUpgrade, onDismiss }: AICoachingSectionPro
           variant="gradient" 
           size="lg"
           className="w-full max-w-xs"
-          onClick={onUpgrade}
+          onClick={handleUpgrade}
+          disabled={isLoading}
         >
           <Sparkles className="w-5 h-5 mr-2" />
           Upgrade to Pro
