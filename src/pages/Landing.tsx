@@ -8,6 +8,7 @@ import { YouTubeEmbed } from "@/components/YouTubeEmbed";
 import { Plus, Check } from "lucide-react";
 import googleLogo from "@/assets/google-logo.png";
 import { ScrollReveal } from "@/components/ScrollReveal";
+import { Footer } from "@/components/Footer";
 
 // Lazy load below-fold sections for better initial load
 const AnalyticsCarousel = lazy(() => import("@/components/landing/AnalyticsCarousel").then(m => ({ default: m.AnalyticsCarousel })));
@@ -395,12 +396,7 @@ export default function Landing() {
       </section>
       
       {/* Footer */}
-      <footer className="py-8 px-4 border-t border-border/50">
-        <div className="max-w-5xl mx-auto flex items-center justify-between">
-          <img src="/neyler-logo.png" alt="Neyler" className="h-6" loading="lazy" width={100} height={24} />
-          <p className="text-sm text-muted-foreground">© 2025 Neyler. All rights reserved.</p>
-        </div>
-      </footer>
+      <Footer />
 
       {/* Sticky CTA Button */}
       <div 

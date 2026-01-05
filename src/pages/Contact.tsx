@@ -1,7 +1,7 @@
 import { LandingNavbar } from "@/components/LandingNavbar";
+import { Footer } from "@/components/Footer";
 import { Helmet } from "react-helmet-async";
 import { Mail } from "lucide-react";
-import neylerLogo from "@/assets/neyler-logo.png";
 import { toast } from "sonner";
 
 export default function Contact() {
@@ -81,13 +81,7 @@ export default function Contact() {
           </div>
         </div>
         
-        {/* Footer - sticks to bottom */}
-        <footer className="py-6 px-4 border-t border-border/30">
-          <div className="max-w-5xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
-            <img src={neylerLogo} alt="Neyler" className="h-6" />
-            <p className="text-sm text-muted-foreground">© 2025 Neyler. All rights reserved.</p>
-          </div>
-        </footer>
+        <Footer />
       </div>
     </>
   );
