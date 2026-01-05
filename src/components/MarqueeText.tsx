@@ -42,11 +42,10 @@ export function MarqueeText({ text, className = "" }: MarqueeTextProps) {
       <div className="pointer-events-none absolute inset-y-0 left-0 w-3 bg-gradient-to-r from-card to-transparent z-10" />
       <div className="pointer-events-none absolute inset-y-0 right-0 w-3 bg-gradient-to-l from-card to-transparent z-10" />
 
-      {/* Scrolling text - seamless loop with inline-flex */}
-      <div className="inline-flex animate-marquee">
-        <span className="whitespace-nowrap pr-8">{text}</span>
-        <span className="whitespace-nowrap pr-8">{text}</span>
-      </div>
+      {/* Single text that scrolls out completely then reappears */}
+      <span className="whitespace-nowrap block animate-marquee-single">
+        {text}
+      </span>
     </div>
   );
 }

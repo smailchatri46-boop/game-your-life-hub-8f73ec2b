@@ -269,10 +269,17 @@ export default {
             transform: "rotate(360deg)"
           },
         },
-        // Marquee scroll for long text
+        // Marquee scroll for long text (seamless loop with two copies)
         "marquee": {
           "0%": { transform: "translateX(0%)" },
           "100%": { transform: "translateX(-50%)" },
+        },
+        // Single text marquee - scrolls out completely then reappears
+        "marquee-single": {
+          "0%": { transform: "translateX(0%)" },
+          "45%": { transform: "translateX(-100%)" },
+          "45.01%": { transform: "translateX(100%)" },
+          "100%": { transform: "translateX(0%)" },
         },
       },
       animation: {
@@ -282,6 +289,7 @@ export default {
         "scale-in": "scale-in 0.3s ease-out forwards",
         "slide-up": "slide-up 0.6s ease-out forwards",
         "marquee": "marquee 8s linear infinite",
+        "marquee-single": "marquee-single 6s linear infinite",
       },
     },
   },
