@@ -218,28 +218,28 @@
       transform: translateX(0%);
       opacity: 1;
     }
-    40% {
-      transform: translateX(-60%);
+    30% {
+      transform: translateX(-50%);
       opacity: 1;
     }
-    48% {
-      transform: translateX(-80%);
-      opacity: 0.5;
+    40% {
+      transform: translateX(-75%);
+      opacity: 0.6;
     }
-    52% {
+    45% {
       transform: translateX(-100%);
       opacity: 0;
     }
-    53% {
-      transform: translateX(100%);
+    46% {
+      transform: translateX(50%);
       opacity: 0;
     }
-    60% {
-      transform: translateX(60%);
-      opacity: 0.5;
+    55% {
+      transform: translateX(25%);
+      opacity: 0.6;
     }
-    70% {
-      transform: translateX(30%);
+    65% {
+      transform: translateX(0%);
       opacity: 1;
     }
     100% {
