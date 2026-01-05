@@ -1,5 +1,4 @@
 import { LandingNavbar } from "@/components/LandingNavbar";
-import { Footer } from "@/components/Footer";
 import { GlassCard } from "@/components/GlassCard";
 import { faqs } from "@/data/faqData";
 import {
@@ -42,8 +41,6 @@ export default function FAQ() {
           </Accordion>
         </GlassCard>
       </main>
-      
-      <Footer />
     </div>
   );
 }

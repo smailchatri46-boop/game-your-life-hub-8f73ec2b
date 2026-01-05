@@ -59,7 +59,7 @@ export function Footer() {
           </div>
 
           {/* Legal - Right */}
-          <div className="text-center md:text-right">
+          <div className="text-center">
             <h4 className="font-body text-sm font-semibold text-foreground mb-3">Legal</h4>
             <ul className="space-y-2">
               {legalLinks.map((link) => (
