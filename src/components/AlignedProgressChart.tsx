@@ -151,7 +151,7 @@ export function AlignedProgressChart({ data, daysInMonth, currentDay, monthName 
       <div className="flex">
         {/* Left column matching habit name column - contains Y axis */}
         <div 
-          className="flex-shrink-0 flex flex-col justify-between text-right pr-3"
+          className="flex-shrink-0 flex flex-col justify-between text-right p-1.5 lg:p-2"
           style={{ width: '160px', height: `${chartHeight}px` }}
         >
           {yAxisLabels.map(({ label }) => (
