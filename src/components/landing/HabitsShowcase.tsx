@@ -106,7 +106,7 @@ export function HabitsShowcase() {
                       <GripVertical className="w-3 h-3 text-muted-foreground/50 flex-shrink-0 hidden lg:block" />
                       <AppleEmoji emoji={habit.icon} size="lg" />
                       <div className="min-w-0 flex-1">
-                        <MarqueeText text={habit.name} className="text-xs lg:text-sm font-medium" />
+                        <MarqueeText text={habit.name} className="text-xs lg:text-sm font-medium" index={habitIndex} />
                         <div className="flex items-center gap-1.5">
                           <span 
                             className="w-2 h-2 rounded-full flex-shrink-0"

@@ -3,9 +3,10 @@ import { useRef, useEffect, useState, useCallback } from "react";
 interface MarqueeTextProps {
   text: string;
   className?: string;
+  index?: number;
 }
 
-export function MarqueeText({ text, className = "" }: MarqueeTextProps) {
+export function MarqueeText({ text, className = "", index = 0 }: MarqueeTextProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const textRef = useRef<HTMLSpanElement>(null);
   const [isOverflowing, setIsOverflowing] = useState(false);
@@ -42,8 +43,10 @@ export function MarqueeText({ text, className = "" }: MarqueeTextProps) {
       <div className="pointer-events-none absolute inset-y-0 left-0 w-3 bg-gradient-to-r from-card to-transparent z-10" />
       <div className="pointer-events-none absolute inset-y-0 right-0 w-3 bg-gradient-to-l from-card to-transparent z-10" />
 
-      {/* Single text that scrolls out completely then reappears */}
-      <span className="whitespace-nowrap block animate-marquee-single">
+      {/* Single text that scrolls out completely then reappears with staggered timing */}
+      <span 
+        className={`whitespace-nowrap block animate-marquee-single-${index % 6}`}
+      >
         {text}
       </span>
     </div>
