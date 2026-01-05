@@ -25,7 +25,7 @@ export function Footer() {
         {/* Three column layout with space-between */}
         <div className="flex flex-col md:flex-row md:justify-between gap-8 mb-8">
           {/* Resources - Left */}
-          <div className="text-center md:text-left flex-1">
+          <div className="text-center flex-1">
             <h4 className="font-body text-sm font-semibold text-foreground mb-3">Resources</h4>
             <ul className="space-y-2">
               {resourceLinks.map((link) => (
