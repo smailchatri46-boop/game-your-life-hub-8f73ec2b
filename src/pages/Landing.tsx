@@ -410,8 +410,8 @@ export default function Landing() {
       >
         <Button variant="gradient" size="lg" asChild className="shadow-lg">
           <Link to="/signup" className="gap-2">
-            <span className="w-5 h-5 bg-white rounded-full flex items-center justify-center flex-shrink-0">
-              <img src={googleLogo} alt="Google" className="w-3.5 h-3.5 block" loading="eager" width={14} height={14} style={{ opacity: 1 }} />
+            <span className="w-6 h-6 bg-white rounded-full flex items-center justify-center flex-shrink-0">
+              <img src={googleLogo} alt="Google" className="w-4 h-4 block" loading="eager" width={16} height={16} style={{ opacity: 1 }} />
             </span>
             Start For Free Now
           </Link>
