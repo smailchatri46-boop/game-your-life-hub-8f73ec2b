@@ -93,14 +93,6 @@ const reviews: Review[] = [
     meta: "Using Neyler for 5 months"
   },
   {
-    text: "The reminders actually feel friendly instead of stressful",
-    name: "Mia J.",
-    avatar: "🌸",
-    avatarBg: "bg-pink-100",
-    stars: 5,
-    meta: "Verified user"
-  },
-  {
     text: "Neyler helped me organize school work, personal habits, and health routines in one space",
     name: "Lucas F.",
     avatar: "🎓",
