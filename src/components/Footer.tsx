@@ -24,8 +24,8 @@ export function Footer() {
       <div className="max-w-6xl mx-auto">
         {/* Three column grid - left/center/right aligned */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
-          {/* Resources - Left */}
-          <div className="text-center md:text-left">
+          {/* Resources - Center aligned */}
+          <div className="text-center">
             <h4 className="font-body text-sm font-semibold text-foreground mb-3">Resources</h4>
             <ul className="space-y-2">
               {resourceLinks.map((link) => (
@@ -58,8 +58,8 @@ export function Footer() {
             </ul>
           </div>
 
-          {/* Legal - Right */}
-          <div className="text-center">
+          {/* Legal - Right aligned */}
+          <div className="text-center md:text-right">
             <h4 className="font-body text-sm font-semibold text-foreground mb-3">Legal</h4>
             <ul className="space-y-2">
               {legalLinks.map((link) => (
@@ -79,7 +79,7 @@ export function Footer() {
         {/* Bottom section with logo left and copyright right */}
         <div className="pt-6 border-t border-border/30 flex flex-col md:flex-row items-center justify-between gap-3">
           <img src={neylerLogo} alt="Neyler" className="h-5" loading="lazy" />
-          <p className="font-body text-sm text-muted-foreground">© 2026 Neyler. All rights reserved.</p>
+          <p className="font-body text-xs text-muted-foreground/60">© 2026 Neyler. All rights reserved.</p>
         </div>
       </div>
     </footer>
