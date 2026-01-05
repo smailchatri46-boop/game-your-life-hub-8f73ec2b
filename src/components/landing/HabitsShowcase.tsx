@@ -55,13 +55,6 @@ const demoHabits = [
     completions: [true, true, false, true, true, true, false, true, true, true, false, true, true, true],
     progress: 79
   },
-  { 
-    name: "Daily Reflection", 
-    icon: "🌅", 
-    category: "Mind",
-    completions: [true, true, true, false, true, false, true, true, false, true, true, false, true, true],
-    progress: 71
-  },
 ];
 
 const days = Array.from({ length: 14 }, (_, i) => i + 1);
