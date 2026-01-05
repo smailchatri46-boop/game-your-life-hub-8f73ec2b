@@ -1,7 +1,9 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useAuth } from "@/contexts/AuthContext";
+import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { useState, useCallback } from "react";
+import { useState, useCallback, useMemo } from "react";
+import { differenceInDays } from "date-fns";
 
 export interface Goal {
   id: string;
@@ -60,24 +62,41 @@ export function useGoals() {
   const [demoGoals, setDemoGoalsState] = useState<Goal[]>([DEFAULT_DEMO_GOAL]);
   const [demoGoalHabits, setDemoGoalHabitsState] = useState<GoalHabit[]>([]);
 
+  // Fetch goals from Supabase
   const goalsQuery = useQuery({
     queryKey: ["goals", user?.id],
     queryFn: async () => {
       if (!user) return [];
-      // TODO: Replace with Firebase Firestore query
-      return [];
+      
+      const { data, error } = await supabase
+        .from("goals")
+        .select("*")
+        .eq("user_id", user.id)
+        .order("created_at", { ascending: false });
+      
+      if (error) throw error;
+      return (data as Goal[]) || [];
     },
     enabled: !!user,
+    staleTime: 1000 * 60 * 5,
   });
 
+  // Fetch goal-habit links
   const goalHabitsQuery = useQuery({
     queryKey: ["goal_habits", user?.id],
     queryFn: async () => {
       if (!user) return [];
-      // TODO: Replace with Firebase Firestore query
-      return [];
+      
+      const { data, error } = await supabase
+        .from("goal_habits")
+        .select("*")
+        .eq("user_id", user.id);
+      
+      if (error) throw error;
+      return (data as GoalHabit[]) || [];
     },
     enabled: !!user,
+    staleTime: 1000 * 60 * 5,
   });
 
   // Demo mode create goal - only session storage, resets on reload
@@ -136,16 +155,43 @@ export function useGoals() {
     toast.success("Goal updated (Demo mode)");
   }, [demoGoals]);
 
+  // Create goal mutation
   const createGoal = useMutation({
     mutationFn: async (input: CreateGoalInput) => {
-      // Demo mode - use local state
       if (isDemo) {
         return createDemoGoal(input);
       }
 
-      // TODO: Replace with Firebase Firestore
-      toast.error("Firebase not configured yet");
-      return null;
+      const { data, error } = await supabase
+        .from("goals")
+        .insert({
+          user_id: user!.id,
+          name: input.name,
+          category: input.category,
+          category_emoji: input.category_emoji,
+          start_date: input.start_date,
+          end_date: input.end_date,
+          target_count: input.target_count,
+          completed_count: 0,
+          status: "active",
+        })
+        .select()
+        .single();
+      
+      if (error) throw error;
+      
+      // Link habits if any
+      if (input.habit_ids.length > 0 && data) {
+        const links = input.habit_ids.map(habit_id => ({
+          goal_id: data.id,
+          habit_id,
+          user_id: user!.id,
+        }));
+        
+        await supabase.from("goal_habits").insert(links);
+      }
+      
+      return data;
     },
     onSuccess: () => {
       if (!isDemo) {
@@ -160,16 +206,29 @@ export function useGoals() {
     },
   });
 
+  // Delete goal mutation
   const deleteGoal = useMutation({
     mutationFn: async (goalId: string) => {
-      // Demo mode
       if (isDemo) {
         deleteDemoGoal(goalId);
         return;
       }
 
-      // TODO: Replace with Firebase Firestore
-      toast.error("Firebase not configured yet");
+      // Delete goal habits first
+      await supabase
+        .from("goal_habits")
+        .delete()
+        .eq("goal_id", goalId)
+        .eq("user_id", user!.id);
+      
+      // Delete goal
+      const { error } = await supabase
+        .from("goals")
+        .delete()
+        .eq("id", goalId)
+        .eq("user_id", user!.id);
+      
+      if (error) throw error;
     },
     onSuccess: () => {
       if (!isDemo) {
@@ -183,16 +242,21 @@ export function useGoals() {
     },
   });
 
+  // Update goal mutation
   const updateGoal = useMutation({
     mutationFn: async ({ id, ...updates }: { id: string } & Partial<Omit<Goal, 'id' | 'user_id' | 'created_at'>>) => {
-      // Demo mode
       if (isDemo) {
         updateDemoGoal(id, updates);
         return;
       }
 
-      // TODO: Replace with Firebase Firestore
-      toast.error("Firebase not configured yet");
+      const { error } = await supabase
+        .from("goals")
+        .update({ ...updates, updated_at: new Date().toISOString() })
+        .eq("id", id)
+        .eq("user_id", user!.id);
+      
+      if (error) throw error;
     },
     onSuccess: () => {
       if (!isDemo) {
@@ -205,12 +269,50 @@ export function useGoals() {
     },
   });
 
-  const getGoalProgress = (goal: Goal) => {
+  // Increment goal progress
+  const incrementGoalProgress = useMutation({
+    mutationFn: async ({ goalId, amount = 1 }: { goalId: string; amount?: number }) => {
+      if (isDemo) {
+        const goal = demoGoals.find(g => g.id === goalId);
+        if (goal) {
+          updateDemoGoal(goalId, { 
+            completed_count: Math.min(goal.completed_count + amount, goal.target_count) 
+          });
+        }
+        return;
+      }
+
+      const goal = goalsQuery.data?.find(g => g.id === goalId);
+      if (!goal) return;
+
+      const newCount = Math.min(goal.completed_count + amount, goal.target_count);
+      const newStatus = newCount >= goal.target_count ? "completed" : "active";
+
+      const { error } = await supabase
+        .from("goals")
+        .update({ 
+          completed_count: newCount, 
+          status: newStatus,
+          updated_at: new Date().toISOString() 
+        })
+        .eq("id", goalId)
+        .eq("user_id", user!.id);
+      
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      if (!isDemo) {
+        queryClient.invalidateQueries({ queryKey: ["goals"] });
+      }
+    },
+  });
+
+  const getGoalProgress = useCallback((goal: Goal) => {
     if (goal.target_count === 0) return 0;
     return Math.min(100, Math.round((goal.completed_count / goal.target_count) * 100));
-  };
+  }, []);
 
-  const getGoalPace = (goal: Goal) => {
+  const getGoalPace = useCallback((goal: Goal) => {
     const now = new Date();
     const start = new Date(goal.start_date);
     const end = new Date(goal.end_date);
@@ -226,25 +328,67 @@ export function useGoals() {
     if (actualProgress >= expectedProgress + 10) return "Ahead of schedule";
     if (actualProgress <= expectedProgress - 10) return "Falling behind";
     return "On track";
-  };
+  }, [getGoalProgress]);
 
   // Use demo data or real data based on auth status
   const goals = isDemo ? demoGoals : (goalsQuery.data || []);
   const goalHabits = isDemo ? demoGoalHabits : (goalHabitsQuery.data || []);
   
-  const activeGoals = goals.filter((g) => g.status === "active");
-  const completedGoals = goals.filter((g) => g.status === "completed");
+  // Filter goals by status and type
+  const activeGoals = useMemo(() => {
+    const now = new Date();
+    return goals.filter((g) => {
+      const endDate = new Date(g.end_date);
+      return g.status === "active" && endDate >= now;
+    });
+  }, [goals]);
+
+  const completedGoals = useMemo(() => {
+    return goals.filter((g) => g.status === "completed");
+  }, [goals]);
+
+  const expiredGoals = useMemo(() => {
+    const now = new Date();
+    return goals.filter((g) => {
+      const endDate = new Date(g.end_date);
+      return g.status === "active" && endDate < now;
+    });
+  }, [goals]);
+
+  // Quarterly goals (less than 120 days duration)
+  const quarterlyGoals = useMemo(() => {
+    return goals.filter((g) => {
+      const start = new Date(g.start_date);
+      const end = new Date(g.end_date);
+      const days = differenceInDays(end, start);
+      return days <= 120;
+    });
+  }, [goals]);
+
+  // Yearly goals (more than 120 days duration)
+  const yearlyGoals = useMemo(() => {
+    return goals.filter((g) => {
+      const start = new Date(g.start_date);
+      const end = new Date(g.end_date);
+      const days = differenceInDays(end, start);
+      return days > 120;
+    });
+  }, [goals]);
 
   return {
     goals,
     activeGoals,
     completedGoals,
+    expiredGoals,
+    quarterlyGoals,
+    yearlyGoals,
     goalHabits,
     isLoading: isDemo ? false : goalsQuery.isLoading,
     isDemo,
     createGoal,
     deleteGoal,
     updateGoal,
+    incrementGoalProgress,
     getGoalProgress,
     getGoalPace,
   };

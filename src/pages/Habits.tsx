@@ -17,24 +17,15 @@ import { usePlanLimits, LimitType } from "@/hooks/use-plan-limits";
 import { DeleteHabitModal } from "@/components/DeleteHabitModal";
 import { useToast } from "@/hooks/use-toast";
 import { MarqueeText } from "@/components/MarqueeText";
+import { useHabitsData, Habit } from "@/hooks/use-habits-data";
+import { useAuth } from "@/contexts/AuthContext";
 
 import { Button } from "@/components/ui/button";
 import { Plus, Trash2, GripVertical, Check, Target, Calendar, TrendingUp, FileText } from "lucide-react";
 import { MonthSelector } from "@/components/MonthSelector";
-import { useMemo, useState, useEffect } from "react";
+import { useMemo, useState, useEffect, useCallback } from "react";
 import { useSelectedMonth } from "@/hooks/use-selected-month";
 import { format } from "date-fns";
-
-interface Habit {
-  id: string;
-  name: string;
-  icon: string;
-  category: string;
-  categoryColor?: string;
-  target: number;
-  importance?: number;
-  completions: Record<string, boolean | number>; // key is "YYYY-MM-DD"
-}
 
 const CATEGORY_COLORS: Record<string, string> = {
   Mind: "#8B5CF6",
@@ -49,65 +40,13 @@ const CATEGORY_COLORS: Record<string, string> = {
   Other: "#6B7280",
 };
 
-const generateCompletions = (year: number, month: number, maxDay: number, target: number) => {
-  const completions: Record<string, boolean | number> = {};
-  for (let day = 1; day <= maxDay; day++) {
-    const dateKey = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
-    if (target === 1) {
-      completions[dateKey] = Math.random() > 0.2;
-    } else {
-      completions[dateKey] = Math.floor(Math.random() * (target + 2));
-    }
-  }
-  return completions;
-};
-
-const habitTemplates = [
-  { id: "1", name: "Morning Meditation", icon: "🧘", category: "Mind", categoryColor: "#8B5CF6", target: 1, importance: 70 },
-  { id: "2", name: "Exercise", icon: "💪", category: "Health", categoryColor: "#22C55E", target: 1, importance: 80 },
-  { id: "3", name: "Read 30 mins", icon: "📚", category: "Growth", categoryColor: "#EC4899", target: 1, importance: 60 },
-  { id: "4", name: "Drink Water", icon: "💧", category: "Health", categoryColor: "#22C55E", target: 8, importance: 50 },
-  { id: "5", name: "No Social Media", icon: "📵", category: "Focus", categoryColor: "#3B82F6", target: 1, importance: 40 },
-];
-
-const generateChartData = (habits: Habit[], daysInMonth: number, currentDay: number, year: number, month: number) => {
-  const maxDay = Math.min(daysInMonth, currentDay);
-  return Array.from({ length: maxDay }, (_, i) => {
-    const day = i + 1;
-    const dateKey = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
-    
-    let totalWeight = 0;
-    let weightedProgress = 0;
-    
-    habits.forEach(habit => {
-      const weight = habit.importance || 50;
-      totalWeight += weight;
-      const value = habit.completions[dateKey];
-      if (habit.target === 1) {
-        if (value === true) weightedProgress += weight;
-      } else {
-        if (typeof value === 'number') {
-          weightedProgress += (Math.min(value, habit.target) / habit.target) * weight;
-        }
-      }
-    });
-    
-    return {
-      day,
-      progress: totalWeight > 0 ? Math.round((weightedProgress / totalWeight) * 100) : 0,
-    };
-  });
-};
-
 export default function Habits() {
+  const { user } = useAuth();
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [reflections, setReflections] = useState<Record<string, { text: string; createdAt: string }>>({});
   const [reflectionModalOpen, setReflectionModalOpen] = useState(false);
   const [selectedReflectionDay, setSelectedReflectionDay] = useState<number | null>(null);
   
   // Mood & Motivation state (unified)
-  const [moodData, setMoodData] = useState<Record<string, number>>({});
-  const [motivationData, setMotivationData] = useState<Record<string, number>>({});
   const [moodMotivationModalOpen, setMoodMotivationModalOpen] = useState(false);
   const [selectedMoodMotivationDay, setSelectedMoodMotivationDay] = useState<number | null>(null);
   
@@ -118,6 +57,13 @@ export default function Habits() {
   // Delete habit modal state
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [habitToDelete, setHabitToDelete] = useState<Habit | null>(null);
+  
+  // Local state for demo mode habits
+  const [demoHabits, setDemoHabits] = useState<Habit[]>([]);
+  const [demoCompletions, setDemoCompletions] = useState<Record<string, Record<string, number>>>({});
+  const [demoMoodData, setDemoMoodData] = useState<Record<string, number>>({});
+  const [demoMotivationData, setDemoMotivationData] = useState<Record<string, number>>({});
+  const [reflections, setReflections] = useState<Record<string, { text: string; createdAt: string }>>({});
   
   const { toast } = useToast();
   
@@ -145,95 +91,132 @@ export default function Habits() {
 
   const daysInMonth = getDaysInMonth();
   const currentDay = getCurrentDay();
-
-  // Initialize all habits with completions - stored in state for interactivity
-  const [allHabits, setAllHabits] = useState<Habit[]>(() => {
-    return habitTemplates.map(template => ({
-      ...template,
-      completions: generateCompletions(year, month, currentDay, template.target),
-    }));
-  });
   
-  // Sync habits count with plan limits on mount and when habits change
+  // Get data from centralized hook
+  const {
+    habits: dbHabits,
+    completionsMap: dbCompletionsMap,
+    moodMap,
+    stats: dbStats,
+    chartData: dbChartData,
+    moodMotivationChartData: dbMoodMotivationChartData,
+    getCompletionValue,
+    getHabitProgress,
+    isLoading,
+    isDemo,
+    createHabit,
+    deleteHabit,
+    toggleCompletion,
+    saveMoodLog,
+  } = useHabitsData(year, month);
+  
+  // Initialize demo data on mount
   useEffect(() => {
-    setHabitsCount(allHabits.length);
-  }, [allHabits.length, setHabitsCount]);
-
-  // Regenerate completions when month changes
-  const displayHabits = useMemo<Habit[]>(() => {
-    // Update template habits with current month's data if needed
-    return allHabits.map(habit => {
-      // Check if this habit has data for the current month
-      const firstDayKey = `${year}-${String(month + 1).padStart(2, '0')}-01`;
-      if (habit.completions[firstDayKey] === undefined && habitTemplates.some(t => t.id === habit.id)) {
-        // Generate new completions for template habits in new month
-        return {
-          ...habit,
-          completions: {
-            ...habit.completions,
-            ...generateCompletions(year, month, currentDay, habit.target),
-          },
-        };
-      }
-      return habit;
-    });
-  }, [allHabits, year, month, currentDay]);
-
-  // Calculate chart data from actual habit completions
-  const chartData = useMemo(() => {
-    return generateChartData(displayHabits, daysInMonth, currentDay, year, month);
-  }, [displayHabits, daysInMonth, currentDay, year, month]);
-
+    if (isDemo && demoHabits.length === 0) {
+      const templates: Habit[] = [
+        { id: "demo-1", user_id: "demo", name: "Morning Meditation", icon: "🧘", category: "Mind", category_color: "#8B5CF6", target: 1, importance: 70, created_at: "", updated_at: "" },
+        { id: "demo-2", user_id: "demo", name: "Exercise", icon: "💪", category: "Health", category_color: "#22C55E", target: 1, importance: 80, created_at: "", updated_at: "" },
+        { id: "demo-3", user_id: "demo", name: "Read 30 mins", icon: "📚", category: "Growth", category_color: "#EC4899", target: 1, importance: 60, created_at: "", updated_at: "" },
+        { id: "demo-4", user_id: "demo", name: "Drink Water", icon: "💧", category: "Health", category_color: "#22C55E", target: 8, importance: 50, created_at: "", updated_at: "" },
+        { id: "demo-5", user_id: "demo", name: "No Social Media", icon: "📵", category: "Focus", category_color: "#3B82F6", target: 1, importance: 40, created_at: "", updated_at: "" },
+      ];
+      setDemoHabits(templates);
+      
+      // Generate demo completions
+      const comps: Record<string, Record<string, number>> = {};
+      templates.forEach(h => {
+        comps[h.id] = {};
+        for (let day = 1; day <= currentDay; day++) {
+          const dateKey = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+          if (h.target === 1) {
+            comps[h.id][dateKey] = Math.random() > 0.2 ? 1 : 0;
+          } else {
+            comps[h.id][dateKey] = Math.floor(Math.random() * (h.target + 2));
+          }
+        }
+      });
+      setDemoCompletions(comps);
+    }
+  }, [isDemo, demoHabits.length, currentDay, year, month]);
+  
+  // Use demo or real data
+  const displayHabits = isDemo ? demoHabits : dbHabits;
+  const completionsMap = isDemo ? demoCompletions : dbCompletionsMap;
+  
+  // Sync habits count with plan limits
+  useEffect(() => {
+    setHabitsCount(displayHabits.length);
+  }, [displayHabits.length, setHabitsCount]);
 
   const getDateKey = (day: number) => {
     return `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
   };
 
-  const getHabitProgress = (habit: Habit) => {
-    let completed = 0;
+  const getLocalHabitProgress = useCallback((habitId: string, target: number): number => {
+    const habitComps = completionsMap[habitId] || {};
+    let completedDays = 0;
+    
     for (let day = 1; day <= currentDay; day++) {
       const dateKey = getDateKey(day);
-      const value = habit.completions[dateKey];
-      if (habit.target === 1) {
-        if (value === true) completed++;
+      const value = habitComps[dateKey] || 0;
+      if (target === 1) {
+        if (value >= 1) completedDays++;
       } else {
-        if (typeof value === 'number' && value >= habit.target) completed++;
+        if (value >= target) completedDays++;
       }
     }
-    return Math.round((completed / currentDay) * 100);
-  };
+    
+    return currentDay > 0 ? Math.round((completedDays / currentDay) * 100) : 0;
+  }, [completionsMap, currentDay, year, month]);
 
   const handleAddHabit = (newHabit: NewHabit) => {
-    const habit: Habit = {
-      id: newHabit.id,
-      name: newHabit.name,
-      icon: newHabit.icon,
-      category: newHabit.category,
-      categoryColor: newHabit.categoryColor,
-      target: newHabit.target,
-      importance: newHabit.importance,
-      completions: {},
-    };
-    setAllHabits(prev => [...prev, habit]);
-    // Note: setHabitsCount is synced via useEffect
+    if (isDemo) {
+      const habit: Habit = {
+        id: crypto.randomUUID(),
+        user_id: "demo",
+        name: newHabit.name,
+        icon: newHabit.icon,
+        category: newHabit.category,
+        category_color: newHabit.categoryColor || null,
+        target: newHabit.target,
+        importance: newHabit.importance,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+      };
+      setDemoHabits(prev => [...prev, habit]);
+      setDemoCompletions(prev => ({ ...prev, [habit.id]: {} }));
+      toast({ title: "Habit created!", description: "Demo mode - sign up to save" });
+    } else {
+      createHabit.mutate({
+        name: newHabit.name,
+        icon: newHabit.icon,
+        category: newHabit.category,
+        category_color: newHabit.categoryColor || null,
+        target: newHabit.target,
+        importance: newHabit.importance,
+      });
+    }
   };
 
   const handleDeleteHabit = (habitId: string) => {
-    setAllHabits(prev => prev.filter(h => h.id !== habitId));
-    toast({
-      title: "Habit deleted",
-      description: "Your habit has been permanently removed.",
-    });
-    // Note: setHabitsCount is synced via useEffect
+    if (isDemo) {
+      setDemoHabits(prev => prev.filter(h => h.id !== habitId));
+      setDemoCompletions(prev => {
+        const newComps = { ...prev };
+        delete newComps[habitId];
+        return newComps;
+      });
+      toast({ title: "Habit deleted", description: "Your habit has been permanently removed." });
+    } else {
+      deleteHabit.mutate(habitId);
+    }
   };
   
-  // Open delete modal for a habit
   const openDeleteModal = (habit: Habit) => {
     setHabitToDelete(habit);
     setDeleteModalOpen(true);
   };
 
-  // Handle FAB click - check limits first
   const handleFabClick = () => {
     if (!canAddHabit) {
       setPaywallLimitType('habits');
@@ -243,36 +226,38 @@ export default function Habits() {
     setIsModalOpen(true);
   };
 
-  // Toggle habit completion for a specific day
   const toggleHabitCompletion = (habitId: string, day: number) => {
     const dateKey = getDateKey(day);
+    const habit = displayHabits.find(h => h.id === habitId);
+    if (!habit) return;
     
-    setAllHabits(prev => prev.map(habit => {
-      if (habit.id !== habitId) return habit;
-      
-      const currentValue = habit.completions[dateKey];
-      let newValue: boolean | number;
-      
+    const currentValue = completionsMap[habitId]?.[dateKey] || 0;
+    
+    if (isDemo) {
+      let newValue: number;
       if (habit.target === 1) {
-        // Boolean habit - toggle true/false
-        newValue = currentValue !== true;
+        newValue = currentValue >= 1 ? 0 : 1;
       } else {
-        // Numeric habit - cycle through values (0 -> 1 -> 2 -> ... -> target -> 0)
-        const current = typeof currentValue === 'number' ? currentValue : 0;
-        newValue = current >= habit.target ? 0 : current + 1;
+        newValue = currentValue >= habit.target ? 0 : currentValue + 1;
       }
       
-      return {
-        ...habit,
-        completions: {
-          ...habit.completions,
+      setDemoCompletions(prev => ({
+        ...prev,
+        [habitId]: {
+          ...prev[habitId],
           [dateKey]: newValue,
         },
-      };
-    }));
+      }));
+    } else {
+      toggleCompletion.mutate({
+        habitId,
+        date: dateKey,
+        currentValue,
+        target: habit.target,
+      });
+    }
   };
 
-  // Handle saving a daily reflection
   const handleSaveReflection = (dateKey: string, text: string) => {
     setReflections(prev => ({
       ...prev,
@@ -280,7 +265,6 @@ export default function Habits() {
     }));
   };
 
-  // Get completion percentage for a specific day
   const getDayCompletionPercent = (day: number) => {
     const dateKey = getDateKey(day);
     let totalWeight = 0;
@@ -289,10 +273,10 @@ export default function Habits() {
     displayHabits.forEach(habit => {
       const weight = habit.importance || 50;
       totalWeight += weight;
-      const value = habit.completions[dateKey];
+      const value = completionsMap[habit.id]?.[dateKey] || 0;
       if (habit.target === 1) {
-        if (value === true) weightedProgress += weight;
-      } else if (typeof value === 'number') {
+        if (value >= 1) weightedProgress += weight;
+      } else {
         weightedProgress += (Math.min(value, habit.target) / habit.target) * weight;
       }
     });
@@ -300,20 +284,101 @@ export default function Habits() {
     return totalWeight > 0 ? Math.round((weightedProgress / totalWeight) * 100) : 0;
   };
 
-  // Format date for display
   const formatReflectionDate = (day: number) => {
     const date = new Date(year, month, day);
     return format(date, "EEEE, MMMM d, yyyy");
   };
 
-  // Handle saving mood and motivation (unified)
   const handleSaveMoodMotivation = (dateKey: string, mood: number, motivation: number) => {
-    setMoodData(prev => ({ ...prev, [dateKey]: mood }));
-    setMotivationData(prev => ({ ...prev, [dateKey]: motivation }));
+    if (isDemo) {
+      setDemoMoodData(prev => ({ ...prev, [dateKey]: mood }));
+      setDemoMotivationData(prev => ({ ...prev, [dateKey]: motivation }));
+    } else {
+      saveMoodLog.mutate({ date: dateKey, mood, motivation });
+    }
   };
 
-  // Generate mood/motivation chart data - convert 1-10 scale to 10%-100%
+  // Calculate stats from data
+  const stats = useMemo(() => {
+    const today = new Date();
+    const isCurrentMonth = today.getFullYear() === year && today.getMonth() === month;
+    
+    const getDayProgress = (day: number): number => {
+      const dateKey = getDateKey(day);
+      let totalWeight = 0;
+      let weightedProgress = 0;
+      
+      displayHabits.forEach(habit => {
+        const weight = habit.importance || 50;
+        totalWeight += weight;
+        const value = completionsMap[habit.id]?.[dateKey] || 0;
+        if (habit.target === 1) {
+          if (value >= 1) weightedProgress += weight;
+        } else {
+          weightedProgress += (Math.min(value, habit.target) / habit.target) * weight;
+        }
+      });
+      
+      return totalWeight > 0 ? (weightedProgress / totalWeight) * 100 : 0;
+    };
+
+    const todayPercent = Math.round(getDayProgress(currentDay));
+
+    let weekTotal = 0;
+    let weekDays = 0;
+    for (let i = 0; i < 7; i++) {
+      const day = currentDay - i;
+      if (day > 0) {
+        weekTotal += getDayProgress(day);
+        weekDays++;
+      }
+    }
+    const weekAvg = weekDays > 0 ? Math.round(weekTotal / weekDays) : 0;
+
+    let monthTotal = 0;
+    for (let day = 1; day <= currentDay; day++) {
+      monthTotal += getDayProgress(day);
+    }
+    const monthPercent = currentDay > 0 ? Math.round(monthTotal / currentDay) : 0;
+
+    return { todayPercent, weekAvg, monthPercent, isCurrentMonth };
+  }, [displayHabits, completionsMap, currentDay, year, month]);
+
+  // Chart data
+  const chartData = useMemo(() => {
+    return Array.from({ length: currentDay }, (_, i) => {
+      const day = i + 1;
+      const dateKey = getDateKey(day);
+      let totalWeight = 0;
+      let weightedProgress = 0;
+      
+      displayHabits.forEach(habit => {
+        const weight = habit.importance || 50;
+        totalWeight += weight;
+        const value = completionsMap[habit.id]?.[dateKey] || 0;
+        if (habit.target === 1) {
+          if (value >= 1) weightedProgress += weight;
+        } else {
+          weightedProgress += (Math.min(value, habit.target) / habit.target) * weight;
+        }
+      });
+      
+      return {
+        day,
+        progress: totalWeight > 0 ? Math.round((weightedProgress / totalWeight) * 100) : 0,
+      };
+    });
+  }, [displayHabits, completionsMap, currentDay, year, month]);
+
+  // Mood chart data
   const moodMotivationChartData = useMemo(() => {
+    const moodData = isDemo ? demoMoodData : Object.fromEntries(
+      Object.entries(moodMap).map(([k, v]) => [k, v.mood])
+    );
+    const motivationData = isDemo ? demoMotivationData : Object.fromEntries(
+      Object.entries(moodMap).map(([k, v]) => [k, v.motivation])
+    );
+    
     return Array.from({ length: currentDay }, (_, i) => {
       const day = i + 1;
       const dateKey = getDateKey(day);
@@ -321,84 +386,19 @@ export default function Habits() {
       const motivationValue = motivationData[dateKey];
       return {
         day,
-        // Convert 1-10 to 10%-100% (1→10%, 10→100%)
         mood: moodValue !== undefined ? moodValue * 10 : undefined,
         motivation: motivationValue !== undefined ? motivationValue * 10 : undefined,
       };
     });
-  }, [moodData, motivationData, currentDay, year, month]);
+  }, [isDemo, demoMoodData, demoMotivationData, moodMap, currentDay, year, month]);
 
-  // Calculate stats from habit data
-  const stats = useMemo(() => {
-    const today = new Date();
-    const isCurrentMonth = today.getFullYear() === year && today.getMonth() === month;
-    
-    // Today's completion
-    const todayKey = getDateKey(currentDay);
-    let todayTotal = 0;
-    let todayWeight = 0;
-    displayHabits.forEach(habit => {
-      const weight = habit.importance || 50;
-      todayWeight += weight;
-      const value = habit.completions[todayKey];
-      if (habit.target === 1) {
-        if (value === true) todayTotal += weight;
-      } else if (typeof value === 'number') {
-        todayTotal += (Math.min(value, habit.target) / habit.target) * weight;
-      }
-    });
-    const todayPercent = todayWeight > 0 ? Math.round((todayTotal / todayWeight) * 100) : 0;
-
-    // Week average (last 7 days)
-    let weekTotal = 0;
-    let weekDays = 0;
-    for (let i = Math.max(1, currentDay - 6); i <= currentDay; i++) {
-      const dateKey = getDateKey(i);
-      let dayWeight = 0;
-      let dayTotal = 0;
-      displayHabits.forEach(habit => {
-        const weight = habit.importance || 50;
-        dayWeight += weight;
-        const value = habit.completions[dateKey];
-        if (habit.target === 1) {
-          if (value === true) dayTotal += weight;
-        } else if (typeof value === 'number') {
-          dayTotal += (Math.min(value, habit.target) / habit.target) * weight;
-        }
-      });
-      if (dayWeight > 0) {
-        weekTotal += (dayTotal / dayWeight) * 100;
-        weekDays++;
-      }
-    }
-    const weekAvg = weekDays > 0 ? Math.round(weekTotal / weekDays) : 0;
-
-    // Month average
-    let monthTotal = 0;
-    let monthDays = 0;
-    for (let i = 1; i <= currentDay; i++) {
-      const dateKey = getDateKey(i);
-      let dayWeight = 0;
-      let dayTotal = 0;
-      displayHabits.forEach(habit => {
-        const weight = habit.importance || 50;
-        dayWeight += weight;
-        const value = habit.completions[dateKey];
-        if (habit.target === 1) {
-          if (value === true) dayTotal += weight;
-        } else if (typeof value === 'number') {
-          dayTotal += (Math.min(value, habit.target) / habit.target) * weight;
-        }
-      });
-      if (dayWeight > 0) {
-        monthTotal += (dayTotal / dayWeight) * 100;
-        monthDays++;
-      }
-    }
-    const monthPercent = monthDays > 0 ? Math.round(monthTotal / monthDays) : 0;
-
-    return { todayPercent, weekAvg, monthPercent, isCurrentMonth };
-  }, [displayHabits, currentDay, year, month]);
+  // Mood data for display
+  const displayMoodData = isDemo ? demoMoodData : Object.fromEntries(
+    Object.entries(moodMap).map(([k, v]) => [k, v.mood])
+  );
+  const displayMotivationData = isDemo ? demoMotivationData : Object.fromEntries(
+    Object.entries(moodMap).map(([k, v]) => [k, v.motivation])
+  );
 
   return (
     <>
@@ -472,7 +472,7 @@ export default function Habits() {
                         <div className="flex items-center gap-1.5">
                           <span 
                             className="w-2 h-2 rounded-full flex-shrink-0"
-                            style={{ backgroundColor: habit.categoryColor || CATEGORY_COLORS[habit.category] || "#6B7280" }}
+                            style={{ backgroundColor: habit.category_color || CATEGORY_COLORS[habit.category] || "#6B7280" }}
                           />
                           <p className="text-[10px] lg:text-xs text-muted-foreground">{habit.category}</p>
                         </div>
@@ -482,10 +482,10 @@ export default function Habits() {
                   {Array.from({ length: daysInMonth }, (_, i) => {
                     const day = i + 1;
                     const dateKey = getDateKey(day);
-                    const value = habit.completions[dateKey];
+                    const value = completionsMap[habit.id]?.[dateKey] || 0;
                     const isCompleted = habit.target === 1 
-                      ? value === true 
-                      : typeof value === 'number' && value >= habit.target;
+                      ? value >= 1 
+                      : value >= habit.target;
                     const isFuture = day > currentDay;
                     
                     return (
@@ -506,7 +506,7 @@ export default function Habits() {
                           )}
                           {!isFuture && habit.target > 1 && (
                             <span className="font-medium text-[10px] lg:text-xs">
-                              {typeof value === 'number' ? value : 0}
+                              {value}
                             </span>
                           )}
                         </button>
@@ -514,7 +514,7 @@ export default function Habits() {
                     );
                   })}
                   <td className="p-1 lg:p-2 text-right">
-                    <span className="text-xs lg:text-sm font-bold gradient-text">{getHabitProgress(habit)}%</span>
+                    <span className="text-xs lg:text-sm font-bold gradient-text">{getLocalHabitProgress(habit.id, habit.target)}%</span>
                   </td>
                   <td className="p-1 lg:p-2">
                     <button 
@@ -616,12 +616,12 @@ export default function Habits() {
                 {Array.from({ length: daysInMonth }, (_, i) => {
                   const day = i + 1;
                   const dateKey = getDateKey(day);
-                  const hasMood = moodData[dateKey] !== undefined;
-                  const hasMotivation = motivationData[dateKey] !== undefined;
+                  const hasMood = displayMoodData[dateKey] !== undefined;
+                  const hasMotivation = displayMotivationData[dateKey] !== undefined;
                   const hasEntry = hasMood || hasMotivation;
                   const isFuture = day > currentDay;
                   
-                  const moodValue = moodData[dateKey];
+                  const moodValue = displayMoodData[dateKey];
                   const MOOD_EMOJIS: Record<number, string> = {
                     1: "😢", 2: "😞", 3: "😔", 4: "😕", 5: "😐",
                     6: "🙂", 7: "😊", 8: "😄", 9: "🥳", 10: "🔥",
@@ -663,8 +663,7 @@ export default function Habits() {
                     <span className="text-[9px] lg:text-[10px] text-muted-foreground leading-tight whitespace-nowrap">Mood Score</span>
                     <div className="mt-0.5 flex items-center justify-center gap-0.5">
                       {(() => {
-                        // Calculate average of all mood + motivation entries
-                        const monthEntries = Object.entries(moodData)
+                        const monthEntries = Object.entries(displayMoodData)
                           .filter(([key]) => {
                             const [y, m] = key.split('-').map(Number);
                             return y === year && m === month + 1;
@@ -672,7 +671,7 @@ export default function Habits() {
                           .map(([key, mood]) => ({
                             key,
                             mood: mood as number,
-                            motivation: (motivationData[key] as number) || 0
+                            motivation: (displayMotivationData[key] as number) || 0
                           }))
                           .filter(e => e.mood > 0 || e.motivation > 0);
                         
@@ -684,7 +683,6 @@ export default function Habits() {
                             }, 0) / monthEntries.length)
                           : 0;
                         
-                        // Calculate trend from last 3 entries
                         const sortedEntries = monthEntries
                           .sort((a, b) => a.key.localeCompare(b.key))
                           .slice(-3);
@@ -776,8 +774,8 @@ export default function Habits() {
           date={new Date(year, month, selectedMoodMotivationDay)}
           dateKey={getDateKey(selectedMoodMotivationDay)}
           completionPercent={getDayCompletionPercent(selectedMoodMotivationDay)}
-          existingMood={moodData[getDateKey(selectedMoodMotivationDay)]}
-          existingMotivation={motivationData[getDateKey(selectedMoodMotivationDay)]}
+          existingMood={displayMoodData[getDateKey(selectedMoodMotivationDay)]}
+          existingMotivation={displayMotivationData[getDateKey(selectedMoodMotivationDay)]}
           onSave={handleSaveMoodMotivation}
         />
       )}
