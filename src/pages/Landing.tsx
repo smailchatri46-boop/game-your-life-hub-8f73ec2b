@@ -103,11 +103,12 @@ export default function Landing() {
 
             {/* Right Column - Video/Demo */}
             <div className="order-1 lg:order-2 animate-fade-in delay-100">
-              <div className="overflow-hidden rounded-3xl lg:h-[380px]">
+              <div className="overflow-hidden rounded-3xl">
                 <YouTubeEmbed 
                   videoId="A-o52DwuWSg" 
-                  thumbnail="/images/app-demo-thumbnail.jpg"
-                  className="h-full [&_img]:rounded-none [&>div]:rounded-none"
+                  showThumbnailBottomFade
+                  thumbnailClassName="scale-110 object-[50%_35%]"
+                  className="[&_img]:rounded-none [&>div]:rounded-none"
                 />
               </div>
             </div>
