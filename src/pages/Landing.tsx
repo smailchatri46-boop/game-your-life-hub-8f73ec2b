@@ -1,4 +1,4 @@
-import { useRef, useState, useEffect } from "react";
+import { useRef, useState, useEffect, lazy, Suspense } from "react";
 import { LandingNavbar } from "@/components/LandingNavbar";
 import { Button } from "@/components/ui/button";
 import { GlassCard } from "@/components/GlassCard";
@@ -7,14 +7,19 @@ import { Link } from "react-router-dom";
 import { YouTubeEmbed } from "@/components/YouTubeEmbed";
 import { Plus, Check } from "lucide-react";
 import googleLogo from "@/assets/google-logo.png";
-import { AnalyticsCarousel } from "@/components/landing/AnalyticsCarousel";
-import { HabitsShowcase } from "@/components/landing/HabitsShowcase";
-import { AIBuddyShowcase } from "@/components/landing/AIBuddyShowcase";
-import { GoalsShowcase } from "@/components/landing/GoalsShowcase";
-import { TestimonialsSection } from "@/components/landing/TestimonialsSection";
-import { LandingPricing } from "@/components/landing/LandingPricing";
-import { LandingFAQ } from "@/components/landing/LandingFAQ";
 import { ScrollReveal } from "@/components/ScrollReveal";
+
+// Lazy load below-fold sections for better initial load
+const AnalyticsCarousel = lazy(() => import("@/components/landing/AnalyticsCarousel").then(m => ({ default: m.AnalyticsCarousel })));
+const HabitsShowcase = lazy(() => import("@/components/landing/HabitsShowcase").then(m => ({ default: m.HabitsShowcase })));
+const AIBuddyShowcase = lazy(() => import("@/components/landing/AIBuddyShowcase").then(m => ({ default: m.AIBuddyShowcase })));
+const GoalsShowcase = lazy(() => import("@/components/landing/GoalsShowcase").then(m => ({ default: m.GoalsShowcase })));
+const TestimonialsSection = lazy(() => import("@/components/landing/TestimonialsSection").then(m => ({ default: m.TestimonialsSection })));
+const LandingPricing = lazy(() => import("@/components/landing/LandingPricing").then(m => ({ default: m.LandingPricing })));
+const LandingFAQ = lazy(() => import("@/components/landing/LandingFAQ").then(m => ({ default: m.LandingFAQ })));
+
+// Minimal section placeholder
+const SectionPlaceholder = () => <div className="min-h-[200px]" />;
 
 export default function Landing() {
   const signUpButtonRef = useRef<HTMLDivElement>(null);
@@ -25,7 +30,6 @@ export default function Landing() {
   useEffect(() => {
     const signUpObserver = new IntersectionObserver(
       ([entry]) => {
-        // Show sticky button when Sign Up button is NOT visible
         setShowStickyButton(!entry.isIntersecting);
       },
       { threshold: 0 }
@@ -33,7 +37,6 @@ export default function Landing() {
 
     const ctaObserver = new IntersectionObserver(
       ([entry]) => {
-        // Hide sticky button when final CTA is visible
         setNearFinalCta(entry.isIntersecting);
       },
       { threshold: 0, rootMargin: '100px 0px 0px 0px' }
@@ -79,7 +82,7 @@ export default function Landing() {
                 <Button variant="gradient" size="xl" asChild>
                   <Link to="/signup" className="gap-3">
                     <span className="w-6 h-6 bg-white rounded-full flex items-center justify-center">
-                      <img src={googleLogo} alt="Google" className="w-4 h-4" />
+                      <img src={googleLogo} alt="Google" className="w-4 h-4" loading="eager" />
                     </span>
                     Continue for free
                   </Link>
@@ -88,11 +91,11 @@ export default function Landing() {
                 {/* Social Proof - below button */}
                 <div className="flex items-center gap-3">
                   <div className="flex -space-x-2">
-                    <img src="/images/user-1.png" alt="User" className="w-9 h-9 rounded-full border-2 border-background object-cover" />
-                    <img src="/images/user-2.png" alt="User" className="w-9 h-9 rounded-full border-2 border-background object-cover" />
-                    <img src="/images/user-3.png" alt="User" className="w-9 h-9 rounded-full border-2 border-background object-cover" />
-                    <img src="/images/user-4.png" alt="User" className="w-9 h-9 rounded-full border-2 border-background object-cover" />
-                    <img src="/images/user-5.png" alt="User" className="w-9 h-9 rounded-full border-2 border-background object-cover" />
+                    <img src="/images/user-1.png" alt="User" className="w-9 h-9 rounded-full border-2 border-background object-cover" loading="lazy" width={36} height={36} />
+                    <img src="/images/user-2.png" alt="User" className="w-9 h-9 rounded-full border-2 border-background object-cover" loading="lazy" width={36} height={36} />
+                    <img src="/images/user-3.png" alt="User" className="w-9 h-9 rounded-full border-2 border-background object-cover" loading="lazy" width={36} height={36} />
+                    <img src="/images/user-4.png" alt="User" className="w-9 h-9 rounded-full border-2 border-background object-cover" loading="lazy" width={36} height={36} />
+                    <img src="/images/user-5.png" alt="User" className="w-9 h-9 rounded-full border-2 border-background object-cover" loading="lazy" width={36} height={36} />
                   </div>
                   <p className="text-sm text-muted-foreground">
                     Join over <span className="font-medium text-foreground">50,000+</span> people improving their lives with Neyler
@@ -116,11 +119,22 @@ export default function Landing() {
         </div>
       </section>
 
-      {/* Feature Showcases */}
-      <AnalyticsCarousel />
-      <HabitsShowcase />
-      <AIBuddyShowcase />
-      <GoalsShowcase />
+      {/* Lazy loaded sections */}
+      <Suspense fallback={<SectionPlaceholder />}>
+        <AnalyticsCarousel />
+      </Suspense>
+      
+      <Suspense fallback={<SectionPlaceholder />}>
+        <HabitsShowcase />
+      </Suspense>
+      
+      <Suspense fallback={<SectionPlaceholder />}>
+        <AIBuddyShowcase />
+      </Suspense>
+      
+      <Suspense fallback={<SectionPlaceholder />}>
+        <GoalsShowcase />
+      </Suspense>
       
       {/* Value Proposition - Combined section */}
       <section className="py-10 px-4">
@@ -141,11 +155,17 @@ export default function Landing() {
                   src="/images/apps-arrows.png" 
                   alt="Apps flowing into Neyler" 
                   className="h-48 md:h-64 object-contain"
+                  loading="lazy"
+                  width={200}
+                  height={256}
                 />
                 <img 
                   src="/images/neyler-logo-full.png" 
                   alt="Neyler" 
                   className="h-12 md:h-16 object-contain"
+                  loading="lazy"
+                  width={150}
+                  height={64}
                 />
               </div>
             </ScrollReveal>
@@ -296,11 +316,11 @@ export default function Landing() {
               {/* Social Proof */}
               <div className="flex items-center justify-center gap-3 mb-6">
                 <div className="flex -space-x-2">
-                  <img src="/images/user-1.png" alt="User" className="w-9 h-9 rounded-full border-2 border-background object-cover" />
-                  <img src="/images/user-2.png" alt="User" className="w-9 h-9 rounded-full border-2 border-background object-cover" />
-                  <img src="/images/user-3.png" alt="User" className="w-9 h-9 rounded-full border-2 border-background object-cover" />
-                  <img src="/images/user-4.png" alt="User" className="w-9 h-9 rounded-full border-2 border-background object-cover" />
-                  <img src="/images/user-5.png" alt="User" className="w-9 h-9 rounded-full border-2 border-background object-cover" />
+                  <img src="/images/user-1.png" alt="User" className="w-9 h-9 rounded-full border-2 border-background object-cover" loading="lazy" width={36} height={36} />
+                  <img src="/images/user-2.png" alt="User" className="w-9 h-9 rounded-full border-2 border-background object-cover" loading="lazy" width={36} height={36} />
+                  <img src="/images/user-3.png" alt="User" className="w-9 h-9 rounded-full border-2 border-background object-cover" loading="lazy" width={36} height={36} />
+                  <img src="/images/user-4.png" alt="User" className="w-9 h-9 rounded-full border-2 border-background object-cover" loading="lazy" width={36} height={36} />
+                  <img src="/images/user-5.png" alt="User" className="w-9 h-9 rounded-full border-2 border-background object-cover" loading="lazy" width={36} height={36} />
                 </div>
                 <p className="text-sm text-muted-foreground">
                   Join over <span className="font-medium text-foreground">50,000+</span> people improving their lives with Neyler
@@ -310,7 +330,7 @@ export default function Landing() {
               <Button variant="gradient" size="xl" asChild>
                 <Link to="/signup" className="gap-3">
                   <span className="w-6 h-6 bg-white rounded-full flex items-center justify-center">
-                    <img src={googleLogo} alt="Google" className="w-4 h-4" />
+                    <img src={googleLogo} alt="Google" className="w-4 h-4" loading="lazy" />
                   </span>
                   Start For Free
                 </Link>
@@ -321,13 +341,19 @@ export default function Landing() {
       </section>
 
       {/* Testimonials */}
-      <TestimonialsSection />
+      <Suspense fallback={<SectionPlaceholder />}>
+        <TestimonialsSection />
+      </Suspense>
 
       {/* Pricing */}
-      <LandingPricing />
+      <Suspense fallback={<SectionPlaceholder />}>
+        <LandingPricing />
+      </Suspense>
 
       {/* FAQ */}
-      <LandingFAQ />
+      <Suspense fallback={<SectionPlaceholder />}>
+        <LandingFAQ />
+      </Suspense>
       
       {/* Final CTA Section - Duplicate of "Ready to level up" */}
       <section className="py-10 px-4" ref={finalCtaRef}>
@@ -344,11 +370,11 @@ export default function Landing() {
               {/* Social Proof */}
               <div className="flex items-center justify-center gap-3 mb-6">
                 <div className="flex -space-x-2">
-                  <img src="/images/user-1.png" alt="User" className="w-9 h-9 rounded-full border-2 border-background object-cover" />
-                  <img src="/images/user-2.png" alt="User" className="w-9 h-9 rounded-full border-2 border-background object-cover" />
-                  <img src="/images/user-3.png" alt="User" className="w-9 h-9 rounded-full border-2 border-background object-cover" />
-                  <img src="/images/user-4.png" alt="User" className="w-9 h-9 rounded-full border-2 border-background object-cover" />
-                  <img src="/images/user-5.png" alt="User" className="w-9 h-9 rounded-full border-2 border-background object-cover" />
+                  <img src="/images/user-1.png" alt="User" className="w-9 h-9 rounded-full border-2 border-background object-cover" loading="lazy" width={36} height={36} />
+                  <img src="/images/user-2.png" alt="User" className="w-9 h-9 rounded-full border-2 border-background object-cover" loading="lazy" width={36} height={36} />
+                  <img src="/images/user-3.png" alt="User" className="w-9 h-9 rounded-full border-2 border-background object-cover" loading="lazy" width={36} height={36} />
+                  <img src="/images/user-4.png" alt="User" className="w-9 h-9 rounded-full border-2 border-background object-cover" loading="lazy" width={36} height={36} />
+                  <img src="/images/user-5.png" alt="User" className="w-9 h-9 rounded-full border-2 border-background object-cover" loading="lazy" width={36} height={36} />
                 </div>
                 <p className="text-sm text-muted-foreground">
                   Join over <span className="font-medium text-foreground">50,000+</span> people improving their lives with Neyler
@@ -358,7 +384,7 @@ export default function Landing() {
               <Button variant="gradient" size="xl" asChild>
                 <Link to="/signup" className="gap-3">
                   <span className="w-6 h-6 bg-white rounded-full flex items-center justify-center">
-                    <img src={googleLogo} alt="Google" className="w-4 h-4" />
+                    <img src={googleLogo} alt="Google" className="w-4 h-4" loading="lazy" />
                   </span>
                   Start For Free
                 </Link>
@@ -371,7 +397,7 @@ export default function Landing() {
       {/* Footer */}
       <footer className="py-8 px-4 border-t border-border/50">
         <div className="max-w-5xl mx-auto flex items-center justify-between">
-          <img src="/neyler-logo.png" alt="Neyler" className="h-6" />
+          <img src="/neyler-logo.png" alt="Neyler" className="h-6" loading="lazy" width={100} height={24} />
           <p className="text-sm text-muted-foreground">© 2025 Neyler. All rights reserved.</p>
         </div>
       </footer>
@@ -387,7 +413,7 @@ export default function Landing() {
         <Button variant="gradient" size="lg" asChild className="shadow-lg">
           <Link to="/signup" className="gap-2">
             <span className="w-5 h-5 bg-white rounded-full flex items-center justify-center">
-              <img src={googleLogo} alt="Google" className="w-3.5 h-3.5" />
+              <img src={googleLogo} alt="Google" className="w-3.5 h-3.5" loading="lazy" />
             </span>
             Start For Free Now
           </Link>

@@ -225,8 +225,8 @@ export function TestimonialsSection() {
               >
               {/* Header with avatar, name, and rating */}
               <div className="flex items-start gap-3 mb-3">
-                {review.avatarImage ? (
-                  <img src={review.avatarImage} alt={review.name} className="w-10 h-10 rounded-full object-cover flex-shrink-0" />
+              {review.avatarImage ? (
+                  <img src={review.avatarImage} alt={review.name} className="w-10 h-10 rounded-full object-cover flex-shrink-0" loading="lazy" width={40} height={40} />
                 ) : (
                   <div className={`w-10 h-10 rounded-full ${review.avatarBg} flex-shrink-0`} />
                 )}
