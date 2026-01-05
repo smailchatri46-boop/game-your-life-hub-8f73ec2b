@@ -92,7 +92,7 @@ export default function Cookies() {
                 </p>
                 <ul className="text-foreground/90 leading-relaxed space-y-2 list-disc pl-5">
                   <li><strong>Chrome:</strong> Settings → Privacy and Security → Cookies</li>
-                  <li><strong>Firefox:</strong> Settings → Privacy & Security → Cookies and Site Data</li>
+                  <li><strong>Firefox:</strong> Settings → Privacy <span className="font-inter">&</span> Security → Cookies and Site Data</li>
                   <li><strong>Safari:</strong> Preferences → Privacy → Cookies and website data</li>
                   <li><strong>Edge:</strong> Settings → Cookies and site permissions → Cookies</li>
                 </ul>
