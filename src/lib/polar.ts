@@ -1,18 +1,18 @@
-// Polar.sh product IDs configuration
-export const POLAR_PRODUCTS = {
+// Polar.sh checkout links configuration
+export const POLAR_CHECKOUT_LINKS = {
   core: {
-    monthly: "9100ba84-597c-40f6-b074-6aa3f2d7954d",
-    yearly: "09435417-f2c2-4ac9-bade-620b859aec9e",
+    monthly: "https://buy.polar.sh/polar_cl_6Uuscfn2Mt3si5serrSJvvBB9lgWgiiFHSO741XgETa",
+    yearly: "https://buy.polar.sh/polar_cl_xdZTihPaPBOSdBDLparmOua3DqmYsF1u3F5wu3yK4Xo",
   },
   pro: {
-    monthly: "7fd272e7-5f25-408b-adb3-4efe1239e9bd",
-    yearly: "b1cdc800-3f05-4c32-b661-d8f92941bedf",
+    monthly: "https://buy.polar.sh/polar_cl_NMrTh0g35Jq1G0RZSuCBj1gYXvIBFtD6mZtRm4fpUlo",
+    yearly: "https://buy.polar.sh/polar_cl_5HTlnlMy3HRWvlS2HjqG7uewttgISwKi5WCHH10DNQu",
   },
 } as const;
 
 export type PlanType = "core" | "pro";
 export type BillingPeriod = "monthly" | "yearly";
 
-export function getProductId(plan: PlanType, period: BillingPeriod): string {
-  return POLAR_PRODUCTS[plan][period];
+export function getCheckoutLink(plan: PlanType, period: BillingPeriod): string {
+  return POLAR_CHECKOUT_LINKS[plan][period];
 }
