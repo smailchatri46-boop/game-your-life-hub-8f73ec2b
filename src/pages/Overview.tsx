@@ -15,6 +15,10 @@ import { useSelectedMonth } from "@/hooks/use-selected-month";
 import { useAuth } from "@/contexts/AuthContext";
 import { PaywallModal } from "@/components/PaywallModal";
 import { usePlanLimits, LimitType } from "@/hooks/use-plan-limits";
+import { useHabitsData } from "@/hooks/use-habits-data";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
+import { format } from "date-fns";
 
 interface TodoItem {
   id: string;
@@ -25,36 +29,9 @@ interface TodoItem {
 
 const TODO_EMOJIS = ["📝", "⏰", "💼", "📚", "🏃", "🧠", "🎨", "💪", "🍎", "💧", "🧘", "📞", "🛒", "🏠", "💡", "✈️", "🎵", "📷", "🎮", "☕"];
 
-interface DayData {
-  date: number;
-  habits: { name: string; completed: boolean }[];
-  mood: string;
-  journal?: string;
-}
-
-const generateMonthData = (daysInMonth: number, currentDay: number): Record<number, DayData> => {
-  const data: Record<number, DayData> = {};
-  const habits = ["Morning Meditation", "Exercise", "Read 30 mins", "Drink Water", "No Social Media"];
-  const moods = ["😊", "😌", "😐", "😔", "🥳"];
-  
-  const maxDay = Math.min(daysInMonth, currentDay);
-  
-  for (let i = 1; i <= maxDay; i++) {
-    data[i] = {
-      date: i,
-      habits: habits.map(name => ({
-        name,
-        completed: Math.random() > 0.3,
-      })),
-      mood: moods[Math.floor(Math.random() * 5)],
-      journal: Math.random() > 0.5 ? "Had a great day today. Feeling productive and motivated." : undefined,
-    };
-  }
-  return data;
-};
-
 export default function Overview() {
   const { user } = useAuth();
+  const queryClient = useQueryClient();
   const {
     monthName,
     year,
@@ -87,29 +64,112 @@ export default function Overview() {
   const { canAddTodo, incrementTodos, setTodosCount, getLimitMessage, usage } = usePlanLimits();
   
   // To-Do List state
-  const [todos, setTodos] = useState<TodoItem[]>([]);
   const [newTodoText, setNewTodoText] = useState("");
   const [isAddingTodo, setIsAddingTodo] = useState(false);
   const [selectedEmoji, setSelectedEmoji] = useState<string | null>(null);
   const [hasSelectedEmoji, setHasSelectedEmoji] = useState(false);
   
+  // Demo mode todos
+  const [demoTodos, setDemoTodos] = useState<TodoItem[]>([]);
+  
+  // Get habits data for calendar
+  const { completionsMap, stats: habitsStats } = useHabitsData(year, month);
+  const habits = useQuery({
+    queryKey: ["habits-overview", user?.id],
+    queryFn: async () => {
+      if (!user) return [];
+      const { data } = await supabase
+        .from("habits")
+        .select("id, target, importance")
+        .eq("user_id", user.id);
+      return data || [];
+    },
+    enabled: !!user,
+    staleTime: 1000 * 60 * 5,
+  });
+  
   // Fetch todos for selected date
-  // TODO: Replace with Firebase Firestore query
-  useEffect(() => {
-    // Currently using local state only - Firebase not configured
-  }, [user, selectedDate, year, month]);
+  const todayStr = selectedDate 
+    ? `${year}-${String(month + 1).padStart(2, '0')}-${String(selectedDate).padStart(2, '0')}`
+    : format(new Date(), "yyyy-MM-dd");
+    
+  const todosQuery = useQuery({
+    queryKey: ["daily_todos", user?.id, todayStr],
+    queryFn: async () => {
+      if (!user) return [];
+      const { data, error } = await supabase
+        .from("daily_todos")
+        .select("*")
+        .eq("user_id", user.id)
+        .eq("date", todayStr);
+      if (error) throw error;
+      return (data || []).map(t => ({
+        id: t.id,
+        text: t.text,
+        completed: t.completed,
+        emoji: "📝", // Default emoji since we don't store it
+      })) as TodoItem[];
+    },
+    enabled: !!user,
+  });
+  
+  const todos = user ? (todosQuery.data || []) : demoTodos;
+  
+  // Create todo mutation
+  const createTodo = useMutation({
+    mutationFn: async ({ text, date, emoji }: { text: string; date: string; emoji: string }) => {
+      if (!user) return null;
+      const { data, error } = await supabase
+        .from("daily_todos")
+        .insert({ user_id: user.id, text, date, completed: false })
+        .select()
+        .single();
+      if (error) throw error;
+      return data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["daily_todos"] });
+      toast.success("Task added!");
+    },
+    onError: () => {
+      toast.error("Failed to add task");
+    },
+  });
+  
+  // Toggle todo mutation
+  const toggleTodo = useMutation({
+    mutationFn: async ({ todoId, completed }: { todoId: string; completed: boolean }) => {
+      if (!user) return;
+      const { error } = await supabase
+        .from("daily_todos")
+        .update({ completed })
+        .eq("id", todoId)
+        .eq("user_id", user.id);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["daily_todos"] });
+    },
+  });
   
   const handleAddTodo = () => {
     if (!newTodoText.trim() || !selectedEmoji) return;
     
-    const newTodo: TodoItem = {
-      id: crypto.randomUUID(),
-      text: newTodoText.trim(),
-      completed: false,
-      emoji: selectedEmoji
-    };
-    setTodos(prev => [...prev, newTodo]);
-    incrementTodos(); // Track in plan limits
+    if (!user) {
+      // Demo mode
+      const newTodo: TodoItem = {
+        id: crypto.randomUUID(),
+        text: newTodoText.trim(),
+        completed: false,
+        emoji: selectedEmoji
+      };
+      setDemoTodos(prev => [...prev, newTodo]);
+      incrementTodos();
+    } else {
+      createTodo.mutate({ text: newTodoText.trim(), date: todayStr, emoji: selectedEmoji });
+      incrementTodos();
+    }
+    
     setNewTodoText("");
     setIsAddingTodo(false);
     setSelectedEmoji(null);
@@ -127,23 +187,47 @@ export default function Overview() {
   };
   
   const handleToggleTodo = (todoId: string) => {
-    setTodos(prev => prev.map(t => 
-      t.id === todoId ? { ...t, completed: !t.completed } : t
-    ));
+    if (!user) {
+      setDemoTodos(prev => prev.map(t => 
+        t.id === todoId ? { ...t, completed: !t.completed } : t
+      ));
+    } else {
+      const todo = todos.find(t => t.id === todoId);
+      if (todo) {
+        toggleTodo.mutate({ todoId, completed: !todo.completed });
+      }
+    }
   };
   
   const weekDays = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
   
-  // Regenerate data when month changes
-  const monthData = useMemo(() => {
-    return generateMonthData(daysInMonth, currentDay);
-  }, [month, year, daysInMonth, currentDay]);
-  
+  // Calculate completion rate for a day
   const getCompletionRate = (day: number) => {
-    const data = monthData[day];
-    if (!data) return 0;
-    const completed = data.habits.filter(h => h.completed).length;
-    return Math.round((completed / data.habits.length) * 100);
+    if (!user) {
+      // Demo mode - generate random data
+      return Math.floor(Math.random() * 100);
+    }
+    
+    const dateKey = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+    const habitsList = habits.data || [];
+    
+    if (habitsList.length === 0) return 0;
+    
+    let totalWeight = 0;
+    let weightedProgress = 0;
+    
+    habitsList.forEach((habit: { id: string; target: number; importance: number | null }) => {
+      const weight = habit.importance || 50;
+      totalWeight += weight;
+      const value = completionsMap[habit.id]?.[dateKey] || 0;
+      if (habit.target === 1) {
+        if (value >= 1) weightedProgress += weight;
+      } else {
+        weightedProgress += (Math.min(value, habit.target) / habit.target) * weight;
+      }
+    });
+    
+    return totalWeight > 0 ? Math.round((weightedProgress / totalWeight) * 100) : 0;
   };
 
   return (
@@ -157,7 +241,6 @@ export default function Overview() {
 
         {/* Stats Row - New Analytics Cards */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-          {/* Card 1 - Average Day Progress */}
           {/* Card 1 - Perfect Days */}
           <div className="glass-card p-5 min-w-[180px] hover:shadow-large transition-all duration-300">
             <div className="flex items-start justify-between mb-3">
@@ -169,14 +252,14 @@ export default function Overview() {
               </div>
             </div>
             <div className="flex items-baseline gap-0.5 mb-2">
-              <span className="text-3xl font-bold gradient-text">{habitStats.perfectDaysThisWeek ?? 0}</span>
+              <span className="text-3xl font-bold gradient-text">{habitStats.perfectDaysThisWeek}</span>
               <span className="text-lg font-medium text-primary/70"> / 7</span>
             </div>
             <p className="text-xs text-muted-foreground">Days completed fully this week</p>
             <div className="mt-3 h-1.5 bg-secondary rounded-full overflow-hidden">
               <div 
                 className="h-full progress-bar-orange rounded-full transition-all duration-500"
-                style={{ width: `${((habitStats.perfectDaysThisWeek ?? 0) / 7) * 100}%` }}
+                style={{ width: `${(habitStats.perfectDaysThisWeek / 7) * 100}%` }}
               />
             </div>
           </div>
@@ -192,9 +275,9 @@ export default function Overview() {
               </div>
             </div>
             <div className="flex items-center gap-2 mb-2">
-              <AppleEmoji emoji={habitStats.averageMoodEmoji ?? "😊"} size="3xl" />
+              <AppleEmoji emoji={habitStats.averageMoodEmoji} size="3xl" />
             </div>
-            <p className="text-xs text-muted-foreground">Your average mood is <span className="font-bold">{habitStats.averageMoodLabel ?? "Happy"}</span>.</p>
+            <p className="text-xs text-muted-foreground">Your average mood is <span className="font-bold">{habitStats.averageMoodLabel}</span>.</p>
           </div>
 
           {/* Card 3 - Mood Stability */}
@@ -208,14 +291,14 @@ export default function Overview() {
               </div>
             </div>
             <div className="flex items-baseline gap-0.5 mb-2">
-              <span className="text-3xl font-bold gradient-text">{habitStats.emotionalStability ?? 7}</span>
+              <span className="text-3xl font-bold gradient-text">{habitStats.emotionalStability}</span>
               <span className="text-lg font-medium text-primary/70"> / 10</span>
             </div>
             <p className="text-xs text-muted-foreground">Consistency of mood</p>
             <div className="mt-3 h-1.5 bg-secondary rounded-full overflow-hidden">
               <div 
                 className="h-full progress-bar-orange rounded-full transition-all duration-500"
-                style={{ width: `${((habitStats.emotionalStability ?? 7) / 10) * 100}%` }}
+                style={{ width: `${(habitStats.emotionalStability / 10) * 100}%` }}
               />
             </div>
           </div>
