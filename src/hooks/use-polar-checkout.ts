@@ -1,4 +1,4 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useRef } from "react";
 import { PolarEmbedCheckout } from "@polar-sh/checkout/embed";
 import { getCheckoutLink, type PlanType, type BillingPeriod } from "@/lib/polar";
 import { toast } from "sonner";
@@ -12,10 +12,12 @@ interface UsePolarCheckoutOptions {
 export function usePolarCheckout(options: UsePolarCheckoutOptions = {}) {
   const [isLoading, setIsLoading] = useState(false);
   const { theme = "light", onSuccess, onError } = options;
+  const currentPlanRef = useRef<PlanType | null>(null);
 
   const openCheckout = useCallback(
     async (plan: PlanType, period: BillingPeriod) => {
       setIsLoading(true);
+      currentPlanRef.current = plan;
 
       try {
         const checkoutLink = getCheckoutLink(plan, period);
@@ -33,6 +35,10 @@ export function usePolarCheckout(options: UsePolarCheckoutOptions = {}) {
 
         // Listen for successful payment
         checkout.addEventListener("success", () => {
+          // Update the plan in localStorage
+          if (currentPlanRef.current) {
+            localStorage.setItem("neyler_current_plan", currentPlanRef.current);
+          }
           toast.success("Payment successful! Welcome to your new plan.");
           onSuccess?.();
         });

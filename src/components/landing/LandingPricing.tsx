@@ -1,10 +1,12 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Check, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { cn } from "@/lib/utils";
 import { ScrollReveal } from "@/components/ScrollReveal";
 import { usePolarCheckout } from "@/hooks/use-polar-checkout";
+import { useAuth } from "@/contexts/AuthContext";
 import type { PlanType, BillingPeriod } from "@/lib/polar";
 
 interface PlanFeature {
@@ -80,6 +82,8 @@ const plans: Plan[] = [
 export function LandingPricing() {
   const [isYearly, setIsYearly] = useState(true);
   const { openCheckout, isLoading } = usePolarCheckout({ theme: "light" });
+  const { user } = useAuth();
+  const navigate = useNavigate();
 
   const getPrice = (plan: Plan) => {
     if (plan.monthlyPrice === 0) return 0;
@@ -105,13 +109,26 @@ export function LandingPricing() {
   };
 
   const handleGetStarted = (planName: string) => {
-    if (planName === "Starter") {
-      window.location.href = "/signup";
+    const plan = planName.toLowerCase() as PlanType | "starter";
+    const period: BillingPeriod = isYearly ? "yearly" : "monthly";
+
+    // If user is not logged in, store the selected plan and redirect to auth
+    if (!user) {
+      localStorage.setItem("neyler_pending_plan", JSON.stringify({ plan, period }));
+      navigate("/auth");
       return;
     }
-    const plan = planName.toLowerCase() as PlanType;
-    const period: BillingPeriod = isYearly ? "yearly" : "monthly";
-    openCheckout(plan, period);
+
+    // User is logged in
+    if (planName === "Starter") {
+      // Free plan - just go to onboarding
+      localStorage.setItem("neyler_current_plan", "free");
+      navigate("/onboarding");
+      return;
+    }
+
+    // Paid plan - open checkout
+    openCheckout(plan as PlanType, period);
   };
 
   return (
