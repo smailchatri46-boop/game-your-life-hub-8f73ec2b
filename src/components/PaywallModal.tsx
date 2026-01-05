@@ -5,6 +5,8 @@ import { Switch } from "@/components/ui/switch";
 import { Check, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { LimitType } from "@/hooks/use-plan-limits";
+import { usePolarCheckout } from "@/hooks/use-polar-checkout";
+import type { PlanType, BillingPeriod } from "@/lib/polar";
 
 interface PlanFeature {
   text: string;
@@ -70,8 +72,14 @@ export function PaywallModal({ open, onOpenChange, limitType, limitMessage }: Pa
   const [countdown, setCountdown] = useState(5);
   const [canClose, setCanClose] = useState(false);
 
+  const { openCheckout, isLoading } = usePolarCheckout({
+    theme: "light",
+    onSuccess: () => {
+      onOpenChange(false);
+    },
+  });
+
   const proPlan = plans.find(p => p.name === "Pro")!;
-  const corePlan = plans.find(p => p.name === "Core")!;
 
   // Reset countdown and state when modal opens
   useEffect(() => {
@@ -105,17 +113,10 @@ export function PaywallModal({ open, onOpenChange, limitType, limitMessage }: Pa
     }
   };
 
-  const getPrice = (plan: Plan) => {
-    if (isYearly) {
-      return (plan.yearlyPrice / 12).toFixed(2);
-    }
-    return plan.monthlyPrice;
-  };
-
-  const getSavingsPercent = (plan: Plan) => {
-    const monthlyTotal = plan.monthlyPrice * 12;
-    const savings = ((monthlyTotal - plan.yearlyPrice) / monthlyTotal) * 100;
-    return Math.round(savings);
+  const handleUpgrade = (planName: string) => {
+    const plan = planName.toLowerCase() as PlanType;
+    const period: BillingPeriod = isYearly ? "yearly" : "monthly";
+    openCheckout(plan, period);
   };
 
   // Calculate progress for circular animation (0 to 1)
@@ -289,6 +290,8 @@ export function PaywallModal({ open, onOpenChange, limitType, limitMessage }: Pa
                   variant="gradient"
                   size="default"
                   className="w-full shadow-md hover:shadow-lg hover:opacity-90"
+                  onClick={() => handleUpgrade("Pro")}
+                  disabled={isLoading}
                 >
                   Unlock Pro
                 </Button>
@@ -415,6 +418,8 @@ export function PaywallModal({ open, onOpenChange, limitType, limitMessage }: Pa
                           ? "shadow-md hover:shadow-lg hover:opacity-90"
                           : "hover:bg-muted hover:border-muted-foreground/30"
                       )}
+                      onClick={() => handleUpgrade(plan.name)}
+                      disabled={isLoading}
                     >
                       {plan.popular ? "Unlock Pro" : "Get Core"}
                     </Button>
