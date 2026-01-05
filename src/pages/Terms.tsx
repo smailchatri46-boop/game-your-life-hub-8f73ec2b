@@ -51,7 +51,7 @@ export default function Terms() {
               </section>
 
               <section>
-                <h2 className="font-display text-xl font-semibold text-foreground mb-3">Subscription & Billing</h2>
+                <h2 className="font-display text-xl font-semibold text-foreground mb-3">Subscription <span className="font-inter">&</span> Billing</h2>
                 <ul className="text-foreground/90 leading-relaxed space-y-2 list-disc pl-5">
                   <li>Neyler offers both free and paid subscription plans.</li>
                   <li>Paid subscriptions are billed on a recurring basis (monthly or annually).</li>
