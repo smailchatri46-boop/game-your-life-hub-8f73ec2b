@@ -37,7 +37,7 @@ export function Navbar() {
             className="flex-shrink-0"
             style={{ width: '100px', minWidth: '100px' }}
           >
-            <img src={neylerLogo} alt="Neyler" className="h-6 w-auto" />
+            <img src={neylerLogo} alt="Neyler" className="h-6 w-auto" loading="eager" fetchPriority="high" width={86} height={24} />
           </Link>
           
           {/* Centered tabs */}

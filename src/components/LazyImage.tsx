@@ -8,13 +8,15 @@ interface LazyImageProps {
   width?: number;
   height?: number;
   priority?: boolean;
+  fetchPriority?: "high" | "low" | "auto";
+  sizes?: string;
   onLoad?: () => void;
   onError?: () => void;
 }
 
 /**
  * LazyImage - Optimized image component with native lazy loading,
- * fade-in animation, and proper sizing hints for better CLS.
+ * fade-in animation, proper sizing hints for better CLS, and fetchPriority support.
  */
 export const LazyImage = memo(function LazyImage({
   src,
@@ -23,6 +25,8 @@ export const LazyImage = memo(function LazyImage({
   width,
   height,
   priority = false,
+  fetchPriority,
+  sizes,
   onLoad,
   onError,
 }: LazyImageProps) {
@@ -62,7 +66,9 @@ export const LazyImage = memo(function LazyImage({
       width={width}
       height={height}
       loading={priority ? "eager" : "lazy"}
-      decoding="async"
+      decoding={priority ? "sync" : "async"}
+      fetchPriority={fetchPriority || (priority ? "high" : "auto")}
+      sizes={sizes}
       onLoad={handleLoad}
       onError={handleError}
       className={cn(

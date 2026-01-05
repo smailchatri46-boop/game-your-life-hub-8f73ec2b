@@ -48,6 +48,9 @@ export default function Auth() {
                   src="/images/neyler-logo-full.png" 
                   alt="Neyler" 
                   className="h-8"
+                  loading="eager"
+                  width={120}
+                  height={32}
                 />
               </div>
               <p className="text-muted-foreground">
@@ -63,7 +66,7 @@ export default function Auth() {
                 onClick={handleGoogleSignIn}
               >
                 <span className="w-6 h-6 bg-white rounded-full flex items-center justify-center">
-                  <img src={googleLogo} alt="Google" className="w-4 h-4" />
+                  <img src={googleLogo} alt="Google" className="w-4 h-4" loading="eager" width={16} height={16} />
                 </span>
                 Continue with Google
               </Button>
