@@ -11,7 +11,9 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="preconnect" href="https://www.youtube.com">
     <link rel="preconnect" href="https://i.ytimg.com">
+    <link rel="preconnect" href="https://cdn.jsdelivr.net">
     <link rel="dns-prefetch" href="https://dsnaslcvocithsjkrsup.supabase.co">
+    <link rel="dns-prefetch" href="https://img.youtube.com">
     
     <!-- Optimized font loading with display swap -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
@@ -31,9 +33,14 @@
     <meta name="twitter:site" content="@Neyler" />
     <meta name="twitter:image" content="https://lovable.dev/opengraph-image-p98pqg.png" />
 
-    <!-- Emoji rendering (consistent cross-platform emoji images) -->
+    <!-- Critical CSS for initial paint -->
     <style>
-      /* Hide native emojis, show Twemoji images instead */
+      /* Prevent FOUC and reduce CLS */
+      html { visibility: visible; opacity: 1; }
+      body { margin: 0; }
+      #root { min-height: 100vh; }
+      
+      /* Emoji rendering (consistent cross-platform emoji images) */
       img.emoji {
         height: 1em;
         width: 1em;
