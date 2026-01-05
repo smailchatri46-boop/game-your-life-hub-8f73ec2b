@@ -36,7 +36,7 @@ export function LandingNavbar() {
     <nav className="fixed top-6 left-1/2 -translate-x-1/2 z-50 w-full max-w-4xl px-4">
       <div className="glass-card px-4 py-3 flex items-center justify-between">
         <Link to="/" className="px-2">
-          <img src={neylerLogo} alt="Neyler" className="h-7 w-auto" loading="eager" />
+          <img src={neylerLogo} alt="Neyler" className="h-7 w-auto" loading="eager" fetchPriority="high" width={100} height={28} />
         </Link>
         
         <div className="flex items-center gap-6">
@@ -72,7 +72,7 @@ export function LandingNavbar() {
               onMouseEnter={handleMouseEnter("/signup")}
             >
               <span className="w-5 h-5 bg-white rounded-full flex items-center justify-center">
-                <img src={googleLogo} alt="Google" className="w-3.5 h-3.5" loading="eager" />
+                <img src={googleLogo} alt="Google" className="w-3.5 h-3.5" loading="eager" width={14} height={14} />
               </span>
               Sign Up
             </Link>

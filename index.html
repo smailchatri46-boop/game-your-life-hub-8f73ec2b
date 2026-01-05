@@ -15,6 +15,10 @@
     <link rel="dns-prefetch" href="https://dsnaslcvocithsjkrsup.supabase.co">
     <link rel="dns-prefetch" href="https://img.youtube.com">
     
+    <!-- Preload critical above-fold images -->
+    <link rel="preload" as="image" href="/neyler-logo.png" fetchpriority="high">
+    <link rel="preload" as="image" href="/images/neyler-logo-full.png" fetchpriority="high">
+    
     <!-- Optimized font loading with display swap -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
     <noscript>
@@ -39,6 +43,11 @@
       html { visibility: visible; opacity: 1; }
       body { margin: 0; }
       #root { min-height: 100vh; }
+      
+      /* Image loading placeholder for CLS prevention */
+      img { 
+        background-color: transparent;
+      }
       
       /* Emoji rendering (consistent cross-platform emoji images) */
       img.emoji {

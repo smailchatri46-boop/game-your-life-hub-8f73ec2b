@@ -78,7 +78,7 @@ export function Footer() {
 
         {/* Bottom section with logo left and copyright right */}
         <div className="pt-6 border-t border-border/30 flex flex-col md:flex-row items-center justify-between gap-3">
-          <img src={neylerLogo} alt="Neyler" className="h-5" loading="lazy" />
+          <img src={neylerLogo} alt="Neyler" className="h-5" loading="lazy" decoding="async" width={71} height={20} />
           <p className="font-body text-xs text-muted-foreground/60">© 2026 Neyler. All rights reserved.</p>
         </div>
       </div>

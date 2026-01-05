@@ -83,7 +83,7 @@ export default function Landing() {
                 <Button variant="gradient" size="xl" asChild>
                   <Link to="/signup" className="gap-3">
                     <span className="w-6 h-6 bg-white rounded-full flex items-center justify-center">
-                      <img src={googleLogo} alt="Google" className="w-4 h-4" loading="eager" />
+                      <img src={googleLogo} alt="Google" className="w-4 h-4" loading="eager" width={16} height={16} />
                     </span>
                     Continue for free
                   </Link>
@@ -92,11 +92,11 @@ export default function Landing() {
                 {/* Social Proof - below button */}
                 <div className="flex items-center gap-3">
                   <div className="flex -space-x-2">
-                    <img src="/images/user-1.png" alt="User" className="w-9 h-9 rounded-full border-2 border-background object-cover" loading="lazy" width={36} height={36} />
-                    <img src="/images/user-2.png" alt="User" className="w-9 h-9 rounded-full border-2 border-background object-cover" loading="lazy" width={36} height={36} />
-                    <img src="/images/user-3.png" alt="User" className="w-9 h-9 rounded-full border-2 border-background object-cover" loading="lazy" width={36} height={36} />
-                    <img src="/images/user-4.png" alt="User" className="w-9 h-9 rounded-full border-2 border-background object-cover" loading="lazy" width={36} height={36} />
-                    <img src="/images/user-5.png" alt="User" className="w-9 h-9 rounded-full border-2 border-background object-cover" loading="lazy" width={36} height={36} />
+                    <img src="/images/user-1.png" alt="User" className="w-9 h-9 rounded-full border-2 border-background object-cover" loading="lazy" decoding="async" width={36} height={36} />
+                    <img src="/images/user-2.png" alt="User" className="w-9 h-9 rounded-full border-2 border-background object-cover" loading="lazy" decoding="async" width={36} height={36} />
+                    <img src="/images/user-3.png" alt="User" className="w-9 h-9 rounded-full border-2 border-background object-cover" loading="lazy" decoding="async" width={36} height={36} />
+                    <img src="/images/user-4.png" alt="User" className="w-9 h-9 rounded-full border-2 border-background object-cover" loading="lazy" decoding="async" width={36} height={36} />
+                    <img src="/images/user-5.png" alt="User" className="w-9 h-9 rounded-full border-2 border-background object-cover" loading="lazy" decoding="async" width={36} height={36} />
                   </div>
                   <p className="text-sm text-muted-foreground">
                     Join over <span className="font-medium text-foreground">50,000+</span> people improving their lives with Neyler
@@ -157,6 +157,7 @@ export default function Landing() {
                   alt="Apps flowing into Neyler" 
                   className="h-48 md:h-64 object-contain"
                   loading="lazy"
+                  decoding="async"
                   width={200}
                   height={256}
                 />
@@ -165,6 +166,7 @@ export default function Landing() {
                   alt="Neyler" 
                   className="h-12 md:h-16 object-contain"
                   loading="lazy"
+                  decoding="async"
                   width={150}
                   height={64}
                 />
@@ -317,11 +319,11 @@ export default function Landing() {
               {/* Social Proof */}
               <div className="flex items-center justify-center gap-3 mb-6">
                 <div className="flex -space-x-2">
-                  <img src="/images/user-1.png" alt="User" className="w-9 h-9 rounded-full border-2 border-background object-cover" loading="lazy" width={36} height={36} />
-                  <img src="/images/user-2.png" alt="User" className="w-9 h-9 rounded-full border-2 border-background object-cover" loading="lazy" width={36} height={36} />
-                  <img src="/images/user-3.png" alt="User" className="w-9 h-9 rounded-full border-2 border-background object-cover" loading="lazy" width={36} height={36} />
-                  <img src="/images/user-4.png" alt="User" className="w-9 h-9 rounded-full border-2 border-background object-cover" loading="lazy" width={36} height={36} />
-                  <img src="/images/user-5.png" alt="User" className="w-9 h-9 rounded-full border-2 border-background object-cover" loading="lazy" width={36} height={36} />
+                  <img src="/images/user-1.png" alt="User" className="w-9 h-9 rounded-full border-2 border-background object-cover" loading="lazy" decoding="async" width={36} height={36} />
+                  <img src="/images/user-2.png" alt="User" className="w-9 h-9 rounded-full border-2 border-background object-cover" loading="lazy" decoding="async" width={36} height={36} />
+                  <img src="/images/user-3.png" alt="User" className="w-9 h-9 rounded-full border-2 border-background object-cover" loading="lazy" decoding="async" width={36} height={36} />
+                  <img src="/images/user-4.png" alt="User" className="w-9 h-9 rounded-full border-2 border-background object-cover" loading="lazy" decoding="async" width={36} height={36} />
+                  <img src="/images/user-5.png" alt="User" className="w-9 h-9 rounded-full border-2 border-background object-cover" loading="lazy" decoding="async" width={36} height={36} />
                 </div>
                 <p className="text-sm text-muted-foreground">
                   Join over <span className="font-medium text-foreground">50,000+</span> people improving their lives with Neyler
@@ -331,7 +333,7 @@ export default function Landing() {
               <Button variant="gradient" size="xl" asChild>
                 <Link to="/signup" className="gap-3">
                   <span className="w-6 h-6 bg-white rounded-full flex items-center justify-center">
-                    <img src={googleLogo} alt="Google" className="w-4 h-4" loading="lazy" />
+                    <img src={googleLogo} alt="Google" className="w-4 h-4" loading="lazy" decoding="async" width={16} height={16} />
                   </span>
                   Start For Free
                 </Link>
@@ -371,11 +373,11 @@ export default function Landing() {
               {/* Social Proof */}
               <div className="flex items-center justify-center gap-3 mb-6">
                 <div className="flex -space-x-2">
-                  <img src="/images/user-1.png" alt="User" className="w-9 h-9 rounded-full border-2 border-background object-cover" loading="lazy" width={36} height={36} />
-                  <img src="/images/user-2.png" alt="User" className="w-9 h-9 rounded-full border-2 border-background object-cover" loading="lazy" width={36} height={36} />
-                  <img src="/images/user-3.png" alt="User" className="w-9 h-9 rounded-full border-2 border-background object-cover" loading="lazy" width={36} height={36} />
-                  <img src="/images/user-4.png" alt="User" className="w-9 h-9 rounded-full border-2 border-background object-cover" loading="lazy" width={36} height={36} />
-                  <img src="/images/user-5.png" alt="User" className="w-9 h-9 rounded-full border-2 border-background object-cover" loading="lazy" width={36} height={36} />
+                  <img src="/images/user-1.png" alt="User" className="w-9 h-9 rounded-full border-2 border-background object-cover" loading="lazy" decoding="async" width={36} height={36} />
+                  <img src="/images/user-2.png" alt="User" className="w-9 h-9 rounded-full border-2 border-background object-cover" loading="lazy" decoding="async" width={36} height={36} />
+                  <img src="/images/user-3.png" alt="User" className="w-9 h-9 rounded-full border-2 border-background object-cover" loading="lazy" decoding="async" width={36} height={36} />
+                  <img src="/images/user-4.png" alt="User" className="w-9 h-9 rounded-full border-2 border-background object-cover" loading="lazy" decoding="async" width={36} height={36} />
+                  <img src="/images/user-5.png" alt="User" className="w-9 h-9 rounded-full border-2 border-background object-cover" loading="lazy" decoding="async" width={36} height={36} />
                 </div>
                 <p className="text-sm text-muted-foreground">
                   Join over <span className="font-medium text-foreground">50,000+</span> people improving their lives with Neyler
@@ -385,7 +387,7 @@ export default function Landing() {
               <Button variant="gradient" size="xl" asChild>
                 <Link to="/signup" className="gap-3">
                   <span className="w-6 h-6 bg-white rounded-full flex items-center justify-center">
-                    <img src={googleLogo} alt="Google" className="w-4 h-4" loading="lazy" />
+                    <img src={googleLogo} alt="Google" className="w-4 h-4" loading="lazy" decoding="async" width={16} height={16} />
                   </span>
                   Start For Free
                 </Link>
@@ -409,7 +411,7 @@ export default function Landing() {
         <Button variant="gradient" size="lg" asChild className="shadow-lg">
           <Link to="/signup" className="gap-2">
             <span className="w-5 h-5 bg-white rounded-full flex items-center justify-center">
-              <img src={googleLogo} alt="Google" className="w-3.5 h-3.5" loading="lazy" />
+              <img src={googleLogo} alt="Google" className="w-3.5 h-3.5" loading="lazy" decoding="async" width={14} height={14} />
             </span>
             Start For Free Now
           </Link>
