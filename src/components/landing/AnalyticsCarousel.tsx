@@ -212,15 +212,15 @@ export function AnalyticsCarousel() {
         </ScrollReveal>
       </div>
 
-      <div className="relative" style={{ background: 'transparent' }}>
-        {/* Fade edges - LEFT matches orange bg, RIGHT matches white bg */}
-        <div className="absolute left-0 top-0 bottom-0 w-32 z-10 pointer-events-none" style={{ background: 'linear-gradient(to right, hsl(38 80% 88%), transparent)' }} />
-        <div className="absolute right-0 top-0 bottom-0 w-32 z-10 pointer-events-none" style={{ background: 'linear-gradient(to left, hsl(30 100% 99%), transparent)' }} />
-
+      <div className="relative">
         <div
           ref={scrollRef}
           className="flex gap-5 overflow-x-hidden py-4"
-          style={{ scrollBehavior: "auto", background: 'transparent' }}
+          style={{ 
+            scrollBehavior: "auto",
+            maskImage: 'linear-gradient(to right, transparent 0%, black 5%, black 95%, transparent 100%)',
+            WebkitMaskImage: 'linear-gradient(to right, transparent 0%, black 5%, black 95%, transparent 100%)',
+          }}
         >
           {/* Duplicate cards for infinite scroll effect */}
           {[...analyticsCards, ...analyticsCards].map((card, index) => (
