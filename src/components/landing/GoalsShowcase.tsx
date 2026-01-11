@@ -131,17 +131,18 @@ export function GoalsShowcase() {
   const duplicatedGoals = [...demoGoals, ...demoGoals];
 
   return (
-    <section className="py-14 px-4">
-      <div className="max-w-6xl mx-auto flex flex-col items-center text-center">
-        {/* Title - centered at top */}
+    <section className="py-14 px-4 overflow-hidden">
+      {/* Title - centered at top */}
+      <div className="max-w-6xl mx-auto text-center mb-8">
         <ScrollReveal animation="fade-up">
-          <h2 className="font-display text-3xl md:text-4xl font-semibold mb-8">
+          <h2 className="font-display text-3xl md:text-4xl font-semibold">
             Set Goals and <span className="gradient-text italic">Track Them</span>
           </h2>
         </ScrollReveal>
+      </div>
 
-        {/* Goal Cards - scrolling carousel with transparency mask fade */}
-        <div className="w-full mb-8">
+      {/* Goal Cards - scrolling carousel with transparency mask fade - full width */}
+      <div className="w-full mb-8">
           <div 
             ref={scrollRef}
             className="flex gap-4 md:gap-6 overflow-x-auto scrollbar-hide py-2"
@@ -214,11 +215,12 @@ export function GoalsShowcase() {
               </GlassCard>
             ))}
           </div>
-        </div>
+      </div>
 
-        {/* Description - centered below cards, wider */}
+      {/* Description - centered below cards, wider */}
+      <div className="max-w-3xl mx-auto text-center">
         <ScrollReveal animation="fade-up" delay={100}>
-          <p className="text-muted-foreground text-lg leading-relaxed max-w-3xl">
+          <p className="text-muted-foreground text-lg leading-relaxed">
             Create meaningful goals, link them to your daily tasks and habits, and watch your progress grow. 
             Stay motivated with visual progress tracking and pace indicators.
           </p>
