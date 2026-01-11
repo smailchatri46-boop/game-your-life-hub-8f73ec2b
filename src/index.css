@@ -89,6 +89,7 @@
   html {
     scroll-behavior: smooth;
     overflow-y: scroll; /* Always show scrollbar to prevent layout shift */
+    zoom: 1.1; /* Scale the entire app to 110% */
   }
 
   body {
