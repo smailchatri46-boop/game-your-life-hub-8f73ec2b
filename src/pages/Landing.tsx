@@ -15,7 +15,7 @@ const AnalyticsCarousel = lazy(() => import("@/components/landing/AnalyticsCarou
 const HabitsShowcase = lazy(() => import("@/components/landing/HabitsShowcase").then(m => ({ default: m.HabitsShowcase })));
 const AIBuddyShowcase = lazy(() => import("@/components/landing/AIBuddyShowcase").then(m => ({ default: m.AIBuddyShowcase })));
 const GoalsShowcase = lazy(() => import("@/components/landing/GoalsShowcase").then(m => ({ default: m.GoalsShowcase })));
-const TestimonialsSection = lazy(() => import("@/components/landing/TestimonialsSection").then(m => ({ default: m.TestimonialsSection })));
+
 const LandingPricing = lazy(() => import("@/components/landing/LandingPricing").then(m => ({ default: m.LandingPricing })));
 const LandingFAQ = lazy(() => import("@/components/landing/LandingFAQ").then(m => ({ default: m.LandingFAQ })));
 
@@ -66,7 +66,7 @@ export default function Landing() {
         <div className="max-w-7xl mx-auto">
           <div className="grid lg:grid-cols-[5fr_7fr] gap-8 lg:gap-8 items-start">
             {/* Left Column - Title, Description, CTA */}
-            <div className="order-2 lg:order-1 flex flex-col">
+            <div className="order-2 lg:order-1 flex flex-col lg:justify-end lg:pb-0">
               <h1 className="font-display text-4xl md:text-5xl lg:text-6xl font-semibold mb-5 animate-fade-in text-center lg:text-left">
                 <span className="italic gradient-text">Turn your life</span>
                 <br />
@@ -79,7 +79,7 @@ export default function Landing() {
               </p>
 
               {/* Sign Up Button */}
-              <div ref={signUpButtonRef} className="animate-fade-in delay-200 flex flex-col items-center lg:items-start gap-4">
+              <div ref={signUpButtonRef} className="animate-fade-in delay-200 flex flex-col items-center lg:items-start">
                 <Button variant="gradient" size="xl" asChild>
                   <Link to="/signup" className="gap-3">
                     <span className="w-6 h-6 bg-white rounded-full flex items-center justify-center">
@@ -88,20 +88,6 @@ export default function Landing() {
                     Continue for free
                   </Link>
                 </Button>
-                
-                {/* Social Proof - below button */}
-                <div className="flex items-center gap-3">
-                  <div className="flex -space-x-2">
-                    <img src="/images/user-1.png" alt="User" className="w-9 h-9 rounded-full border-2 border-background object-cover" loading="lazy" decoding="async" width={36} height={36} />
-                    <img src="/images/user-2.png" alt="User" className="w-9 h-9 rounded-full border-2 border-background object-cover" loading="lazy" decoding="async" width={36} height={36} />
-                    <img src="/images/user-3.png" alt="User" className="w-9 h-9 rounded-full border-2 border-background object-cover" loading="lazy" decoding="async" width={36} height={36} />
-                    <img src="/images/user-4.png" alt="User" className="w-9 h-9 rounded-full border-2 border-background object-cover" loading="lazy" decoding="async" width={36} height={36} />
-                    <img src="/images/user-5.png" alt="User" className="w-9 h-9 rounded-full border-2 border-background object-cover" loading="lazy" decoding="async" width={36} height={36} />
-                  </div>
-                  <p className="text-sm text-muted-foreground">
-                    Join over <span className="font-medium text-foreground">50,000+</span> people improving their lives with Neyler
-                  </p>
-                </div>
               </div>
             </div>
 
@@ -313,22 +299,8 @@ export default function Landing() {
                 Ready to level up?
               </h2>
               <p className="text-muted-foreground mb-6">
-                Join thousands of people who have transformed their lives with Neyler.
+                Start your journey to a better you.
               </p>
-              
-              {/* Social Proof */}
-              <div className="flex items-center justify-center gap-3 mb-6">
-                <div className="flex -space-x-2">
-                  <img src="/images/user-1.png" alt="User" className="w-9 h-9 rounded-full border-2 border-background object-cover" loading="lazy" decoding="async" width={36} height={36} />
-                  <img src="/images/user-2.png" alt="User" className="w-9 h-9 rounded-full border-2 border-background object-cover" loading="lazy" decoding="async" width={36} height={36} />
-                  <img src="/images/user-3.png" alt="User" className="w-9 h-9 rounded-full border-2 border-background object-cover" loading="lazy" decoding="async" width={36} height={36} />
-                  <img src="/images/user-4.png" alt="User" className="w-9 h-9 rounded-full border-2 border-background object-cover" loading="lazy" decoding="async" width={36} height={36} />
-                  <img src="/images/user-5.png" alt="User" className="w-9 h-9 rounded-full border-2 border-background object-cover" loading="lazy" decoding="async" width={36} height={36} />
-                </div>
-                <p className="text-sm text-muted-foreground">
-                  Join over <span className="font-medium text-foreground">50,000+</span> people improving their lives with Neyler
-                </p>
-              </div>
               
               <Button variant="gradient" size="xl" asChild>
                 <Link to="/signup" className="gap-3">
@@ -343,10 +315,6 @@ export default function Landing() {
         </ScrollReveal>
       </section>
 
-      {/* Testimonials */}
-      <Suspense fallback={<SectionPlaceholder />}>
-        <TestimonialsSection />
-      </Suspense>
 
       {/* Pricing */}
       <Suspense fallback={<SectionPlaceholder />}>
@@ -367,22 +335,8 @@ export default function Landing() {
                 Ready to level up?
               </h2>
               <p className="text-muted-foreground mb-6">
-                Join thousands of people who have transformed their lives with Neyler.
+                Start your journey to a better you.
               </p>
-              
-              {/* Social Proof */}
-              <div className="flex items-center justify-center gap-3 mb-6">
-                <div className="flex -space-x-2">
-                  <img src="/images/user-1.png" alt="User" className="w-9 h-9 rounded-full border-2 border-background object-cover" loading="lazy" decoding="async" width={36} height={36} />
-                  <img src="/images/user-2.png" alt="User" className="w-9 h-9 rounded-full border-2 border-background object-cover" loading="lazy" decoding="async" width={36} height={36} />
-                  <img src="/images/user-3.png" alt="User" className="w-9 h-9 rounded-full border-2 border-background object-cover" loading="lazy" decoding="async" width={36} height={36} />
-                  <img src="/images/user-4.png" alt="User" className="w-9 h-9 rounded-full border-2 border-background object-cover" loading="lazy" decoding="async" width={36} height={36} />
-                  <img src="/images/user-5.png" alt="User" className="w-9 h-9 rounded-full border-2 border-background object-cover" loading="lazy" decoding="async" width={36} height={36} />
-                </div>
-                <p className="text-sm text-muted-foreground">
-                  Join over <span className="font-medium text-foreground">50,000+</span> people improving their lives with Neyler
-                </p>
-              </div>
               
               <Button variant="gradient" size="xl" asChild>
                 <Link to="/signup" className="gap-3">
