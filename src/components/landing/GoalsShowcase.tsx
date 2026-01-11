@@ -148,8 +148,8 @@ export function GoalsShowcase() {
             style={{ 
               scrollbarWidth: 'none', 
               msOverflowStyle: 'none',
-              maskImage: 'linear-gradient(to right, transparent 0%, black 12%, black 88%, transparent 100%)',
-              WebkitMaskImage: 'linear-gradient(to right, transparent 0%, black 12%, black 88%, transparent 100%)',
+              maskImage: 'linear-gradient(to right, transparent 0%, black 5%, black 95%, transparent 100%)',
+              WebkitMaskImage: 'linear-gradient(to right, transparent 0%, black 5%, black 95%, transparent 100%)',
               maskRepeat: 'no-repeat',
               maskSize: '100% 100%'
             }}
