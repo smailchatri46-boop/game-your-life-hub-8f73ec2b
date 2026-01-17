@@ -5,10 +5,48 @@ import { GlassCard } from "@/components/GlassCard";
 import { AppleEmoji } from "@/components/AppleEmoji";
 import { Link } from "react-router-dom";
 import { YouTubeEmbed } from "@/components/YouTubeEmbed";
-import { Plus, Check } from "lucide-react";
+import { Plus, Check, Download } from "lucide-react";
 import googleLogo from "@/assets/google-logo.png";
 import { ScrollReveal } from "@/components/ScrollReveal";
 import { Footer } from "@/components/Footer";
+import neylerLogoAsset from "@/assets/neyler-logo.png";
+import dashboardPreview from "@/assets/dashboard-preview-optimized.jpg";
+
+// Temporary function to download all images
+const downloadAllImages = async () => {
+  const images = [
+    { url: neylerLogoAsset, name: "neyler-logo.png" },
+    { url: googleLogo, name: "google-logo.png" },
+    { url: dashboardPreview, name: "dashboard-preview-optimized.jpg" },
+    { url: "/images/neyler-logo-full.png", name: "neyler-logo-full.png" },
+    { url: "/images/apps-arrows.png", name: "apps-arrows.png" },
+    { url: "/images/user-1.png", name: "user-1.png" },
+    { url: "/images/user-2.png", name: "user-2.png" },
+    { url: "/images/user-3.png", name: "user-3.png" },
+    { url: "/images/user-4.png", name: "user-4.png" },
+    { url: "/images/user-5.png", name: "user-5.png" },
+    { url: "/favicon.png", name: "favicon.png" },
+    { url: "/neyler-logo.png", name: "neyler-logo-public.png" },
+  ];
+
+  for (const img of images) {
+    try {
+      const response = await fetch(img.url);
+      const blob = await response.blob();
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = img.name;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      await new Promise(r => setTimeout(r, 300)); // Small delay between downloads
+    } catch (e) {
+      console.error(`Failed to download ${img.name}`, e);
+    }
+  }
+};
 
 // Lazy load below-fold sections for better initial load
 const AnalyticsCarousel = lazy(() => import("@/components/landing/AnalyticsCarousel").then(m => ({ default: m.AnalyticsCarousel })));
@@ -60,6 +98,18 @@ export default function Landing() {
   return (
     <div className="min-h-screen gradient-hero overflow-hidden">
       <LandingNavbar />
+      
+      {/* TEMPORARY: Download all images button */}
+      <div className="fixed bottom-4 left-4 z-50">
+        <Button 
+          onClick={downloadAllImages}
+          variant="outline"
+          className="gap-2 bg-background/80 backdrop-blur-sm border-primary"
+        >
+          <Download className="w-4 h-4" />
+          Download All Images
+        </Button>
+      </div>
       
       {/* Hero Section */}
       <section className="pt-32 pb-16 px-4">
