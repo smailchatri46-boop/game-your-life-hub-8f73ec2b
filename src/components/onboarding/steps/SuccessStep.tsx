@@ -1,7 +1,7 @@
 import { OnboardingCard } from "../OnboardingCard";
 import { Button } from "@/components/ui/button";
 import { AppleEmoji } from "@/components/AppleEmoji";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import dashboardPreview from "@/assets/dashboard-preview-optimized.jpg";
 
 interface SuccessStepProps {
@@ -17,29 +17,6 @@ export function SuccessStep({
   onAddMoreHabits,
   onStartJournaling,
 }: SuccessStepProps) {
-  // Check if image is already cached (from LoadingStep preload)
-  const checkImageCached = () => {
-    const img = new Image();
-    img.src = dashboardPreview;
-    return img.complete && img.naturalHeight !== 0;
-  };
-
-  // Start with true if already cached, otherwise false
-  const [imageLoaded, setImageLoaded] = useState(() => checkImageCached());
-
-  // Only load if not already cached
-  useEffect(() => {
-    if (imageLoaded) return; // Already loaded
-    
-    const img = new Image();
-    img.src = dashboardPreview;
-    if (img.complete) {
-      setImageLoaded(true);
-    } else {
-      img.onload = () => setImageLoaded(true);
-    }
-  }, [imageLoaded]);
-
   // Hide scrollbar on mount
   useEffect(() => {
     const html = document.documentElement;
@@ -62,20 +39,14 @@ export function SuccessStep({
       className="fixed inset-0 flex items-center justify-center"
       style={{ overflow: 'hidden', height: '100vh', maxHeight: '100vh' }}
     >
-      {/* Blurred dashboard background with fade-in */}
+      {/* Blurred dashboard background - always visible, image is preloaded in LoadingStep */}
       <div 
-        className="absolute inset-0 bg-cover bg-center bg-no-repeat transition-opacity duration-500"
+        className="absolute inset-0 bg-cover bg-center bg-no-repeat"
         style={{
           backgroundImage: `url(${dashboardPreview})`,
           filter: 'blur(8px)',
           transform: 'scale(1.1)',
-          opacity: imageLoaded ? 1 : 0,
         }}
-      />
-      {/* Fallback gradient while image loads */}
-      <div 
-        className="absolute inset-0 gradient-hero transition-opacity duration-500"
-        style={{ opacity: imageLoaded ? 0 : 1 }}
       />
       {/* Light overlay for readability */}
       <div className="absolute inset-0 bg-white/40" />
