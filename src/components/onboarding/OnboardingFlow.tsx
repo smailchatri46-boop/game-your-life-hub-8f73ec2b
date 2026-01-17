@@ -5,6 +5,7 @@ import { WhyWeExistStep } from "./steps/WhyWeExistStep";
 import { TellUsAboutYouStep } from "./steps/TellUsAboutYouStep";
 import { AboutYourselfStep } from "./steps/AboutYourselfStep";
 import { HabitSuggestionsStep } from "./steps/HabitSuggestionsStep";
+import { GoalCreationStep } from "./steps/GoalCreationStep";
 import { CommitmentStep } from "./steps/CommitmentStep";
 import { LoadingStep } from "./steps/LoadingStep";
 import { SuccessStep } from "./steps/SuccessStep";
@@ -96,6 +97,8 @@ export function OnboardingFlow() {
     removeCustomHabit,
     toggleAffirmation,
     setSurveyAnswer,
+    setCreatedHabits,
+    setGoalData,
     completeOnboarding,
     skipOnboarding,
   } = useOnboarding();
@@ -322,6 +325,17 @@ export function OnboardingFlow() {
             onRemoveCustomHabit={removeCustomHabit}
             onNext={goToNext}
             onBack={goToPrevious}
+            onHabitsChange={setCreatedHabits}
+          />
+        );
+
+      case "goal-creation":
+        return (
+          <GoalCreationStep
+            createdHabits={data.createdHabits}
+            onNext={goToNext}
+            onBack={goToPrevious}
+            onGoalDataChange={setGoalData}
           />
         );
 
