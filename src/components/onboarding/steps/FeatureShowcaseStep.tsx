@@ -23,65 +23,63 @@ interface FeatureShowcaseStepProps {
 
 function AllInOneShowcase() {
   return (
-    <section className="py-4 px-4 overflow-hidden w-full">
-      {/* Title - centered at top with more space below */}
-      <div className="max-w-6xl mx-auto text-center mb-6">
+    <section className="h-full w-full flex flex-col items-center justify-center px-4">
+      {/* Title */}
+      <div className="text-center mb-10 md:mb-12">
         <h2 className="font-display text-2xl md:text-5xl font-semibold">
           Your all in <span className="italic gradient-text">one tracker</span>
         </h2>
       </div>
       
-      {/* Content - centered with more space below */}
-      <div className="max-w-5xl mx-auto mb-6">
-        <div className="flex flex-col md:flex-row items-center justify-center gap-6 md:gap-10">
-          <div className="flex items-center gap-5 md:gap-8 flex-shrink-0">
-            <img 
-              src="/images/apps-arrows.png" 
-              alt="Apps flowing into Neyler" 
-              className="h-32 md:h-48 object-contain"
-            />
-            <img 
-              src="/images/neyler-logo-full.png" 
-              alt="Neyler" 
-              className="h-10 md:h-14 object-contain"
-            />
+      {/* Content - icons, logo, and todo card */}
+      <div className="flex flex-col md:flex-row items-center justify-center gap-6 md:gap-10 mb-10 md:mb-12">
+        <div className="flex items-center gap-5 md:gap-8 flex-shrink-0">
+          <img 
+            src="/images/apps-arrows.png" 
+            alt="Apps flowing into Neyler" 
+            className="h-32 md:h-48 object-contain"
+          />
+          <img 
+            src="/images/neyler-logo-full.png" 
+            alt="Neyler" 
+            className="h-10 md:h-14 object-contain"
+          />
+        </div>
+        
+        <div className="p-5 rounded-3xl bg-gradient-to-br from-[hsl(30,70%,96%)] to-[hsl(25,60%,92%)] w-[300px] md:w-[340px]">
+          <div className="flex items-start justify-between mb-2">
+            <div>
+              <h3 className="font-display text-lg font-semibold text-foreground">To-Do List</h3>
+              <p className="text-sm text-muted-foreground">
+                1 décembre 2025
+              </p>
+            </div>
+            <AppleEmoji emoji="😌" size="xl" />
           </div>
           
-          <div className="p-5 rounded-3xl bg-gradient-to-br from-[hsl(30,70%,96%)] to-[hsl(25,60%,92%)] w-[300px] md:w-[340px]">
-            <div className="flex items-start justify-between mb-2">
-              <div>
-                <h3 className="font-display text-lg font-semibold text-foreground">To-Do List</h3>
-                <p className="text-sm text-muted-foreground">
-                  1 décembre 2025
-                </p>
-              </div>
-              <AppleEmoji emoji="😌" size="xl" />
-            </div>
-            
-            <div className="space-y-2 mt-3">
-              <div className="flex items-center gap-3 p-2.5 rounded-2xl bg-white/80 shadow-sm">
-                <AppleEmoji emoji="💬" size="md" />
-                <span className="text-sm flex-1 text-muted-foreground line-through text-left">
-                  Call mom
-                </span>
-                <button className="w-5 h-5 rounded-full border-2 flex items-center justify-center bg-[hsl(25,60%,70%)] border-[hsl(25,60%,70%)]">
-                  <Check className="w-3 h-3 text-white" />
-                </button>
-              </div>
-
-              <button
-                className="w-full flex items-center justify-center gap-2 p-2.5 rounded-2xl bg-white/50 hover:bg-white/70 transition-colors text-muted-foreground border-2 border-dashed border-muted-foreground/20"
-              >
-                <Plus className="w-4 h-4" />
-                <span className="text-sm">Add task</span>
+          <div className="space-y-2 mt-3">
+            <div className="flex items-center gap-3 p-2.5 rounded-2xl bg-white/80 shadow-sm">
+              <AppleEmoji emoji="💬" size="md" />
+              <span className="text-sm flex-1 text-muted-foreground line-through text-left">
+                Call mom
+              </span>
+              <button className="w-5 h-5 rounded-full border-2 flex items-center justify-center bg-[hsl(25,60%,70%)] border-[hsl(25,60%,70%)]">
+                <Check className="w-3 h-3 text-white" />
               </button>
             </div>
+
+            <button
+              className="w-full flex items-center justify-center gap-2 p-2.5 rounded-2xl bg-white/50 hover:bg-white/70 transition-colors text-muted-foreground border-2 border-dashed border-muted-foreground/20"
+            >
+              <Plus className="w-4 h-4" />
+              <span className="text-sm">Add task</span>
+            </button>
           </div>
         </div>
       </div>
       
-      {/* Description - centered below content with more space above */}
-      <div className="max-w-3xl mx-auto text-center mt-4">
+      {/* Description */}
+      <div className="max-w-3xl text-center">
         <p className="text-muted-foreground text-sm md:text-base leading-relaxed">
           Bring your goals, habits, tasks, and reflections into one simple tracker that stays organized for you. Keep everything clear in one place and move forward without juggling apps or notes.
         </p>
