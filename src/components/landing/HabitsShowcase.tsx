@@ -65,23 +65,28 @@ interface HabitsShowcaseProps {
 
 export function HabitsShowcase({ isOnboarding = false }: HabitsShowcaseProps) {
   // Adjust sizes - LARGER for onboarding to fill screen
-  const titleSize = isOnboarding ? "text-2xl md:text-5xl" : "text-2xl md:text-4xl";
-  const descriptionSize = isOnboarding ? "text-sm md:text-base" : "text-sm md:text-base";
+  const titleSize = isOnboarding ? "text-2xl md:text-4xl" : "text-2xl md:text-4xl";
+  const descriptionSize = isOnboarding ? "text-xs md:text-sm" : "text-sm md:text-base";
 
   return (
-    <section className={`${isOnboarding ? 'py-3' : 'py-4'} px-4 w-full`}>
+    <section className={`${isOnboarding ? 'py-2' : 'py-4'} px-4 w-full ${isOnboarding ? 'flex flex-col' : ''}`}>
       <div className="max-w-6xl mx-auto">
-        <div className="text-center mb-4">
+        <div className="text-center mb-3">
           <h2 className={`font-display ${titleSize} font-semibold mb-2`}>
             Organize Your Daily Routine <span className="gradient-text italic">Effortlessly</span>
           </h2>
-          <p className={`text-muted-foreground ${descriptionSize} max-w-2xl mx-auto`}>
-            Track habits and tasks in a beautiful clean style. See your progress at a glance.
-          </p>
         </div>
 
         {/* Exact Habits Grid from Dashboard */}
-        <GlassCard className="p-2 sm:p-3 lg:p-4 overflow-x-auto">
+        <GlassCard className={`p-2 sm:p-3 lg:p-4 overflow-x-auto ${isOnboarding ? 'relative' : ''}`}>
+          {/* Description inside card for onboarding */}
+          {isOnboarding && (
+            <p className={`text-muted-foreground ${descriptionSize} text-center mb-3 px-2`}>
+              Track habits and tasks in a beautiful clean style. See your progress at a glance.
+            </p>
+          )}
+          {/* Description outside for homepage */}
+          {!isOnboarding && null}
           <table className="w-full table-fixed" style={{ minWidth: '700px' }}>
             <thead>
               <tr>
