@@ -1,5 +1,6 @@
 import { OnboardingCard } from "../OnboardingCard";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { AppleEmoji } from "@/components/AppleEmoji";
 import { Check, ChevronRight } from "lucide-react";
 
@@ -15,6 +16,12 @@ interface SurveyQuestionStepProps {
   selectedOption: string | null;
   onSelectOption: (option: string) => void;
   onNext: () => void;
+  // Optional follow-up input for specific options
+  showInputForOptions?: string[];
+  inputPlaceholder?: string;
+  inputLabel?: string;
+  inputValue?: string;
+  onInputChange?: (value: string) => void;
 }
 
 export function SurveyQuestionStep({
@@ -25,8 +32,14 @@ export function SurveyQuestionStep({
   selectedOption,
   onSelectOption,
   onNext,
+  showInputForOptions = [],
+  inputPlaceholder = "Enter app name(s)",
+  inputLabel = "Which app(s) do you use?",
+  inputValue = "",
+  onInputChange,
 }: SurveyQuestionStepProps) {
   const canProceed = selectedOption !== null;
+  const shouldShowInput = selectedOption && showInputForOptions.includes(selectedOption);
 
   return (
     <OnboardingCard>
@@ -72,6 +85,21 @@ export function SurveyQuestionStep({
           );
         })}
       </div>
+
+      {/* Optional follow-up input */}
+      {shouldShowInput && onInputChange && (
+        <div className="mb-6 animate-fade-in">
+          <label className="block text-sm font-medium text-foreground mb-2 text-center">
+            {inputLabel} <span className="text-muted-foreground font-normal">(optional)</span>
+          </label>
+          <Input
+            placeholder={inputPlaceholder}
+            value={inputValue}
+            onChange={(e) => onInputChange(e.target.value)}
+            className="h-12 bg-white/50 border-border/30 rounded-xl text-center"
+          />
+        </div>
+      )}
 
       <Button
         onClick={onNext}

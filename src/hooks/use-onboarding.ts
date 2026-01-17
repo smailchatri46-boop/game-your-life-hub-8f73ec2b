@@ -36,6 +36,7 @@ export interface OnboardingData {
   commitmentName: string;
   checkedAffirmations: string[];
   uniqueAbout: string;
+  currentApps: string;
   surveyAnswers: {
     survey1: string | null;
     survey2: string | null;
@@ -58,6 +59,7 @@ const INITIAL_DATA: OnboardingData = {
   commitmentName: "",
   checkedAffirmations: [],
   uniqueAbout: "",
+  currentApps: "",
   surveyAnswers: {
     survey1: null,
     survey2: null,
