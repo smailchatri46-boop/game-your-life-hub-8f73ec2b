@@ -40,7 +40,8 @@ const SURVEY_QUESTIONS = {
     options: [
       { label: "TikTok" },
       { label: "Instagram" },
-      { label: "YouTube" },
+      { label: "YouTube Shorts" },
+      { label: "YouTube (Long Videos)" },
       { label: "Snapchat" },
       { label: "Pinterest" },
     ],
@@ -57,8 +58,7 @@ const SURVEY_QUESTIONS = {
   },
   "survey-5": {
     emoji: "💬",
-    title: "Do you sometimes use AI to help you analyze your life, goals, or give you motivation?",
-    description: "Like ChatGPT or similar tools",
+    title: "Do you ever chat with AI for advice or motivation?",
     options: [
       { label: "Yes, regularly" },
       { label: "Sometimes" },
@@ -68,11 +68,20 @@ const SURVEY_QUESTIONS = {
   },
   "survey-6": {
     emoji: "🧠",
-    title: "Would you like an AI that sees all your daily reflections, goals, daily progress, and gives you a personalized experience to achieve your goals faster?",
+    title: "Want an AI that understands your life tracker?",
+    options: [
+      { label: "Yes, that sounds great" },
+      { label: "Maybe, I'd like to see how it works" },
+      { label: "No, not interested" },
+    ],
+  },
+  "survey-7": {
+    emoji: "✨",
+    title: "So it can give you personalized insights and guidance?",
     options: [
       { label: "Yes, this would change my life" },
       { label: "Yes, that sounds very helpful" },
-      { label: "Maybe, I'd like to see how it works" },
+      { label: "Maybe, I'd like to try it" },
     ],
   },
 };
@@ -134,7 +143,14 @@ export function OnboardingFlow() {
             {...SURVEY_QUESTIONS["survey-1"]}
             selectedOption={data.surveyAnswers.survey1}
             onSelectOption={(answer) => setSurveyAnswer("survey1", answer)}
-            onNext={goToNext}
+            onNext={() => {
+              // If user selected "No" (doesn't use any app), skip survey-2
+              if (data.surveyAnswers.survey1 === "No") {
+                goToStep("survey-4");
+              } else {
+                goToNext();
+              }
+            }}
           />
         );
 
@@ -184,6 +200,16 @@ export function OnboardingFlow() {
             {...SURVEY_QUESTIONS["survey-6"]}
             selectedOption={data.surveyAnswers.survey6}
             onSelectOption={(answer) => setSurveyAnswer("survey6", answer)}
+            onNext={goToNext}
+          />
+        );
+
+      case "survey-7":
+        return (
+          <SurveyQuestionStep
+            {...SURVEY_QUESTIONS["survey-7"]}
+            selectedOption={data.surveyAnswers.survey7}
+            onSelectOption={(answer) => setSurveyAnswer("survey7", answer)}
             onNext={goToNext}
           />
         );

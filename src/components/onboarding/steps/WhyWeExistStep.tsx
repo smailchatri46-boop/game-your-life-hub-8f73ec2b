@@ -18,7 +18,8 @@ export function WhyWeExistStep({ onNext }: WhyWeExistStepProps) {
           Neyler got your back
         </h2>
         <p className="text-muted-foreground text-base leading-relaxed">
-          Neyler is an AI-powered habit, task, and goals tracker. Everything in one place with meaningful insights built for you.
+          Neyler keeps everything in one place — your habits, tasks, and goals.
+          And with AI, it helps you spot patterns, stay consistent, and move forward with clarity.
         </p>
       </div>
 
