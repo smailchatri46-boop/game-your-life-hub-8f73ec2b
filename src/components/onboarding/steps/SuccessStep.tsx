@@ -34,16 +34,21 @@ export function SuccessStep({
     };
   }, []);
 
+  // The image URL - we use this inline to ensure instant display
+  const imageUrl = dashboardPreview;
+
   return (
     <div 
       className="fixed inset-0 flex items-center justify-center"
       style={{ overflow: 'hidden', height: '100vh', maxHeight: '100vh' }}
     >
-      {/* Blurred dashboard background - always visible, image is preloaded in LoadingStep */}
-      <div 
-        className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+      {/* Blurred dashboard background - use an actual img element for more reliable rendering */}
+      <img 
+        src={imageUrl}
+        alt=""
+        aria-hidden="true"
+        className="absolute inset-0 w-full h-full object-cover"
         style={{
-          backgroundImage: `url(${dashboardPreview})`,
           filter: 'blur(8px)',
           transform: 'scale(1.1)',
         }}

@@ -56,6 +56,18 @@ export function LoadingStep({ onComplete }: LoadingStepProps) {
 
   return (
     <div className="fixed inset-0 h-screen flex flex-col items-center justify-center p-4 gradient-hero overflow-hidden">
+      {/* Pre-render the dashboard background image hidden - this ensures it's fully painted in the DOM
+          so when SuccessStep mounts, there's no flash/blink */}
+      <div 
+        className="absolute inset-0 bg-cover bg-center bg-no-repeat pointer-events-none"
+        style={{
+          backgroundImage: `url(${dashboardPreview})`,
+          opacity: 0,
+          visibility: 'hidden',
+        }}
+        aria-hidden="true"
+      />
+      
       <div className="w-full max-w-md">
         <OnboardingCard className="text-center">
           <div className="py-8 flex flex-col items-center justify-center min-h-[220px]">
