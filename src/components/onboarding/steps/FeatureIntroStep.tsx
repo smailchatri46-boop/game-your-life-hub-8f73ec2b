@@ -20,6 +20,23 @@ export function FeatureIntroStep({ onComplete }: FeatureIntroStepProps) {
     });
   }, []);
 
+  // Hide scrollbar on mount
+  useEffect(() => {
+    const html = document.documentElement;
+    const body = document.body;
+    
+    const originalHtmlOverflow = html.style.overflow;
+    const originalBodyOverflow = body.style.overflow;
+    
+    html.style.overflow = 'hidden';
+    body.style.overflow = 'hidden';
+    
+    return () => {
+      html.style.overflow = originalHtmlOverflow;
+      body.style.overflow = originalBodyOverflow;
+    };
+  }, []);
+
   useEffect(() => {
     // Fade in
     const fadeInTimer = setTimeout(() => {
@@ -45,19 +62,20 @@ export function FeatureIntroStep({ onComplete }: FeatureIntroStepProps) {
 
   return (
     <div 
-      className="fixed inset-0 w-full h-full gradient-hero"
+      className="gradient-hero"
       style={{ 
         position: 'fixed',
         top: 0,
         left: 0,
-        right: 0,
-        bottom: 0,
         width: '100vw',
         height: '100vh',
+        margin: 0,
+        padding: 0,
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
         overflow: 'hidden',
+        zIndex: 50,
       }}
     >
       <h2 
@@ -65,6 +83,7 @@ export function FeatureIntroStep({ onComplete }: FeatureIntroStepProps) {
         style={{
           opacity,
           transition: 'opacity 0.8s ease-in-out',
+          margin: 0,
         }}
       >
         Here's what you'll find <span className="gradient-text italic">inside</span>
@@ -72,4 +91,3 @@ export function FeatureIntroStep({ onComplete }: FeatureIntroStepProps) {
     </div>
   );
 }
-
