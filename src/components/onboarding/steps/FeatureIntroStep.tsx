@@ -6,6 +6,7 @@ interface FeatureIntroStepProps {
 
 export function FeatureIntroStep({ onComplete }: FeatureIntroStepProps) {
   const [opacity, setOpacity] = useState(0);
+  const [logoLoaded, setLogoLoaded] = useState(false);
 
   // Preload images for the "All-in-one tracker" step
   useEffect(() => {
@@ -18,6 +19,11 @@ export function FeatureIntroStep({ onComplete }: FeatureIntroStepProps) {
       const img = new Image();
       img.src = src;
     });
+    
+    // Preload the logo for this step and mark when ready
+    const logoImg = new Image();
+    logoImg.onload = () => setLogoLoaded(true);
+    logoImg.src = "/images/neyler-logo-full.png";
   }, []);
 
   // Hide scrollbar on mount
@@ -38,6 +44,9 @@ export function FeatureIntroStep({ onComplete }: FeatureIntroStepProps) {
   }, []);
 
   useEffect(() => {
+    // Only start animation once logo is loaded
+    if (!logoLoaded) return;
+    
     // Fade in
     const fadeInTimer = setTimeout(() => {
       setOpacity(1);
@@ -58,7 +67,7 @@ export function FeatureIntroStep({ onComplete }: FeatureIntroStepProps) {
       clearTimeout(fadeOutTimer);
       clearTimeout(completeTimer);
     };
-  }, [onComplete]);
+  }, [onComplete, logoLoaded]);
 
   return (
     <div 
@@ -67,15 +76,24 @@ export function FeatureIntroStep({ onComplete }: FeatureIntroStepProps) {
         zIndex: 50,
       }}
     >
-      <h2 
-        className="font-display text-3xl md:text-5xl font-semibold text-foreground leading-tight text-center px-8 max-w-4xl"
+      <div 
+        className="flex flex-col md:flex-row items-center justify-center gap-3 md:gap-4 px-8 max-w-4xl"
         style={{
           opacity,
           transition: 'opacity 0.8s ease-in-out',
         }}
       >
-        Here is what you can do inside <span className="gradient-text italic">Neyler</span>
-      </h2>
+        <h2 className="font-display text-3xl md:text-5xl font-semibold text-foreground leading-tight text-center">
+          Here is what you can do inside
+        </h2>
+        <img 
+          src="/images/neyler-logo-full.png" 
+          alt="Neyler" 
+          className="h-10 md:h-14 object-contain"
+          width={140}
+          height={56}
+        />
+      </div>
     </div>
   );
 }
