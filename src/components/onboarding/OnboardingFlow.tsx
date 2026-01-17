@@ -9,6 +9,7 @@ import { GoalCreationStep } from "./steps/GoalCreationStep";
 import { CommitmentStep } from "./steps/CommitmentStep";
 import { LoadingStep } from "./steps/LoadingStep";
 import { SuccessStep } from "./steps/SuccessStep";
+import { PaywallStep } from "./steps/PaywallStep";
 import { SurveyQuestionStep } from "./steps/SurveyQuestionStep";
 import { FeatureShowcaseStep } from "./steps/FeatureShowcaseStep";
 import { FeatureIntroStep } from "./steps/FeatureIntroStep";
@@ -111,9 +112,8 @@ export function OnboardingFlow() {
     goToStep("why-we-exist");
   };
 
-  const handleGoToDashboard = () => {
-    completeOnboarding();
-    navigate("/dashboard");
+  const handleGoToPaywall = () => {
+    goToStep("paywall");
   };
 
   const handleAddMoreHabits = () => {
@@ -344,9 +344,16 @@ export function OnboardingFlow() {
         return (
           <SuccessStep
             commitmentName={data.commitmentName}
-            onGoToDashboard={handleGoToDashboard}
+            onGoToDashboard={handleGoToPaywall}
             onAddMoreHabits={handleAddMoreHabits}
             onStartJournaling={handleStartJournaling}
+          />
+        );
+
+      case "paywall":
+        return (
+          <PaywallStep
+            commitmentName={data.commitmentName}
           />
         );
 
@@ -356,8 +363,8 @@ export function OnboardingFlow() {
   };
 
   const isFeatureShowcase = currentStep.startsWith("feature-");
-  const isFullScreenStep = isFeatureShowcase || currentStep === "success" || currentStep === "loading";
-  const showProgress = currentStep !== "loading" && currentStep !== "success" && !isFeatureShowcase;
+  const isFullScreenStep = isFeatureShowcase || currentStep === "success" || currentStep === "loading" || currentStep === "paywall";
+  const showProgress = currentStep !== "loading" && currentStep !== "success" && currentStep !== "paywall" && !isFeatureShowcase;
 
   // Feature showcase steps and success/loading render their own full-screen layout
   if (isFullScreenStep) {
