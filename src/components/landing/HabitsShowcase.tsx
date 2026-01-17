@@ -61,24 +61,19 @@ const days = Array.from({ length: 14 }, (_, i) => i + 1);
 
 export function HabitsShowcase() {
   return (
-    <section className="py-8 px-4">
+    <section className="py-4 px-4">
       <div className="max-w-6xl mx-auto">
-        <div className="text-center mb-10">
-          <ScrollReveal animation="fade-up">
-            <h2 className="font-display text-3xl md:text-4xl font-semibold mb-5">
-              Organize Your Daily Routine <span className="gradient-text italic">Effortlessly</span>
-            </h2>
-          </ScrollReveal>
-          <ScrollReveal animation="fade-up" delay={100}>
-            <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-              Track habits and tasks in a beautiful clean style. See your progress at a glance.
-            </p>
-          </ScrollReveal>
+        <div className="text-center mb-6">
+          <h2 className="font-display text-2xl md:text-4xl font-semibold mb-3">
+            Organize Your Daily Routine <span className="gradient-text italic">Effortlessly</span>
+          </h2>
+          <p className="text-muted-foreground text-sm md:text-base max-w-2xl mx-auto">
+            Track habits and tasks in a beautiful clean style. See your progress at a glance.
+          </p>
         </div>
 
         {/* Exact Habits Grid from Dashboard */}
-        <ScrollReveal animation="slide-up" delay={200}>
-          <GlassCard className="p-2 sm:p-3 lg:p-4 overflow-x-auto">
+        <GlassCard className="p-2 sm:p-3 lg:p-4 overflow-x-auto">
           <table className="w-full table-fixed" style={{ minWidth: '700px' }}>
             <thead>
               <tr>
@@ -154,8 +149,7 @@ export function HabitsShowcase() {
               ))}
             </tbody>
           </table>
-          </GlassCard>
-        </ScrollReveal>
+        </GlassCard>
       </div>
     </section>
   );
