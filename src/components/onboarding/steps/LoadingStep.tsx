@@ -22,13 +22,23 @@ export function LoadingStep({ onComplete }: LoadingStepProps) {
   const [fadeIn, setFadeIn] = useState(true);
   const [imagePreloaded, setImagePreloaded] = useState(false);
 
-  // Preload the dashboard image during loading step - ensure it's fully cached
+  // Preload the dashboard image during loading step with decode() for real caching
   useEffect(() => {
-    const img = new Image();
-    img.onload = () => {
-      setImagePreloaded(true);
+    let cancelled = false;
+
+    const preload = async () => {
+      const img = new Image();
+      img.src = dashboardPreview;
+
+      try {
+        if ("decode" in img) await img.decode();
+      } catch {}
+
+      if (!cancelled) setImagePreloaded(true);
     };
-    img.src = dashboardPreview;
+
+    preload();
+    return () => { cancelled = true; };
   }, []);
 
   useEffect(() => {
