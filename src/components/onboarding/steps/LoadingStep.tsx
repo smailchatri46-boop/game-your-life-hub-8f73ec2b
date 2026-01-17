@@ -24,7 +24,7 @@ export function LoadingStep({ onComplete }: LoadingStepProps) {
     // Cycle through emojis (no animation, just swap)
     const emojiInterval = setInterval(() => {
       setCurrentEmoji(prev => (prev + 1) % LOADING_EMOJIS.length);
-    }, 600);
+    }, 1200);
 
     // Cycle through messages with fade transition
     const messageInterval = setInterval(() => {
@@ -32,13 +32,13 @@ export function LoadingStep({ onComplete }: LoadingStepProps) {
       setTimeout(() => {
         setCurrentMessage(prev => (prev + 1) % LOADING_STATES.length);
         setFadeIn(true);
-      }, 150);
-    }, 900);
+      }, 200);
+    }, 1800);
 
-    // Complete after 4 seconds
+    // Complete after 8 seconds
     const completeTimeout = setTimeout(() => {
       onComplete();
-    }, 4000);
+    }, 8000);
 
     return () => {
       clearInterval(emojiInterval);
