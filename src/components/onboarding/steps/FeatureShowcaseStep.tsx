@@ -37,13 +37,13 @@ function AllInOneShowcase() {
       {/* Content - icons, logo, and todo card */}
       <ScrollReveal animation="zoom-in" delay={100}>
         <div className="flex flex-col md:flex-row items-center justify-center gap-6 md:gap-10 mb-10 md:mb-12">
-          <div className="flex items-center gap-5 md:gap-8 flex-shrink-0">
+          <div className="flex items-center gap-2 md:gap-4 flex-shrink-0">
             <img 
               src="/images/apps-arrows.png" 
               alt="Apps flowing into Neyler" 
-              className="h-32 md:h-48 object-contain"
+              className="h-48 md:h-64 object-contain"
               width={200}
-              height={192}
+              height={256}
               loading="eager"
               decoding="async"
               fetchPriority="high"
@@ -51,9 +51,9 @@ function AllInOneShowcase() {
             <img 
               src="/images/neyler-logo-full.png" 
               alt="Neyler" 
-              className="h-10 md:h-14 object-contain"
-              width={120}
-              height={56}
+              className="h-12 md:h-16 object-contain"
+              width={150}
+              height={64}
               loading="eager"
               decoding="async"
             />
