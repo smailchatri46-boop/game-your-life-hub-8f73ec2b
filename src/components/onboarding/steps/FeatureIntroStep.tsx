@@ -5,7 +5,7 @@ interface FeatureIntroStepProps {
 }
 
 export function FeatureIntroStep({ onComplete }: FeatureIntroStepProps) {
-  const [phase, setPhase] = useState<"enter" | "visible" | "exit">("enter");
+  const [opacity, setOpacity] = useState(0);
 
   // Preload images for the "All-in-one tracker" step
   useEffect(() => {
@@ -21,66 +21,54 @@ export function FeatureIntroStep({ onComplete }: FeatureIntroStepProps) {
   }, []);
 
   useEffect(() => {
-    // Phase 1: Enter animation (fade in the text) - start immediately
-    const enterTimer = setTimeout(() => {
-      setPhase("visible");
+    // Fade in
+    const fadeInTimer = setTimeout(() => {
+      setOpacity(1);
     }, 50);
 
-    // Phase 2: Keep visible for a moment
-    const visibleTimer = setTimeout(() => {
-      setPhase("exit");
+    // Start fade out
+    const fadeOutTimer = setTimeout(() => {
+      setOpacity(0);
     }, 2200);
 
-    // Phase 3: Exit and move to next step - longer exit for smoother transition
-    const exitTimer = setTimeout(() => {
+    // Move to next step after fade out completes
+    const completeTimer = setTimeout(() => {
       onComplete();
     }, 3000);
 
     return () => {
-      clearTimeout(enterTimer);
-      clearTimeout(visibleTimer);
-      clearTimeout(exitTimer);
+      clearTimeout(fadeInTimer);
+      clearTimeout(fadeOutTimer);
+      clearTimeout(completeTimer);
     };
   }, [onComplete]);
 
   return (
     <div 
-      className="fixed inset-0 w-full h-full gradient-hero flex items-center justify-center"
+      className="fixed inset-0 w-full h-full gradient-hero"
       style={{ 
-        height: '100vh', 
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
         width: '100vw',
-        overflow: 'hidden',
+        height: '100vh',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
+        overflow: 'hidden',
       }}
     >
-      {/* Perfectly centered animated text */}
-      <div 
-        className="absolute inset-0 flex items-center justify-center"
+      <h2 
+        className="font-display text-3xl md:text-5xl font-semibold text-foreground leading-tight text-center px-8"
         style={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
+          opacity,
+          transition: 'opacity 0.8s ease-in-out',
         }}
       >
-        <div 
-          className={`text-center px-8 max-w-4xl ${
-            phase === "enter" 
-              ? "opacity-0 translate-y-6" 
-              : phase === "visible"
-              ? "opacity-100 translate-y-0"
-              : "opacity-0 -translate-y-6"
-          }`}
-          style={{
-            transition: 'opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1), transform 0.8s cubic-bezier(0.4, 0, 0.2, 1)',
-          }}
-        >
-          <h2 className="font-display text-3xl md:text-5xl font-semibold text-foreground leading-tight">
-            Here's what you'll find <span className="gradient-text italic">inside</span>
-          </h2>
-        </div>
-      </div>
+        Here's what you'll find <span className="gradient-text italic">inside</span>
+      </h2>
     </div>
   );
 }
