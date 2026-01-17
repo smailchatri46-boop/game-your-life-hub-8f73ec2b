@@ -51,11 +51,11 @@ const CONTENT = {
     title: "What's the thing you're struggling with the most to track?",
     subtitle: "Choose the one thing you're struggling with the most",
     options: [
-      { label: "Tracking my progress towards my yearly goals", emoji: "🎯" },
-      { label: "Tracking my mood", emoji: "😊" },
-      { label: "Motivation", emoji: "🔥" },
-      { label: "Organizing", emoji: "📋" },
-      { label: "Having everything in one place", emoji: "📦" },
+      { label: "My progress", emoji: "🎯" },
+      { label: "My mood", emoji: "😊" },
+      { label: "My motivation", emoji: "🔥" },
+      { label: "My habits", emoji: "📋" },
+      { label: "My tasks", emoji: "✅" },
     ],
   },
 };
