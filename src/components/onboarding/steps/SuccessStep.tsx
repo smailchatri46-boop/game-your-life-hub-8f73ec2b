@@ -80,7 +80,7 @@ export function SuccessStep({
         className="absolute inset-0"
         style={{
           opacity: bgLoaded ? 1 : 0,
-          transition: bgLoaded ? 'opacity 600ms ease-out' : 'none',
+          transition: bgLoaded ? 'opacity 1800ms ease-out' : 'none',
         }}
       >
         {/* Blurred dashboard background */}
