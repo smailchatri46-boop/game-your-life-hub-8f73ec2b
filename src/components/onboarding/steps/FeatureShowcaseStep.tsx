@@ -24,15 +24,15 @@ interface FeatureShowcaseStepProps {
 function AllInOneShowcase() {
   return (
     <section className="py-4 px-4 overflow-hidden w-full">
-      {/* Title - centered at top */}
-      <div className="max-w-6xl mx-auto text-center mb-4">
+      {/* Title - centered at top with more space below */}
+      <div className="max-w-6xl mx-auto text-center mb-6">
         <h2 className="font-display text-2xl md:text-5xl font-semibold">
           Your all in <span className="italic gradient-text">one tracker</span>
         </h2>
       </div>
       
-      {/* Content - centered */}
-      <div className="max-w-5xl mx-auto mb-4">
+      {/* Content - centered with more space below */}
+      <div className="max-w-5xl mx-auto mb-6">
         <div className="flex flex-col md:flex-row items-center justify-center gap-6 md:gap-10">
           <div className="flex items-center gap-5 md:gap-8 flex-shrink-0">
             <img 
@@ -80,8 +80,8 @@ function AllInOneShowcase() {
         </div>
       </div>
       
-      {/* Description - centered below content */}
-      <div className="max-w-3xl mx-auto text-center mt-2">
+      {/* Description - centered below content with more space above */}
+      <div className="max-w-3xl mx-auto text-center mt-4">
         <p className="text-muted-foreground text-sm md:text-base leading-relaxed">
           Bring your goals, habits, tasks, and reflections into one simple tracker that stays organized for you. Keep everything clear in one place and move forward without juggling apps or notes.
         </p>
