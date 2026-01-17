@@ -10,6 +10,7 @@ import { LoadingStep } from "./steps/LoadingStep";
 import { SuccessStep } from "./steps/SuccessStep";
 import { SurveyQuestionStep } from "./steps/SurveyQuestionStep";
 import { FeatureShowcaseStep } from "./steps/FeatureShowcaseStep";
+import { FeatureIntroStep } from "./steps/FeatureIntroStep";
 
 const SURVEY_QUESTIONS = {
   "survey-1": {
@@ -247,6 +248,9 @@ export function OnboardingFlow() {
             onNext={goToNext}
           />
         );
+
+      case "feature-intro":
+        return <FeatureIntroStep onComplete={goToNext} />;
 
       case "feature-goals":
         return (
