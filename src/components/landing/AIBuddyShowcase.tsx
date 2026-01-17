@@ -50,23 +50,23 @@ export function AIBuddyShowcase({ isOnboarding = false }: AIBuddyShowcaseProps) 
   const duplicatedQuestions = [...suggestedQuestions, ...suggestedQuestions];
 
   // Adjust sizes for onboarding context - LARGER for onboarding to fill screen
-  const chatboxHeight = isOnboarding ? "min(420px, 58vh)" : "min(380px, 55vh)";
+  const chatboxHeight = isOnboarding ? "min(440px, 60vh)" : "min(380px, 55vh)";
   const titleSize = isOnboarding ? "text-xl md:text-4xl" : "text-2xl md:text-4xl";
   const descriptionSize = isOnboarding ? "text-xs md:text-sm" : "text-sm md:text-base";
 
   // Different title for onboarding vs homepage
   const titleContent = isOnboarding ? (
-    <>Analyze Your Progress With <span className="gradient-text italic">AI Buddy</span></>
+    <>Analyze Your Progress With <span className="gradient-text italic">the AI Buddy</span></>
   ) : (
     <>Ask the <span className="gradient-text italic">AI Buddy</span> <span className="font-sans not-italic">&</span> Get Deep Insights</>
   );
 
   return (
-    <section className={isOnboarding ? "py-2 px-4 w-full flex flex-col" : "py-2 px-4"}>
+    <section className={isOnboarding ? "py-2 px-4 w-full h-full flex flex-col" : "py-2 px-4"}>
       {/* Title - outside chat box container, full section width */}
       <ScrollReveal animation="fade-up">
         <h2 
-          className={`font-display ${titleSize} font-semibold mb-3 text-center max-w-4xl mx-auto`}
+          className={`font-display ${titleSize} font-semibold ${isOnboarding ? 'mb-5' : 'mb-3'} text-center max-w-4xl mx-auto`}
           style={{ textWrap: 'balance' } as React.CSSProperties}
         >
           {titleContent}
@@ -74,8 +74,8 @@ export function AIBuddyShowcase({ isOnboarding = false }: AIBuddyShowcaseProps) 
       </ScrollReveal>
 
       {/* Chat box container */}
-      <ScrollReveal animation="zoom-in" delay={100}>
-        <div className="max-w-3xl mx-auto mb-2">
+      <ScrollReveal animation="zoom-in" delay={100} className={isOnboarding ? "flex-1 flex flex-col justify-center" : ""}>
+        <div className={`max-w-3xl mx-auto ${isOnboarding ? 'mb-0' : 'mb-2'}`}>
           {/* AI Buddy Chat Card - matching dashboard style */}
           <div className="w-full">
             <div 
@@ -151,9 +151,9 @@ export function AIBuddyShowcase({ isOnboarding = false }: AIBuddyShowcaseProps) 
         </div>
       </ScrollReveal>
 
-      {/* Description - outside chat box container, pushed to bottom in onboarding */}
+      {/* Description - outside chat box container, at bottom for onboarding */}
       <ScrollReveal animation="fade-up" delay={200}>
-        <p className={`text-muted-foreground ${descriptionSize} leading-relaxed text-center max-w-4xl mx-auto px-4 ${isOnboarding ? 'mt-auto pt-4' : ''}`}>
+        <p className={`text-muted-foreground ${descriptionSize} leading-relaxed text-center max-w-4xl mx-auto px-4 ${isOnboarding ? 'flex-shrink-0 pb-2' : ''}`}>
           AI Buddy sees all your goals, tasks, habits, and daily reflections, analyzes them, and helps you see patterns.
         </p>
       </ScrollReveal>

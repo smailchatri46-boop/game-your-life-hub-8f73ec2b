@@ -23,9 +23,9 @@ interface FeatureShowcaseStepProps {
 
 function AllInOneShowcase() {
   return (
-    <section className="px-4 w-full flex flex-col items-center">
-      <div className="max-w-5xl mx-auto text-center">
-        <h2 className="font-display text-3xl md:text-5xl font-semibold mb-4">
+    <section className="px-4 w-full h-full flex flex-col">
+      <div className="max-w-5xl mx-auto text-center flex-1 flex flex-col justify-center">
+        <h2 className="font-display text-3xl md:text-5xl font-semibold mb-8">
           Your all in <span className="italic gradient-text">one tracker</span>
         </h2>
         
@@ -76,8 +76,8 @@ function AllInOneShowcase() {
         </div>
       </div>
       
-      {/* Description pushed to bottom via flex layout in parent */}
-      <p className="text-muted-foreground text-base max-w-2xl mx-auto text-center mt-auto pt-6">
+      {/* Description at consistent bottom position */}
+      <p className="text-muted-foreground text-base max-w-2xl mx-auto text-center flex-shrink-0 pb-2">
         Replace scattered spreadsheets, multiple AI apps, and messy notes with one beautiful solution.
       </p>
     </section>

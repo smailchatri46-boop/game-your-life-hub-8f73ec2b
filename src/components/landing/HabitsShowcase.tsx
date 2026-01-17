@@ -69,24 +69,22 @@ export function HabitsShowcase({ isOnboarding = false }: HabitsShowcaseProps) {
   const descriptionSize = isOnboarding ? "text-xs md:text-sm" : "text-sm md:text-base";
 
   return (
-    <section className={`${isOnboarding ? 'py-2' : 'py-4'} px-4 w-full ${isOnboarding ? 'flex flex-col' : ''}`}>
-      <div className="max-w-6xl mx-auto">
+    <section className={`${isOnboarding ? 'py-2 h-full' : 'py-4'} px-4 w-full ${isOnboarding ? 'flex flex-col' : ''}`}>
+      <div className={`max-w-6xl mx-auto ${isOnboarding ? 'flex-1 flex flex-col justify-center' : ''}`}>
         <div className="text-center mb-3">
           <h2 className={`font-display ${titleSize} font-semibold mb-2`}>
             Organize Your Daily Routine <span className="gradient-text italic">Effortlessly</span>
           </h2>
-        </div>
-
-        {/* Exact Habits Grid from Dashboard */}
-        <GlassCard className={`p-2 sm:p-3 lg:p-4 overflow-x-auto ${isOnboarding ? 'relative' : ''}`}>
-          {/* Description inside card for onboarding */}
-          {isOnboarding && (
-            <p className={`text-muted-foreground ${descriptionSize} text-center mb-3 px-2`}>
+          {/* Description for homepage only - inside header */}
+          {!isOnboarding && (
+            <p className={`text-muted-foreground ${descriptionSize} max-w-2xl mx-auto`}>
               Track habits and tasks in a beautiful clean style. See your progress at a glance.
             </p>
           )}
-          {/* Description outside for homepage */}
-          {!isOnboarding && null}
+        </div>
+
+        {/* Exact Habits Grid from Dashboard */}
+        <GlassCard className="p-2 sm:p-3 lg:p-4 overflow-x-auto">
           <table className="w-full table-fixed" style={{ minWidth: '700px' }}>
             <thead>
               <tr>
@@ -164,6 +162,13 @@ export function HabitsShowcase({ isOnboarding = false }: HabitsShowcaseProps) {
           </table>
         </GlassCard>
       </div>
+      
+      {/* Description at bottom for onboarding - outside card */}
+      {isOnboarding && (
+        <p className={`text-muted-foreground ${descriptionSize} text-center max-w-2xl mx-auto flex-shrink-0 pb-2`}>
+          Track habits and tasks in a beautiful clean style. See your progress at a glance.
+        </p>
+      )}
     </section>
   );
 }
