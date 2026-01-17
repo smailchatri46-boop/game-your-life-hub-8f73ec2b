@@ -42,11 +42,20 @@ function AllInOneShowcase() {
               src="/images/apps-arrows.png" 
               alt="Apps flowing into Neyler" 
               className="h-32 md:h-48 object-contain"
+              width={200}
+              height={192}
+              loading="eager"
+              decoding="async"
+              fetchPriority="high"
             />
             <img 
               src="/images/neyler-logo-full.png" 
               alt="Neyler" 
               className="h-10 md:h-14 object-contain"
+              width={120}
+              height={56}
+              loading="eager"
+              decoding="async"
             />
           </div>
           
