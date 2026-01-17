@@ -56,7 +56,7 @@ export function AIBuddyShowcase({ isOnboarding = false }: AIBuddyShowcaseProps) 
 
   // Different title for onboarding vs homepage
   const titleContent = isOnboarding ? (
-    <>Analyze Your Progress With <span className="gradient-text italic">the AI Buddy</span></>
+    <>Analyze Your Progress With the <span className="gradient-text italic">AI Buddy</span></>
   ) : (
     <>Ask the <span className="gradient-text italic">AI Buddy</span> <span className="font-sans not-italic">&</span> Get Deep Insights</>
   );

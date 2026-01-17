@@ -2,7 +2,6 @@ import { OnboardingCard } from "../OnboardingCard";
 import { Button } from "@/components/ui/button";
 import { AppleEmoji } from "@/components/AppleEmoji";
 import { useEffect } from "react";
-import dashboardPreview from "@/assets/dashboard-preview-optimized.jpg";
 
 interface SuccessStepProps {
   commitmentName: string;
@@ -37,21 +36,7 @@ export function SuccessStep({
       className="fixed inset-0 flex items-center justify-center gradient-hero"
       style={{ overflow: 'hidden', height: '100vh', maxHeight: '100vh' }}
     >
-      {/* Background image layer - instantly visible (preloaded in OnboardingFlow) */}
-      <div className="absolute inset-0">
-        <img 
-          src={dashboardPreview}
-          alt=""
-          aria-hidden="true"
-          loading="eager"
-          decoding="async"
-          className="absolute inset-0 w-full h-full object-cover"
-        />
-        {/* Light overlay for readability */}
-        <div className="absolute inset-0 bg-white/50" />
-      </div>
-      
-      {/* Card content - instantly visible */}
+      {/* Card content */}
       <div className="relative z-10 w-full max-w-md px-4">
         <OnboardingCard className="text-center">
           <div className="mb-6">
