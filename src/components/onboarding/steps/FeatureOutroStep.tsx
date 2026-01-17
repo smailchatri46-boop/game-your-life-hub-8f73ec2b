@@ -49,23 +49,16 @@ export function FeatureOutroStep({ onComplete }: FeatureOutroStepProps) {
 
   return (
     <div 
-      className="fixed inset-0 w-full gradient-hero flex items-center justify-center"
+      className="fixed top-0 left-0 right-0 bottom-0 w-full h-full gradient-hero grid place-items-center overflow-hidden"
       style={{ 
-        minHeight: '100dvh',
-        height: '100dvh',
-        margin: 0,
-        padding: 0,
-        overflow: 'hidden',
         zIndex: 50,
       }}
     >
       <h2 
-        className="font-display text-3xl md:text-5xl font-semibold text-foreground leading-tight text-center px-8 max-w-4xl mx-auto"
+        className="font-display text-3xl md:text-5xl font-semibold text-foreground leading-tight text-center px-8 max-w-4xl"
         style={{
           opacity,
           transition: 'opacity 0.8s ease-in-out',
-          margin: 0,
-          padding: 0,
         }}
       >
         And much more to help you <span className="gradient-text italic">succeed</span>.
