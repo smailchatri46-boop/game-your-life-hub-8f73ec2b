@@ -17,14 +17,28 @@ export function SuccessStep({
   onAddMoreHabits,
   onStartJournaling,
 }: SuccessStepProps) {
-  const [imageLoaded, setImageLoaded] = useState(false);
-
-  // Preload the image
-  useEffect(() => {
+  // Check if image is already cached (from LoadingStep preload)
+  const checkImageCached = () => {
     const img = new Image();
     img.src = dashboardPreview;
-    img.onload = () => setImageLoaded(true);
-  }, []);
+    return img.complete && img.naturalHeight !== 0;
+  };
+
+  // Start with true if already cached, otherwise false
+  const [imageLoaded, setImageLoaded] = useState(() => checkImageCached());
+
+  // Only load if not already cached
+  useEffect(() => {
+    if (imageLoaded) return; // Already loaded
+    
+    const img = new Image();
+    img.src = dashboardPreview;
+    if (img.complete) {
+      setImageLoaded(true);
+    } else {
+      img.onload = () => setImageLoaded(true);
+    }
+  }, [imageLoaded]);
 
   // Hide scrollbar on mount
   useEffect(() => {
