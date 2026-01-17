@@ -46,11 +46,11 @@ export function AIBuddyShowcase() {
   const duplicatedQuestions = [...suggestedQuestions, ...suggestedQuestions];
 
   return (
-    <section className="py-4 px-4">
+    <section className="py-2 px-4">
       {/* Title - outside chat box container, full section width */}
       <ScrollReveal animation="fade-up">
         <h2 
-          className="font-display text-3xl md:text-5xl font-semibold mb-6 text-center max-w-4xl mx-auto"
+          className="font-display text-2xl md:text-4xl font-semibold mb-4 text-center max-w-4xl mx-auto"
           style={{ textWrap: 'balance' } as React.CSSProperties}
         >
           Ask the <span className="gradient-text italic">AI Buddy</span> <span className="font-sans not-italic">&</span> Get Deep Insights
@@ -59,40 +59,39 @@ export function AIBuddyShowcase() {
 
       {/* Chat box container */}
       <ScrollReveal animation="zoom-in" delay={100}>
-        <div className="max-w-3xl mx-auto mb-3">
+        <div className="max-w-3xl mx-auto mb-2">
           {/* AI Buddy Chat Card - matching dashboard style */}
           <div className="w-full">
             <div 
-              className="w-full bg-card/40 backdrop-blur-xl rounded-3xl shadow-soft overflow-hidden flex flex-col relative border border-border/10" 
-              style={{ height: "min(380px, 50vh)", maxWidth: "100%" }}
+              className="w-full bg-card/40 backdrop-blur-xl rounded-3xl shadow-soft flex flex-col relative border border-border/10" 
+              style={{ height: "min(340px, 42vh)", maxWidth: "100%", overflow: 'hidden' }}
             >
               {/* Messages Area - Welcome state with GlowOrb */}
-              <div className="flex-1 overflow-y-auto px-4 md:px-6 py-4">
+              <div className="flex-1 px-4 md:px-6 py-3" style={{ overflow: 'hidden' }}>
                 <div className="h-full flex flex-col items-center justify-center text-center px-4">
                   {/* Animated Glow Orb - perfectly centered */}
-                  <div className="relative flex items-center justify-center mb-3">
-                    <div className="relative w-20 h-20 md:w-24 md:h-24 rounded-full overflow-hidden flex-shrink-0">
+                  <div className="relative flex items-center justify-center mb-2">
+                    <div className="relative w-16 h-16 md:w-20 md:h-20 rounded-full overflow-hidden flex-shrink-0">
                       <GlowOrb />
                     </div>
                   </div>
                   
-                  <h2 className="font-display text-lg font-medium text-foreground mb-2">
+                  <h2 className="font-display text-base font-medium text-foreground mb-1">
                     Start a conversation
                   </h2>
-                  <p className="text-muted-foreground text-sm max-w-sm">
+                  <p className="text-muted-foreground text-xs max-w-sm">
                     I'm your wellness buddy <AppleEmoji emoji="🙂" size="sm" className="inline align-middle mx-0.5" /> I turn your habits into insights to help you reach your goals.
                   </p>
                 </div>
               </div>
 
               {/* Suggested Questions Carousel - with transparency mask fade */}
-              <div className="px-0 pb-2">
+              <div className="px-0 pb-1">
                 <div 
                   ref={scrollRef}
-                  className="flex gap-3 overflow-x-auto scrollbar-hide px-4"
+                  className="flex gap-2 px-4"
                   style={{ 
-                    scrollbarWidth: 'none', 
-                    msOverflowStyle: 'none',
+                    overflow: 'hidden',
                     maskImage: 'linear-gradient(to right, transparent 0%, black 12%, black 88%, transparent 100%)',
                     WebkitMaskImage: 'linear-gradient(to right, transparent 0%, black 12%, black 88%, transparent 100%)',
                     maskRepeat: 'no-repeat',
@@ -102,7 +101,7 @@ export function AIBuddyShowcase() {
                   {duplicatedQuestions.map((q, index) => (
                     <button
                       key={index}
-                      className="flex-shrink-0 flex items-center gap-2 px-3 py-2 rounded-full bg-secondary/60 hover:bg-secondary/80 transition-colors text-xs text-foreground whitespace-nowrap"
+                      className="flex-shrink-0 flex items-center gap-1.5 px-2.5 py-1.5 rounded-full bg-secondary/60 hover:bg-secondary/80 transition-colors text-xs text-foreground whitespace-nowrap"
                     >
                       <span>{q.text}</span>
                       <AppleEmoji emoji={q.emoji} size="sm" />
@@ -112,22 +111,22 @@ export function AIBuddyShowcase() {
               </div>
 
               {/* Input Area - matching dashboard style */}
-              <div className="p-4 pt-2">
+              <div className="p-3 pt-1">
                 <div 
-                  className="flex items-center gap-3 rounded-full px-5 py-3 transition-all border border-orange-100/60" 
+                  className="flex items-center gap-2 rounded-full px-4 py-2 transition-all border border-orange-100/60" 
                   style={{ background: 'hsl(35 30% 97%)' }}
                 >
                   <input
                     type="text"
                     placeholder="Message AI Buddy..."
-                    className="flex-1 bg-transparent border-0 focus:outline-none text-sm text-foreground placeholder:text-muted-foreground"
+                    className="flex-1 bg-transparent border-0 focus:outline-none text-xs text-foreground placeholder:text-muted-foreground"
                     disabled
                   />
                   <button
-                    className="w-10 h-10 min-w-[2.5rem] min-h-[2.5rem] rounded-full text-primary-foreground flex-shrink-0 shadow-[0_2px_8px_hsl(var(--primary)/0.3)] flex items-center justify-center p-0"
+                    className="w-8 h-8 min-w-[2rem] min-h-[2rem] rounded-full text-primary-foreground flex-shrink-0 shadow-[0_2px_8px_hsl(var(--primary)/0.3)] flex items-center justify-center p-0"
                     style={{ background: 'linear-gradient(135deg, hsl(38 100% 70%) 0%, hsl(24 95% 53%) 100%)' }}
                   >
-                    <ArrowUp className="w-5 h-5 stroke-[2.5]" />
+                    <ArrowUp className="w-4 h-4 stroke-[2.5]" />
                   </button>
                 </div>
               </div>
@@ -138,7 +137,7 @@ export function AIBuddyShowcase() {
 
       {/* Description - outside chat box container, wide like Goals section */}
       <ScrollReveal animation="fade-up" delay={200}>
-        <p className="text-muted-foreground text-sm md:text-base leading-relaxed text-center max-w-4xl mx-auto px-4">
+        <p className="text-muted-foreground text-xs md:text-sm leading-relaxed text-center max-w-4xl mx-auto px-4">
           AI Buddy sees all your goals, tasks, habits, and daily reflections, analyzes them, and helps you see patterns.
         </p>
       </ScrollReveal>

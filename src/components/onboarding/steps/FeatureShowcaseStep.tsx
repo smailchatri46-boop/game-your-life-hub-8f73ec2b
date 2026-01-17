@@ -96,9 +96,9 @@ export function FeatureShowcaseStep({ variant, onNext, currentIndex, totalFeatur
   };
 
   return (
-    <div className="h-screen flex flex-col gradient-hero overflow-hidden fixed inset-0">
+    <div className="h-screen flex flex-col gradient-hero fixed inset-0" style={{ overflow: 'hidden' }}>
       {/* Progress dots at top with white background pill */}
-      <div className="flex justify-center pt-6 pb-4">
+      <div className="flex justify-center pt-6 pb-4 flex-shrink-0">
         <div className="flex gap-2 px-4 py-2 rounded-full bg-white/80 backdrop-blur-sm shadow-sm">
           {Array.from({ length: totalFeatures }).map((_, i) => (
             <div
@@ -114,7 +114,7 @@ export function FeatureShowcaseStep({ variant, onNext, currentIndex, totalFeatur
       </div>
 
       {/* Main content - centered, no scroll */}
-      <div className="flex-1 flex items-center justify-center overflow-hidden animate-in fade-in slide-in-from-right-4 duration-500">
+      <div className="flex-1 flex items-center justify-center animate-in fade-in slide-in-from-right-4 duration-500 min-h-0" style={{ overflow: 'hidden' }}>
         {renderContent()}
       </div>
 
