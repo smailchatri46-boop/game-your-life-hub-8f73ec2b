@@ -347,10 +347,11 @@ export function OnboardingFlow() {
   };
 
   const isFeatureShowcase = currentStep.startsWith("feature-");
+  const isFullScreenStep = isFeatureShowcase || currentStep === "success" || currentStep === "loading";
   const showProgress = currentStep !== "loading" && currentStep !== "success" && !isFeatureShowcase;
 
-  // Feature showcase steps render their own full-screen layout
-  if (isFeatureShowcase) {
+  // Feature showcase steps and success/loading render their own full-screen layout
+  if (isFullScreenStep) {
     return renderStep();
   }
 
