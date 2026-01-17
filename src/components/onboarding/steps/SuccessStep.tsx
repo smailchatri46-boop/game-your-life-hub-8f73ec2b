@@ -14,11 +14,11 @@ interface SuccessStepProps {
 export function SuccessStep({
   commitmentName,
   onGoToDashboard,
-  onAddMoreHabits,
-  onStartJournaling,
 }: SuccessStepProps) {
+  const [bgLoaded, setBgLoaded] = useState(false);
   const [showContent, setShowContent] = useState(false);
   const imgRef = useRef<HTMLImageElement>(null);
+  const loadStartTime = useRef(Date.now());
 
   // Hide scrollbar on mount
   useEffect(() => {
@@ -37,40 +37,51 @@ export function SuccessStep({
     };
   }, []);
 
-  // Handle image load and trigger smooth fade-in of EVERYTHING together
+  // Handle background image load separately
   useEffect(() => {
-    const img = imgRef.current;
-    if (!img) return;
-
-    const handleImageReady = () => {
-      // Use double RAF to ensure browser has painted the initial state
-      requestAnimationFrame(() => {
-        requestAnimationFrame(() => {
-          setShowContent(true);
-        });
-      });
+    const img = new Image();
+    
+    const handleLoad = () => {
+      // If image loaded very quickly (< 50ms), it was cached - show faster
+      const loadTime = Date.now() - loadStartTime.current;
+      const delay = loadTime < 50 ? 0 : 50;
+      
+      setTimeout(() => {
+        setBgLoaded(true);
+      }, delay);
     };
-
-    // Check if image is already loaded (from preload in LoadingStep)
-    if (img.complete && img.naturalHeight !== 0) {
-      handleImageReady();
-    } else {
-      img.onload = handleImageReady;
+    
+    img.onload = handleLoad;
+    img.src = dashboardPreview;
+    
+    // If already cached and complete
+    if (img.complete) {
+      handleLoad();
     }
   }, []);
+
+  // Show content slightly after bg starts fading (staggered entrance)
+  useEffect(() => {
+    if (bgLoaded) {
+      const timer = setTimeout(() => {
+        setShowContent(true);
+      }, 150);
+      return () => clearTimeout(timer);
+    }
+  }, [bgLoaded]);
 
   return (
     <div 
       className="fixed inset-0 flex items-center justify-center gradient-hero"
       style={{ overflow: 'hidden', height: '100vh', maxHeight: '100vh' }}
     >
-      {/* Everything wrapped together - fades in as one unit */}
+      {/* Background image layer - fades in independently after load */}
       <div
-        style={{
-          opacity: showContent ? 1 : 0,
-          transition: 'opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1)',
-        }}
         className="absolute inset-0"
+        style={{
+          opacity: bgLoaded ? 1 : 0,
+          transition: bgLoaded ? 'opacity 600ms ease-out' : 'none',
+        }}
       >
         {/* Blurred dashboard background */}
         <img 
@@ -88,12 +99,13 @@ export function SuccessStep({
         <div className="absolute inset-0 bg-white/40" />
       </div>
       
-      {/* Card content - also part of the same fade transition */}
+      {/* Card content - fades in after background */}
       <div 
         className="relative z-10 w-full max-w-md px-4"
         style={{
           opacity: showContent ? 1 : 0,
-          transition: 'opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1)',
+          transform: showContent ? 'translateY(0)' : 'translateY(10px)',
+          transition: 'opacity 500ms ease-out, transform 500ms ease-out',
         }}
       >
         <OnboardingCard className="text-center">

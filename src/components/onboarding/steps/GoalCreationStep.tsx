@@ -1,9 +1,10 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { OnboardingCard } from "../OnboardingCard";
 import { Button } from "@/components/ui/button";
 import { AppleEmoji } from "@/components/AppleEmoji";
 import { ChevronRight, Plus, X } from "lucide-react";
 import { AddGoalModal } from "@/components/AddGoalModal";
+import dashboardPreview from "@/assets/dashboard-preview-optimized.jpg";
 
 interface CreatedGoal {
   name: string;
@@ -21,6 +22,12 @@ export function GoalCreationStep({
   const [createdGoals, setCreatedGoals] = useState<CreatedGoal[]>([]);
 
   const hasGoals = createdGoals.length > 0;
+
+  // Preload the dashboard image early so it's ready for SuccessStep
+  useEffect(() => {
+    const img = new Image();
+    img.src = dashboardPreview;
+  }, []);
 
   const handleGoalCreated = (goalName: string, emoji: string) => {
     setCreatedGoals(prev => [...prev, { name: goalName, emoji }]);
