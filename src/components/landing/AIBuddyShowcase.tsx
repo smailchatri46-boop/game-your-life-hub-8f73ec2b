@@ -64,7 +64,7 @@ export function AIBuddyShowcase() {
           <div className="w-full">
             <div 
               className="w-full bg-card/40 backdrop-blur-xl rounded-3xl shadow-soft overflow-hidden flex flex-col relative border border-border/10" 
-              style={{ height: "min(320px, 45vh)", maxWidth: "100%" }}
+              style={{ height: "min(380px, 50vh)", maxWidth: "100%" }}
             >
               {/* Messages Area - Welcome state with GlowOrb */}
               <div className="flex-1 overflow-y-auto px-4 md:px-6 py-4">
