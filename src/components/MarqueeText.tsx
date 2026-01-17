@@ -4,6 +4,7 @@ interface MarqueeTextProps {
   text: string;
   className?: string;
   index?: number;
+  hideOverlay?: boolean;
 }
 
 // Staggered animation configs for variety
@@ -16,7 +17,7 @@ const ANIMATION_CONFIGS = [
   { duration: 10, delay: 2.2 },
 ];
 
-export function MarqueeText({ text, className = "", index = 0 }: MarqueeTextProps) {
+export function MarqueeText({ text, className = "", index = 0, hideOverlay = false }: MarqueeTextProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const textRef = useRef<HTMLSpanElement>(null);
   const [isOverflowing, setIsOverflowing] = useState(false);
@@ -46,7 +47,7 @@ export function MarqueeText({ text, className = "", index = 0 }: MarqueeTextProp
       ref={containerRef}
       className={`relative overflow-hidden ${className}`}
     >
-      {isOverflowing && (
+      {isOverflowing && !hideOverlay && (
         <>
           <div className="pointer-events-none absolute inset-y-0 left-0 w-3 bg-gradient-to-r from-card to-transparent z-10" />
           <div className="pointer-events-none absolute inset-y-0 right-0 w-3 bg-gradient-to-l from-card to-transparent z-10" />
