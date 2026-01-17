@@ -266,7 +266,7 @@ export function OnboardingFlow() {
             variant="goals"
             onNext={goToNext}
             currentIndex={0}
-            totalFeatures={5}
+            totalFeatures={4}
           />
         );
 
@@ -276,7 +276,7 @@ export function OnboardingFlow() {
             variant="ai-buddy"
             onNext={goToNext}
             currentIndex={1}
-            totalFeatures={5}
+            totalFeatures={4}
           />
         );
 
@@ -286,7 +286,7 @@ export function OnboardingFlow() {
             variant="habits"
             onNext={goToNext}
             currentIndex={2}
-            totalFeatures={5}
+            totalFeatures={4}
           />
         );
 
@@ -296,17 +296,7 @@ export function OnboardingFlow() {
             variant="insights"
             onNext={goToNext}
             currentIndex={3}
-            totalFeatures={5}
-          />
-        );
-
-      case "feature-all-in-one":
-        return (
-          <FeatureShowcaseStep
-            variant="all-in-one"
-            onNext={goToNext}
-            currentIndex={4}
-            totalFeatures={5}
+            totalFeatures={4}
           />
         );
 
