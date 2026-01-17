@@ -55,43 +55,47 @@ export function LoadingStep({ onComplete }: LoadingStepProps) {
   }, [onComplete]);
 
   return (
-    <OnboardingCard className="text-center">
-      <div className="py-8 flex flex-col items-center justify-center min-h-[220px]">
-        {/* Emoji that cycles - no movement animation */}
-        <div className="mb-6">
-          <AppleEmoji emoji={LOADING_EMOJIS[currentEmoji]} size="3xl" />
-        </div>
+    <div className="fixed inset-0 h-screen flex flex-col items-center justify-center p-4 gradient-hero overflow-hidden">
+      <div className="w-full max-w-md">
+        <OnboardingCard className="text-center">
+          <div className="py-8 flex flex-col items-center justify-center min-h-[220px]">
+            {/* Emoji that cycles - no movement animation */}
+            <div className="mb-6">
+              <AppleEmoji emoji={LOADING_EMOJIS[currentEmoji]} size="3xl" />
+            </div>
 
-        {/* Modern pill progress loader */}
-        <div className="w-48 h-3 rounded-full bg-secondary/60 overflow-hidden relative mb-6 shadow-inner">
-          {/* Animated gradient fill */}
-          <div 
-            className="absolute inset-y-0 left-0 w-full rounded-full animate-progress-slide"
-            style={{
-              background: 'linear-gradient(90deg, transparent 0%, hsl(38, 100%, 70%) 20%, hsl(24, 95%, 53%) 50%, hsl(38, 100%, 70%) 80%, transparent 100%)',
-              backgroundSize: '200% 100%',
-            }}
-          />
-          {/* Shimmer overlay */}
-          <div 
-            className="absolute inset-0 rounded-full animate-shimmer"
-            style={{
-              background: 'linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.4) 50%, transparent 100%)',
-              backgroundSize: '200% 100%',
-            }}
-          />
-        </div>
+            {/* Modern pill progress loader */}
+            <div className="w-48 h-3 rounded-full bg-secondary/60 overflow-hidden relative mb-6 shadow-inner">
+              {/* Animated gradient fill */}
+              <div 
+                className="absolute inset-y-0 left-0 w-full rounded-full animate-progress-slide"
+                style={{
+                  background: 'linear-gradient(90deg, transparent 0%, hsl(38, 100%, 70%) 20%, hsl(24, 95%, 53%) 50%, hsl(38, 100%, 70%) 80%, transparent 100%)',
+                  backgroundSize: '200% 100%',
+                }}
+              />
+              {/* Shimmer overlay */}
+              <div 
+                className="absolute inset-0 rounded-full animate-shimmer"
+                style={{
+                  background: 'linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.4) 50%, transparent 100%)',
+                  backgroundSize: '200% 100%',
+                }}
+              />
+            </div>
 
-        {/* Cycling loading text with fade transition */}
-        <div className={`transition-opacity duration-200 ${fadeIn ? "opacity-100" : "opacity-0"}`}>
-          <h2 className="text-xl font-bold font-display text-foreground mb-2">
-            {LOADING_STATES[currentMessage].title}
-          </h2>
-          <p className="text-sm text-muted-foreground">
-            {LOADING_STATES[currentMessage].subtitle}
-          </p>
-        </div>
+            {/* Cycling loading text with fade transition */}
+            <div className={`transition-opacity duration-200 ${fadeIn ? "opacity-100" : "opacity-0"}`}>
+              <h2 className="text-xl font-bold font-display text-foreground mb-2">
+                {LOADING_STATES[currentMessage].title}
+              </h2>
+              <p className="text-sm text-muted-foreground">
+                {LOADING_STATES[currentMessage].subtitle}
+              </p>
+            </div>
+          </div>
+        </OnboardingCard>
       </div>
-    </OnboardingCard>
+    </div>
   );
 }
