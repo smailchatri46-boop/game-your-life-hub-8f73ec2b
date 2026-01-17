@@ -1,7 +1,8 @@
 import { OnboardingCard } from "../OnboardingCard";
 import { Button } from "@/components/ui/button";
 import { AppleEmoji } from "@/components/AppleEmoji";
-import dashboardPreview from "@/assets/dashboard-preview.png";
+import { useEffect, useState } from "react";
+import dashboardPreview from "@/assets/dashboard-preview-optimized.jpg";
 
 interface SuccessStepProps {
   commitmentName: string;
@@ -16,19 +17,54 @@ export function SuccessStep({
   onAddMoreHabits,
   onStartJournaling,
 }: SuccessStepProps) {
+  const [imageLoaded, setImageLoaded] = useState(false);
+
+  // Preload the image
+  useEffect(() => {
+    const img = new Image();
+    img.src = dashboardPreview;
+    img.onload = () => setImageLoaded(true);
+  }, []);
+
+  // Hide scrollbar on mount
+  useEffect(() => {
+    const html = document.documentElement;
+    const body = document.body;
+    
+    const originalHtmlOverflow = html.style.overflow;
+    const originalBodyOverflow = body.style.overflow;
+    
+    html.style.overflow = 'hidden';
+    body.style.overflow = 'hidden';
+    
+    return () => {
+      html.style.overflow = originalHtmlOverflow;
+      body.style.overflow = originalBodyOverflow;
+    };
+  }, []);
+
   return (
-    <div className="fixed inset-0 flex items-center justify-center">
-      {/* Blurred dashboard background */}
+    <div 
+      className="fixed inset-0 flex items-center justify-center"
+      style={{ overflow: 'hidden', height: '100vh', maxHeight: '100vh' }}
+    >
+      {/* Blurred dashboard background with fade-in */}
       <div 
-        className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+        className="absolute inset-0 bg-cover bg-center bg-no-repeat transition-opacity duration-500"
         style={{
           backgroundImage: `url(${dashboardPreview})`,
-          filter: 'blur(12px)',
-          transform: 'scale(1.05)',
+          filter: 'blur(16px)',
+          transform: 'scale(1.1)',
+          opacity: imageLoaded ? 1 : 0,
         }}
       />
+      {/* Fallback gradient while image loads */}
+      <div 
+        className="absolute inset-0 gradient-hero transition-opacity duration-500"
+        style={{ opacity: imageLoaded ? 0 : 1 }}
+      />
       {/* Light overlay for readability */}
-      <div className="absolute inset-0 bg-white/30" />
+      <div className="absolute inset-0 bg-white/40" />
       
       {/* Card content */}
       <div className="relative z-10 w-full max-w-md px-4">
