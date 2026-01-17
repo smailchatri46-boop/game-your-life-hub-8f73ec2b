@@ -217,14 +217,22 @@ export function AnalyticsCarousel({ isOnboarding = false }: AnalyticsCarouselPro
           </h2>
         </div>
 
-        <div className="relative">
+        <div 
+          className="relative"
+          style={isOnboarding ? { 
+            maskImage: 'linear-gradient(to right, transparent 0%, black 10%, black 90%, transparent 100%)',
+            WebkitMaskImage: 'linear-gradient(to right, transparent 0%, black 10%, black 90%, transparent 100%)',
+          } : undefined}
+        >
           <div
             ref={scrollRef}
             className={`flex gap-6 overflow-x-hidden py-4 w-full ${cardScale}`}
             style={{ 
               scrollBehavior: "auto",
-              maskImage: 'linear-gradient(to right, transparent 0%, black 8%, black 92%, transparent 100%)',
-              WebkitMaskImage: 'linear-gradient(to right, transparent 0%, black 8%, black 92%, transparent 100%)',
+              ...(isOnboarding ? {} : {
+                maskImage: 'linear-gradient(to right, transparent 0%, black 8%, black 92%, transparent 100%)',
+                WebkitMaskImage: 'linear-gradient(to right, transparent 0%, black 8%, black 92%, transparent 100%)',
+              }),
               transformOrigin: 'center center',
             }}
           >
