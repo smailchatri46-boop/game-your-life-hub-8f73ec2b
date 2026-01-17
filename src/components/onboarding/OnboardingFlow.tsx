@@ -11,6 +11,7 @@ import { SuccessStep } from "./steps/SuccessStep";
 import { SurveyQuestionStep } from "./steps/SurveyQuestionStep";
 import { FeatureShowcaseStep } from "./steps/FeatureShowcaseStep";
 import { FeatureIntroStep } from "./steps/FeatureIntroStep";
+import { FeatureOutroStep } from "./steps/FeatureOutroStep";
 
 const SURVEY_QUESTIONS = {
   "survey-1": {
@@ -301,6 +302,9 @@ export function OnboardingFlow() {
             totalFeatures={5}
           />
         );
+
+      case "feature-outro":
+        return <FeatureOutroStep onComplete={goToNext} />;
 
       case "habit-suggestions":
         return (
