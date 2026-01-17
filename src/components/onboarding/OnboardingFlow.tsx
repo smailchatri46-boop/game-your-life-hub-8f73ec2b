@@ -253,7 +253,6 @@ export function OnboardingFlow() {
           <FeatureShowcaseStep
             variant="all-in-one"
             onNext={goToNext}
-            onBack={goToPrevious}
             currentIndex={0}
             totalFeatures={5}
           />
@@ -264,7 +263,6 @@ export function OnboardingFlow() {
           <FeatureShowcaseStep
             variant="goals"
             onNext={goToNext}
-            onBack={goToPrevious}
             currentIndex={1}
             totalFeatures={5}
           />
@@ -275,7 +273,6 @@ export function OnboardingFlow() {
           <FeatureShowcaseStep
             variant="habits"
             onNext={goToNext}
-            onBack={goToPrevious}
             currentIndex={2}
             totalFeatures={5}
           />
@@ -286,7 +283,6 @@ export function OnboardingFlow() {
           <FeatureShowcaseStep
             variant="ai-buddy"
             onNext={goToNext}
-            onBack={goToPrevious}
             currentIndex={3}
             totalFeatures={5}
           />
@@ -297,7 +293,6 @@ export function OnboardingFlow() {
           <FeatureShowcaseStep
             variant="insights"
             onNext={goToNext}
-            onBack={goToPrevious}
             currentIndex={4}
             totalFeatures={5}
           />
@@ -347,7 +342,13 @@ export function OnboardingFlow() {
     }
   };
 
-  const showProgress = currentStep !== "loading" && currentStep !== "success";
+  const isFeatureShowcase = currentStep.startsWith("feature-");
+  const showProgress = currentStep !== "loading" && currentStep !== "success" && !isFeatureShowcase;
+
+  // Feature showcase steps render their own full-screen layout
+  if (isFeatureShowcase) {
+    return renderStep();
+  }
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center p-4 gradient-hero">
