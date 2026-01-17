@@ -23,63 +23,69 @@ interface FeatureShowcaseStepProps {
 
 function AllInOneShowcase() {
   return (
-    <section className="px-4 w-full h-full flex flex-col">
-      <div className="max-w-5xl mx-auto text-center flex-1 flex flex-col justify-center">
-        <h2 className="font-display text-3xl md:text-5xl font-semibold mb-8">
+    <section className="py-4 px-4 overflow-hidden w-full">
+      {/* Title - centered at top */}
+      <div className="max-w-6xl mx-auto text-center mb-4">
+        <h2 className="font-display text-2xl md:text-5xl font-semibold">
           Your all in <span className="italic gradient-text">one tracker</span>
         </h2>
-        
+      </div>
+      
+      {/* Content - centered */}
+      <div className="max-w-5xl mx-auto mb-4">
         <div className="flex flex-col md:flex-row items-center justify-center gap-6 md:gap-10">
           <div className="flex items-center gap-5 md:gap-8 flex-shrink-0">
             <img 
               src="/images/apps-arrows.png" 
               alt="Apps flowing into Neyler" 
-              className="h-36 md:h-56 object-contain"
+              className="h-32 md:h-48 object-contain"
             />
             <img 
               src="/images/neyler-logo-full.png" 
               alt="Neyler" 
-              className="h-12 md:h-16 object-contain"
+              className="h-10 md:h-14 object-contain"
             />
           </div>
           
-          <div className="p-6 rounded-3xl bg-gradient-to-br from-[hsl(30,70%,96%)] to-[hsl(25,60%,92%)] w-[320px] md:w-[380px]">
+          <div className="p-5 rounded-3xl bg-gradient-to-br from-[hsl(30,70%,96%)] to-[hsl(25,60%,92%)] w-[300px] md:w-[340px]">
             <div className="flex items-start justify-between mb-2">
               <div>
-                <h3 className="font-display text-xl font-semibold text-foreground">To-Do List</h3>
+                <h3 className="font-display text-lg font-semibold text-foreground">To-Do List</h3>
                 <p className="text-sm text-muted-foreground">
                   1 décembre 2025
                 </p>
               </div>
-              <AppleEmoji emoji="😌" size="2xl" />
+              <AppleEmoji emoji="😌" size="xl" />
             </div>
             
-            <div className="space-y-3 mt-4">
-              <div className="flex items-center gap-3 p-3 rounded-2xl bg-white/80 shadow-sm">
-                <AppleEmoji emoji="💬" size="lg" />
-                <span className="text-base flex-1 text-muted-foreground line-through text-left">
+            <div className="space-y-2 mt-3">
+              <div className="flex items-center gap-3 p-2.5 rounded-2xl bg-white/80 shadow-sm">
+                <AppleEmoji emoji="💬" size="md" />
+                <span className="text-sm flex-1 text-muted-foreground line-through text-left">
                   Call mom
                 </span>
-                <button className="w-6 h-6 rounded-full border-2 flex items-center justify-center bg-[hsl(25,60%,70%)] border-[hsl(25,60%,70%)]">
-                  <Check className="w-4 h-4 text-white" />
+                <button className="w-5 h-5 rounded-full border-2 flex items-center justify-center bg-[hsl(25,60%,70%)] border-[hsl(25,60%,70%)]">
+                  <Check className="w-3 h-3 text-white" />
                 </button>
               </div>
 
               <button
-                className="w-full flex items-center justify-center gap-2 p-3 rounded-2xl bg-white/50 hover:bg-white/70 transition-colors text-muted-foreground border-2 border-dashed border-muted-foreground/20"
+                className="w-full flex items-center justify-center gap-2 p-2.5 rounded-2xl bg-white/50 hover:bg-white/70 transition-colors text-muted-foreground border-2 border-dashed border-muted-foreground/20"
               >
-                <Plus className="w-5 h-5" />
-                <span className="text-base">Add task</span>
+                <Plus className="w-4 h-4" />
+                <span className="text-sm">Add task</span>
               </button>
             </div>
           </div>
         </div>
       </div>
       
-      {/* Description at consistent bottom position */}
-      <p className="text-muted-foreground text-base max-w-2xl mx-auto text-center flex-shrink-0 pb-2">
-        Replace scattered spreadsheets, multiple AI apps, and messy notes with one beautiful solution.
-      </p>
+      {/* Description - centered below content */}
+      <div className="max-w-3xl mx-auto text-center mt-2">
+        <p className="text-muted-foreground text-sm md:text-base leading-relaxed">
+          Bring your goals, habits, tasks, and reflections into one simple tracker that stays organized for you. Keep everything clear in one place and move forward without juggling apps or notes.
+        </p>
+      </div>
     </section>
   );
 }

@@ -64,111 +64,110 @@ interface HabitsShowcaseProps {
 }
 
 export function HabitsShowcase({ isOnboarding = false }: HabitsShowcaseProps) {
-  // Adjust sizes - LARGER for onboarding to fill screen
-  const titleSize = isOnboarding ? "text-2xl md:text-4xl" : "text-2xl md:text-4xl";
-  const descriptionSize = isOnboarding ? "text-xs md:text-sm" : "text-sm md:text-base";
+  // Adjust sizes - match GoalsShowcase sizing
+  const titleSize = isOnboarding ? "text-2xl md:text-5xl" : "text-2xl md:text-4xl";
+  const descriptionSize = isOnboarding ? "text-sm md:text-base" : "text-sm md:text-base";
 
   return (
-    <section className={`${isOnboarding ? 'py-2 h-full' : 'py-4'} px-4 w-full ${isOnboarding ? 'flex flex-col' : ''}`}>
-      <div className={`max-w-6xl mx-auto ${isOnboarding ? 'flex-1 flex flex-col justify-center' : ''}`}>
-        <div className="text-center mb-3">
-          <h2 className={`font-display ${titleSize} font-semibold mb-2`}>
-            Organize Your Daily Routine <span className="gradient-text italic">Effortlessly</span>
-          </h2>
-          {/* Description for homepage only - inside header */}
-          {!isOnboarding && (
-            <p className={`text-muted-foreground ${descriptionSize} max-w-2xl mx-auto`}>
-              Track habits and tasks in a beautiful clean style. See your progress at a glance.
-            </p>
-          )}
-        </div>
+    <section className={`${isOnboarding ? 'py-4' : 'py-4'} px-4 overflow-hidden w-full`}>
+      {/* Title - centered at top, matching GoalsShowcase */}
+      <div className="max-w-6xl mx-auto text-center mb-4">
+        <h2 className={`font-display ${titleSize} font-semibold`}>
+          Organize Your Daily Routine <span className="gradient-text italic">Effortlessly</span>
+        </h2>
+      </div>
 
-        {/* Exact Habits Grid from Dashboard */}
-        <GlassCard className="p-2 sm:p-3 lg:p-4 overflow-x-auto">
-          <table className="w-full table-fixed" style={{ minWidth: '700px' }}>
-            <thead>
-              <tr>
-                <th className="text-left p-1.5 lg:p-2" style={{ width: '160px' }}>
-                  <span className="text-xs lg:text-sm font-semibold text-foreground">Habits and Tasks</span>
-                </th>
-                {days.map((day) => (
-                  <th key={day} className="p-0.5 lg:p-1 text-center">
-                    <span className={`text-xs lg:text-sm font-medium ${day === 14 ? 'text-primary font-bold' : 'text-muted-foreground'}`}>
-                      {day}
-                    </span>
+      {/* Habits Grid - matching GoalsShowcase card container spacing */}
+      <div className={`w-full ${isOnboarding ? 'mb-4' : 'mb-8'}`}>
+        <div className="max-w-6xl mx-auto">
+          <GlassCard className="p-2 sm:p-3 lg:p-4 overflow-x-auto">
+            <table className="w-full table-fixed" style={{ minWidth: '700px' }}>
+              <thead>
+                <tr>
+                  <th className="text-left p-1.5 lg:p-2" style={{ width: '160px' }}>
+                    <span className="text-xs lg:text-sm font-semibold text-foreground">Habits and Tasks</span>
                   </th>
-                ))}
-                <th className="p-1 lg:p-2 text-right" style={{ width: '48px' }}>
-                  <span className="text-xs lg:text-sm font-semibold text-foreground">%</span>
-                </th>
-                <th style={{ width: '36px' }}></th>
-              </tr>
-            </thead>
-            <tbody>
-              {demoHabits.map((habit, habitIndex) => (
-                <tr key={habitIndex} className="border-t border-border/30">
-                  <td className="p-1.5 lg:p-2">
-                    <div className="flex items-center gap-1.5">
-                      <GripVertical className="w-3 h-3 text-muted-foreground/50 flex-shrink-0 hidden lg:block" />
-                      <AppleEmoji emoji={habit.icon} size="lg" />
-                      <div className="min-w-0 flex-1">
-                        <MarqueeText text={habit.name} className="text-xs lg:text-sm font-medium" index={habitIndex} hideOverlay />
-                        <div className="flex items-center gap-1.5">
-                          <span 
-                            className="w-2 h-2 rounded-full flex-shrink-0"
-                            style={{ backgroundColor: CATEGORY_COLORS[habit.category] || "#6B7280" }}
-                          />
-                          <p className="text-[10px] lg:text-xs text-muted-foreground">{habit.category}</p>
+                  {days.map((day) => (
+                    <th key={day} className="p-0.5 lg:p-1 text-center">
+                      <span className={`text-xs lg:text-sm font-medium ${day === 14 ? 'text-primary font-bold' : 'text-muted-foreground'}`}>
+                        {day}
+                      </span>
+                    </th>
+                  ))}
+                  <th className="p-1 lg:p-2 text-right" style={{ width: '48px' }}>
+                    <span className="text-xs lg:text-sm font-semibold text-foreground">%</span>
+                  </th>
+                  <th style={{ width: '36px' }}></th>
+                </tr>
+              </thead>
+              <tbody>
+                {demoHabits.map((habit, habitIndex) => (
+                  <tr key={habitIndex} className="border-t border-border/30">
+                    <td className="p-1.5 lg:p-2">
+                      <div className="flex items-center gap-1.5">
+                        <GripVertical className="w-3 h-3 text-muted-foreground/50 flex-shrink-0 hidden lg:block" />
+                        <AppleEmoji emoji={habit.icon} size="lg" />
+                        <div className="min-w-0 flex-1">
+                          <MarqueeText text={habit.name} className="text-xs lg:text-sm font-medium" index={habitIndex} hideOverlay />
+                          <div className="flex items-center gap-1.5">
+                            <span 
+                              className="w-2 h-2 rounded-full flex-shrink-0"
+                              style={{ backgroundColor: CATEGORY_COLORS[habit.category] || "#6B7280" }}
+                            />
+                            <p className="text-[10px] lg:text-xs text-muted-foreground">{habit.category}</p>
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  </td>
-                  {habit.completions.map((value, dayIndex) => {
-                    const isCompleted = habit.target ? (value as number) >= habit.target : value === true;
-                    const isNumeric = habit.target !== undefined;
-                    
-                    return (
-                      <td key={dayIndex} className="p-0.5 lg:p-1">
-                        <div
-                          className={`w-5 h-5 lg:w-6 lg:h-6 xl:w-7 xl:h-7 mx-auto rounded-md flex items-center justify-center text-xs transition-all duration-200 ${
-                            isCompleted
-                              ? 'bg-gradient-to-br from-accent to-primary text-primary-foreground shadow-sm'
-                              : 'bg-secondary'
-                          }`}
-                        >
-                          {isNumeric ? (
-                            <span className="font-medium text-[10px] lg:text-xs">
-                              {value as number}
-                            </span>
-                          ) : (
-                            isCompleted && <Check className="w-3 h-3 lg:w-4 lg:h-4" />
-                          )}
-                        </div>
-                      </td>
-                    );
-                  })}
-                  <td className="p-1 lg:p-2 text-right">
-                    <span className="text-xs lg:text-sm font-bold gradient-text">{habit.progress}%</span>
-                  </td>
-                  <td className="p-1 lg:p-2">
-                    {/* Non-clickable delete icon */}
-                    <div className="p-1 text-muted-foreground/40">
-                      <Trash2 className="w-3.5 h-3.5 lg:w-4 lg:h-4" />
-                    </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </GlassCard>
+                    </td>
+                    {habit.completions.map((value, dayIndex) => {
+                      const isCompleted = habit.target ? (value as number) >= habit.target : value === true;
+                      const isNumeric = habit.target !== undefined;
+                      
+                      return (
+                        <td key={dayIndex} className="p-0.5 lg:p-1">
+                          <div
+                            className={`w-5 h-5 lg:w-6 lg:h-6 xl:w-7 xl:h-7 mx-auto rounded-md flex items-center justify-center text-xs transition-all duration-200 ${
+                              isCompleted
+                                ? 'bg-gradient-to-br from-accent to-primary text-primary-foreground shadow-sm'
+                                : 'bg-secondary'
+                            }`}
+                          >
+                            {isNumeric ? (
+                              <span className="font-medium text-[10px] lg:text-xs">
+                                {value as number}
+                              </span>
+                            ) : (
+                              isCompleted && <Check className="w-3 h-3 lg:w-4 lg:h-4" />
+                            )}
+                          </div>
+                        </td>
+                      );
+                    })}
+                    <td className="p-1 lg:p-2 text-right">
+                      <span className="text-xs lg:text-sm font-bold gradient-text">{habit.progress}%</span>
+                    </td>
+                    <td className="p-1 lg:p-2">
+                      <div className="p-1 text-muted-foreground/40">
+                        <Trash2 className="w-3.5 h-3.5 lg:w-4 lg:h-4" />
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </GlassCard>
+        </div>
       </div>
-      
-      {/* Description at bottom for onboarding - outside card */}
-      {isOnboarding && (
-        <p className={`text-muted-foreground ${descriptionSize} text-center max-w-2xl mx-auto flex-shrink-0 pb-2`}>
-          Track habits and tasks in a beautiful clean style. See your progress at a glance.
+
+      {/* Description - centered below cards, matching GoalsShowcase */}
+      <div className="max-w-3xl mx-auto text-center mt-2">
+        <p className={`text-muted-foreground ${descriptionSize} leading-relaxed`}>
+          {isOnboarding 
+            ? "Plan your days with a clean system that makes habits and tasks easy to follow without stress. See your progress at a glance and stay consistent with a routine that actually feels simple."
+            : "Track habits and tasks in a beautiful clean style. See your progress at a glance."
+          }
         </p>
-      )}
+      </div>
     </section>
   );
 }

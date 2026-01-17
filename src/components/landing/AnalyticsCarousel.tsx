@@ -192,8 +192,6 @@ export function AnalyticsCarousel({ isOnboarding = false }: AnalyticsCarouselPro
 
     animationRef.current = requestAnimationFrame(animate);
 
-    // Don't pause on hover - continue scrolling
-
     return () => {
       if (animationRef.current) {
         cancelAnimationFrame(animationRef.current);
@@ -201,22 +199,22 @@ export function AnalyticsCarousel({ isOnboarding = false }: AnalyticsCarouselPro
     };
   }, []);
 
-  // Adjust sizes - LARGER for onboarding to fill screen
-  const titleSize = isOnboarding ? "text-2xl md:text-4xl" : "text-2xl md:text-4xl";
-  const descriptionSize = isOnboarding ? "text-xs md:text-sm" : "text-sm md:text-base";
-  const cardScale = isOnboarding ? "scale-125" : "";
+  // Adjust sizes - match GoalsShowcase sizing
+  const titleSize = isOnboarding ? "text-2xl md:text-5xl" : "text-2xl md:text-4xl";
+  const descriptionSize = isOnboarding ? "text-sm md:text-base" : "text-sm md:text-base";
+  const cardScale = isOnboarding ? "scale-110" : "";
 
   return (
-    <section className={`${isOnboarding ? 'py-2 h-full' : 'py-2'} px-4 overflow-hidden w-full ${isOnboarding ? 'flex flex-col' : ''}`}>
-      {/* Content wrapper - centered vertically for onboarding */}
-      <div className={isOnboarding ? "flex-1 flex flex-col justify-center" : ""}>
-        {/* Title - closer to the cards */}
-        <div className={`max-w-4xl mx-auto text-center ${isOnboarding ? 'mb-4' : 'mb-8'}`}>
-          <h2 className={`font-display ${titleSize} font-semibold mb-2`}>
-            Get Deep <span className="gradient-text italic">Insights</span> About Your Life
-          </h2>
-        </div>
+    <section className={`${isOnboarding ? 'py-4' : 'py-2'} px-4 overflow-hidden w-full`}>
+      {/* Title - centered at top, matching GoalsShowcase */}
+      <div className="max-w-6xl mx-auto text-center mb-4">
+        <h2 className={`font-display ${titleSize} font-semibold`}>
+          Get Deep <span className="gradient-text italic">Insights</span> About Your Life
+        </h2>
+      </div>
 
+      {/* Cards carousel - matching GoalsShowcase card container spacing */}
+      <div className={`w-full ${isOnboarding ? 'mb-4' : 'mb-8'}`}>
         <div 
           className="relative"
           style={isOnboarding ? { 
@@ -226,7 +224,7 @@ export function AnalyticsCarousel({ isOnboarding = false }: AnalyticsCarouselPro
         >
           <div
             ref={scrollRef}
-            className={`flex gap-6 overflow-x-hidden py-4 w-full ${cardScale}`}
+            className={`flex gap-6 overflow-x-hidden py-2 w-full ${cardScale}`}
             style={{ 
               scrollBehavior: "auto",
               ...(isOnboarding ? {} : {
@@ -265,19 +263,16 @@ export function AnalyticsCarousel({ isOnboarding = false }: AnalyticsCarouselPro
           </div>
         </div>
       </div>
-      
-      {/* Description at bottom for onboarding - closer to content */}
-      {isOnboarding && (
-        <p className={`text-muted-foreground ${descriptionSize} text-center max-w-xl mx-auto flex-shrink-0 mt-4 pb-2`}>
-          Understand your progress and patterns with beautiful analytics that show you the full picture.
+
+      {/* Description - centered below cards, matching GoalsShowcase */}
+      <div className="max-w-3xl mx-auto text-center mt-2">
+        <p className={`text-muted-foreground ${descriptionSize} leading-relaxed`}>
+          {isOnboarding 
+            ? "See your patterns across progress, mood, motivation, and consistency with clean analytics that tell the full story. Understand what's working, what's not, and adjust faster with insights that feel clear and useful."
+            : "Understand your progress and patterns with beautiful analytics that show you the full picture."
+          }
         </p>
-      )}
-      {/* Description in header for homepage */}
-      {!isOnboarding && (
-        <p className={`text-muted-foreground ${descriptionSize} max-w-xl mx-auto text-center -mt-2`}>
-          Understand your progress and patterns with beautiful analytics that show you the full picture.
-        </p>
-      )}
+      </div>
     </section>
   );
 }
