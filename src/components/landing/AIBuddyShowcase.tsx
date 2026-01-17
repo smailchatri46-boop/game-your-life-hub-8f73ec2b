@@ -49,13 +49,13 @@ export function AIBuddyShowcase({ isOnboarding = false }: AIBuddyShowcaseProps) 
 
   const duplicatedQuestions = [...suggestedQuestions, ...suggestedQuestions];
 
-  // Adjust sizes for onboarding context
-  const chatboxHeight = isOnboarding ? "min(320px, 48vh)" : "min(380px, 55vh)";
-  const titleSize = isOnboarding ? "text-xl md:text-3xl" : "text-2xl md:text-4xl";
-  const descriptionSize = isOnboarding ? "text-xs md:text-sm" : "text-sm md:text-base";
+  // Adjust sizes for onboarding context - LARGER for onboarding to fill screen
+  const chatboxHeight = isOnboarding ? "min(400px, 55vh)" : "min(380px, 55vh)";
+  const titleSize = isOnboarding ? "text-2xl md:text-5xl" : "text-2xl md:text-4xl";
+  const descriptionSize = isOnboarding ? "text-sm md:text-base" : "text-sm md:text-base";
 
   return (
-    <section className={isOnboarding ? "py-1 px-4 w-full" : "py-2 px-4"}>
+    <section className={isOnboarding ? "py-2 px-4 w-full" : "py-2 px-4"}>
       {/* Title - outside chat box container, full section width */}
       <ScrollReveal animation="fade-up">
         <h2 

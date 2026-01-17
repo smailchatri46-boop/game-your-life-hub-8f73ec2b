@@ -64,11 +64,12 @@ interface HabitsShowcaseProps {
 }
 
 export function HabitsShowcase({ isOnboarding = false }: HabitsShowcaseProps) {
-  const titleSize = isOnboarding ? "text-xl md:text-3xl" : "text-2xl md:text-4xl";
-  const descriptionSize = isOnboarding ? "text-xs md:text-sm" : "text-sm md:text-base";
+  // Adjust sizes - LARGER for onboarding to fill screen
+  const titleSize = isOnboarding ? "text-2xl md:text-5xl" : "text-2xl md:text-4xl";
+  const descriptionSize = isOnboarding ? "text-sm md:text-base" : "text-sm md:text-base";
 
   return (
-    <section className={`${isOnboarding ? 'py-1' : 'py-4'} px-4 w-full`}>
+    <section className={`${isOnboarding ? 'py-3' : 'py-4'} px-4 w-full`}>
       <div className="max-w-6xl mx-auto">
         <div className="text-center mb-4">
           <h2 className={`font-display ${titleSize} font-semibold mb-2`}>
