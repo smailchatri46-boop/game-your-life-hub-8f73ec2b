@@ -37,35 +37,13 @@ export function SuccessStep({
         <p className="text-xs text-muted-foreground mt-1">— Mark Twain</p>
       </div>
 
-      <div className="space-y-3">
-        <Button
-          onClick={onGoToDashboard}
-          variant="gradient"
-          className="w-full h-12 text-base hover:opacity-90"
-        >
-          <AppleEmoji emoji="🏠" size="sm" />
-          Go to my dashboard
-        </Button>
-        
-        <div className="flex gap-3">
-          <Button
-            onClick={onAddMoreHabits}
-            variant="outline"
-            className="flex-1 h-11 bg-white/50 border-border/30 hover:bg-secondary/50 hover:border-border/30"
-          >
-            <AppleEmoji emoji="➕" size="sm" />
-            Add more habits
-          </Button>
-          <Button
-            onClick={onStartJournaling}
-            variant="outline"
-            className="flex-1 h-11 bg-white/50 border-border/30 hover:bg-secondary/50 hover:border-border/30"
-          >
-            <AppleEmoji emoji="📝" size="sm" />
-            Start journaling
-          </Button>
-        </div>
-      </div>
+      <Button
+        onClick={onGoToDashboard}
+        variant="gradient"
+        className="w-full h-12 text-base hover:opacity-90"
+      >
+        Start organizing my life
+      </Button>
     </OnboardingCard>
   );
 }
