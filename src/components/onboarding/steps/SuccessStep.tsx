@@ -1,7 +1,7 @@
 import { OnboardingCard } from "../OnboardingCard";
 import { Button } from "@/components/ui/button";
 import { AppleEmoji } from "@/components/AppleEmoji";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import dashboardPreview from "@/assets/dashboard-preview-optimized.jpg";
 
 interface SuccessStepProps {
@@ -15,9 +15,6 @@ export function SuccessStep({
   commitmentName,
   onGoToDashboard,
 }: SuccessStepProps) {
-  const [bgLoaded, setBgLoaded] = useState(false);
-  const [showContent, setShowContent] = useState(false);
-
   // Hide scrollbar on mount
   useEffect(() => {
     const html = document.documentElement;
@@ -35,95 +32,27 @@ export function SuccessStep({
     };
   }, []);
 
-  // Handle background image load with decode() for bulletproof fade-in
-  useEffect(() => {
-    let cancelled = false;
-
-    const preload = async () => {
-      const img = new Image();
-      img.src = dashboardPreview;
-
-      try {
-        // Use decode() if available for proper paint readiness
-        if (typeof img.decode === 'function') {
-          await img.decode();
-        } else {
-          // Fallback to onload
-          await new Promise<void>((resolve, reject) => {
-            img.onload = () => resolve();
-            img.onerror = () => reject();
-          });
-        }
-
-        if (!cancelled) setBgLoaded(true);
-      } catch {
-        // Still fade in even if decode fails
-        if (!cancelled) setBgLoaded(true);
-      }
-    };
-
-    preload();
-    return () => {
-      cancelled = true;
-    };
-  }, []);
-
-  // Show content slightly after bg starts fading (staggered entrance)
-  useEffect(() => {
-    if (bgLoaded) {
-      const timer = setTimeout(() => {
-        setShowContent(true);
-      }, 150);
-      return () => clearTimeout(timer);
-    }
-  }, [bgLoaded]);
-
   return (
     <div 
       className="fixed inset-0 flex items-center justify-center gradient-hero"
       style={{ overflow: 'hidden', height: '100vh', maxHeight: '100vh' }}
     >
-      {/* Soft placeholder gradient while image loads */}
-      <div className="absolute inset-0 bg-gradient-to-br from-orange-100/40 via-white/30 to-orange-200/30" />
-
-      {/* Background image layer - always has transition for bulletproof fade-in */}
-      <div
-        className="absolute inset-0"
-        style={{
-          opacity: bgLoaded ? 1 : 0,
-          transition: "opacity 1500ms ease-out",
-          willChange: "opacity",
-          transform: "translateZ(0)",
-        }}
-      >
-        {/* Blurred dashboard background */}
+      {/* Background image layer - instantly visible (preloaded in OnboardingFlow) */}
+      <div className="absolute inset-0">
         <img 
           src={dashboardPreview}
           alt=""
           aria-hidden="true"
           loading="eager"
           decoding="async"
-          fetchPriority="high"
           className="absolute inset-0 w-full h-full object-cover"
-          style={{
-            filter: 'blur(8px)',
-            transform: 'scale(1.1)',
-            willChange: 'transform, filter',
-          }}
         />
         {/* Light overlay for readability */}
-        <div className="absolute inset-0 bg-white/40" />
+        <div className="absolute inset-0 bg-white/50" />
       </div>
       
-      {/* Card content - fades in after background */}
-      <div 
-        className="relative z-10 w-full max-w-md px-4"
-        style={{
-          opacity: showContent ? 1 : 0,
-          transform: showContent ? 'translateY(0)' : 'translateY(10px)',
-          transition: 'opacity 500ms ease-out, transform 500ms ease-out',
-        }}
-      >
+      {/* Card content - instantly visible */}
+      <div className="relative z-10 w-full max-w-md px-4">
         <OnboardingCard className="text-center">
           <div className="mb-6">
             <div className="flex justify-center mb-4">
