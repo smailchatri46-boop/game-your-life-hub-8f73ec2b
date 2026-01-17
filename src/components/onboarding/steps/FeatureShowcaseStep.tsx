@@ -26,7 +26,7 @@ function AllInOneShowcase() {
   return (
     <section className="px-4 w-full">
       <div className="max-w-5xl mx-auto text-center">
-        <h2 className="font-display text-2xl md:text-4xl font-semibold mb-6">
+        <h2 className="font-display text-3xl md:text-5xl font-semibold mb-8">
           Your all in <span className="italic gradient-text">one tracker</span>
         </h2>
         
@@ -96,7 +96,7 @@ export function FeatureShowcaseStep({ variant, onNext, currentIndex, totalFeatur
   };
 
   return (
-    <div className="h-screen flex flex-col gradient-hero overflow-hidden">
+    <div className="h-screen flex flex-col gradient-hero overflow-hidden fixed inset-0">
       {/* Progress dots at top with white background pill */}
       <div className="flex justify-center pt-6 pb-4">
         <div className="flex gap-2 px-4 py-2 rounded-full bg-white/80 backdrop-blur-sm shadow-sm">

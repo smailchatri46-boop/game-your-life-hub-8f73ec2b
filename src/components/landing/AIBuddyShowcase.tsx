@@ -46,25 +46,25 @@ export function AIBuddyShowcase() {
   const duplicatedQuestions = [...suggestedQuestions, ...suggestedQuestions];
 
   return (
-    <section className="py-8 px-4">
+    <section className="py-4 px-4">
       {/* Title - outside chat box container, full section width */}
       <ScrollReveal animation="fade-up">
         <h2 
-          className="font-display text-2xl md:text-4xl font-semibold mb-10 text-center max-w-4xl mx-auto"
+          className="font-display text-3xl md:text-5xl font-semibold mb-6 text-center max-w-4xl mx-auto"
           style={{ textWrap: 'balance' } as React.CSSProperties}
         >
-          Ask the <span className="gradient-text italic">AI Buddy</span> & Get Deep Insights
+          Ask the <span className="gradient-text italic">AI Buddy</span> <span className="font-sans not-italic">&</span> Get Deep Insights
         </h2>
       </ScrollReveal>
 
       {/* Chat box container */}
       <ScrollReveal animation="zoom-in" delay={100}>
-        <div className="max-w-3xl mx-auto mb-4">
+        <div className="max-w-3xl mx-auto mb-3">
           {/* AI Buddy Chat Card - matching dashboard style */}
           <div className="w-full">
             <div 
               className="w-full bg-card/40 backdrop-blur-xl rounded-3xl shadow-soft overflow-hidden flex flex-col relative border border-border/10" 
-              style={{ height: "min(400px, 50vh)", maxWidth: "100%" }}
+              style={{ height: "min(320px, 45vh)", maxWidth: "100%" }}
             >
               {/* Messages Area - Welcome state with GlowOrb */}
               <div className="flex-1 overflow-y-auto px-4 md:px-6 py-4">
