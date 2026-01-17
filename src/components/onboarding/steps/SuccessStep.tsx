@@ -1,7 +1,7 @@
 import { OnboardingCard } from "../OnboardingCard";
 import { Button } from "@/components/ui/button";
 import { AppleEmoji } from "@/components/AppleEmoji";
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState } from "react";
 import dashboardPreview from "@/assets/dashboard-preview-optimized.jpg";
 
 interface SuccessStepProps {
@@ -17,8 +17,6 @@ export function SuccessStep({
 }: SuccessStepProps) {
   const [bgLoaded, setBgLoaded] = useState(false);
   const [showContent, setShowContent] = useState(false);
-  const imgRef = useRef<HTMLImageElement>(null);
-  const loadStartTime = useRef(Date.now());
 
   // Hide scrollbar on mount
   useEffect(() => {
@@ -37,27 +35,37 @@ export function SuccessStep({
     };
   }, []);
 
-  // Handle background image load separately
+  // Handle background image load with decode() for bulletproof fade-in
   useEffect(() => {
-    const img = new Image();
-    
-    const handleLoad = () => {
-      // If image loaded very quickly (< 50ms), it was cached - show faster
-      const loadTime = Date.now() - loadStartTime.current;
-      const delay = loadTime < 50 ? 0 : 50;
-      
-      setTimeout(() => {
-        setBgLoaded(true);
-      }, delay);
+    let cancelled = false;
+
+    const preload = async () => {
+      const img = new Image();
+      img.src = dashboardPreview;
+
+      try {
+        // Use decode() if available for proper paint readiness
+        if (typeof img.decode === 'function') {
+          await img.decode();
+        } else {
+          // Fallback to onload
+          await new Promise<void>((resolve, reject) => {
+            img.onload = () => resolve();
+            img.onerror = () => reject();
+          });
+        }
+
+        if (!cancelled) setBgLoaded(true);
+      } catch {
+        // Still fade in even if decode fails
+        if (!cancelled) setBgLoaded(true);
+      }
     };
-    
-    img.onload = handleLoad;
-    img.src = dashboardPreview;
-    
-    // If already cached and complete
-    if (img.complete) {
-      handleLoad();
-    }
+
+    preload();
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   // Show content slightly after bg starts fading (staggered entrance)
@@ -75,24 +83,32 @@ export function SuccessStep({
       className="fixed inset-0 flex items-center justify-center gradient-hero"
       style={{ overflow: 'hidden', height: '100vh', maxHeight: '100vh' }}
     >
-      {/* Background image layer - fades in independently after load */}
+      {/* Soft placeholder gradient while image loads */}
+      <div className="absolute inset-0 bg-gradient-to-br from-orange-100/40 via-white/30 to-orange-200/30" />
+
+      {/* Background image layer - always has transition for bulletproof fade-in */}
       <div
         className="absolute inset-0"
         style={{
           opacity: bgLoaded ? 1 : 0,
-          transition: bgLoaded ? 'opacity 1800ms ease-out' : 'none',
+          transition: "opacity 1500ms ease-out",
+          willChange: "opacity",
+          transform: "translateZ(0)",
         }}
       >
         {/* Blurred dashboard background */}
         <img 
-          ref={imgRef}
           src={dashboardPreview}
           alt=""
           aria-hidden="true"
+          loading="eager"
+          decoding="async"
+          fetchPriority="high"
           className="absolute inset-0 w-full h-full object-cover"
           style={{
             filter: 'blur(8px)',
             transform: 'scale(1.1)',
+            willChange: 'transform, filter',
           }}
         />
         {/* Light overlay for readability */}
