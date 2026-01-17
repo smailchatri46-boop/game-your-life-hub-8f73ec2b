@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { OnboardingCard } from "../OnboardingCard";
 import { Button } from "@/components/ui/button";
 import { AppleEmoji } from "@/components/AppleEmoji";
@@ -22,6 +22,23 @@ export function GoalCreationStep({
 
   const hasGoals = createdGoals.length > 0;
 
+  // Hide scrollbar on mount
+  useEffect(() => {
+    const html = document.documentElement;
+    const body = document.body;
+    
+    const originalHtmlOverflow = html.style.overflow;
+    const originalBodyOverflow = body.style.overflow;
+    
+    html.style.overflow = 'hidden';
+    body.style.overflow = 'hidden';
+    
+    return () => {
+      html.style.overflow = originalHtmlOverflow;
+      body.style.overflow = originalBodyOverflow;
+    };
+  }, []);
+
   const handleGoalCreated = (goalName: string, emoji: string) => {
     setCreatedGoals(prev => [...prev, { name: goalName, emoji }]);
   };
@@ -31,72 +48,76 @@ export function GoalCreationStep({
   };
 
   return (
-    <div className="flex flex-col min-h-[calc(100vh-120px)] justify-between">
-      {/* Centered card */}
-      <div className="flex-1 flex items-center justify-center px-4">
-        <OnboardingCard className="max-w-lg w-full min-h-[340px] p-10">
-          <div className="text-center mb-8">
-            <div className="flex justify-center mb-5">
-              <AppleEmoji emoji="🎯" size="3xl" />
-            </div>
-            <h2 className="text-xl font-bold font-display text-foreground mb-3">
-              Add a goal to start with
-            </h2>
-            <p className="text-muted-foreground text-sm leading-relaxed">
-              Add one goal now, then link it to habits or tasks so you can track real progress.
-            </p>
-          </div>
-
-          {/* Created goals list */}
-          {createdGoals.length > 0 && (
-            <div className="space-y-3 mb-8">
-              {createdGoals.map((goal) => (
-                <div
-                  key={goal.name}
-                  className="flex items-center justify-between p-4 rounded-xl bg-secondary/50 border border-border/20"
-                >
-                  <div className="flex items-center gap-3">
-                    <AppleEmoji emoji={goal.emoji} size="lg" />
-                    <span className="font-medium text-foreground">{goal.name}</span>
-                  </div>
-                  <button
-                    onClick={() => handleRemoveGoal(goal.name)}
-                    className="p-1.5 rounded-lg hover:bg-secondary transition-colors text-muted-foreground hover:text-foreground"
-                  >
-                    <X className="w-4 h-4" />
-                  </button>
-                </div>
-              ))}
-            </div>
-          )}
-
-          {/* Add goal button */}
-          <Button
-            onClick={() => setShowAddModal(true)}
-            variant="outline"
-            className="w-full h-14 bg-white/50 border-border/30 hover:bg-secondary/50 rounded-xl text-base"
-          >
-            <Plus className="w-5 h-5 mr-2" />
-            Add goal
-          </Button>
-        </OnboardingCard>
-      </div>
-
-      {/* Fixed bottom CTA */}
-      <div className="px-4 pb-8 pt-4">
-        <div className="max-w-lg mx-auto">
-          <Button
-            onClick={onNext}
-            disabled={!hasGoals}
-            variant="gradient"
-            size="lg"
-            className="w-full h-14 text-base"
-          >
-            Continue
-            <ChevronRight className="w-5 h-5 ml-1" />
-          </Button>
+    <div 
+      className="fixed inset-0 w-full gradient-hero flex flex-col items-center justify-center"
+      style={{ height: '100vh', maxHeight: '100vh', overflow: 'hidden' }}
+    >
+      {/* Progress bar - positioned closer to the card */}
+      <div className="flex justify-center mb-6">
+        <div className="flex gap-2 px-4 py-2 rounded-full bg-white/80 backdrop-blur-sm shadow-sm">
+          <div className="h-2 w-8 rounded-full progress-bar-orange" />
         </div>
       </div>
+
+      {/* Card with everything inside */}
+      <OnboardingCard className="max-w-md w-full mx-4 p-8">
+        <div className="text-center mb-6">
+          <div className="flex justify-center mb-4">
+            <AppleEmoji emoji="🎯" size="3xl" />
+          </div>
+          <h2 className="text-xl font-bold font-display text-foreground mb-2">
+            Add a goal to start with
+          </h2>
+          <p className="text-muted-foreground text-sm leading-relaxed">
+            Add one goal now, then link it to habits or tasks so you can track real progress.
+          </p>
+        </div>
+
+        {/* Created goals list */}
+        {createdGoals.length > 0 && (
+          <div className="space-y-2 mb-6">
+            {createdGoals.map((goal) => (
+              <div
+                key={goal.name}
+                className="flex items-center justify-between p-3 rounded-xl bg-secondary/50 border border-border/20"
+              >
+                <div className="flex items-center gap-3">
+                  <AppleEmoji emoji={goal.emoji} size="lg" />
+                  <span className="font-medium text-foreground text-sm">{goal.name}</span>
+                </div>
+                <button
+                  onClick={() => handleRemoveGoal(goal.name)}
+                  className="p-1.5 rounded-lg hover:bg-secondary transition-colors text-muted-foreground hover:text-foreground"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {/* Add goal button */}
+        <Button
+          onClick={() => setShowAddModal(true)}
+          variant="outline"
+          className="w-full h-12 bg-white/50 border-border/30 hover:bg-secondary/50 rounded-xl text-base mb-4"
+        >
+          <Plus className="w-5 h-5 mr-2" />
+          Add goal
+        </Button>
+
+        {/* Continue button - INSIDE the card */}
+        <Button
+          onClick={onNext}
+          disabled={!hasGoals}
+          variant="gradient"
+          size="lg"
+          className="w-full h-12 text-base"
+        >
+          Continue
+          <ChevronRight className="w-5 h-5 ml-1" />
+        </Button>
+      </OnboardingCard>
 
       <AddGoalModal
         open={showAddModal}
