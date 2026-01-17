@@ -198,18 +198,14 @@ export function AnalyticsCarousel() {
   }, []);
 
   return (
-    <section className="pt-6 pb-10 px-4 overflow-hidden">
-      <div className="max-w-4xl mx-auto text-center mb-10">
-        <ScrollReveal animation="fade-up">
-          <h2 className="font-display text-3xl md:text-4xl font-semibold mb-4">
-            Get Deep <span className="gradient-text italic">Insights</span> About Your Life
-          </h2>
-        </ScrollReveal>
-        <ScrollReveal animation="fade-up" delay={100}>
-          <p className="text-muted-foreground max-w-xl mx-auto">
-            Understand your progress and patterns with beautiful analytics that show you the full picture.
-          </p>
-        </ScrollReveal>
+    <section className="py-4 px-4 overflow-hidden">
+      <div className="max-w-4xl mx-auto text-center mb-6">
+        <h2 className="font-display text-2xl md:text-4xl font-semibold mb-3">
+          Get Deep <span className="gradient-text italic">Insights</span> About Your Life
+        </h2>
+        <p className="text-muted-foreground text-sm md:text-base max-w-xl mx-auto">
+          Understand your progress and patterns with beautiful analytics that show you the full picture.
+        </p>
       </div>
 
       <div className="relative">

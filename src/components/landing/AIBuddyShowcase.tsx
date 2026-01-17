@@ -53,25 +53,25 @@ export function AIBuddyShowcase() {
           className="font-display text-2xl md:text-4xl font-semibold mb-10 text-center max-w-4xl mx-auto"
           style={{ textWrap: 'balance' } as React.CSSProperties}
         >
-          Analyze your progress with the <span className="gradient-text italic">AI Buddy</span>
+          Ask the <span className="gradient-text italic">AI Buddy</span> & Get Deep Insights
         </h2>
       </ScrollReveal>
 
       {/* Chat box container */}
       <ScrollReveal animation="zoom-in" delay={100}>
-        <div className="max-w-3xl mx-auto mb-6">
+        <div className="max-w-3xl mx-auto mb-4">
           {/* AI Buddy Chat Card - matching dashboard style */}
           <div className="w-full">
             <div 
               className="w-full bg-card/40 backdrop-blur-xl rounded-3xl shadow-soft overflow-hidden flex flex-col relative border border-border/10" 
-              style={{ height: "min(520px, 60vh)", maxWidth: "100%" }}
+              style={{ height: "min(400px, 50vh)", maxWidth: "100%" }}
             >
               {/* Messages Area - Welcome state with GlowOrb */}
-              <div className="flex-1 overflow-y-auto px-4 md:px-6 py-6">
+              <div className="flex-1 overflow-y-auto px-4 md:px-6 py-4">
                 <div className="h-full flex flex-col items-center justify-center text-center px-4">
                   {/* Animated Glow Orb - perfectly centered */}
-                  <div className="relative flex items-center justify-center mb-4">
-                    <div className="relative w-24 h-24 md:w-28 md:h-28 rounded-full overflow-hidden flex-shrink-0">
+                  <div className="relative flex items-center justify-center mb-3">
+                    <div className="relative w-20 h-20 md:w-24 md:h-24 rounded-full overflow-hidden flex-shrink-0">
                       <GlowOrb />
                     </div>
                   </div>
@@ -138,8 +138,8 @@ export function AIBuddyShowcase() {
 
       {/* Description - outside chat box container, wide like Goals section */}
       <ScrollReveal animation="fade-up" delay={200}>
-        <p className="text-muted-foreground text-base md:text-lg leading-relaxed text-center max-w-4xl mx-auto px-4">
-          AI Buddy sees all your goals, tasks, habits, and daily reflections, analyzes them, and helps you see patterns, find weaknesses, and reach your goals faster.
+        <p className="text-muted-foreground text-sm md:text-base leading-relaxed text-center max-w-4xl mx-auto px-4">
+          AI Buddy sees all your goals, tasks, habits, and daily reflections, analyzes them, and helps you see patterns.
         </p>
       </ScrollReveal>
     </section>
