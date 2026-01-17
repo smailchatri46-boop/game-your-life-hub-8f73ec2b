@@ -50,7 +50,7 @@ export function AIBuddyShowcase({ isOnboarding = false }: AIBuddyShowcaseProps) 
   const duplicatedQuestions = [...suggestedQuestions, ...suggestedQuestions];
 
   // Adjust sizes for onboarding context
-  const chatboxHeight = isOnboarding ? "min(280px, 40vh)" : "min(380px, 55vh)";
+  const chatboxHeight = isOnboarding ? "min(320px, 48vh)" : "min(380px, 55vh)";
   const titleSize = isOnboarding ? "text-xl md:text-3xl" : "text-2xl md:text-4xl";
   const descriptionSize = isOnboarding ? "text-xs md:text-sm" : "text-sm md:text-base";
 
