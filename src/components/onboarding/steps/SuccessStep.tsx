@@ -17,8 +17,7 @@ export function SuccessStep({
   onAddMoreHabits,
   onStartJournaling,
 }: SuccessStepProps) {
-  const [imageLoaded, setImageLoaded] = useState(false);
-  const [showImage, setShowImage] = useState(false);
+  const [showContent, setShowContent] = useState(false);
   const imgRef = useRef<HTMLImageElement>(null);
 
   // Hide scrollbar on mount
@@ -38,18 +37,16 @@ export function SuccessStep({
     };
   }, []);
 
-  // Handle image load and trigger smooth fade-in
+  // Handle image load and trigger smooth fade-in of EVERYTHING together
   useEffect(() => {
     const img = imgRef.current;
     if (!img) return;
 
     const handleImageReady = () => {
-      setImageLoaded(true);
-      // Small delay to ensure the browser has painted the initial state (opacity: 0)
-      // Then smoothly fade in
+      // Use double RAF to ensure browser has painted the initial state
       requestAnimationFrame(() => {
         requestAnimationFrame(() => {
-          setShowImage(true);
+          setShowContent(true);
         });
       });
     };
@@ -67,31 +64,38 @@ export function SuccessStep({
       className="fixed inset-0 flex items-center justify-center gradient-hero"
       style={{ overflow: 'hidden', height: '100vh', maxHeight: '100vh' }}
     >
-      {/* Blurred dashboard background with smooth fade-in animation */}
-      <img 
-        ref={imgRef}
-        src={dashboardPreview}
-        alt=""
-        aria-hidden="true"
-        className="absolute inset-0 w-full h-full object-cover"
+      {/* Everything wrapped together - fades in as one unit */}
+      <div
         style={{
-          filter: 'blur(8px)',
-          transform: 'scale(1.1)',
-          opacity: showImage ? 1 : 0,
-          transition: 'opacity 1.2s cubic-bezier(0.4, 0, 0.2, 1)',
+          opacity: showContent ? 1 : 0,
+          transition: 'opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1)',
         }}
-      />
-      {/* Light overlay for readability - also fades in smoothly with image */}
-      <div 
-        className="absolute inset-0 bg-white/40"
-        style={{
-          opacity: showImage ? 1 : 0,
-          transition: 'opacity 1.2s cubic-bezier(0.4, 0, 0.2, 1)',
-        }}
-      />
+        className="absolute inset-0"
+      >
+        {/* Blurred dashboard background */}
+        <img 
+          ref={imgRef}
+          src={dashboardPreview}
+          alt=""
+          aria-hidden="true"
+          className="absolute inset-0 w-full h-full object-cover"
+          style={{
+            filter: 'blur(8px)',
+            transform: 'scale(1.1)',
+          }}
+        />
+        {/* Light overlay for readability */}
+        <div className="absolute inset-0 bg-white/40" />
+      </div>
       
-      {/* Card content */}
-      <div className="relative z-10 w-full max-w-md px-4">
+      {/* Card content - also part of the same fade transition */}
+      <div 
+        className="relative z-10 w-full max-w-md px-4"
+        style={{
+          opacity: showContent ? 1 : 0,
+          transition: 'opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1)',
+        }}
+      >
         <OnboardingCard className="text-center">
           <div className="mb-6">
             <div className="flex justify-center mb-4">
