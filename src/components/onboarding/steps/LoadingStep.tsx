@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { OnboardingCard } from "../OnboardingCard";
 import { AppleEmoji } from "@/components/AppleEmoji";
+import dashboardPreview from "@/assets/dashboard-preview-optimized.jpg";
 
 interface LoadingStepProps {
   onComplete: () => void;
@@ -19,6 +20,12 @@ export function LoadingStep({ onComplete }: LoadingStepProps) {
   const [currentEmoji, setCurrentEmoji] = useState(0);
   const [currentMessage, setCurrentMessage] = useState(0);
   const [fadeIn, setFadeIn] = useState(true);
+
+  // Preload the dashboard image during loading step
+  useEffect(() => {
+    const img = new Image();
+    img.src = dashboardPreview;
+  }, []);
 
   useEffect(() => {
     // Cycle through emojis (no animation, just swap)

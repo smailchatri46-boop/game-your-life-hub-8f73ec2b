@@ -53,7 +53,7 @@ export function SuccessStep({
         className="absolute inset-0 bg-cover bg-center bg-no-repeat transition-opacity duration-500"
         style={{
           backgroundImage: `url(${dashboardPreview})`,
-          filter: 'blur(16px)',
+          filter: 'blur(8px)',
           transform: 'scale(1.1)',
           opacity: imageLoaded ? 1 : 0,
         }}
@@ -94,7 +94,7 @@ export function SuccessStep({
             variant="gradient"
             className="w-full h-12 text-base hover:opacity-90"
           >
-            Start organizing my life
+            Start My Journey Now
           </Button>
         </OnboardingCard>
       </div>
