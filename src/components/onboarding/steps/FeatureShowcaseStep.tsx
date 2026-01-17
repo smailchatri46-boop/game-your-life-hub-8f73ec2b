@@ -84,7 +84,7 @@ function AllInOneShowcase() {
 }
 
 export function FeatureShowcaseStep({ variant, onNext, currentIndex, totalFeatures }: FeatureShowcaseStepProps) {
-  // Hide scrollbar on html/body when this step is active
+  // Hide scrollbar and reset zoom on html/body when this step is active
   useEffect(() => {
     const html = document.documentElement;
     const body = document.body;
@@ -94,12 +94,14 @@ export function FeatureShowcaseStep({ variant, onNext, currentIndex, totalFeatur
     const originalBodyOverflow = body.style.overflow;
     const originalHtmlHeight = html.style.height;
     const originalBodyHeight = body.style.height;
+    const originalZoom = html.style.zoom;
     
-    // Apply overflow hidden
+    // Apply overflow hidden and reset zoom for proper viewport calculation
     html.style.overflow = 'hidden';
     body.style.overflow = 'hidden';
     html.style.height = '100%';
     body.style.height = '100%';
+    html.style.zoom = '1'; // Reset zoom to prevent button from being pushed off screen
     
     return () => {
       // Restore original styles
@@ -107,6 +109,7 @@ export function FeatureShowcaseStep({ variant, onNext, currentIndex, totalFeatur
       body.style.overflow = originalBodyOverflow;
       html.style.height = originalHtmlHeight;
       body.style.height = originalBodyHeight;
+      html.style.zoom = originalZoom;
     };
   }, []);
 
@@ -123,10 +126,10 @@ export function FeatureShowcaseStep({ variant, onNext, currentIndex, totalFeatur
   return (
     <div 
       className="fixed inset-0 w-full gradient-hero flex flex-col"
-      style={{ height: '100dvh', overflow: 'hidden' }}
+      style={{ height: '100vh', maxHeight: '100vh', overflow: 'hidden' }}
     >
       {/* Top: Progress dots */}
-      <div className="flex-shrink-0 flex justify-center pt-3 pb-2">
+      <div className="flex-shrink-0 flex justify-center pt-4 pb-3">
         <div className="flex gap-2 px-4 py-2 rounded-full bg-white/80 backdrop-blur-sm shadow-sm">
           {Array.from({ length: totalFeatures }).map((_, i) => (
             <div
@@ -149,13 +152,13 @@ export function FeatureShowcaseStep({ variant, onNext, currentIndex, totalFeatur
         {renderContent()}
       </div>
 
-      {/* Bottom: CTA Button - fixed at bottom */}
-      <div className="flex-shrink-0 flex justify-center py-4 pb-6">
+      {/* Bottom: CTA Button - ALWAYS visible */}
+      <div className="flex-shrink-0 flex justify-center py-5 pb-8 bg-gradient-to-t from-white/20 to-transparent">
         <Button
           onClick={onNext}
           variant="gradient"
           size="lg"
-          className="h-12 px-10 text-base shadow-lg"
+          className="h-14 px-12 text-lg shadow-xl"
         >
           Next
           <ChevronRight className="w-5 h-5 ml-1" />
