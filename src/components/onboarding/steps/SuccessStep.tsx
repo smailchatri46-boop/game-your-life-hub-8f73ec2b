@@ -1,7 +1,7 @@
 import { OnboardingCard } from "../OnboardingCard";
 import { Button } from "@/components/ui/button";
 import { AppleEmoji } from "@/components/AppleEmoji";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import dashboardPreview from "@/assets/dashboard-preview-optimized.jpg";
 
 interface SuccessStepProps {
@@ -17,8 +17,8 @@ export function SuccessStep({
   onAddMoreHabits,
   onStartJournaling,
 }: SuccessStepProps) {
-  const [imageLoaded, setImageLoaded] = useState(false);
   const [showImage, setShowImage] = useState(false);
+  const imgRef = useRef<HTMLImageElement>(null);
 
   // Hide scrollbar on mount
   useEffect(() => {
@@ -37,15 +37,29 @@ export function SuccessStep({
     };
   }, []);
 
-  // When image loads, trigger the fade-in
+  // Check if image is already loaded (from preload in CommitmentStep)
+  // and trigger fade-in after a brief delay to ensure CSS transition works
   useEffect(() => {
-    if (imageLoaded) {
-      // Small delay to ensure the transition works
+    const img = imgRef.current;
+    if (!img) return;
+
+    const triggerFade = () => {
+      // Use double RAF to ensure the browser has painted the initial state
       requestAnimationFrame(() => {
-        setShowImage(true);
+        requestAnimationFrame(() => {
+          setShowImage(true);
+        });
       });
+    };
+
+    if (img.complete && img.naturalHeight !== 0) {
+      // Image already loaded (from preload)
+      triggerFade();
+    } else {
+      // Wait for image to load
+      img.onload = triggerFade;
     }
-  }, [imageLoaded]);
+  }, []);
 
   return (
     <div 
@@ -54,24 +68,22 @@ export function SuccessStep({
     >
       {/* Blurred dashboard background with fade-in animation */}
       <img 
+        ref={imgRef}
         src={dashboardPreview}
         alt=""
         aria-hidden="true"
-        className="absolute inset-0 w-full h-full object-cover"
+        className="absolute inset-0 w-full h-full object-cover transition-opacity duration-700 ease-out"
         style={{
           filter: 'blur(8px)',
           transform: 'scale(1.1)',
           opacity: showImage ? 1 : 0,
-          transition: 'opacity 0.6s ease-in-out',
         }}
-        onLoad={() => setImageLoaded(true)}
       />
       {/* Light overlay for readability - also fades in with image */}
       <div 
-        className="absolute inset-0 bg-white/40"
+        className="absolute inset-0 bg-white/40 transition-opacity duration-700 ease-out"
         style={{
           opacity: showImage ? 1 : 0,
-          transition: 'opacity 0.6s ease-in-out',
         }}
       />
       
