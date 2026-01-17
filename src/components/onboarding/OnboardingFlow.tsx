@@ -1,4 +1,5 @@
 import { useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
 import { useOnboarding } from "@/hooks/use-onboarding";
 import { OnboardingProgress } from "./OnboardingProgress";
 import { WhyWeExistStep } from "./steps/WhyWeExistStep";
@@ -13,6 +14,7 @@ import { SurveyQuestionStep } from "./steps/SurveyQuestionStep";
 import { FeatureShowcaseStep } from "./steps/FeatureShowcaseStep";
 import { FeatureIntroStep } from "./steps/FeatureIntroStep";
 import { FeatureOutroStep } from "./steps/FeatureOutroStep";
+import dashboardPreview from "@/assets/dashboard-preview-optimized.jpg";
 
 const SURVEY_QUESTIONS = {
   "survey-1": {
@@ -81,6 +83,7 @@ const SURVEY_QUESTIONS = {
 
 export function OnboardingFlow() {
   const navigate = useNavigate();
+  const [successBgReady, setSuccessBgReady] = useState(false);
   const {
     currentStep,
     data,
@@ -101,6 +104,26 @@ export function OnboardingFlow() {
     completeOnboarding,
     skipOnboarding,
   } = useOnboarding();
+
+  // Preload success background image early (when onboarding starts)
+  useEffect(() => {
+    let cancelled = false;
+
+    const img = new Image();
+    img.src = dashboardPreview;
+
+    img.onload = () => {
+      if (!cancelled) setSuccessBgReady(true);
+    };
+
+    img.onerror = () => {
+      if (!cancelled) setSuccessBgReady(true); // don't block onboarding
+    };
+
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   const handleSkip = () => {
     skipOnboarding();
@@ -341,6 +364,10 @@ export function OnboardingFlow() {
         return <LoadingStep onComplete={goToNext} />;
 
       case "success":
+        // Block SuccessStep until background image is ready
+        if (!successBgReady) {
+          return <LoadingStep onComplete={() => {}} />;
+        }
         return (
           <SuccessStep
             commitmentName={data.commitmentName}
