@@ -17,6 +17,7 @@ export function SuccessStep({
   onAddMoreHabits,
   onStartJournaling,
 }: SuccessStepProps) {
+  const [imageLoaded, setImageLoaded] = useState(false);
   const [showImage, setShowImage] = useState(false);
   const imgRef = useRef<HTMLImageElement>(null);
 
@@ -37,14 +38,15 @@ export function SuccessStep({
     };
   }, []);
 
-  // Check if image is already loaded (from preload in CommitmentStep)
-  // and trigger fade-in after a brief delay to ensure CSS transition works
+  // Handle image load and trigger smooth fade-in
   useEffect(() => {
     const img = imgRef.current;
     if (!img) return;
 
-    const triggerFade = () => {
-      // Use double RAF to ensure the browser has painted the initial state
+    const handleImageReady = () => {
+      setImageLoaded(true);
+      // Small delay to ensure the browser has painted the initial state (opacity: 0)
+      // Then smoothly fade in
       requestAnimationFrame(() => {
         requestAnimationFrame(() => {
           setShowImage(true);
@@ -52,12 +54,11 @@ export function SuccessStep({
       });
     };
 
+    // Check if image is already loaded (from preload in LoadingStep)
     if (img.complete && img.naturalHeight !== 0) {
-      // Image already loaded (from preload)
-      triggerFade();
+      handleImageReady();
     } else {
-      // Wait for image to load
-      img.onload = triggerFade;
+      img.onload = handleImageReady;
     }
   }, []);
 
@@ -66,24 +67,26 @@ export function SuccessStep({
       className="fixed inset-0 flex items-center justify-center gradient-hero"
       style={{ overflow: 'hidden', height: '100vh', maxHeight: '100vh' }}
     >
-      {/* Blurred dashboard background with fade-in animation */}
+      {/* Blurred dashboard background with smooth fade-in animation */}
       <img 
         ref={imgRef}
         src={dashboardPreview}
         alt=""
         aria-hidden="true"
-        className="absolute inset-0 w-full h-full object-cover transition-opacity duration-700 ease-out"
+        className="absolute inset-0 w-full h-full object-cover"
         style={{
           filter: 'blur(8px)',
           transform: 'scale(1.1)',
           opacity: showImage ? 1 : 0,
+          transition: 'opacity 1.2s cubic-bezier(0.4, 0, 0.2, 1)',
         }}
       />
-      {/* Light overlay for readability - also fades in with image */}
+      {/* Light overlay for readability - also fades in smoothly with image */}
       <div 
-        className="absolute inset-0 bg-white/40 transition-opacity duration-700 ease-out"
+        className="absolute inset-0 bg-white/40"
         style={{
           opacity: showImage ? 1 : 0,
+          transition: 'opacity 1.2s cubic-bezier(0.4, 0, 0.2, 1)',
         }}
       />
       
