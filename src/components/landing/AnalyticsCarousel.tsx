@@ -201,11 +201,12 @@ export function AnalyticsCarousel({ isOnboarding = false }: AnalyticsCarouselPro
     };
   }, []);
 
-  const titleSize = isOnboarding ? "text-xl md:text-3xl" : "text-2xl md:text-4xl";
-  const descriptionSize = isOnboarding ? "text-xs md:text-sm" : "text-sm md:text-base";
+  // Adjust sizes - LARGER for onboarding to fill screen
+  const titleSize = isOnboarding ? "text-2xl md:text-5xl" : "text-2xl md:text-4xl";
+  const descriptionSize = isOnboarding ? "text-sm md:text-base" : "text-sm md:text-base";
 
   return (
-    <section className={`${isOnboarding ? 'py-1' : 'py-2'} px-4 overflow-hidden w-full`}>
+    <section className={`${isOnboarding ? 'py-4' : 'py-2'} px-4 overflow-hidden w-full`}>
       <div className={`max-w-4xl mx-auto text-center ${isOnboarding ? 'mb-4' : 'mb-8'}`}>
         <h2 className={`font-display ${titleSize} font-semibold mb-2`}>
           Get Deep <span className="gradient-text italic">Insights</span> About Your Life

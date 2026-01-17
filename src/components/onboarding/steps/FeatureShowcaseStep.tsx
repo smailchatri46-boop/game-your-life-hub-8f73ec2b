@@ -25,57 +25,57 @@ function AllInOneShowcase() {
   return (
     <section className="px-4 w-full">
       <div className="max-w-5xl mx-auto text-center">
-        <h2 className="font-display text-2xl md:text-4xl font-semibold mb-4">
+        <h2 className="font-display text-2xl md:text-5xl font-semibold mb-6">
           Your all in <span className="italic gradient-text">one tracker</span>
         </h2>
         
-        <div className="flex flex-col md:flex-row items-center justify-center gap-3 md:gap-6 mb-4">
-          <div className="flex items-center gap-3 md:gap-5 flex-shrink-0">
+        <div className="flex flex-col md:flex-row items-center justify-center gap-4 md:gap-8 mb-6">
+          <div className="flex items-center gap-4 md:gap-6 flex-shrink-0">
             <img 
               src="/images/apps-arrows.png" 
               alt="Apps flowing into Neyler" 
-              className="h-24 md:h-36 object-contain"
+              className="h-28 md:h-44 object-contain"
             />
             <img 
               src="/images/neyler-logo-full.png" 
               alt="Neyler" 
-              className="h-8 md:h-12 object-contain"
+              className="h-10 md:h-14 object-contain"
             />
           </div>
           
-          <div className="p-4 rounded-3xl bg-gradient-to-br from-[hsl(30,70%,96%)] to-[hsl(25,60%,92%)] w-[240px] md:w-[280px]">
+          <div className="p-5 rounded-3xl bg-gradient-to-br from-[hsl(30,70%,96%)] to-[hsl(25,60%,92%)] w-[280px] md:w-[320px]">
             <div className="flex items-start justify-between mb-1">
               <div>
-                <h3 className="font-display text-base font-semibold text-foreground">To-Do List</h3>
+                <h3 className="font-display text-lg font-semibold text-foreground">To-Do List</h3>
                 <p className="text-xs text-muted-foreground">
                   1 décembre 2025
                 </p>
               </div>
-              <AppleEmoji emoji="😌" size="lg" />
+              <AppleEmoji emoji="😌" size="xl" />
             </div>
             
-            <div className="space-y-2 mt-2">
-              <div className="flex items-center gap-3 p-2 rounded-2xl bg-white/80 shadow-sm">
-                <AppleEmoji emoji="💬" size="sm" />
-                <span className="text-xs flex-1 text-muted-foreground line-through text-left">
+            <div className="space-y-2 mt-3">
+              <div className="flex items-center gap-3 p-2.5 rounded-2xl bg-white/80 shadow-sm">
+                <AppleEmoji emoji="💬" size="md" />
+                <span className="text-sm flex-1 text-muted-foreground line-through text-left">
                   Call mom
                 </span>
-                <button className="w-4 h-4 rounded-full border-2 flex items-center justify-center bg-[hsl(25,60%,70%)] border-[hsl(25,60%,70%)]">
-                  <Check className="w-2.5 h-2.5 text-white" />
+                <button className="w-5 h-5 rounded-full border-2 flex items-center justify-center bg-[hsl(25,60%,70%)] border-[hsl(25,60%,70%)]">
+                  <Check className="w-3 h-3 text-white" />
                 </button>
               </div>
 
               <button
-                className="w-full flex items-center justify-center gap-2 p-2 rounded-2xl bg-white/50 hover:bg-white/70 transition-colors text-muted-foreground border-2 border-dashed border-muted-foreground/20"
+                className="w-full flex items-center justify-center gap-2 p-2.5 rounded-2xl bg-white/50 hover:bg-white/70 transition-colors text-muted-foreground border-2 border-dashed border-muted-foreground/20"
               >
-                <Plus className="w-3 h-3" />
-                <span className="text-xs">Add task</span>
+                <Plus className="w-4 h-4" />
+                <span className="text-sm">Add task</span>
               </button>
             </div>
           </div>
         </div>
         
-        <p className="text-muted-foreground text-sm max-w-xl mx-auto">
+        <p className="text-muted-foreground text-base max-w-2xl mx-auto">
           Replace scattered spreadsheets, multiple AI apps, and messy notes with one beautiful solution.
         </p>
       </div>

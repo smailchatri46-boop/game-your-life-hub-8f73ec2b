@@ -134,12 +134,13 @@ export function GoalsShowcase({ isOnboarding = false }: GoalsShowcaseProps) {
   // Duplicate goals for seamless loop
   const duplicatedGoals = [...demoGoals, ...demoGoals];
 
-  const titleSize = isOnboarding ? "text-xl md:text-3xl" : "text-2xl md:text-4xl";
-  const cardSize = isOnboarding ? "w-[260px] md:w-[280px]" : "w-[300px] md:w-[320px]";
-  const descriptionSize = isOnboarding ? "text-xs md:text-sm" : "text-base";
+  // Adjust sizes - LARGER for onboarding to fill screen
+  const titleSize = isOnboarding ? "text-2xl md:text-5xl" : "text-2xl md:text-4xl";
+  const cardSize = isOnboarding ? "w-[320px] md:w-[360px]" : "w-[300px] md:w-[320px]";
+  const descriptionSize = isOnboarding ? "text-sm md:text-base" : "text-base";
 
   return (
-    <section className={`${isOnboarding ? 'py-2' : 'py-6'} px-4 overflow-hidden w-full`}>
+    <section className={`${isOnboarding ? 'py-4' : 'py-6'} px-4 overflow-hidden w-full`}>
       {/* Title - centered at top */}
       <div className="max-w-6xl mx-auto text-center mb-4">
         <h2 className={`font-display ${titleSize} font-semibold`}>
