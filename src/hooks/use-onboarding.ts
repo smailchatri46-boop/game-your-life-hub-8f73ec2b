@@ -18,6 +18,7 @@ export type OnboardingStep =
   | "feature-habits"
   | "feature-ai-buddy"
   | "feature-insights"
+  | "feature-outro"
   | "habit-suggestions"
   | "commitment"
   | "loading"
@@ -85,6 +86,7 @@ const STEP_ORDER: OnboardingStep[] = [
   "feature-habits",
   "feature-insights",
   "feature-all-in-one",
+  "feature-outro",
   "habit-suggestions",
   "commitment",
   "loading",
