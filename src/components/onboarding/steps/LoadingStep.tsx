@@ -21,10 +21,10 @@ export function LoadingStep({ onComplete }: LoadingStepProps) {
   const [fadeIn, setFadeIn] = useState(true);
 
   useEffect(() => {
-    // Cycle through emojis slowly
+    // Cycle through emojis (no animation, just swap)
     const emojiInterval = setInterval(() => {
       setCurrentEmoji(prev => (prev + 1) % LOADING_EMOJIS.length);
-    }, 1800);
+    }, 600);
 
     // Cycle through messages with fade transition
     const messageInterval = setInterval(() => {
@@ -32,13 +32,13 @@ export function LoadingStep({ onComplete }: LoadingStepProps) {
       setTimeout(() => {
         setCurrentMessage(prev => (prev + 1) % LOADING_STATES.length);
         setFadeIn(true);
-      }, 200);
-    }, 2200);
+      }, 150);
+    }, 900);
 
-    // Complete after longer loading animation
+    // Complete after 4 seconds
     const completeTimeout = setTimeout(() => {
       onComplete();
-    }, 9000);
+    }, 4000);
 
     return () => {
       clearInterval(emojiInterval);
@@ -50,8 +50,8 @@ export function LoadingStep({ onComplete }: LoadingStepProps) {
   return (
     <OnboardingCard className="text-center">
       <div className="py-8 flex flex-col items-center justify-center min-h-[220px]">
-        {/* Slowly pulsing emoji that cycles */}
-        <div className="mb-6 animate-pulse-float-slow">
+        {/* Emoji that cycles - no movement animation */}
+        <div className="mb-6">
           <AppleEmoji emoji={LOADING_EMOJIS[currentEmoji]} size="3xl" />
         </div>
 
