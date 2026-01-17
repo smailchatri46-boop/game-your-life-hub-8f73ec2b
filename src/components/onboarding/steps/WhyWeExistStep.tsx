@@ -47,7 +47,7 @@ export function WhyWeExistStep({ onNext }: WhyWeExistStepProps) {
         variant="gradient"
         className="w-full h-11"
       >
-        Next
+        See what Neyler offers
         <ChevronRight className="w-4 h-4 ml-1" />
       </Button>
     </OnboardingCard>
