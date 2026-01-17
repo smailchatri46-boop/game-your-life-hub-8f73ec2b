@@ -7,7 +7,6 @@ export type OnboardingStep =
   | "survey-4"
   | "survey-5"
   | "survey-6"
-  | "survey-7"
   | "about-focus"
   | "about-struggle"
   | "about-time"
@@ -39,7 +38,6 @@ export interface OnboardingData {
     survey4: string | null;
     survey5: string | null;
     survey6: string | null;
-    survey7: string | null;
   };
 }
 
@@ -61,18 +59,16 @@ const INITIAL_DATA: OnboardingData = {
     survey4: null,
     survey5: null,
     survey6: null,
-    survey7: null,
   },
 };
 
 const STEP_ORDER: OnboardingStep[] = [
   "survey-1",
   "survey-2",
-  "survey-4", // Swapped: "Would you like one app..." before "Where did you hear about us?"
-  "survey-3", // Swapped: "Where did you hear about us?" after survey-4
+  "survey-4",
+  "survey-3",
   "survey-5",
   "survey-6",
-  "survey-7", // New: Second AI question (split from survey-6)
   "about-focus",
   "about-struggle",
   "about-time",

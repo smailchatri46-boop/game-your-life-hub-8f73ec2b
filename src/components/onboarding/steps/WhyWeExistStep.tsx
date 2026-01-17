@@ -18,7 +18,7 @@ export function WhyWeExistStep({ onNext }: WhyWeExistStepProps) {
           Neyler got your back
         </h2>
         <p className="text-muted-foreground text-base leading-relaxed">
-          Neyler keeps everything in one place — your habits, tasks, and goals.
+          Neyler keeps everything in one place: your habits, tasks, and goals.
           And with AI, it helps you spot patterns, stay consistent, and move forward with clarity.
         </p>
       </div>
