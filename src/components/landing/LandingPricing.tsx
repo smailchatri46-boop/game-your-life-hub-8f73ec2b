@@ -26,39 +26,6 @@ interface Plan {
 
 const plans: Plan[] = [
   {
-    name: "Starter",
-    monthlyPrice: 0,
-    yearlyPrice: 0,
-    subtitle: "Good for people just starting out",
-    benefitText: "Perfect if you're just beginning your self-improvement journey.",
-    features: [
-      { text: "Up to 2 habits & tasks", included: true },
-      { text: "Up to 1 quarterly or yearly goal", included: true },
-      { text: "Add up to 3 one-time tasks per day", included: true },
-      { text: "Mood tracking", included: true },
-      { text: "Progress charts and streaks", included: true },
-      { text: "Reflections & basic analytics", included: true },
-      { text: "AI chat access", included: false },
-    ],
-  },
-  {
-    name: "Core",
-    monthlyPrice: 5,
-    yearlyPrice: 25,
-    subtitle: "Great for people getting serious about tracking their lives",
-    benefitText: "Great if you want more structure and motivation day-to-day.",
-    features: [
-      { text: "Up to 6 habits & tasks", included: true },
-      { text: "Unlimited to-do lists", included: true },
-      { text: "Up to 4 quarterly or yearly goals", included: true },
-      { text: "Mood tracking", included: true },
-      { text: "Reflections journal", included: true },
-      { text: "Progress charts and streaks", included: true },
-      { text: "Basic analytics", included: true },
-      { text: "AI chat access", included: false },
-    ],
-  },
-  {
     name: "Pro",
     monthlyPrice: 9,
     yearlyPrice: 49,
@@ -182,12 +149,12 @@ export function LandingPricing() {
         </ScrollReveal>
 
         {/* Pricing Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-5 lg:gap-6">
+        <div className="flex justify-center">
           {plans.map((plan, index) => (
             <ScrollReveal key={plan.name} animation="zoom-in" delay={index * 100}>
               <div
                 className={cn(
-                  "relative rounded-3xl p-6 lg:p-8 transition-all duration-300 glass-card flex flex-col h-full",
+                  "relative rounded-3xl p-6 lg:p-8 transition-all duration-300 glass-card flex flex-col h-full max-w-md",
                   plan.popular
                     ? "shadow-xl scale-[1.02] md:scale-105"
                     : "hover:shadow-lg"

@@ -23,7 +23,8 @@ export type OnboardingStep =
   | "goal-creation"
   | "commitment"
   | "loading"
-  | "success";
+  | "success"
+  | "paywall";
 
 export interface OnboardingData {
   focusAreas: string[];
@@ -96,6 +97,7 @@ const STEP_ORDER: OnboardingStep[] = [
   "commitment",
   "loading",
   "success",
+  "paywall",
 ];
 
 export function useOnboarding() {
