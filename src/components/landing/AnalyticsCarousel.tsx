@@ -202,28 +202,27 @@ export function AnalyticsCarousel({ isOnboarding = false }: AnalyticsCarouselPro
   }, []);
 
   // Adjust sizes - LARGER for onboarding to fill screen
-  const titleSize = isOnboarding ? "text-2xl md:text-5xl" : "text-2xl md:text-4xl";
-  const descriptionSize = isOnboarding ? "text-sm md:text-base" : "text-sm md:text-base";
+  const titleSize = isOnboarding ? "text-2xl md:text-4xl" : "text-2xl md:text-4xl";
+  const descriptionSize = isOnboarding ? "text-xs md:text-sm" : "text-sm md:text-base";
+  const cardScale = isOnboarding ? "scale-110" : "";
 
   return (
-    <section className={`${isOnboarding ? 'py-4' : 'py-2'} px-4 overflow-hidden w-full`}>
-      <div className={`max-w-4xl mx-auto text-center ${isOnboarding ? 'mb-4' : 'mb-8'}`}>
+    <section className={`${isOnboarding ? 'py-2' : 'py-2'} px-4 overflow-hidden w-full ${isOnboarding ? 'flex flex-col' : ''}`}>
+      <div className={`max-w-4xl mx-auto text-center ${isOnboarding ? 'mb-3' : 'mb-8'}`}>
         <h2 className={`font-display ${titleSize} font-semibold mb-2`}>
           Get Deep <span className="gradient-text italic">Insights</span> About Your Life
         </h2>
-        <p className={`text-muted-foreground ${descriptionSize} max-w-xl mx-auto`}>
-          Understand your progress and patterns with beautiful analytics that show you the full picture.
-        </p>
       </div>
 
-      <div className="relative">
+      <div className={`relative ${isOnboarding ? 'flex-1' : ''}`}>
         <div
           ref={scrollRef}
-          className="flex gap-5 overflow-x-hidden py-4"
+          className={`flex gap-5 overflow-x-hidden py-4 ${cardScale}`}
           style={{ 
             scrollBehavior: "auto",
             maskImage: 'linear-gradient(to right, transparent 0%, black 5%, black 95%, transparent 100%)',
             WebkitMaskImage: 'linear-gradient(to right, transparent 0%, black 5%, black 95%, transparent 100%)',
+            transformOrigin: 'center center',
           }}
         >
           {/* Duplicate cards for infinite scroll effect */}
@@ -254,6 +253,19 @@ export function AnalyticsCarousel({ isOnboarding = false }: AnalyticsCarouselPro
           ))}
         </div>
       </div>
+      
+      {/* Description at bottom for onboarding */}
+      {isOnboarding && (
+        <p className={`text-muted-foreground ${descriptionSize} text-center max-w-xl mx-auto mt-auto pt-3`}>
+          Understand your progress and patterns with beautiful analytics that show you the full picture.
+        </p>
+      )}
+      {/* Description in header for homepage - already shown above */}
+      {!isOnboarding && (
+        <p className={`text-muted-foreground ${descriptionSize} max-w-xl mx-auto text-center -mt-2`}>
+          Understand your progress and patterns with beautiful analytics that show you the full picture.
+        </p>
+      )}
     </section>
   );
 }
