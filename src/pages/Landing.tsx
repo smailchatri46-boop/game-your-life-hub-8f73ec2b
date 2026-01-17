@@ -137,7 +137,7 @@ export default function Landing() {
           <div className="flex flex-col md:flex-row items-center justify-center gap-6 md:gap-10 mb-8">
             {/* Apps image - shifted slightly left */}
             <ScrollReveal animation="fade-right" delay={100}>
-              <div className="flex items-center gap-4 md:gap-8 flex-shrink-0">
+              <div className="flex items-center gap-2 md:gap-4 flex-shrink-0">
                 <img 
                   src="/images/apps-arrows.png" 
                   alt="Apps flowing into Neyler" 
