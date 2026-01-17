@@ -16,18 +16,19 @@ export interface UsageData {
   todosDate: string; // YYYY-MM-DD format to reset daily
 }
 
+// All plans now have unlimited access - no hard paywalls
 const PLAN_LIMITS: Record<PlanType, PlanLimits> = {
   free: {
-    maxHabits: 2,
-    maxGoals: 1,
-    maxTodosPerDay: 3,
-    hasAIAccess: false,
+    maxHabits: Infinity,
+    maxGoals: Infinity,
+    maxTodosPerDay: Infinity,
+    hasAIAccess: true,
   },
   core: {
-    maxHabits: 6,
-    maxGoals: 4,
+    maxHabits: Infinity,
+    maxGoals: Infinity,
     maxTodosPerDay: Infinity,
-    hasAIAccess: false,
+    hasAIAccess: true,
   },
   pro: {
     maxHabits: Infinity,

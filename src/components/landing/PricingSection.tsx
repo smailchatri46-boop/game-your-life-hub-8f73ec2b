@@ -25,43 +25,10 @@ interface Plan {
 
 const plans: Plan[] = [
   {
-    name: "Starter",
-    monthlyPrice: 0,
-    yearlyPrice: 0,
-    subtitle: "Good for people just starting out",
-    benefitText: "Perfect if you're just beginning your self-improvement journey.",
-    features: [
-      { text: "Up to 2 habits & tasks", included: true },
-      { text: "Up to 1 quarterly or yearly goal", included: true },
-      { text: "Add up to 3 one-time tasks per day", included: true },
-      { text: "Mood tracking", included: true },
-      { text: "Progress charts and streaks", included: true },
-      { text: "Reflections & basic analytics", included: true },
-      { text: "AI chat access", included: false },
-    ],
-  },
-  {
-    name: "Core",
-    monthlyPrice: 5,
-    yearlyPrice: 25,
-    subtitle: "Great for people getting serious about tracking their lives",
-    benefitText: "Great if you want more structure and motivation day-to-day.",
-    features: [
-      { text: "Up to 6 habits & tasks", included: true },
-      { text: "Unlimited to-do lists", included: true },
-      { text: "Up to 4 quarterly or yearly goals", included: true },
-      { text: "Mood tracking", included: true },
-      { text: "Reflections journal", included: true },
-      { text: "Progress charts and streaks", included: true },
-      { text: "Basic analytics", included: true },
-      { text: "AI chat access", included: false },
-    ],
-  },
-  {
     name: "Pro",
     monthlyPrice: 9,
     yearlyPrice: 49,
-    subtitle: "Unlock the full AI experience",
+    subtitle: "Unlock the full experience",
     benefitText: "Everything in Neyler unlocked.",
     popular: true,
     features: [
@@ -108,27 +75,18 @@ export function PricingSection() {
     return `Pay only $${plan.yearlyPrice}/year`;
   };
 
-  const handleGetStarted = (planName: string) => {
-    const plan = planName.toLowerCase() as PlanType | "starter";
+  const handleGetStarted = () => {
     const period: BillingPeriod = isYearly ? "yearly" : "monthly";
 
     // If user is not logged in, store the selected plan and redirect to auth
     if (!user) {
-      localStorage.setItem("neyler_pending_plan", JSON.stringify({ plan, period }));
+      localStorage.setItem("neyler_pending_plan", JSON.stringify({ plan: "pro", period }));
       navigate("/auth");
       return;
     }
 
-    // User is logged in
-    if (planName === "Starter") {
-      // Free plan - just go to onboarding
-      localStorage.setItem("neyler_current_plan", "free");
-      navigate("/onboarding");
-      return;
-    }
-
-    // Paid plan - open checkout
-    openCheckout(plan as PlanType, period);
+    // Open Pro checkout
+    openCheckout("pro", period);
   };
 
   return (
@@ -180,10 +138,11 @@ export function PricingSection() {
         </div>
 
         {/* Pricing Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-5 lg:gap-6">
+        <div className="flex justify-center">
           {plans.map((plan) => (
             <div
               key={plan.name}
+              style={{ maxWidth: '400px' }}
               className={cn(
                 "relative rounded-3xl p-6 lg:p-8 transition-all duration-300 glass-card flex flex-col",
                 plan.popular
@@ -286,10 +245,10 @@ export function PricingSection() {
                     ? "shadow-md hover:shadow-lg hover:opacity-90"
                     : "hover:bg-muted hover:border-muted-foreground/30"
                 )}
-                onClick={() => handleGetStarted(plan.name)}
+                onClick={() => handleGetStarted()}
                 disabled={isLoading}
               >
-                {plan.monthlyPrice === 0 ? "Start for free" : "Get started"}
+                Get started
               </Button>
             </div>
           ))}

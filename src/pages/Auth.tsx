@@ -10,7 +10,7 @@ import googleLogo from "@/assets/google-logo.png";
 import type { PlanType, BillingPeriod } from "@/lib/polar";
 
 interface PendingPlan {
-  plan: PlanType | "starter";
+  plan: string; // Can be "pro", "starter", "free", etc.
   period: BillingPeriod;
 }
 
@@ -38,18 +38,16 @@ export default function Auth() {
         try {
           const pendingPlan: PendingPlan = JSON.parse(pendingPlanStr);
           
-          if (pendingPlan.plan === "starter") {
+          if (pendingPlan.plan === "starter" || pendingPlan.plan === "free") {
             // Free plan - just go to onboarding
             localStorage.setItem("neyler_current_plan", "free");
             localStorage.removeItem("neyler_pending_plan");
             navigate("/onboarding");
           } else {
-            // Paid plan - show checkout
+            // Paid plan (pro) - show checkout
             setCheckoutShown(true);
-            // Update the plan in localStorage based on selection
-            const planType = pendingPlan.plan === "core" ? "core" : "pro";
-            localStorage.setItem("neyler_current_plan", planType);
-            openCheckout(pendingPlan.plan, pendingPlan.period);
+            localStorage.setItem("neyler_current_plan", "pro");
+            openCheckout("pro", pendingPlan.period);
           }
         } catch {
           // Invalid pending plan, go to onboarding
