@@ -44,7 +44,6 @@ export default function Settings() {
   });
   
   const isPro = currentPlan === 'pro';
-  const isCore = currentPlan === 'core';
   const isFree = currentPlan === 'free';
 
   useEffect(() => {
@@ -76,13 +75,14 @@ export default function Settings() {
     if (isFree) {
       setShowPaywall(true);
     } else {
-      // For paid users, show toast with current plan info
-      toast.info(
-        isPro 
-          ? "You're on the Pro plan. Contact support to manage your subscription." 
-          : "You're on the Core plan. Upgrade to Pro for AI coaching!"
-      );
+      // For paid users, open the Polar customer portal to manage subscription
+      window.open("https://polar.sh/neyler/portal", "_blank");
     }
+  };
+
+  const handleCancelSubscription = () => {
+    // Open Polar customer portal for subscription management
+    window.open("https://polar.sh/neyler/portal", "_blank");
   };
 
 
@@ -133,16 +133,29 @@ export default function Settings() {
               <div className="text-left">
                 <span className="font-medium block text-foreground">Subscription</span>
                 <span className="text-sm text-muted-foreground">
-                  {isPro ? "Pro Plan" : isCore ? "Core Plan" : "Free Plan"}
+                  {isPro ? "Pro Plan" : "Free Plan"}
                 </span>
               </div>
             </span>
             <ChevronRight className="w-5 h-5 text-muted-foreground" />
           </button>
+          
+          {/* Cancel Subscription - only show for paid users */}
+          {isPro && (
+            <div className="px-5 pb-5">
+              <Button 
+                variant="ghost"
+                onClick={handleCancelSubscription}
+                className="w-full text-muted-foreground hover:text-destructive hover:bg-destructive/10 rounded-2xl"
+              >
+                Cancel Subscription
+              </Button>
+            </div>
+          )}
         </GlassCard>
         
-        {/* Upgrade Card */}
-        {!isPro && (
+        {/* Upgrade Card - only show for free users */}
+        {isFree && (
           <GlassCard className="p-6 mb-6" glow>
             <div className="flex items-center gap-4 mb-4">
               <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-primary/20 to-accent/20 flex items-center justify-center">
