@@ -208,55 +208,59 @@ export function AnalyticsCarousel({ isOnboarding = false }: AnalyticsCarouselPro
 
   return (
     <section className={`${isOnboarding ? 'py-2 h-full' : 'py-2'} px-4 overflow-hidden w-full ${isOnboarding ? 'flex flex-col' : ''}`}>
-      <div className={`max-w-4xl mx-auto text-center ${isOnboarding ? 'mb-3' : 'mb-8'}`}>
-        <h2 className={`font-display ${titleSize} font-semibold mb-2`}>
-          Get Deep <span className="gradient-text italic">Insights</span> About Your Life
-        </h2>
-      </div>
+      {/* Content wrapper - centered vertically for onboarding */}
+      <div className={isOnboarding ? "flex-1 flex flex-col justify-center" : ""}>
+        {/* Title - closer to the cards */}
+        <div className={`max-w-4xl mx-auto text-center ${isOnboarding ? 'mb-4' : 'mb-8'}`}>
+          <h2 className={`font-display ${titleSize} font-semibold mb-2`}>
+            Get Deep <span className="gradient-text italic">Insights</span> About Your Life
+          </h2>
+        </div>
 
-      <div className={`relative ${isOnboarding ? 'flex-1 flex items-center' : ''}`}>
-        <div
-          ref={scrollRef}
-          className={`flex gap-6 overflow-x-hidden py-4 w-full ${cardScale}`}
-          style={{ 
-            scrollBehavior: "auto",
-            maskImage: 'linear-gradient(to right, transparent 0%, black 8%, black 92%, transparent 100%)',
-            WebkitMaskImage: 'linear-gradient(to right, transparent 0%, black 8%, black 92%, transparent 100%)',
-            transformOrigin: 'center center',
-          }}
-        >
-          {/* Duplicate cards for infinite scroll effect */}
-          {[...analyticsCards, ...analyticsCards].map((card, index) => (
-            card.component === "stat" ? (
-              <StatCardPreview 
-                key={index}
-                title={card.title}
-                subtitle={card.subtitle}
-                value={card.value!}
-                icon={card.icon}
-                iconColor={card.iconColor}
-                progress={card.progress}
-              />
-            ) : (
-              <OverviewStatCard
-                key={index}
-                title={card.title}
-                value={card.value}
-                suffix={card.suffix}
-                subtitle={card.subtitle}
-                icon={card.icon}
-                iconColor={card.iconColor}
-                progress={card.progress}
-                emoji={card.emoji}
-              />
-            )
-          ))}
+        <div className="relative">
+          <div
+            ref={scrollRef}
+            className={`flex gap-6 overflow-x-hidden py-4 w-full ${cardScale}`}
+            style={{ 
+              scrollBehavior: "auto",
+              maskImage: 'linear-gradient(to right, transparent 0%, black 8%, black 92%, transparent 100%)',
+              WebkitMaskImage: 'linear-gradient(to right, transparent 0%, black 8%, black 92%, transparent 100%)',
+              transformOrigin: 'center center',
+            }}
+          >
+            {/* Duplicate cards for infinite scroll effect */}
+            {[...analyticsCards, ...analyticsCards].map((card, index) => (
+              card.component === "stat" ? (
+                <StatCardPreview 
+                  key={index}
+                  title={card.title}
+                  subtitle={card.subtitle}
+                  value={card.value!}
+                  icon={card.icon}
+                  iconColor={card.iconColor}
+                  progress={card.progress}
+                />
+              ) : (
+                <OverviewStatCard
+                  key={index}
+                  title={card.title}
+                  value={card.value}
+                  suffix={card.suffix}
+                  subtitle={card.subtitle}
+                  icon={card.icon}
+                  iconColor={card.iconColor}
+                  progress={card.progress}
+                  emoji={card.emoji}
+                />
+              )
+            ))}
+          </div>
         </div>
       </div>
       
-      {/* Description at bottom for onboarding - closer to Next button */}
+      {/* Description at bottom for onboarding - closer to content */}
       {isOnboarding && (
-        <p className={`text-muted-foreground ${descriptionSize} text-center max-w-xl mx-auto flex-shrink-0 pb-2`}>
+        <p className={`text-muted-foreground ${descriptionSize} text-center max-w-xl mx-auto flex-shrink-0 mt-4 pb-2`}>
           Understand your progress and patterns with beautiful analytics that show you the full picture.
         </p>
       )}
