@@ -6,7 +6,7 @@ export function TodoShowcase() {
     <section className="py-8 px-4">
       <div className="max-w-md mx-auto flex flex-col items-center text-center">
         {/* Title - centered at top */}
-        <h2 className="font-display text-3xl md:text-4xl font-semibold mb-6">
+        <h2 className="font-display text-2xl md:text-4xl font-semibold mb-6">
           Everything in <span className="gradient-text italic">one place</span>
         </h2>
 

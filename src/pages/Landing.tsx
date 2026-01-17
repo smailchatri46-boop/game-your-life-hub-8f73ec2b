@@ -128,7 +128,7 @@ export default function Landing() {
         <div className="max-w-5xl mx-auto text-center">
           {/* Single Title */}
           <ScrollReveal animation="fade-up">
-            <h2 className="font-display text-3xl md:text-4xl font-semibold mb-8">
+            <h2 className="font-display text-2xl md:text-4xl font-semibold mb-8">
               Your all in <span className="italic gradient-text">one tracker</span>
             </h2>
           </ScrollReveal>
@@ -209,7 +209,7 @@ export default function Landing() {
       <section className="py-10 px-4">
         <div className="max-w-5xl mx-auto">
           <ScrollReveal animation="fade-up">
-            <h2 className="font-display text-3xl md:text-4xl font-semibold text-center mb-12">
+            <h2 className="font-display text-2xl md:text-4xl font-semibold text-center mb-12">
               Everything you need to <span className="gradient-text italic">succeed</span>
             </h2>
           </ScrollReveal>
