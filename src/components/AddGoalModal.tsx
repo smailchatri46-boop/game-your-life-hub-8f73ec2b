@@ -17,6 +17,8 @@ import { AddHabitModal, NewHabit } from "@/components/AddHabitModal";
 interface AddGoalModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  skipCommitment?: boolean;
+  onGoalCreated?: (goalName: string, emoji: string) => void;
 }
 
 const CATEGORIES = [
@@ -61,7 +63,7 @@ function ConfettiParticle({ delay, left }: { delay: number; left: number }) {
   );
 }
 
-export function AddGoalModal({ open, onOpenChange }: AddGoalModalProps) {
+export function AddGoalModal({ open, onOpenChange, skipCommitment = false, onGoalCreated }: AddGoalModalProps) {
   const { user } = useAuth();
   const { createGoal } = useGoals();
   const queryClient = useQueryClient();
@@ -122,8 +124,9 @@ export function AddGoalModal({ open, onOpenChange }: AddGoalModalProps) {
     return habit.oncePerDay === true;
   };
 
-  // Total steps: 1-Goal, 2-Why, 3-Category, 4-Period, 5-Habits, 6-Commitment, 7-Target
-  const totalSteps = 7;
+  // Total steps: 1-Goal, 2-Why, 3-Category, 4-Period, 5-Habits, 6-Target, 7-Commitment
+  // If skipCommitment is true, we skip step 7
+  const totalSteps = skipCommitment ? 6 : 7;
 
   // Trigger confetti when complete
   useEffect(() => {
@@ -161,7 +164,7 @@ export function AddGoalModal({ open, onOpenChange }: AddGoalModalProps) {
         setCurrentHabitTarget("");
       }
     } else {
-      // Step 7 (commitment) is the last step - submit the goal
+      // Last step - submit the goal (step 6 if skipCommitment, step 7 otherwise)
       handleSubmit();
     }
   };
@@ -216,6 +219,10 @@ export function AddGoalModal({ open, onOpenChange }: AddGoalModalProps) {
     try {
       await createGoal.mutateAsync(input);
       setIsComplete(true);
+      // Notify parent about the created goal
+      if (onGoalCreated && selectedCategory) {
+        onGoalCreated(goalName, selectedCategory.emoji);
+      }
     } catch (error) {
       // Error handled by mutation
     }
@@ -265,7 +272,8 @@ export function AddGoalModal({ open, onOpenChange }: AddGoalModalProps) {
         if (selectedHabitObjects.length === 0) return true;
         return parseInt(currentHabitTarget) > 0;
       case 7: 
-        // All checkboxes must be checked and name must be entered
+        // All checkboxes must be checked and name must be entered (only if not skipping)
+        if (skipCommitment) return true;
         return commitmentChecks.every(c => c) && signatureName.trim().length > 0;
       default: return false;
     }
@@ -715,7 +723,7 @@ export function AddGoalModal({ open, onOpenChange }: AddGoalModalProps) {
               {createGoal.isPending 
                 ? "Creating..." 
                 : step === totalSteps
-                  ? "Sign & Create" 
+                  ? (skipCommitment ? "Create Goal" : "Sign & Create")
                   : "Next"}
               {step !== totalSteps && (
                 <ChevronRight className="w-4 h-4 ml-1" />
