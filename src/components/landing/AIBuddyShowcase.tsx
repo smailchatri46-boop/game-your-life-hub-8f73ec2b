@@ -12,7 +12,11 @@ const suggestedQuestions = [
   { text: "What patterns do you see in my productivity?", emoji: "⚡" },
 ];
 
-export function AIBuddyShowcase() {
+interface AIBuddyShowcaseProps {
+  isOnboarding?: boolean;
+}
+
+export function AIBuddyShowcase({ isOnboarding = false }: AIBuddyShowcaseProps) {
   const scrollRef = useRef<HTMLDivElement>(null);
   const animationRef = useRef<number>();
 
@@ -45,12 +49,17 @@ export function AIBuddyShowcase() {
 
   const duplicatedQuestions = [...suggestedQuestions, ...suggestedQuestions];
 
+  // Adjust sizes for onboarding context
+  const chatboxHeight = isOnboarding ? "min(280px, 40vh)" : "min(380px, 55vh)";
+  const titleSize = isOnboarding ? "text-xl md:text-3xl" : "text-2xl md:text-4xl";
+  const descriptionSize = isOnboarding ? "text-xs md:text-sm" : "text-sm md:text-base";
+
   return (
-    <section className="py-2 px-4">
+    <section className={isOnboarding ? "py-1 px-4 w-full" : "py-2 px-4"}>
       {/* Title - outside chat box container, full section width */}
       <ScrollReveal animation="fade-up">
         <h2 
-          className="font-display text-2xl md:text-4xl font-semibold mb-4 text-center max-w-4xl mx-auto"
+          className={`font-display ${titleSize} font-semibold mb-3 text-center max-w-4xl mx-auto`}
           style={{ textWrap: 'balance' } as React.CSSProperties}
         >
           Ask the <span className="gradient-text italic">AI Buddy</span> <span className="font-sans not-italic">&</span> Get Deep Insights
@@ -64,7 +73,7 @@ export function AIBuddyShowcase() {
           <div className="w-full">
             <div 
               className="w-full bg-card/40 backdrop-blur-xl rounded-3xl shadow-soft flex flex-col relative border border-border/10" 
-              style={{ height: "min(380px, 55vh)", maxWidth: "100%", overflow: 'hidden' }}
+              style={{ height: chatboxHeight, maxWidth: "100%", overflow: 'hidden' }}
             >
               {/* Messages Area - Welcome state with GlowOrb */}
               <div className="flex-1 px-4 md:px-6 py-4" style={{ overflow: 'hidden' }}>
@@ -137,7 +146,7 @@ export function AIBuddyShowcase() {
 
       {/* Description - outside chat box container, wide like Goals section */}
       <ScrollReveal animation="fade-up" delay={200}>
-        <p className="text-muted-foreground text-sm md:text-base leading-relaxed text-center max-w-4xl mx-auto px-4">
+        <p className={`text-muted-foreground ${descriptionSize} leading-relaxed text-center max-w-4xl mx-auto px-4`}>
           AI Buddy sees all your goals, tasks, habits, and daily reflections, analyzes them, and helps you see patterns.
         </p>
       </ScrollReveal>

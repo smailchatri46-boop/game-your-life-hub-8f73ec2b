@@ -166,7 +166,11 @@ const analyticsCards = [
   },
 ];
 
-export function AnalyticsCarousel() {
+interface AnalyticsCarouselProps {
+  isOnboarding?: boolean;
+}
+
+export function AnalyticsCarousel({ isOnboarding = false }: AnalyticsCarouselProps) {
   const scrollRef = useRef<HTMLDivElement>(null);
   const animationRef = useRef<number>();
 
@@ -197,13 +201,16 @@ export function AnalyticsCarousel() {
     };
   }, []);
 
+  const titleSize = isOnboarding ? "text-xl md:text-3xl" : "text-2xl md:text-4xl";
+  const descriptionSize = isOnboarding ? "text-xs md:text-sm" : "text-sm md:text-base";
+
   return (
-    <section className="py-2 px-4 overflow-hidden">
-      <div className="max-w-4xl mx-auto text-center mb-8">
-        <h2 className="font-display text-2xl md:text-4xl font-semibold mb-4">
+    <section className={`${isOnboarding ? 'py-1' : 'py-2'} px-4 overflow-hidden w-full`}>
+      <div className={`max-w-4xl mx-auto text-center ${isOnboarding ? 'mb-4' : 'mb-8'}`}>
+        <h2 className={`font-display ${titleSize} font-semibold mb-2`}>
           Get Deep <span className="gradient-text italic">Insights</span> About Your Life
         </h2>
-        <p className="text-muted-foreground text-sm md:text-base max-w-xl mx-auto">
+        <p className={`text-muted-foreground ${descriptionSize} max-w-xl mx-auto`}>
           Understand your progress and patterns with beautiful analytics that show you the full picture.
         </p>
       </div>
