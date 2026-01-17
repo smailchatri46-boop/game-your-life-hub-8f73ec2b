@@ -1,8 +1,10 @@
+import { useEffect } from "react";
 import { OnboardingCard } from "../OnboardingCard";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { AppleEmoji } from "@/components/AppleEmoji";
 import { Check } from "lucide-react";
+import dashboardPreview from "@/assets/dashboard-preview-optimized.jpg";
 
 interface CommitmentStepProps {
   checkedAffirmations: string[];
@@ -29,6 +31,12 @@ export function CommitmentStep({
 }: CommitmentStepProps) {
   const allChecked = AFFIRMATIONS.every(a => checkedAffirmations.includes(a));
   const canComplete = allChecked && commitmentName.trim().length > 0;
+
+  // Preload the dashboard image early so it's ready for SuccessStep
+  useEffect(() => {
+    const img = new Image();
+    img.src = dashboardPreview;
+  }, []);
 
   return (
     <OnboardingCard>

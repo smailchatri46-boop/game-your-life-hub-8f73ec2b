@@ -1,7 +1,7 @@
 import { OnboardingCard } from "../OnboardingCard";
 import { Button } from "@/components/ui/button";
 import { AppleEmoji } from "@/components/AppleEmoji";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import dashboardPreview from "@/assets/dashboard-preview-optimized.jpg";
 
 interface SuccessStepProps {
@@ -17,6 +17,9 @@ export function SuccessStep({
   onAddMoreHabits,
   onStartJournaling,
 }: SuccessStepProps) {
+  const [imageLoaded, setImageLoaded] = useState(false);
+  const [showImage, setShowImage] = useState(false);
+
   // Hide scrollbar on mount
   useEffect(() => {
     const html = document.documentElement;
@@ -34,27 +37,43 @@ export function SuccessStep({
     };
   }, []);
 
-  // The image URL - we use this inline to ensure instant display
-  const imageUrl = dashboardPreview;
+  // When image loads, trigger the fade-in
+  useEffect(() => {
+    if (imageLoaded) {
+      // Small delay to ensure the transition works
+      requestAnimationFrame(() => {
+        setShowImage(true);
+      });
+    }
+  }, [imageLoaded]);
 
   return (
     <div 
-      className="fixed inset-0 flex items-center justify-center"
+      className="fixed inset-0 flex items-center justify-center gradient-hero"
       style={{ overflow: 'hidden', height: '100vh', maxHeight: '100vh' }}
     >
-      {/* Blurred dashboard background - use an actual img element for more reliable rendering */}
+      {/* Blurred dashboard background with fade-in animation */}
       <img 
-        src={imageUrl}
+        src={dashboardPreview}
         alt=""
         aria-hidden="true"
         className="absolute inset-0 w-full h-full object-cover"
         style={{
           filter: 'blur(8px)',
           transform: 'scale(1.1)',
+          opacity: showImage ? 1 : 0,
+          transition: 'opacity 0.6s ease-in-out',
+        }}
+        onLoad={() => setImageLoaded(true)}
+      />
+      {/* Light overlay for readability - also fades in with image */}
+      <div 
+        className="absolute inset-0 bg-white/40"
+        style={{
+          opacity: showImage ? 1 : 0,
+          transition: 'opacity 0.6s ease-in-out',
         }}
       />
-      {/* Light overlay for readability */}
-      <div className="absolute inset-0 bg-white/40" />
       
       {/* Card content */}
       <div className="relative z-10 w-full max-w-md px-4">
