@@ -68,20 +68,11 @@ const SURVEY_QUESTIONS = {
   },
   "survey-6": {
     emoji: "🧠",
-    title: "Want an AI that understands your life tracker?",
+    title: "Would an AI that sees your daily routine give better advice?",
     options: [
-      { label: "Yes, that sounds great" },
-      { label: "Maybe, I'd like to see how it works" },
-      { label: "No, not interested" },
-    ],
-  },
-  "survey-7": {
-    emoji: "✨",
-    title: "So it can give you personalized insights and guidance?",
-    options: [
-      { label: "Yes, this would change my life" },
-      { label: "Yes, that sounds very helpful" },
+      { label: "Yes, that would be amazing" },
       { label: "Maybe, I'd like to try it" },
+      { label: "No, not interested" },
     ],
   },
 };
@@ -200,16 +191,6 @@ export function OnboardingFlow() {
             {...SURVEY_QUESTIONS["survey-6"]}
             selectedOption={data.surveyAnswers.survey6}
             onSelectOption={(answer) => setSurveyAnswer("survey6", answer)}
-            onNext={goToNext}
-          />
-        );
-
-      case "survey-7":
-        return (
-          <SurveyQuestionStep
-            {...SURVEY_QUESTIONS["survey-7"]}
-            selectedOption={data.surveyAnswers.survey7}
-            onSelectOption={(answer) => setSurveyAnswer("survey7", answer)}
             onNext={goToNext}
           />
         );
