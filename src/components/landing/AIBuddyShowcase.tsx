@@ -49,10 +49,10 @@ export function AIBuddyShowcase({ isOnboarding = false }: AIBuddyShowcaseProps) 
 
   const duplicatedQuestions = [...suggestedQuestions, ...suggestedQuestions];
 
-  // Adjust sizes for onboarding context - LARGER for onboarding to fill screen
-  const chatboxHeight = isOnboarding ? "min(440px, 60vh)" : "min(380px, 55vh)";
-  const titleSize = isOnboarding ? "text-xl md:text-4xl" : "text-2xl md:text-4xl";
-  const descriptionSize = isOnboarding ? "text-xs md:text-sm" : "text-sm md:text-base";
+  // Adjust sizes - match GoalsShowcase sizing
+  const chatboxHeight = isOnboarding ? "min(380px, 50vh)" : "min(380px, 55vh)";
+  const titleSize = isOnboarding ? "text-2xl md:text-5xl" : "text-2xl md:text-4xl";
+  const descriptionSize = isOnboarding ? "text-sm md:text-base" : "text-sm md:text-base";
 
   // Different title for onboarding vs homepage
   const titleContent = isOnboarding ? (
@@ -62,23 +62,23 @@ export function AIBuddyShowcase({ isOnboarding = false }: AIBuddyShowcaseProps) 
   );
 
   return (
-    <section className={isOnboarding ? "py-2 px-4 w-full h-full flex flex-col" : "py-2 px-4"}>
-      {/* Content wrapper - centered vertically for onboarding */}
-      <div className={isOnboarding ? "flex-1 flex flex-col justify-center" : ""}>
-        {/* Title - closer to the chatbox */}
+    <section className={`${isOnboarding ? 'py-4' : 'py-2'} px-4 overflow-hidden w-full`}>
+      {/* Title - centered at top, matching GoalsShowcase */}
+      <div className="max-w-6xl mx-auto text-center mb-4">
         <ScrollReveal animation="fade-up">
           <h2 
-            className={`font-display ${titleSize} font-semibold ${isOnboarding ? 'mb-4' : 'mb-3'} text-center max-w-4xl mx-auto`}
+            className={`font-display ${titleSize} font-semibold`}
             style={{ textWrap: 'balance' } as React.CSSProperties}
           >
             {titleContent}
           </h2>
         </ScrollReveal>
+      </div>
 
-        {/* Chat box container */}
+      {/* Chat box container - matching GoalsShowcase card container spacing */}
+      <div className={`w-full ${isOnboarding ? 'mb-4' : 'mb-8'}`}>
         <ScrollReveal animation="zoom-in" delay={100}>
-          <div className={`max-w-3xl mx-auto ${isOnboarding ? 'mb-0' : 'mb-2'}`}>
-            {/* AI Buddy Chat Card - matching dashboard style */}
+          <div className="max-w-3xl mx-auto">
             <div className="w-full">
               <div 
                 className="w-full bg-card/40 backdrop-blur-xl rounded-3xl shadow-soft flex flex-col relative border border-border/10" 
@@ -89,15 +89,15 @@ export function AIBuddyShowcase({ isOnboarding = false }: AIBuddyShowcaseProps) 
                   <div className="h-full flex flex-col items-center justify-center text-center px-4">
                     {/* Animated Glow Orb - perfectly centered */}
                     <div className="relative flex items-center justify-center mb-3">
-                      <div className="relative w-20 h-20 md:w-24 md:h-24 rounded-full overflow-hidden flex-shrink-0">
+                      <div className="relative w-16 h-16 md:w-20 md:h-20 rounded-full overflow-hidden flex-shrink-0">
                         <GlowOrb />
                       </div>
                     </div>
                     
-                    <h2 className="font-display text-lg font-medium text-foreground mb-2">
+                    <h2 className="font-display text-base md:text-lg font-medium text-foreground mb-2">
                       Start a conversation
                     </h2>
-                    <p className="text-muted-foreground text-sm max-w-sm">
+                    <p className="text-muted-foreground text-xs md:text-sm max-w-sm">
                       I'm your wellness buddy <AppleEmoji emoji="🙂" size="sm" className="inline align-middle mx-0.5" /> I turn your habits into insights to help you reach your goals.
                     </p>
                   </div>
@@ -129,9 +129,9 @@ export function AIBuddyShowcase({ isOnboarding = false }: AIBuddyShowcaseProps) 
                 </div>
 
                 {/* Input Area - matching dashboard style */}
-                <div className="p-4 pt-2">
+                <div className="p-3 pt-2">
                   <div 
-                    className="flex items-center gap-3 rounded-full px-5 py-3 transition-all border border-orange-100/60" 
+                    className="flex items-center gap-3 rounded-full px-4 py-2.5 transition-all border border-orange-100/60" 
                     style={{ background: 'hsl(35 30% 97%)' }}
                   >
                     <input
@@ -141,10 +141,10 @@ export function AIBuddyShowcase({ isOnboarding = false }: AIBuddyShowcaseProps) 
                       disabled
                     />
                     <button
-                      className="w-10 h-10 min-w-[2.5rem] min-h-[2.5rem] rounded-full text-primary-foreground flex-shrink-0 shadow-[0_2px_8px_hsl(var(--primary)/0.3)] flex items-center justify-center p-0"
+                      className="w-9 h-9 min-w-[2.25rem] min-h-[2.25rem] rounded-full text-primary-foreground flex-shrink-0 shadow-[0_2px_8px_hsl(var(--primary)/0.3)] flex items-center justify-center p-0"
                       style={{ background: 'linear-gradient(135deg, hsl(38 100% 70%) 0%, hsl(24 95% 53%) 100%)' }}
                     >
-                      <ArrowUp className="w-5 h-5 stroke-[2.5]" />
+                      <ArrowUp className="w-4 h-4 stroke-[2.5]" />
                     </button>
                   </div>
                 </div>
@@ -154,12 +154,17 @@ export function AIBuddyShowcase({ isOnboarding = false }: AIBuddyShowcaseProps) 
         </ScrollReveal>
       </div>
 
-      {/* Description - at bottom, closer to content */}
-      <ScrollReveal animation="fade-up" delay={200}>
-        <p className={`text-muted-foreground ${descriptionSize} leading-relaxed text-center max-w-4xl mx-auto px-4 ${isOnboarding ? 'flex-shrink-0 mt-4 pb-2' : ''}`}>
-          AI Buddy sees all your goals, tasks, habits, and daily reflections, analyzes them, and helps you see patterns.
-        </p>
-      </ScrollReveal>
+      {/* Description - centered below content, matching GoalsShowcase */}
+      <div className="max-w-3xl mx-auto text-center mt-2">
+        <ScrollReveal animation="fade-up" delay={200}>
+          <p className={`text-muted-foreground ${descriptionSize} leading-relaxed`}>
+            {isOnboarding 
+              ? "Chat with your AI Buddy to understand your habits, goals, tasks, and reflections in a smarter way. Get personalized insights from your real data and make better decisions without overthinking everything."
+              : "AI Buddy sees all your goals, tasks, habits, and daily reflections, analyzes them, and helps you see patterns."
+            }
+          </p>
+        </ScrollReveal>
+      </div>
     </section>
   );
 }
