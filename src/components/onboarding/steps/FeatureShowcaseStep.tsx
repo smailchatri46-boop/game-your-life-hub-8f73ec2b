@@ -156,11 +156,20 @@ export function FeatureShowcaseStep({ variant, onNext, currentIndex, totalFeatur
         </div>
       </div>
 
-      {/* Middle: Content area - flex-1 with min-h-0 to allow shrinking */}
+      {/* Middle: Content area - simple opacity fade only */}
       <div 
-        className="flex-1 min-h-0 flex items-center justify-center px-4 animate-in fade-in slide-in-from-right-4 duration-500"
-        style={{ overflow: 'hidden' }}
+        className="flex-1 min-h-0 flex items-center justify-center px-4"
+        style={{ 
+          overflow: 'hidden',
+          animation: 'simpleFadeIn 0.8s ease-in-out',
+        }}
       >
+        <style>{`
+          @keyframes simpleFadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+          }
+        `}</style>
         {renderContent()}
       </div>
 
