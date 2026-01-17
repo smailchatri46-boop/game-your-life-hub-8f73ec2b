@@ -208,20 +208,23 @@ export function AnalyticsCarousel({ isOnboarding = false }: AnalyticsCarouselPro
     <section className={`${isOnboarding ? 'py-6' : 'py-2'} px-4 overflow-hidden w-full`}>
       {/* Title - centered with more space below */}
       <div className="max-w-6xl mx-auto text-center mb-6">
-        <h2 className={`font-display ${titleSize} font-semibold`}>
-          Get Deep <span className="gradient-text italic">Insights</span> About Your Life
-        </h2>
+        <ScrollReveal animation="fade-up">
+          <h2 className={`font-display ${titleSize} font-semibold`}>
+            Get Deep <span className="gradient-text italic">Insights</span> About Your Life
+          </h2>
+        </ScrollReveal>
       </div>
 
       {/* Cards carousel - with more space below */}
       <div className={`w-full ${isOnboarding ? 'mb-6' : 'mb-8'}`}>
-        <div 
-          className="relative"
-          style={isOnboarding ? { 
-            maskImage: 'linear-gradient(to right, transparent 0%, black 10%, black 90%, transparent 100%)',
-            WebkitMaskImage: 'linear-gradient(to right, transparent 0%, black 10%, black 90%, transparent 100%)',
-          } : undefined}
-        >
+        <ScrollReveal animation="zoom-in" delay={100}>
+          <div 
+            className="relative"
+            style={isOnboarding ? { 
+              maskImage: 'linear-gradient(to right, transparent 0%, black 10%, black 90%, transparent 100%)',
+              WebkitMaskImage: 'linear-gradient(to right, transparent 0%, black 10%, black 90%, transparent 100%)',
+            } : undefined}
+          >
           <div
             ref={scrollRef}
             className={`flex gap-6 overflow-x-hidden py-2 w-full ${cardScale}`}
@@ -261,17 +264,20 @@ export function AnalyticsCarousel({ isOnboarding = false }: AnalyticsCarouselPro
               )
             ))}
           </div>
-        </div>
+          </div>
+        </ScrollReveal>
       </div>
 
       {/* Description - centered below cards, matching GoalsShowcase */}
       <div className="max-w-3xl mx-auto text-center mt-2">
-        <p className={`text-muted-foreground ${descriptionSize} leading-relaxed`}>
-          {isOnboarding 
-            ? "See your patterns across progress, mood, motivation, and consistency with clean analytics that tell the full story. Understand what's working, what's not, and adjust faster with insights that feel clear and useful."
-            : "Understand your progress and patterns with beautiful analytics that show you the full picture."
-          }
-        </p>
+        <ScrollReveal animation="fade-up" delay={200}>
+          <p className={`text-muted-foreground ${descriptionSize} leading-relaxed`}>
+            {isOnboarding 
+              ? "See your patterns across progress, mood, motivation, and consistency with clean analytics that tell the full story. Understand what's working, what's not, and adjust faster with insights that feel clear and useful."
+              : "Understand your progress and patterns with beautiful analytics that show you the full picture."
+            }
+          </p>
+        </ScrollReveal>
       </div>
     </section>
   );

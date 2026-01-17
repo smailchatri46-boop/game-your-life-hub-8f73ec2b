@@ -143,13 +143,16 @@ export function GoalsShowcase({ isOnboarding = false }: GoalsShowcaseProps) {
     <section className={`${isOnboarding ? 'py-4' : 'py-6'} px-4 overflow-hidden w-full`}>
       {/* Title - centered at top */}
       <div className="max-w-6xl mx-auto text-center mb-4">
-        <h2 className={`font-display ${titleSize} font-semibold`}>
-          Set Goals and <span className="gradient-text italic">Track Them</span>
-        </h2>
+        <ScrollReveal animation="fade-up">
+          <h2 className={`font-display ${titleSize} font-semibold`}>
+            Set Goals and <span className="gradient-text italic">Track Them</span>
+          </h2>
+        </ScrollReveal>
       </div>
 
       {/* Goal Cards - scrolling carousel with transparency mask fade - full width */}
       <div className={`w-full ${isOnboarding ? 'mb-4' : 'mb-8'}`}>
+        <ScrollReveal animation="zoom-in" delay={100}>
           <div 
             ref={scrollRef}
             className="flex gap-3 md:gap-4 overflow-x-auto scrollbar-hide py-2"
@@ -222,14 +225,17 @@ export function GoalsShowcase({ isOnboarding = false }: GoalsShowcaseProps) {
               </GlassCard>
             ))}
           </div>
+        </ScrollReveal>
       </div>
 
       {/* Description - centered below cards, wider */}
       <div className="max-w-3xl mx-auto text-center mt-2">
-        <p className={`text-muted-foreground ${descriptionSize} leading-relaxed`}>
-          Create meaningful goals, link them to your daily tasks and habits, and watch your progress grow. 
-          Stay motivated with visual progress tracking and pace indicators.
-        </p>
+        <ScrollReveal animation="fade-up" delay={200}>
+          <p className={`text-muted-foreground ${descriptionSize} leading-relaxed`}>
+            Create meaningful goals, link them to your daily tasks and habits, and watch your progress grow. 
+            Stay motivated with visual progress tracking and pace indicators.
+          </p>
+        </ScrollReveal>
       </div>
     </section>
   );

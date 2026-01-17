@@ -72,13 +72,16 @@ export function HabitsShowcase({ isOnboarding = false }: HabitsShowcaseProps) {
     <section className={`${isOnboarding ? 'py-4' : 'py-4'} px-4 overflow-hidden w-full`}>
       {/* Title - centered at top with more space below */}
       <div className="max-w-6xl mx-auto text-center mb-6">
-        <h2 className={`font-display ${titleSize} font-semibold`}>
-          Organize Your Daily Routine <span className="gradient-text italic">Effortlessly</span>
-        </h2>
+        <ScrollReveal animation="fade-up">
+          <h2 className={`font-display ${titleSize} font-semibold`}>
+            Organize Your Daily Routine <span className="gradient-text italic">Effortlessly</span>
+          </h2>
+        </ScrollReveal>
       </div>
 
       {/* Habits Grid - with more space below */}
       <div className={`w-full ${isOnboarding ? 'mb-6' : 'mb-8'}`}>
+        <ScrollReveal animation="zoom-in" delay={100}>
         <div className="max-w-6xl mx-auto">
           <GlassCard className="p-2 sm:p-3 lg:p-4 overflow-x-auto">
             <table className="w-full table-fixed" style={{ minWidth: '700px' }}>
@@ -157,16 +160,19 @@ export function HabitsShowcase({ isOnboarding = false }: HabitsShowcaseProps) {
             </table>
           </GlassCard>
         </div>
+        </ScrollReveal>
       </div>
 
       {/* Description - centered below cards, matching GoalsShowcase */}
       <div className="max-w-3xl mx-auto text-center mt-2">
-        <p className={`text-muted-foreground ${descriptionSize} leading-relaxed`}>
-          {isOnboarding 
-            ? "Plan your days with a clean system that makes habits and tasks easy to follow without stress. See your progress at a glance and stay consistent with a routine that actually feels simple."
-            : "Track habits and tasks in a beautiful clean style. See your progress at a glance."
-          }
-        </p>
+        <ScrollReveal animation="fade-up" delay={200}>
+          <p className={`text-muted-foreground ${descriptionSize} leading-relaxed`}>
+            {isOnboarding 
+              ? "Plan your days with a clean system that makes habits and tasks easy to follow without stress. See your progress at a glance and stay consistent with a routine that actually feels simple."
+              : "Track habits and tasks in a beautiful clean style. See your progress at a glance."
+            }
+          </p>
+        </ScrollReveal>
       </div>
     </section>
   );
