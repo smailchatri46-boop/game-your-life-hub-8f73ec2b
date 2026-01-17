@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { OnboardingCard } from "../OnboardingCard";
 import { Button } from "@/components/ui/button";
 import { AppleEmoji } from "@/components/AppleEmoji";
@@ -22,23 +22,6 @@ export function GoalCreationStep({
 
   const hasGoals = createdGoals.length > 0;
 
-  // Hide scrollbar on mount
-  useEffect(() => {
-    const html = document.documentElement;
-    const body = document.body;
-    
-    const originalHtmlOverflow = html.style.overflow;
-    const originalBodyOverflow = body.style.overflow;
-    
-    html.style.overflow = 'hidden';
-    body.style.overflow = 'hidden';
-    
-    return () => {
-      html.style.overflow = originalHtmlOverflow;
-      body.style.overflow = originalBodyOverflow;
-    };
-  }, []);
-
   const handleGoalCreated = (goalName: string, emoji: string) => {
     setCreatedGoals(prev => [...prev, { name: goalName, emoji }]);
   };
@@ -48,19 +31,8 @@ export function GoalCreationStep({
   };
 
   return (
-    <div 
-      className="fixed inset-0 w-full gradient-hero flex flex-col items-center justify-center"
-      style={{ height: '100vh', maxHeight: '100vh', overflow: 'hidden' }}
-    >
-      {/* Progress bar - positioned closer to the card */}
-      <div className="flex justify-center mb-6">
-        <div className="flex gap-2 px-4 py-2 rounded-full bg-white/80 backdrop-blur-sm shadow-sm">
-          <div className="h-2 w-8 rounded-full progress-bar-orange" />
-        </div>
-      </div>
-
-      {/* Card with everything inside */}
-      <OnboardingCard className="max-w-md w-full mx-4 p-8">
+    <>
+      <OnboardingCard className="max-w-md w-full">
         <div className="text-center mb-6">
           <div className="flex justify-center mb-4">
             <AppleEmoji emoji="🎯" size="3xl" />
@@ -111,8 +83,7 @@ export function GoalCreationStep({
           onClick={onNext}
           disabled={!hasGoals}
           variant="gradient"
-          size="lg"
-          className="w-full h-12 text-base"
+          className="w-full h-11"
         >
           Continue
           <ChevronRight className="w-5 h-5 ml-1" />
@@ -125,6 +96,6 @@ export function GoalCreationStep({
         skipCommitment
         onGoalCreated={handleGoalCreated}
       />
-    </div>
+    </>
   );
 }
