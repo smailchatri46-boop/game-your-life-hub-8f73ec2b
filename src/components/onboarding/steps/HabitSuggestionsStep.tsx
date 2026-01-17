@@ -78,7 +78,7 @@ export function HabitSuggestionsStep({
         {/* Selected count */}
         <div className="text-center mb-4">
           <span className={`text-sm font-medium ${canProceed ? "text-primary" : "text-muted-foreground"}`}>
-            {totalSelected} created {canProceed ? "✓" : `(need ${2 - totalSelected} more)`}
+            {totalSelected} created{!canProceed && ` (need ${2 - totalSelected} more)`}
           </span>
         </div>
 
