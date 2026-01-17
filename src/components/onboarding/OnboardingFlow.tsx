@@ -89,6 +89,7 @@ export function OnboardingFlow() {
     updateData,
     toggleFocusArea,
     toggleStruggle,
+    toggleTrackingStruggle,
     toggleHabit,
     addCustomHabit,
     removeCustomHabit,
@@ -223,10 +224,8 @@ export function OnboardingFlow() {
         return (
           <AboutYourselfStep
             variant="time"
-            selectedItems={[]}
-            preferredTime={data.preferredTime}
-            onToggleItem={() => {}}
-            onSetTime={(time) => updateData({ preferredTime: time })}
+            selectedItems={data.trackingStruggles}
+            onToggleItem={toggleTrackingStruggle}
             onNext={goToNext}
             onBack={goToPrevious}
             onSkip={handleSkip}

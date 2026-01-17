@@ -23,6 +23,7 @@ export type OnboardingStep =
 export interface OnboardingData {
   focusAreas: string[];
   struggles: string[];
+  trackingStruggles: string[];
   preferredTime: string;
   selectedHabits: string[];
   customHabits: string[];
@@ -44,6 +45,7 @@ export interface OnboardingData {
 const INITIAL_DATA: OnboardingData = {
   focusAreas: [],
   struggles: [],
+  trackingStruggles: [],
   preferredTime: "",
   selectedHabits: [],
   customHabits: [],
@@ -133,6 +135,15 @@ export function useOnboarding() {
     }));
   }, []);
 
+  const toggleTrackingStruggle = useCallback((item: string) => {
+    setData(prev => ({
+      ...prev,
+      trackingStruggles: prev.trackingStruggles.includes(item)
+        ? prev.trackingStruggles.filter(s => s !== item)
+        : [...prev.trackingStruggles, item],
+    }));
+  }, []);
+
   const toggleHabit = useCallback((habit: string) => {
     setData(prev => ({
       ...prev,
@@ -217,6 +228,7 @@ export function useOnboarding() {
     updateData,
     toggleFocusArea,
     toggleStruggle,
+    toggleTrackingStruggle,
     toggleHabit,
     addCustomHabit,
     removeCustomHabit,

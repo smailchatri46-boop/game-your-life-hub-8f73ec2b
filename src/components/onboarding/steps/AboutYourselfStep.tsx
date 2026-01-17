@@ -49,7 +49,7 @@ const CONTENT = {
   time: {
     emoji: "📊",
     title: "What's the thing you're struggling with the most to track?",
-    subtitle: "Choose the one thing you're struggling with the most",
+    subtitle: "Select all that apply",
     options: [
       { label: "My progress", emoji: "🎯" },
       { label: "My mood", emoji: "😊" },
@@ -71,26 +71,15 @@ export function AboutYourselfStep({
   onSkip,
 }: AboutYourselfStepProps) {
   const content = CONTENT[variant];
-  const isTimeVariant = variant === "time";
-
   const isSelected = (item: string) => {
-    if (isTimeVariant) {
-      return preferredTime === item;
-    }
     return selectedItems.includes(item);
   };
 
   const handleSelect = (item: string) => {
-    if (isTimeVariant && onSetTime) {
-      onSetTime(item);
-    } else {
-      onToggleItem(item);
-    }
+    onToggleItem(item);
   };
 
-  const canProceed = isTimeVariant 
-    ? !!preferredTime 
-    : selectedItems.length > 0;
+  const canProceed = selectedItems.length > 0;
 
   // No skip for any of these screens - user must select an option
   const showBack = variant !== "focus";
