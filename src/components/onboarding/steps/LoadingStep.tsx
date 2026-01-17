@@ -20,10 +20,14 @@ export function LoadingStep({ onComplete }: LoadingStepProps) {
   const [currentEmoji, setCurrentEmoji] = useState(0);
   const [currentMessage, setCurrentMessage] = useState(0);
   const [fadeIn, setFadeIn] = useState(true);
+  const [imagePreloaded, setImagePreloaded] = useState(false);
 
-  // Preload the dashboard image during loading step
+  // Preload the dashboard image during loading step - ensure it's fully cached
   useEffect(() => {
     const img = new Image();
+    img.onload = () => {
+      setImagePreloaded(true);
+    };
     img.src = dashboardPreview;
   }, []);
 
