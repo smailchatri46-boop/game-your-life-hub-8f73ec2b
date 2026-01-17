@@ -248,20 +248,20 @@ export function OnboardingFlow() {
           />
         );
 
-      case "feature-all-in-one":
+      case "feature-goals":
         return (
           <FeatureShowcaseStep
-            variant="all-in-one"
+            variant="goals"
             onNext={goToNext}
             currentIndex={0}
             totalFeatures={5}
           />
         );
 
-      case "feature-goals":
+      case "feature-ai-buddy":
         return (
           <FeatureShowcaseStep
-            variant="goals"
+            variant="ai-buddy"
             onNext={goToNext}
             currentIndex={1}
             totalFeatures={5}
@@ -278,20 +278,20 @@ export function OnboardingFlow() {
           />
         );
 
-      case "feature-ai-buddy":
+      case "feature-insights":
         return (
           <FeatureShowcaseStep
-            variant="ai-buddy"
+            variant="insights"
             onNext={goToNext}
             currentIndex={3}
             totalFeatures={5}
           />
         );
 
-      case "feature-insights":
+      case "feature-all-in-one":
         return (
           <FeatureShowcaseStep
-            variant="insights"
+            variant="all-in-one"
             onNext={goToNext}
             currentIndex={4}
             totalFeatures={5}
