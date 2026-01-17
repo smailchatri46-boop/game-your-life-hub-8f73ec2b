@@ -1,4 +1,6 @@
 import { useState, useCallback } from "react";
+import type { CreatedHabit } from "@/components/onboarding/steps/HabitSuggestionsStep";
+import type { GoalData } from "@/components/onboarding/steps/GoalCreationStep";
 
 export type OnboardingStep = 
   | "survey-1"
@@ -20,6 +22,7 @@ export type OnboardingStep =
   | "feature-insights"
   | "feature-outro"
   | "habit-suggestions"
+  | "goal-creation"
   | "commitment"
   | "loading"
   | "success";
@@ -45,6 +48,8 @@ export interface OnboardingData {
     survey5: string | null;
     survey6: string | null;
   };
+  createdHabits: CreatedHabit[];
+  goalData: GoalData | null;
 }
 
 const INITIAL_DATA: OnboardingData = {
@@ -68,6 +73,8 @@ const INITIAL_DATA: OnboardingData = {
     survey5: null,
     survey6: null,
   },
+  createdHabits: [],
+  goalData: null,
 };
 
 const STEP_ORDER: OnboardingStep[] = [
@@ -90,6 +97,7 @@ const STEP_ORDER: OnboardingStep[] = [
   "feature-all-in-one",
   "feature-outro",
   "habit-suggestions",
+  "goal-creation",
   "commitment",
   "loading",
   "success",
@@ -198,6 +206,14 @@ export function useOnboarding() {
     }));
   }, []);
 
+  const setCreatedHabits = useCallback((habits: CreatedHabit[]) => {
+    setData(prev => ({ ...prev, createdHabits: habits }));
+  }, []);
+
+  const setGoalData = useCallback((goalData: GoalData) => {
+    setData(prev => ({ ...prev, goalData }));
+  }, []);
+
   const completeOnboarding = useCallback(() => {
     setIsComplete(true);
     localStorage.setItem("locked_onboarding_complete", "true");
@@ -244,6 +260,8 @@ export function useOnboarding() {
     removeCustomHabit,
     toggleAffirmation,
     setSurveyAnswer,
+    setCreatedHabits,
+    setGoalData,
     completeOnboarding,
     skipOnboarding,
     getTotalSelectedHabits,
