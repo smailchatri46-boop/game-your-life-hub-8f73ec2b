@@ -137,13 +137,18 @@ export function OnboardingFlow() {
             selectedOption={data.surveyAnswers.survey1}
             onSelectOption={(answer) => setSurveyAnswer("survey1", answer)}
             onNext={() => {
-              // If user selected "No" (doesn't use any app), skip survey-2
-              if (data.surveyAnswers.survey1 === "No") {
+              // If user selected "No" or "I tried before but stopped using it", skip survey-2
+              if (data.surveyAnswers.survey1 === "No" || data.surveyAnswers.survey1 === "I tried before but stopped using it") {
                 goToStep("survey-4");
               } else {
                 goToNext();
               }
             }}
+            showInputForOptions={["Yes", "Yes, but I don't like it"]}
+            inputLabel="Which app(s) do you use?"
+            inputPlaceholder="e.g. Habitica, Notion, Todoist..."
+            inputValue={data.currentApps}
+            onInputChange={(value) => updateData({ currentApps: value })}
           />
         );
 
