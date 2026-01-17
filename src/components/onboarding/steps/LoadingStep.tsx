@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { OnboardingCard } from "../OnboardingCard";
 import { AppleEmoji } from "@/components/AppleEmoji";
 
@@ -6,24 +6,53 @@ interface LoadingStepProps {
   onComplete: () => void;
 }
 
+const LOADING_EMOJIS = ["✨", "🧠", "⚡️", "🎯", "🚀", "💫"];
+
+const LOADING_STATES = [
+  { title: "Setting up your tracker…", subtitle: "Personalizing goals, habits, and tasks." },
+  { title: "Analyzing your preferences…", subtitle: "Building your personalized experience." },
+  { title: "Preparing your dashboard…", subtitle: "Almost there!" },
+  { title: "Optimizing for you…", subtitle: "Making everything perfect." },
+];
+
 export function LoadingStep({ onComplete }: LoadingStepProps) {
+  const [currentEmoji, setCurrentEmoji] = useState(0);
+  const [currentMessage, setCurrentMessage] = useState(0);
+  const [fadeIn, setFadeIn] = useState(true);
+
   useEffect(() => {
-    // Complete after loading animation
+    // Cycle through emojis slowly
+    const emojiInterval = setInterval(() => {
+      setCurrentEmoji(prev => (prev + 1) % LOADING_EMOJIS.length);
+    }, 1800);
+
+    // Cycle through messages with fade transition
+    const messageInterval = setInterval(() => {
+      setFadeIn(false);
+      setTimeout(() => {
+        setCurrentMessage(prev => (prev + 1) % LOADING_STATES.length);
+        setFadeIn(true);
+      }, 200);
+    }, 2200);
+
+    // Complete after longer loading animation
     const completeTimeout = setTimeout(() => {
       onComplete();
-    }, 4000);
+    }, 9000);
 
     return () => {
+      clearInterval(emojiInterval);
+      clearInterval(messageInterval);
       clearTimeout(completeTimeout);
     };
   }, [onComplete]);
 
   return (
     <OnboardingCard className="text-center">
-      <div className="py-8 flex flex-col items-center justify-center min-h-[200px]">
-        {/* Pulsing emoji */}
-        <div className="mb-6 animate-pulse-float">
-          <AppleEmoji emoji="✨" size="3xl" />
+      <div className="py-8 flex flex-col items-center justify-center min-h-[220px]">
+        {/* Slowly pulsing emoji that cycles */}
+        <div className="mb-6 animate-pulse-float-slow">
+          <AppleEmoji emoji={LOADING_EMOJIS[currentEmoji]} size="3xl" />
         </div>
 
         {/* Modern pill progress loader */}
@@ -46,13 +75,15 @@ export function LoadingStep({ onComplete }: LoadingStepProps) {
           />
         </div>
 
-        {/* Modern loading text */}
-        <h2 className="text-xl font-bold font-display text-foreground mb-2">
-          Setting up your tracker…
-        </h2>
-        <p className="text-sm text-muted-foreground">
-          Personalizing goals, habits, and tasks.
-        </p>
+        {/* Cycling loading text with fade transition */}
+        <div className={`transition-opacity duration-200 ${fadeIn ? "opacity-100" : "opacity-0"}`}>
+          <h2 className="text-xl font-bold font-display text-foreground mb-2">
+            {LOADING_STATES[currentMessage].title}
+          </h2>
+          <p className="text-sm text-muted-foreground">
+            {LOADING_STATES[currentMessage].subtitle}
+          </p>
+        </div>
       </div>
     </OnboardingCard>
   );
