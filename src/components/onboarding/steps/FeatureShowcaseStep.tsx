@@ -88,17 +88,20 @@ export function FeatureShowcaseStep({ variant, onNext, currentIndex, totalFeatur
   const renderContent = () => {
     switch (variant) {
       case "all-in-one": return <AllInOneShowcase />;
-      case "goals": return <GoalsShowcase />;
-      case "habits": return <HabitsShowcase />;
-      case "ai-buddy": return <AIBuddyShowcase />;
-      case "insights": return <AnalyticsCarousel />;
+      case "goals": return <GoalsShowcase isOnboarding />;
+      case "habits": return <HabitsShowcase isOnboarding />;
+      case "ai-buddy": return <AIBuddyShowcase isOnboarding />;
+      case "insights": return <AnalyticsCarousel isOnboarding />;
     }
   };
 
   return (
-    <div className="h-screen flex flex-col gradient-hero fixed inset-0" style={{ overflow: 'hidden' }}>
-      {/* Progress dots at top with white background pill */}
-      <div className="flex justify-center pt-6 pb-4 flex-shrink-0">
+    <div 
+      className="h-[100dvh] w-full flex flex-col gradient-hero fixed inset-0"
+      style={{ overflow: 'hidden' }}
+    >
+      {/* Progress dots at top */}
+      <div className="flex justify-center pt-4 pb-2 flex-shrink-0">
         <div className="flex gap-2 px-4 py-2 rounded-full bg-white/80 backdrop-blur-sm shadow-sm">
           {Array.from({ length: totalFeatures }).map((_, i) => (
             <div
@@ -113,13 +116,16 @@ export function FeatureShowcaseStep({ variant, onNext, currentIndex, totalFeatur
         </div>
       </div>
 
-      {/* Main content - centered, no scroll */}
-      <div className="flex-1 flex items-center justify-center animate-in fade-in slide-in-from-right-4 duration-500 min-h-0" style={{ overflow: 'hidden' }}>
+      {/* Main content - takes remaining space, centered */}
+      <div 
+        className="flex-1 flex items-center justify-center px-4 animate-in fade-in slide-in-from-right-4 duration-500"
+        style={{ overflow: 'hidden', minHeight: 0, maxHeight: 'calc(100dvh - 140px)' }}
+      >
         {renderContent()}
       </div>
 
-      {/* Centered Next button at bottom - fixed position */}
-      <div className="flex justify-center pb-8 pt-4 flex-shrink-0">
+      {/* Next button - always visible at bottom */}
+      <div className="flex-shrink-0 flex justify-center py-6">
         <Button
           onClick={onNext}
           variant="gradient"

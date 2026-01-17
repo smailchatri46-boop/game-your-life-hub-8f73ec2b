@@ -59,15 +59,22 @@ const demoHabits = [
 
 const days = Array.from({ length: 14 }, (_, i) => i + 1);
 
-export function HabitsShowcase() {
+interface HabitsShowcaseProps {
+  isOnboarding?: boolean;
+}
+
+export function HabitsShowcase({ isOnboarding = false }: HabitsShowcaseProps) {
+  const titleSize = isOnboarding ? "text-xl md:text-3xl" : "text-2xl md:text-4xl";
+  const descriptionSize = isOnboarding ? "text-xs md:text-sm" : "text-sm md:text-base";
+
   return (
-    <section className="py-4 px-4">
+    <section className={`${isOnboarding ? 'py-1' : 'py-4'} px-4 w-full`}>
       <div className="max-w-6xl mx-auto">
-        <div className="text-center mb-6">
-          <h2 className="font-display text-2xl md:text-4xl font-semibold mb-3">
+        <div className="text-center mb-4">
+          <h2 className={`font-display ${titleSize} font-semibold mb-2`}>
             Organize Your Daily Routine <span className="gradient-text italic">Effortlessly</span>
           </h2>
-          <p className="text-muted-foreground text-sm md:text-base max-w-2xl mx-auto">
+          <p className={`text-muted-foreground ${descriptionSize} max-w-2xl mx-auto`}>
             Track habits and tasks in a beautiful clean style. See your progress at a glance.
           </p>
         </div>

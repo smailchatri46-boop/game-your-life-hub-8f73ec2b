@@ -4,7 +4,11 @@ import { AppleEmoji } from "@/components/AppleEmoji";
 import { Calendar } from "lucide-react";
 import { ScrollReveal } from "@/components/ScrollReveal";
 
-export function GoalsShowcase() {
+interface GoalsShowcaseProps {
+  isOnboarding?: boolean;
+}
+
+export function GoalsShowcase({ isOnboarding = false }: GoalsShowcaseProps) {
   const scrollRef = useRef<HTMLDivElement>(null);
   const animationRef = useRef<number>();
 
@@ -130,20 +134,24 @@ export function GoalsShowcase() {
   // Duplicate goals for seamless loop
   const duplicatedGoals = [...demoGoals, ...demoGoals];
 
+  const titleSize = isOnboarding ? "text-xl md:text-3xl" : "text-2xl md:text-4xl";
+  const cardSize = isOnboarding ? "w-[260px] md:w-[280px]" : "w-[300px] md:w-[320px]";
+  const descriptionSize = isOnboarding ? "text-xs md:text-sm" : "text-base";
+
   return (
-    <section className="py-6 px-4 overflow-hidden">
+    <section className={`${isOnboarding ? 'py-2' : 'py-6'} px-4 overflow-hidden w-full`}>
       {/* Title - centered at top */}
-      <div className="max-w-6xl mx-auto text-center mb-6">
-        <h2 className="font-display text-2xl md:text-4xl font-semibold">
+      <div className="max-w-6xl mx-auto text-center mb-4">
+        <h2 className={`font-display ${titleSize} font-semibold`}>
           Set Goals and <span className="gradient-text italic">Track Them</span>
         </h2>
       </div>
 
       {/* Goal Cards - scrolling carousel with transparency mask fade - full width */}
-      <div className="w-full mb-8">
+      <div className={`w-full ${isOnboarding ? 'mb-4' : 'mb-8'}`}>
           <div 
             ref={scrollRef}
-            className="flex gap-4 md:gap-6 overflow-x-auto scrollbar-hide py-2"
+            className="flex gap-3 md:gap-4 overflow-x-auto scrollbar-hide py-2"
             style={{ 
               scrollbarWidth: 'none', 
               msOverflowStyle: 'none',
@@ -154,8 +162,8 @@ export function GoalsShowcase() {
             }}
           >
             {duplicatedGoals.map((goal, index) => (
-              <GlassCard key={index} className="p-5 hover:shadow-large transition-all duration-300 flex-shrink-0 w-[300px] md:w-[320px]">
-                <div className="flex items-start justify-between mb-4">
+              <GlassCard key={index} className={`p-4 hover:shadow-large transition-all duration-300 flex-shrink-0 ${cardSize}`}>
+                <div className="flex items-start justify-between mb-3">
                   <div className="flex items-center gap-3">
                     <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-primary/20 to-accent/20 flex items-center justify-center">
                       <AppleEmoji emoji={goal.category_emoji} size="xl" />
@@ -216,8 +224,8 @@ export function GoalsShowcase() {
       </div>
 
       {/* Description - centered below cards, wider */}
-      <div className="max-w-3xl mx-auto text-center mt-4">
-        <p className="text-muted-foreground text-base leading-relaxed">
+      <div className="max-w-3xl mx-auto text-center mt-2">
+        <p className={`text-muted-foreground ${descriptionSize} leading-relaxed`}>
           Create meaningful goals, link them to your daily tasks and habits, and watch your progress grow. 
           Stay motivated with visual progress tracking and pace indicators.
         </p>
