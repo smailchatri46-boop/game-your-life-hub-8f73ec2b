@@ -378,12 +378,21 @@ export function AddGoalModal({ open, onOpenChange, skipCommitment = false, onGoa
               You just took a meaningful step toward the life you want. Stay consistent, keep showing up, and your small actions will compound into real, lasting change.
             </p>
             <div className="space-y-3">
-              <Button onClick={handleClose} variant="gradient" size="lg" className="w-full">
-                Go to my goals
-              </Button>
-              <Button onClick={handleAddAnother} variant="outline" size="lg" className="w-full text-muted-foreground bg-muted/30 border-muted/50 hover:bg-muted/50">
-                Add another goal
-              </Button>
+              {/* Onboarding mode: show only Finish button */}
+              {skipCommitment ? (
+                <Button onClick={handleClose} variant="gradient" size="lg" className="w-full">
+                  Finish
+                </Button>
+              ) : (
+                <>
+                  <Button onClick={handleClose} variant="gradient" size="lg" className="w-full">
+                    Go to my goals
+                  </Button>
+                  <Button onClick={handleAddAnother} variant="outline" size="lg" className="w-full text-muted-foreground bg-muted/30 border-muted/50 hover:bg-muted/50">
+                    Add another goal
+                  </Button>
+                </>
+              )}
             </div>
           </div>
         </DialogContent>
