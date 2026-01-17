@@ -1,16 +1,15 @@
 import { useNavigate } from "react-router-dom";
 import { useOnboarding } from "@/hooks/use-onboarding";
 import { OnboardingProgress } from "./OnboardingProgress";
-import { IdentityStep } from "./steps/IdentityStep";
 import { WhyWeExistStep } from "./steps/WhyWeExistStep";
 import { TellUsAboutYouStep } from "./steps/TellUsAboutYouStep";
 import { AboutYourselfStep } from "./steps/AboutYourselfStep";
 import { HabitSuggestionsStep } from "./steps/HabitSuggestionsStep";
-import { GoalsStep } from "./steps/GoalsStep";
 import { CommitmentStep } from "./steps/CommitmentStep";
 import { LoadingStep } from "./steps/LoadingStep";
 import { SuccessStep } from "./steps/SuccessStep";
 import { SurveyQuestionStep } from "./steps/SurveyQuestionStep";
+import { FeatureShowcaseStep } from "./steps/FeatureShowcaseStep";
 
 const SURVEY_QUESTIONS = {
   "survey-1": {
@@ -249,27 +248,58 @@ export function OnboardingFlow() {
           />
         );
 
-      case "goals":
+      case "feature-all-in-one":
         return (
-          <GoalsStep
+          <FeatureShowcaseStep
+            variant="all-in-one"
             onNext={goToNext}
             onBack={goToPrevious}
+            currentIndex={0}
+            totalFeatures={5}
           />
         );
 
-      case "identity-1":
+      case "feature-goals":
         return (
-          <IdentityStep
-            variant={1}
+          <FeatureShowcaseStep
+            variant="goals"
             onNext={goToNext}
+            onBack={goToPrevious}
+            currentIndex={1}
+            totalFeatures={5}
           />
         );
 
-      case "identity-2":
+      case "feature-habits":
         return (
-          <IdentityStep
-            variant={2}
+          <FeatureShowcaseStep
+            variant="habits"
             onNext={goToNext}
+            onBack={goToPrevious}
+            currentIndex={2}
+            totalFeatures={5}
+          />
+        );
+
+      case "feature-ai-buddy":
+        return (
+          <FeatureShowcaseStep
+            variant="ai-buddy"
+            onNext={goToNext}
+            onBack={goToPrevious}
+            currentIndex={3}
+            totalFeatures={5}
+          />
+        );
+
+      case "feature-insights":
+        return (
+          <FeatureShowcaseStep
+            variant="insights"
+            onNext={goToNext}
+            onBack={goToPrevious}
+            currentIndex={4}
+            totalFeatures={5}
           />
         );
 

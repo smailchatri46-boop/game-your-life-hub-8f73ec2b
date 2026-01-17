@@ -12,9 +12,11 @@ export type OnboardingStep =
   | "about-time"
   | "tell-us-about-you"
   | "why-we-exist"
-  | "goals"
-  | "identity-1"
-  | "identity-2"
+  | "feature-all-in-one"
+  | "feature-goals"
+  | "feature-habits"
+  | "feature-ai-buddy"
+  | "feature-insights"
   | "habit-suggestions"
   | "commitment"
   | "loading"
@@ -76,9 +78,11 @@ const STEP_ORDER: OnboardingStep[] = [
   "about-time",
   "tell-us-about-you",
   "why-we-exist",
-  "goals",
-  "identity-1",
-  "identity-2",
+  "feature-all-in-one",
+  "feature-goals",
+  "feature-habits",
+  "feature-ai-buddy",
+  "feature-insights",
   "habit-suggestions",
   "commitment",
   "loading",
