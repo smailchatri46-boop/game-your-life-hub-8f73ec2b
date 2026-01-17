@@ -62,28 +62,23 @@ export function FeatureIntroStep({ onComplete }: FeatureIntroStepProps) {
 
   return (
     <div 
-      className="gradient-hero"
+      className="fixed inset-0 w-full gradient-hero flex items-center justify-center"
       style={{ 
-        position: 'fixed',
-        top: 0,
-        left: 0,
-        width: '100vw',
-        height: '100vh',
+        minHeight: '100dvh',
+        height: '100dvh',
         margin: 0,
         padding: 0,
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
         overflow: 'hidden',
         zIndex: 50,
       }}
     >
       <h2 
-        className="font-display text-3xl md:text-5xl font-semibold text-foreground leading-tight text-center px-8"
+        className="font-display text-3xl md:text-5xl font-semibold text-foreground leading-tight text-center px-8 max-w-4xl mx-auto"
         style={{
           opacity,
           transition: 'opacity 0.8s ease-in-out',
           margin: 0,
+          padding: 0,
         }}
       >
         Here's what you'll find <span className="gradient-text italic">inside</span>
