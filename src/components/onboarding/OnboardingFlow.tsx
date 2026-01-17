@@ -98,7 +98,6 @@ export function OnboardingFlow() {
     toggleAffirmation,
     setSurveyAnswer,
     setCreatedHabits,
-    setGoalData,
     completeOnboarding,
     skipOnboarding,
   } = useOnboarding();
@@ -332,10 +331,7 @@ export function OnboardingFlow() {
       case "goal-creation":
         return (
           <GoalCreationStep
-            createdHabits={data.createdHabits}
             onNext={goToNext}
-            onBack={goToPrevious}
-            onGoalDataChange={setGoalData}
           />
         );
 
