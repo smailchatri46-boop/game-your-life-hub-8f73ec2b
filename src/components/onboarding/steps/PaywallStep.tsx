@@ -4,9 +4,12 @@ import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { GlassCard } from "@/components/GlassCard";
 import { AppleEmoji } from "@/components/AppleEmoji";
+import { YouTubeEmbed } from "@/components/YouTubeEmbed";
 import { cn } from "@/lib/utils";
 import { usePolarCheckout } from "@/hooks/use-polar-checkout";
 import type { BillingPeriod } from "@/lib/polar";
+
+const OVERVIEW_VIDEO_ID = "0GO0SyFo8dc";
 
 interface PaywallStepProps {
   commitmentName: string;
@@ -189,6 +192,23 @@ export function PaywallStep({ commitmentName }: PaywallStepProps) {
             <p className="text-xs text-muted-foreground text-center mt-4">
               Cancel anytime • 7-day money-back guarantee
             </p>
+          </div>
+        </div>
+
+        {/* Overview Video Section */}
+        <div className="w-full max-w-3xl mb-10">
+          <h2 className="font-display text-xl md:text-2xl font-semibold text-center mb-4">
+            See how <span className="gradient-text italic">Neyler</span> works
+          </h2>
+          <p className="text-muted-foreground text-sm text-center mb-6">
+            Watch this quick overview to see everything the app can do for you
+          </p>
+          <div className="rounded-2xl overflow-hidden shadow-xl">
+            <YouTubeEmbed 
+              videoId={OVERVIEW_VIDEO_ID} 
+              showThumbnailBottomFade
+              thumbnailClassName="scale-110 object-[50%_35%]"
+            />
           </div>
         </div>
 

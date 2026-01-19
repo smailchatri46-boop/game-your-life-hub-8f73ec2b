@@ -95,7 +95,7 @@ export default function Landing() {
             <div className="order-1 lg:order-2 animate-fade-in delay-100">
               <div className="overflow-hidden rounded-3xl">
                 <YouTubeEmbed 
-                  videoId="A-o52DwuWSg" 
+                  videoId="0GO0SyFo8dc" 
                   showThumbnailBottomFade
                   thumbnailClassName="scale-110 object-[50%_35%]"
                   className="[&_img]:rounded-none [&>div]:rounded-none"

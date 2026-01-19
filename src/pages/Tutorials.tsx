@@ -34,8 +34,18 @@ const overviewVideo: OverviewVideo = {
   title: "Overview of Neyler",
   description: "A walkthrough of the app showing all the features and how they work together.",
   duration: "2 min",
-  videoId: "A-o52DwuWSg",
+  videoId: "0GO0SyFo8dc",
   category: "Overview",
+  featured: true,
+};
+
+const fullTutorialVideo: OverviewVideo = {
+  id: "full-tutorial",
+  title: "Full App Tutorial",
+  description: "A complete walkthrough to master all features and get the most out of Neyler.",
+  duration: "10 min",
+  videoId: "eX6Tn66IXCM",
+  category: "Tutorial",
   featured: true,
 };
 
@@ -130,6 +140,28 @@ export default function Tutorials() {
               <div className="flex items-center gap-2 text-xs font-body font-medium text-muted-foreground">
                 <Clock className="w-3.5 h-3.5" />
                 <span>{overviewVideo.duration}</span>
+              </div>
+            </div>
+          </GlassCard>
+
+          {/* Full Tutorial Video */}
+          <GlassCard className="overflow-hidden animate-fade-in" style={{ animationDelay: '100ms' } as React.CSSProperties}>
+            <div className="relative">
+              <YouTubeEmbed videoId={fullTutorialVideo.videoId} thumbnailClassName="scale-110 object-[50%_35%]" showThumbnailBottomFade />
+              <span className="absolute top-3 left-3 px-2 py-1 bg-card/80 backdrop-blur-sm rounded-lg text-xs font-body font-semibold z-20 pointer-events-none">
+                {fullTutorialVideo.category}
+              </span>
+            </div>
+            <div className="p-5">
+              <h3 className="font-body text-xl font-bold mb-2">
+                {fullTutorialVideo.title}
+              </h3>
+              <p className="font-body text-sm text-muted-foreground mb-3">
+                {fullTutorialVideo.description}
+              </p>
+              <div className="flex items-center gap-2 text-xs font-body font-medium text-muted-foreground">
+                <Clock className="w-3.5 h-3.5" />
+                <span>{fullTutorialVideo.duration}</span>
               </div>
             </div>
           </GlassCard>
