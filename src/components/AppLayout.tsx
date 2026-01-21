@@ -2,6 +2,7 @@ import { Outlet, useLocation } from "react-router-dom";
 import { useEffect } from "react";
 import { Navbar } from "@/components/Navbar";
 import { ReviewRequestModal } from "@/components/ReviewRequestModal";
+import { MobileNotificationBanner } from "@/components/MobileNotificationBanner";
 import { usePageVisitTracker } from "@/hooks/use-page-visit-tracker";
 
 export function AppLayout() {
@@ -18,6 +19,9 @@ export function AppLayout() {
     <div className="min-h-screen gradient-bg">
       <Navbar />
       <Outlet />
+      
+      {/* Mobile notification banner */}
+      <MobileNotificationBanner />
       
       {/* Review request modal - shows after visiting all main pages */}
       <ReviewRequestModal 
