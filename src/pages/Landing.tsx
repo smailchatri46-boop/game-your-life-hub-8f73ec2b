@@ -9,6 +9,7 @@ import { Plus, Check } from "lucide-react";
 import googleLogo from "@/assets/google-logo.png";
 import { ScrollReveal } from "@/components/ScrollReveal";
 import { Footer } from "@/components/Footer";
+import dashboardThumbnail from "@/assets/dashboard-preview-optimized.jpg";
 
 // Lazy load below-fold sections for better initial load
 const AnalyticsCarousel = lazy(() => import("@/components/landing/AnalyticsCarousel").then(m => ({ default: m.AnalyticsCarousel })));
@@ -96,6 +97,7 @@ export default function Landing() {
               <div className="overflow-hidden rounded-3xl">
                 <YouTubeEmbed 
                   videoId="0GO0SyFo8dc" 
+                  thumbnail={dashboardThumbnail}
                   showThumbnailBottomFade
                   thumbnailClassName="scale-110 object-[50%_35%]"
                   className="[&_img]:rounded-none [&>div]:rounded-none"
