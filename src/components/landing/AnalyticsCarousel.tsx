@@ -200,14 +200,14 @@ export function AnalyticsCarousel({ isOnboarding = false }: AnalyticsCarouselPro
   }, []);
 
   // Adjust sizes - match other screens
-  const titleSize = isOnboarding ? "text-2xl md:text-4xl" : "text-2xl md:text-4xl";
-  const descriptionSize = isOnboarding ? "text-sm md:text-base" : "text-sm md:text-base";
+  const titleSize = isOnboarding ? "text-2xl md:text-4xl" : "text-3xl md:text-5xl";
+  const descriptionSize = isOnboarding ? "text-sm md:text-base" : "text-base md:text-lg";
   const cardScale = isOnboarding ? "scale-110" : "";
 
   return (
-    <section className={`${isOnboarding ? 'py-6' : 'py-2'} px-4 overflow-hidden w-full`}>
+    <section className={`${isOnboarding ? 'py-6' : 'py-12'} px-4 overflow-hidden w-full`}>
       {/* Title - centered with more space below */}
-      <div className="max-w-6xl mx-auto text-center mb-6">
+      <div className="max-w-6xl mx-auto text-center mb-8">
         <ScrollReveal animation="fade-up">
           <h2 className={`font-display ${titleSize} font-semibold`}>
             Get Deep <span className="gradient-text italic">Insights</span> About Your Life
@@ -216,7 +216,7 @@ export function AnalyticsCarousel({ isOnboarding = false }: AnalyticsCarouselPro
       </div>
 
       {/* Cards carousel - with more space below */}
-      <div className={`w-full ${isOnboarding ? 'mb-6' : 'mb-8'}`}>
+      <div className={`w-full ${isOnboarding ? 'mb-6' : 'mb-10'}`}>
         <ScrollReveal animation="zoom-in" delay={100}>
           <div 
             className="relative"
@@ -269,12 +269,12 @@ export function AnalyticsCarousel({ isOnboarding = false }: AnalyticsCarouselPro
       </div>
 
       {/* Description - centered below cards, matching GoalsShowcase */}
-      <div className="max-w-3xl mx-auto text-center mt-2">
+      <div className="max-w-3xl mx-auto text-center mt-4">
         <ScrollReveal animation="fade-up" delay={200}>
           <p className={`text-muted-foreground ${descriptionSize} leading-relaxed`}>
             {isOnboarding 
               ? "See your patterns across progress, mood, motivation, and consistency with clean analytics that tell the full story. Understand what's working, what's not, and adjust faster with insights that feel clear and useful."
-              : "Understand your progress and patterns with beautiful analytics that show you the full picture."
+              : "Understand your progress, mood trends, and patterns with beautiful analytics. See your full picture and make smarter decisions about your habits and goals."
             }
           </p>
         </ScrollReveal>

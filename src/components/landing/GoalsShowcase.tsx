@@ -135,14 +135,14 @@ export function GoalsShowcase({ isOnboarding = false }: GoalsShowcaseProps) {
   const duplicatedGoals = [...demoGoals, ...demoGoals];
 
   // Adjust sizes - LARGER for onboarding to fill screen
-  const titleSize = isOnboarding ? "text-2xl md:text-5xl" : "text-2xl md:text-4xl";
-  const cardSize = isOnboarding ? "w-[320px] md:w-[360px]" : "w-[300px] md:w-[320px]";
-  const descriptionSize = isOnboarding ? "text-sm md:text-base" : "text-base";
+  const titleSize = isOnboarding ? "text-2xl md:text-5xl" : "text-3xl md:text-5xl";
+  const cardSize = isOnboarding ? "w-[320px] md:w-[360px]" : "w-[300px] md:w-[340px]";
+  const descriptionSize = isOnboarding ? "text-sm md:text-base" : "text-base md:text-lg";
 
   return (
-    <section className={`${isOnboarding ? 'py-4' : 'py-6'} px-4 overflow-hidden w-full`}>
+    <section className={`${isOnboarding ? 'py-4' : 'py-12'} px-4 overflow-hidden w-full`}>
       {/* Title - centered at top */}
-      <div className="max-w-6xl mx-auto text-center mb-4">
+      <div className="max-w-6xl mx-auto text-center mb-6">
         <ScrollReveal animation="fade-up">
           <h2 className={`font-display ${titleSize} font-semibold`}>
             Set Goals and <span className="gradient-text italic">Track Them</span>
@@ -151,7 +151,7 @@ export function GoalsShowcase({ isOnboarding = false }: GoalsShowcaseProps) {
       </div>
 
       {/* Goal Cards - scrolling carousel with transparency mask fade - full width */}
-      <div className={`w-full ${isOnboarding ? 'mb-4' : 'mb-8'}`}>
+      <div className={`w-full ${isOnboarding ? 'mb-4' : 'mb-10'}`}>
         <ScrollReveal animation="zoom-in" delay={100}>
           <div 
             ref={scrollRef}
@@ -229,11 +229,10 @@ export function GoalsShowcase({ isOnboarding = false }: GoalsShowcaseProps) {
       </div>
 
       {/* Description - centered below cards, wider */}
-      <div className="max-w-3xl mx-auto text-center mt-2">
+      <div className="max-w-3xl mx-auto text-center mt-4">
         <ScrollReveal animation="fade-up" delay={200}>
           <p className={`text-muted-foreground ${descriptionSize} leading-relaxed`}>
-            Create meaningful goals, link them to your daily tasks and habits, and watch your progress grow. 
-            Stay motivated with visual progress tracking and pace indicators.
+            Create meaningful goals, link them to your daily habits, and watch your progress grow. Stay motivated with visual progress tracking, pace indicators, and deadline reminders.
           </p>
         </ScrollReveal>
       </div>
