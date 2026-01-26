@@ -65,22 +65,22 @@ interface HabitsShowcaseProps {
 
 export function HabitsShowcase({ isOnboarding = false }: HabitsShowcaseProps) {
   // Adjust sizes - smaller title for onboarding
-  const titleSize = isOnboarding ? "text-xl md:text-4xl" : "text-2xl md:text-4xl";
-  const descriptionSize = isOnboarding ? "text-sm md:text-base" : "text-sm md:text-base";
+  const titleSize = isOnboarding ? "text-xl md:text-4xl" : "text-3xl md:text-5xl";
+  const descriptionSize = isOnboarding ? "text-sm md:text-base" : "text-base md:text-lg";
 
   return (
-    <section className={`${isOnboarding ? 'py-4' : 'py-4'} px-4 overflow-hidden w-full`}>
+    <section className={`${isOnboarding ? 'py-4' : 'py-12'} px-4 overflow-hidden w-full`}>
       {/* Title - centered at top with more space below */}
-      <div className="max-w-6xl mx-auto text-center mb-6">
+      <div className="max-w-6xl mx-auto text-center mb-8">
         <ScrollReveal animation="fade-up">
           <h2 className={`font-display ${titleSize} font-semibold`}>
-            Organize Your Daily Routine <span className="gradient-text italic">Effortlessly</span>
+            Track Habits <span className="font-body">&</span> Tasks <span className="gradient-text italic">Effortlessly</span>
           </h2>
         </ScrollReveal>
       </div>
 
       {/* Habits Grid - with more space below */}
-      <div className={`w-full ${isOnboarding ? 'mb-6' : 'mb-8'}`}>
+      <div className={`w-full ${isOnboarding ? 'mb-6' : 'mb-10'}`}>
         <ScrollReveal animation="zoom-in" delay={100}>
         <div className="max-w-6xl mx-auto">
           <GlassCard className="p-2 sm:p-3 lg:p-4 overflow-x-auto">
@@ -164,12 +164,12 @@ export function HabitsShowcase({ isOnboarding = false }: HabitsShowcaseProps) {
       </div>
 
       {/* Description - centered below cards, matching GoalsShowcase */}
-      <div className="max-w-3xl mx-auto text-center mt-2">
+      <div className="max-w-3xl mx-auto text-center mt-4">
         <ScrollReveal animation="fade-up" delay={200}>
           <p className={`text-muted-foreground ${descriptionSize} leading-relaxed`}>
             {isOnboarding 
               ? "Plan your days with a clean system that makes habits and tasks easy to follow without stress. See your progress at a glance and stay consistent with a routine that actually feels simple."
-              : "Track habits and tasks in a beautiful clean style. See your progress at a glance."
+              : "Track your daily habits and one-time tasks with a beautiful spreadsheet-style grid. See your streaks, completion rates, and progress all in one clean view."
             }
           </p>
         </ScrollReveal>

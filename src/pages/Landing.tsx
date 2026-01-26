@@ -17,7 +17,7 @@ const HabitsShowcase = lazy(() => import("@/components/landing/HabitsShowcase").
 const AIBuddyShowcase = lazy(() => import("@/components/landing/AIBuddyShowcase").then(m => ({ default: m.AIBuddyShowcase })));
 const GoalsShowcase = lazy(() => import("@/components/landing/GoalsShowcase").then(m => ({ default: m.GoalsShowcase })));
 
-const LandingPricing = lazy(() => import("@/components/landing/LandingPricing").then(m => ({ default: m.LandingPricing })));
+
 const LandingFAQ = lazy(() => import("@/components/landing/LandingFAQ").then(m => ({ default: m.LandingFAQ })));
 
 // Minimal section placeholder
@@ -63,20 +63,20 @@ export default function Landing() {
       <LandingNavbar />
       
       {/* Hero Section */}
-      <section className="pt-32 pb-16 px-4">
+      <section className="pt-32 pb-20 px-4">
         <div className="max-w-7xl mx-auto">
-          <div className="grid lg:grid-cols-[5fr_7fr] gap-8 lg:gap-8 items-start">
+          <div className="grid lg:grid-cols-[5fr_7fr] gap-10 lg:gap-12 items-start">
             {/* Left Column - Title, Description, CTA */}
             <div className="order-2 lg:order-1 flex flex-col lg:justify-end lg:pb-0">
-              <h1 className="font-display text-4xl md:text-5xl lg:text-6xl font-semibold mb-5 animate-fade-in text-center lg:text-left">
+              <h1 className="font-display text-4xl md:text-5xl lg:text-6xl font-semibold mb-6 animate-fade-in text-center lg:text-left">
                 <span className="italic gradient-text">Turn your life</span>
                 <br />
                 <span className="text-foreground">into a Game</span>
                 <span className="gradient-text"> with AI</span>
               </h1>
               
-              <p className="text-lg text-muted-foreground max-w-lg mb-6 animate-fade-in delay-100 text-center lg:text-left mx-auto lg:mx-0">
-                Analyze your life with AI using the most beautiful tracker you've ever used. Track tasks and habits, level up your life, and turn your data into insights.
+              <p className="text-lg md:text-xl text-muted-foreground max-w-lg mb-8 animate-fade-in delay-100 text-center lg:text-left mx-auto lg:mx-0">
+                Analyze your life with AI using the most beautiful tracker you've ever used. Track habits & tasks, set goals, level up, and turn your data into insights.
               </p>
 
               {/* Sign Up Button */}
@@ -126,17 +126,17 @@ export default function Landing() {
       </Suspense>
       
       {/* Value Proposition - Combined section */}
-      <section className="py-10 px-4">
+      <section className="py-16 px-4">
         <div className="max-w-5xl mx-auto text-center">
           {/* Single Title */}
           <ScrollReveal animation="fade-up">
-            <h2 className="font-display text-2xl md:text-4xl font-semibold mb-8">
+            <h2 className="font-display text-3xl md:text-5xl font-semibold mb-10">
               Your all in <span className="italic gradient-text">one tracker</span>
             </h2>
           </ScrollReveal>
           
           {/* Image + To-Do Card side by side */}
-          <div className="flex flex-col md:flex-row items-center justify-center gap-6 md:gap-10 mb-8">
+          <div className="flex flex-col md:flex-row items-center justify-center gap-8 md:gap-12 mb-10">
             {/* Apps image - shifted slightly left */}
             <ScrollReveal animation="fade-right" delay={100}>
               <div className="flex items-center gap-2 md:gap-4 flex-shrink-0">
@@ -200,20 +200,25 @@ export default function Landing() {
           
           {/* Single description paragraph */}
           <ScrollReveal animation="fade-up" delay={300}>
-            <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-              Replace scattered spreadsheets, multiple AI apps, and messy notes with one beautiful solution.
+            <p className="text-muted-foreground text-lg md:text-xl max-w-2xl mx-auto">
+              Replace scattered spreadsheets, multiple AI apps, and messy notes with one beautiful solution. No more switching between different tools.
             </p>
           </ScrollReveal>
         </div>
       </section>
       
       {/* Features Grid */}
-      <section className="py-10 px-4">
+      <section className="py-16 px-4">
         <div className="max-w-5xl mx-auto">
           <ScrollReveal animation="fade-up">
-            <h2 className="font-display text-2xl md:text-4xl font-semibold text-center mb-12">
+            <h2 className="font-display text-3xl md:text-5xl font-semibold text-center mb-6">
               Everything you need to <span className="gradient-text italic">succeed</span>
             </h2>
+          </ScrollReveal>
+          <ScrollReveal animation="fade-up" delay={50}>
+            <p className="text-muted-foreground text-lg text-center mb-14 max-w-2xl mx-auto">
+              A complete system to track, analyze, and improve every area of your life with AI-powered insights.
+            </p>
           </ScrollReveal>
           
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -222,9 +227,9 @@ export default function Landing() {
                 <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-accent/30 to-primary/30 flex items-center justify-center mb-4">
                   <AppleEmoji emoji="🎯" size="2xl" />
                 </div>
-                <h3 className="font-display text-xl font-semibold mb-2">Habits <span className="font-body">&</span> Tasks Tracking</h3>
-                <p className="text-muted-foreground text-sm">
-                  Track your daily habits and tasks with a beautiful spreadsheet-style grid. See your progress and link them to your goals.
+                <h3 className="font-display text-xl font-semibold mb-3">Habits <span className="font-body">&</span> Tasks Tracking</h3>
+                <p className="text-muted-foreground text-sm leading-relaxed">
+                  Track your daily habits and one-time tasks with a beautiful spreadsheet-style grid. See your progress at a glance and link them directly to your goals.
                 </p>
               </GlassCard>
             </ScrollReveal>
@@ -234,9 +239,9 @@ export default function Landing() {
                 <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-accent/30 to-primary/30 flex items-center justify-center mb-4">
                   <AppleEmoji emoji="🎯" size="2xl" />
                 </div>
-                <h3 className="font-display text-xl font-semibold mb-2">Set Goals <span className="font-body">&</span> Track Them</h3>
-                <p className="text-muted-foreground text-sm">
-                  Create meaningful goals, connect them to your daily habits, and see your progress toward them in a clear visual way.
+                <h3 className="font-display text-xl font-semibold mb-3">Set Goals <span className="font-body">&</span> Track Them</h3>
+                <p className="text-muted-foreground text-sm leading-relaxed">
+                  Create meaningful goals, connect them to your daily habits, and see your progress toward them in a clear, visual way that keeps you motivated.
                 </p>
               </GlassCard>
             </ScrollReveal>
@@ -246,8 +251,8 @@ export default function Landing() {
                 <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-accent/30 to-primary/30 flex items-center justify-center mb-4">
                   <AppleEmoji emoji="🤖" size="2xl" />
                 </div>
-                <h3 className="font-display text-xl font-semibold mb-2">AI-Powered Deep Analytics</h3>
-                <p className="text-muted-foreground text-sm">
+                <h3 className="font-display text-xl font-semibold mb-3">AI-Powered Deep Analytics</h3>
+                <p className="text-muted-foreground text-sm leading-relaxed">
                   AI analyzes all your goals, tasks, and habits to give you personalized structure, actionable insights, and expert guidance to achieve your goals faster.
                 </p>
               </GlassCard>
@@ -258,9 +263,9 @@ export default function Landing() {
                 <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-accent/30 to-primary/30 flex items-center justify-center mb-4">
                   <AppleEmoji emoji="📊" size="2xl" />
                 </div>
-                <h3 className="font-display text-xl font-semibold mb-2">Analytics</h3>
-                <p className="text-muted-foreground text-sm">
-                  Beautiful charts and insights to understand your patterns and growth.
+                <h3 className="font-display text-xl font-semibold mb-3">Beautiful Analytics</h3>
+                <p className="text-muted-foreground text-sm leading-relaxed">
+                  Beautiful charts and insights to understand your patterns, mood trends, and growth over time. See the full picture of your progress.
                 </p>
               </GlassCard>
             </ScrollReveal>
@@ -270,9 +275,9 @@ export default function Landing() {
                 <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-accent/30 to-primary/30 flex items-center justify-center mb-4">
                   <AppleEmoji emoji="📝" size="2xl" />
                 </div>
-                <h3 className="font-display text-xl font-semibold mb-2">Add One-Time Tasks Too</h3>
-                <p className="text-muted-foreground text-sm">
-                  Add to-do lists and one-time tasks, so you don't need any other app to track what you do throughout your day and your life.
+                <h3 className="font-display text-xl font-semibold mb-3">Add One-Time Tasks Too</h3>
+                <p className="text-muted-foreground text-sm leading-relaxed">
+                  Add to-do lists and one-time tasks alongside your habits, so you don't need any other app to track what you do throughout your day.
                 </p>
               </GlassCard>
             </ScrollReveal>
@@ -282,9 +287,9 @@ export default function Landing() {
                 <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-accent/30 to-primary/30 flex items-center justify-center mb-4">
                   <AppleEmoji emoji="💬" size="2xl" />
                 </div>
-                <h3 className="font-display text-xl font-semibold mb-2">AI Buddy</h3>
-                <p className="text-muted-foreground text-sm">
-                  Your personal AI companion that understands your habits and provides personalized motivation and insights.
+                <h3 className="font-display text-xl font-semibold mb-3">AI Buddy</h3>
+                <p className="text-muted-foreground text-sm leading-relaxed">
+                  Your personal AI companion that understands your habits, goals, and journal entries to provide personalized motivation and insights.
                 </p>
               </GlassCard>
             </ScrollReveal>
@@ -293,15 +298,15 @@ export default function Landing() {
       </section>
       
       {/* CTA Section */}
-      <section className="py-10 px-4">
+      <section className="py-16 px-4">
         <ScrollReveal animation="zoom-in" duration={800}>
           <div className="max-w-2xl mx-auto text-center">
-            <GlassCard className="p-10" glow>
-              <h2 className="font-display text-3xl font-semibold mb-4">
+            <GlassCard className="p-12" glow>
+              <h2 className="font-display text-3xl md:text-4xl font-semibold mb-4">
                 Ready to level up?
               </h2>
-              <p className="text-muted-foreground mb-6">
-                Start your journey to a better you.
+              <p className="text-muted-foreground text-lg mb-8">
+                Start your journey to a better you. Join thousands building better habits.
               </p>
               
               <Button variant="gradient" size="xl" asChild>
@@ -309,7 +314,7 @@ export default function Landing() {
                   <span className="w-6 h-6 bg-white rounded-full flex items-center justify-center">
                     <img src={googleLogo} alt="Google" className="w-4 h-4" loading="lazy" decoding="async" width={16} height={16} />
                   </span>
-                  Start For Free
+                  Continue with Google
                 </Link>
               </Button>
             </GlassCard>
@@ -318,26 +323,21 @@ export default function Landing() {
       </section>
 
 
-      {/* Pricing */}
-      <Suspense fallback={<SectionPlaceholder />}>
-        <LandingPricing />
-      </Suspense>
-
       {/* FAQ */}
       <Suspense fallback={<SectionPlaceholder />}>
         <LandingFAQ />
       </Suspense>
       
       {/* Final CTA Section - Duplicate of "Ready to level up" */}
-      <section className="py-10 px-4" ref={finalCtaRef}>
+      <section className="py-16 px-4" ref={finalCtaRef}>
         <ScrollReveal animation="zoom-in" duration={800}>
           <div className="max-w-2xl mx-auto text-center">
-            <GlassCard className="p-10" glow>
-              <h2 className="font-display text-3xl font-semibold mb-4">
+            <GlassCard className="p-12" glow>
+              <h2 className="font-display text-3xl md:text-4xl font-semibold mb-4">
                 Ready to level up?
               </h2>
-              <p className="text-muted-foreground mb-6">
-                Start your journey to a better you.
+              <p className="text-muted-foreground text-lg mb-8">
+                Start your journey to a better you. Join thousands building better habits.
               </p>
               
               <Button variant="gradient" size="xl" asChild>
@@ -345,7 +345,7 @@ export default function Landing() {
                   <span className="w-6 h-6 bg-white rounded-full flex items-center justify-center">
                     <img src={googleLogo} alt="Google" className="w-4 h-4" loading="lazy" decoding="async" width={16} height={16} />
                   </span>
-                  Start For Free
+                  Continue with Google
                 </Link>
               </Button>
             </GlassCard>
