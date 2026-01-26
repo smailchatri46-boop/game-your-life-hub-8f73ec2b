@@ -6,9 +6,9 @@ import { Button } from "@/components/ui/button";
 import { PaywallModal } from "@/components/PaywallModal";
 import { EditProfileModal } from "@/components/EditProfileModal";
 import { useAuth } from "@/contexts/AuthContext";
-import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { usePlanLimits } from "@/hooks/use-plan-limits";
+import { getProfile } from "@/services/firestore/profiles";
 import { 
   User, 
   CreditCard, 
@@ -47,18 +47,19 @@ export default function Settings() {
   const isFree = currentPlan === 'free';
 
   useEffect(() => {
-    if (user) {
-      supabase
-        .from("profiles")
-        .select("full_name, email, avatar_url")
-        .eq("id", user.id)
-        .single()
-        .then(({ data }) => {
-          if (data) {
-            setProfile(data);
-          }
-        });
-    }
+    const loadProfile = async () => {
+      if (user) {
+        const profileData = await getProfile(user.id);
+        if (profileData) {
+          setProfile({
+            full_name: profileData.full_name,
+            email: profileData.email,
+            avatar_url: profileData.avatar_url,
+          });
+        }
+      }
+    };
+    loadProfile();
   }, [user, showEditProfile]);
 
   const displayName = profile.full_name || user?.email?.split("@")[0] || "User";

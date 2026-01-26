@@ -10,6 +10,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner";
+import { updateProfile, getProfile, ensureProfile } from "@/services/firestore/profiles";
 
 interface EditProfileModalProps {
   open: boolean;
@@ -33,10 +34,22 @@ export function EditProfileModal({ open, onClose }: EditProfileModalProps) {
   const [saving, setSaving] = useState(false);
 
   useEffect(() => {
-    if (user) {
-      setEmail(user.email || "");
-      setFullName(user.user_metadata?.full_name || "");
-    }
+    const loadProfile = async () => {
+      if (user && open) {
+        setEmail(user.email || "");
+        const profile = await getProfile(user.id);
+        if (profile) {
+          setFullName(profile.full_name || user.user_metadata?.full_name || "");
+          // Find the selected color index from saved avatar_url
+          const savedColor = profile.avatar_url;
+          const colorIndex = avatarColors.findIndex(c => c === savedColor);
+          if (colorIndex >= 0) setSelectedColor(colorIndex);
+        } else {
+          setFullName(user.user_metadata?.full_name || "");
+        }
+      }
+    };
+    loadProfile();
   }, [user, open]);
 
   const handleSave = async () => {
@@ -44,10 +57,17 @@ export function EditProfileModal({ open, onClose }: EditProfileModalProps) {
     setSaving(true);
 
     try {
-      // TODO: Replace with Firebase Firestore update
-      toast.info("Firebase not configured yet - profile changes won't be saved");
+      // Ensure profile exists first
+      await ensureProfile(user.id, user.email, fullName, avatarColors[selectedColor]);
+      // Then update
+      await updateProfile(user.id, {
+        full_name: fullName,
+        avatar_url: avatarColors[selectedColor],
+      });
+      toast.success("Profile updated!");
       onClose();
     } catch (error) {
+      console.error("Profile update error:", error);
       toast.error("Failed to update profile");
     } finally {
       setSaving(false);

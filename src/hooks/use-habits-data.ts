@@ -1,9 +1,26 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useAuth } from "@/contexts/AuthContext";
-import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { useCallback, useMemo } from "react";
-import { format, subDays, startOfMonth, endOfMonth, isToday, parseISO } from "date-fns";
+import { format } from "date-fns";
+import {
+  getHabits,
+  createHabit as createHabitService,
+  deleteHabit as deleteHabitService,
+  getCompletions,
+  upsertCompletion,
+  deleteCompletion,
+} from "@/services/firestore/habits";
+import {
+  getMoodLogs,
+  upsertMoodLog,
+} from "@/services/firestore/mood";
+import {
+  getTodosForDate,
+  createTodo as createTodoService,
+  toggleTodo as toggleTodoService,
+  deleteTodo as deleteTodoService,
+} from "@/services/firestore/todos";
 
 export interface Habit {
   id: string;
@@ -124,25 +141,17 @@ export function useHabitsData(selectedYear?: number, selectedMonth?: number) {
     ? now.getDate() 
     : new Date(year, month + 1, 0).getDate();
 
-  // Fetch habits
+  // Fetch habits from Firestore
   const habitsQuery = useQuery({
     queryKey: ["habits", user?.id],
     queryFn: async () => {
       if (!user) return DEMO_HABITS;
-      
-      const { data, error } = await supabase
-        .from("habits")
-        .select("*")
-        .eq("user_id", user.id)
-        .order("created_at", { ascending: true });
-      
-      if (error) throw error;
-      return (data as Habit[]) || [];
+      return await getHabits(user.id);
     },
     staleTime: 1000 * 60 * 5,
   });
 
-  // Fetch completions for the selected month
+  // Fetch completions for the selected month from Firestore
   const completionsQuery = useQuery({
     queryKey: ["habit_completions", user?.id, year, month],
     queryFn: async () => {
@@ -153,20 +162,12 @@ export function useHabitsData(selectedYear?: number, selectedMonth?: number) {
       const startDate = `${year}-${String(month + 1).padStart(2, '0')}-01`;
       const endDate = `${year}-${String(month + 1).padStart(2, '0')}-${String(new Date(year, month + 1, 0).getDate()).padStart(2, '0')}`;
       
-      const { data, error } = await supabase
-        .from("habit_completions")
-        .select("*")
-        .eq("user_id", user.id)
-        .gte("date", startDate)
-        .lte("date", endDate);
-      
-      if (error) throw error;
-      return (data as HabitCompletion[]) || [];
+      return await getCompletions(user.id, startDate, endDate);
     },
     staleTime: 1000 * 60 * 2,
   });
 
-  // Fetch mood logs for the selected month
+  // Fetch mood logs for the selected month from Firestore
   const moodLogsQuery = useQuery({
     queryKey: ["mood_logs", user?.id, year, month],
     queryFn: async () => {
@@ -177,33 +178,17 @@ export function useHabitsData(selectedYear?: number, selectedMonth?: number) {
       const startDate = `${year}-${String(month + 1).padStart(2, '0')}-01`;
       const endDate = `${year}-${String(month + 1).padStart(2, '0')}-${String(new Date(year, month + 1, 0).getDate()).padStart(2, '0')}`;
       
-      const { data, error } = await supabase
-        .from("mood_logs")
-        .select("*")
-        .eq("user_id", user.id)
-        .gte("date", startDate)
-        .lte("date", endDate);
-      
-      if (error) throw error;
-      return (data as MoodLog[]) || [];
+      return await getMoodLogs(user.id, startDate, endDate);
     },
     staleTime: 1000 * 60 * 2,
   });
 
-  // Fetch todos for today
+  // Fetch todos for today from Firestore
   const todosQuery = useQuery({
     queryKey: ["daily_todos", user?.id, format(now, "yyyy-MM-dd")],
     queryFn: async () => {
       if (!user) return [];
-      
-      const { data, error } = await supabase
-        .from("daily_todos")
-        .select("*")
-        .eq("user_id", user.id)
-        .eq("date", format(now, "yyyy-MM-dd"));
-      
-      if (error) throw error;
-      return (data as DailyTodo[]) || [];
+      return await getTodosForDate(user.id, format(now, "yyyy-MM-dd"));
     },
     staleTime: 1000 * 60 * 2,
   });
@@ -216,14 +201,7 @@ export function useHabitsData(selectedYear?: number, selectedMonth?: number) {
         return null;
       }
       
-      const { data, error } = await supabase
-        .from("habits")
-        .insert({ ...habit, user_id: user.id })
-        .select()
-        .single();
-      
-      if (error) throw error;
-      return data;
+      return await createHabitService(user.id, habit);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["habits"] });
@@ -238,14 +216,7 @@ export function useHabitsData(selectedYear?: number, selectedMonth?: number) {
   const deleteHabit = useMutation({
     mutationFn: async (habitId: string) => {
       if (!user) return;
-      
-      const { error } = await supabase
-        .from("habits")
-        .delete()
-        .eq("id", habitId)
-        .eq("user_id", user.id);
-      
-      if (error) throw error;
+      await deleteHabitService(habitId, user.id);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["habits"] });
@@ -271,47 +242,9 @@ export function useHabitsData(selectedYear?: number, selectedMonth?: number) {
         newValue = currentValue >= target ? 0 : currentValue + 1;
       }
       
-      // If new value is 0, delete the completion record
-      if (newValue === 0) {
-        await supabase
-          .from("habit_completions")
-          .delete()
-          .eq("habit_id", habitId)
-          .eq("date", date)
-          .eq("user_id", user.id);
-        return { deleted: true, habitId, date, newValue: 0 };
-      }
-      
-      // Check if record exists
-      const { data: existing } = await supabase
-        .from("habit_completions")
-        .select("id")
-        .eq("habit_id", habitId)
-        .eq("date", date)
-        .eq("user_id", user.id)
-        .maybeSingle();
-      
-      if (existing) {
-        // Update
-        const { error } = await supabase
-          .from("habit_completions")
-          .update({ value: newValue })
-          .eq("id", existing.id);
-        if (error) throw error;
-      } else {
-        // Insert
-        const { error } = await supabase
-          .from("habit_completions")
-          .insert({
-            habit_id: habitId,
-            user_id: user.id,
-            date,
-            value: newValue,
-          });
-        if (error) throw error;
-      }
-      
-      return { deleted: false, habitId, date, newValue };
+      // Use upsertCompletion which handles create/update/delete
+      await upsertCompletion(habitId, user.id, date, newValue);
+      return { habitId, date, newValue };
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["habit_completions"] });
@@ -325,35 +258,7 @@ export function useHabitsData(selectedYear?: number, selectedMonth?: number) {
   const saveMoodLog = useMutation({
     mutationFn: async ({ date, mood, motivation, reflection }: { date: string; mood?: number; motivation?: number; reflection?: string }) => {
       if (!user) return null;
-      
-      // Check if record exists
-      const { data: existing } = await supabase
-        .from("mood_logs")
-        .select("id")
-        .eq("user_id", user.id)
-        .eq("date", date)
-        .maybeSingle();
-      
-      if (existing) {
-        const { error } = await supabase
-          .from("mood_logs")
-          .update({ mood, motivation, reflection })
-          .eq("id", existing.id);
-        if (error) throw error;
-      } else {
-        const { error } = await supabase
-          .from("mood_logs")
-          .insert({
-            user_id: user.id,
-            date,
-            mood,
-            motivation,
-            reflection,
-          });
-        if (error) throw error;
-      }
-      
-      return { date, mood, motivation, reflection };
+      return await upsertMoodLog(user.id, date, mood, motivation, reflection);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["mood_logs"] });
@@ -367,15 +272,7 @@ export function useHabitsData(selectedYear?: number, selectedMonth?: number) {
   const createTodo = useMutation({
     mutationFn: async ({ text, date }: { text: string; date: string }) => {
       if (!user) return null;
-      
-      const { data, error } = await supabase
-        .from("daily_todos")
-        .insert({ user_id: user.id, text, date, completed: false })
-        .select()
-        .single();
-      
-      if (error) throw error;
-      return data;
+      return await createTodoService(user.id, text, date);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["daily_todos"] });
@@ -390,14 +287,7 @@ export function useHabitsData(selectedYear?: number, selectedMonth?: number) {
   const toggleTodo = useMutation({
     mutationFn: async ({ todoId, completed }: { todoId: string; completed: boolean }) => {
       if (!user) return;
-      
-      const { error } = await supabase
-        .from("daily_todos")
-        .update({ completed })
-        .eq("id", todoId)
-        .eq("user_id", user.id);
-      
-      if (error) throw error;
+      await toggleTodoService(todoId, user.id, completed);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["daily_todos"] });
@@ -411,14 +301,7 @@ export function useHabitsData(selectedYear?: number, selectedMonth?: number) {
   const deleteTodo = useMutation({
     mutationFn: async (todoId: string) => {
       if (!user) return;
-      
-      const { error } = await supabase
-        .from("daily_todos")
-        .delete()
-        .eq("id", todoId)
-        .eq("user_id", user.id);
-      
-      if (error) throw error;
+      await deleteTodoService(todoId, user.id);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["daily_todos"] });
@@ -498,7 +381,7 @@ export function useHabitsData(selectedYear?: number, selectedMonth?: number) {
     };
 
     // Today's progress
-    const todayProgress = Math.round(getDayProgress(currentDay));
+    const todayPercent = Math.round(getDayProgress(currentDay));
 
     // Week average (last 7 days)
     let weekTotal = 0;
@@ -519,66 +402,45 @@ export function useHabitsData(selectedYear?: number, selectedMonth?: number) {
     }
     const monthPercent = currentDay > 0 ? Math.round(monthTotal / currentDay) : 0;
 
-    // Perfect days this week (100% completion)
-    let perfectDaysThisWeek = 0;
-    for (let i = 0; i < 7; i++) {
-      const day = currentDay - i;
-      if (day > 0 && getDayProgress(day) >= 100) {
-        perfectDaysThisWeek++;
+    // Perfect days count (100% completion)
+    let perfectDays = 0;
+    for (let day = 1; day <= currentDay; day++) {
+      if (getDayProgress(day) >= 100) perfectDays++;
+    }
+
+    // Current streak
+    let streak = 0;
+    for (let day = currentDay; day > 0; day--) {
+      if (getDayProgress(day) >= 80) {
+        streak++;
+      } else {
+        break;
       }
     }
 
-    // Mood stats
-    const moodValues = moodLogs.filter(l => l.mood != null).map(l => l.mood!);
-    const avgMood = moodValues.length > 0 
-      ? Math.round(moodValues.reduce((a, b) => a + b, 0) / moodValues.length)
-      : 7;
-    
-    // Mood stability (inverse of variance, normalized to 1-10)
-    let emotionalStability = 7;
-    if (moodValues.length >= 2) {
-      const mean = moodValues.reduce((a, b) => a + b, 0) / moodValues.length;
-      const variance = moodValues.reduce((sum, v) => sum + Math.pow(v - mean, 2), 0) / moodValues.length;
-      const stdDev = Math.sqrt(variance);
-      // Convert: 0 stdDev = 10 stability, 3+ stdDev = 1 stability
-      emotionalStability = Math.max(1, Math.min(10, Math.round(10 - stdDev * 3)));
-    }
+    // Average mood/motivation
+    const moodValues = moodLogs.filter(l => l.mood !== null).map(l => l.mood as number);
+    const avgMood = moodValues.length > 0 ? moodValues.reduce((a, b) => a + b, 0) / moodValues.length : 5;
 
-    const MOOD_EMOJIS: Record<number, string> = {
-      1: "😢", 2: "😞", 3: "😔", 4: "😕", 5: "😐",
-      6: "🙂", 7: "😊", 8: "😄", 9: "🥳", 10: "🔥",
-    };
-    const MOOD_LABELS: Record<number, string> = {
-      1: "Very Sad", 2: "Sad", 3: "Down", 4: "Meh", 5: "Neutral",
-      6: "Okay", 7: "Happy", 8: "Great", 9: "Excited", 10: "On Fire",
-    };
-
-    return {
-      todayProgress,
-      weekAvg,
-      monthPercent,
-      perfectDaysThisWeek,
-      averageMood: avgMood,
-      averageMoodEmoji: MOOD_EMOJIS[avgMood] || "😊",
-      averageMoodLabel: MOOD_LABELS[avgMood] || "Happy",
-      emotionalStability,
-    };
+    return { todayPercent, weekAvg, monthPercent, perfectDays, streak, avgMood };
   }, [habitsQuery.data, completionsMap, moodLogsQuery.data, currentDay, year, month]);
 
   // Chart data for progress chart
   const chartData = useMemo(() => {
     const habits = habitsQuery.data || [];
-    const data: { day: number; progress: number }[] = [];
+    const completions = completionsMap;
     
-    for (let day = 1; day <= currentDay; day++) {
+    return Array.from({ length: currentDay }, (_, i) => {
+      const day = i + 1;
       const dateKey = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+      
       let totalWeight = 0;
       let weightedProgress = 0;
       
       habits.forEach(habit => {
         const weight = habit.importance || 50;
         totalWeight += weight;
-        const value = completionsMap[habit.id]?.[dateKey] || 0;
+        const value = completions[habit.id]?.[dateKey] || 0;
         if (habit.target === 1) {
           if (value >= 1) weightedProgress += weight;
         } else {
@@ -586,55 +448,42 @@ export function useHabitsData(selectedYear?: number, selectedMonth?: number) {
         }
       });
       
-      data.push({
+      return {
         day,
         progress: totalWeight > 0 ? Math.round((weightedProgress / totalWeight) * 100) : 0,
-      });
-    }
-    
-    return data;
+      };
+    });
   }, [habitsQuery.data, completionsMap, currentDay, year, month]);
 
   // Mood/motivation chart data
   const moodMotivationChartData = useMemo(() => {
-    const data: { day: number; mood?: number; motivation?: number }[] = [];
-    
-    for (let day = 1; day <= currentDay; day++) {
+    return Array.from({ length: currentDay }, (_, i) => {
+      const day = i + 1;
       const dateKey = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
       const log = moodMap[dateKey];
-      data.push({
+      
+      return {
         day,
-        mood: log?.mood != null ? log.mood * 10 : undefined, // Convert 1-10 to 10-100
-        motivation: log?.motivation != null ? log.motivation * 10 : undefined,
-      });
-    }
-    
-    return data;
+        mood: log?.mood !== null ? (log?.mood ?? 0) * 10 : undefined,
+        motivation: log?.motivation !== null ? (log?.motivation ?? 0) * 10 : undefined,
+      };
+    });
   }, [moodMap, currentDay, year, month]);
 
   return {
-    // Data
     habits: habitsQuery.data || [],
     completions: completionsQuery.data || [],
-    completionsMap,
     moodLogs: moodLogsQuery.data || [],
-    moodMap,
     todos: todosQuery.data || [],
-    
-    // Stats
+    completionsMap,
+    moodMap,
     stats,
     chartData,
     moodMotivationChartData,
-    
-    // Helpers
     getCompletionValue,
     getHabitProgress,
-    
-    // Loading states
     isLoading: habitsQuery.isLoading || completionsQuery.isLoading,
     isDemo,
-    
-    // Mutations
     createHabit,
     deleteHabit,
     toggleCompletion,
@@ -642,10 +491,5 @@ export function useHabitsData(selectedYear?: number, selectedMonth?: number) {
     createTodo,
     toggleTodo,
     deleteTodo,
-    
-    // Meta
-    currentDay,
-    year,
-    month,
   };
 }

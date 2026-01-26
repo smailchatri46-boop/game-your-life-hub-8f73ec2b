@@ -1,10 +1,17 @@
-// Goals management hook with Supabase integration
+// Goals management hook with Firebase/Firestore integration
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useAuth } from "@/contexts/AuthContext";
-import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { useState, useCallback, useMemo } from "react";
 import { differenceInDays } from "date-fns";
+import {
+  getGoals,
+  createGoal as createGoalService,
+  updateGoal as updateGoalService,
+  deleteGoal as deleteGoalService,
+  incrementGoalProgress as incrementGoalProgressService,
+  getGoalHabits,
+} from "@/services/firestore/goals";
 
 export interface Goal {
   id: string;
@@ -63,44 +70,29 @@ export function useGoals() {
   const [demoGoals, setDemoGoalsState] = useState<Goal[]>([DEFAULT_DEMO_GOAL]);
   const [demoGoalHabits, setDemoGoalHabitsState] = useState<GoalHabit[]>([]);
 
-  // Fetch goals from Supabase
+  // Fetch goals from Firestore
   const goalsQuery = useQuery({
     queryKey: ["goals", user?.id],
     queryFn: async () => {
       if (!user) return [];
-      
-      const { data, error } = await supabase
-        .from("goals")
-        .select("*")
-        .eq("user_id", user.id)
-        .order("created_at", { ascending: false });
-      
-      if (error) throw error;
-      return (data as Goal[]) || [];
+      return await getGoals(user.id);
     },
     enabled: !!user,
     staleTime: 1000 * 60 * 5,
   });
 
-  // Fetch goal-habit links
+  // Fetch goal-habit links from Firestore
   const goalHabitsQuery = useQuery({
     queryKey: ["goal_habits", user?.id],
     queryFn: async () => {
       if (!user) return [];
-      
-      const { data, error } = await supabase
-        .from("goal_habits")
-        .select("*")
-        .eq("user_id", user.id);
-      
-      if (error) throw error;
-      return (data as GoalHabit[]) || [];
+      return await getGoalHabits(user.id);
     },
     enabled: !!user,
     staleTime: 1000 * 60 * 5,
   });
 
-  // Create goal mutation - ALL mutations defined BEFORE any useCallback that uses them
+  // Create goal mutation
   const createGoal = useMutation({
     mutationFn: async (input: CreateGoalInput) => {
       if (isDemo) {
@@ -137,36 +129,18 @@ export function useGoals() {
         return newGoal;
       }
 
-      const { data, error } = await supabase
-        .from("goals")
-        .insert({
-          user_id: user!.id,
+      return await createGoalService(
+        user!.id,
+        {
           name: input.name,
           category: input.category,
           category_emoji: input.category_emoji,
           start_date: input.start_date,
           end_date: input.end_date,
           target_count: input.target_count,
-          completed_count: 0,
-          status: "active",
-        })
-        .select()
-        .single();
-      
-      if (error) throw error;
-      
-      // Link habits if any
-      if (input.habit_ids.length > 0 && data) {
-        const links = input.habit_ids.map(habit_id => ({
-          goal_id: data.id,
-          habit_id,
-          user_id: user!.id,
-        }));
-        
-        await supabase.from("goal_habits").insert(links);
-      }
-      
-      return data;
+        },
+        input.habit_ids
+      );
     },
     onSuccess: (_, __, context) => {
       if (!isDemo) {
@@ -191,21 +165,7 @@ export function useGoals() {
         return;
       }
 
-      // Delete goal habits first
-      await supabase
-        .from("goal_habits")
-        .delete()
-        .eq("goal_id", goalId)
-        .eq("user_id", user!.id);
-      
-      // Delete goal
-      const { error } = await supabase
-        .from("goals")
-        .delete()
-        .eq("id", goalId)
-        .eq("user_id", user!.id);
-      
-      if (error) throw error;
+      await deleteGoalService(goalId, user!.id);
     },
     onSuccess: () => {
       if (!isDemo) {
@@ -230,13 +190,7 @@ export function useGoals() {
         return;
       }
 
-      const { error } = await supabase
-        .from("goals")
-        .update({ ...updates, updated_at: new Date().toISOString() })
-        .eq("id", id)
-        .eq("user_id", user!.id);
-      
-      if (error) throw error;
+      await updateGoalService(id, user!.id, updates);
     },
     onSuccess: () => {
       if (!isDemo) {
@@ -268,20 +222,7 @@ export function useGoals() {
       const goal = goalsQuery.data?.find(g => g.id === goalId);
       if (!goal) return;
 
-      const newCount = Math.min(goal.completed_count + amount, goal.target_count);
-      const newStatus = newCount >= goal.target_count ? "completed" : "active";
-
-      const { error } = await supabase
-        .from("goals")
-        .update({ 
-          completed_count: newCount, 
-          status: newStatus,
-          updated_at: new Date().toISOString() 
-        })
-        .eq("id", goalId)
-        .eq("user_id", user!.id);
-      
-      if (error) throw error;
+      await incrementGoalProgressService(goalId, user!.id, goal.completed_count, goal.target_count, amount);
     },
     onSuccess: () => {
       if (!isDemo) {

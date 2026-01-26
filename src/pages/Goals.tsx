@@ -9,9 +9,9 @@ import { PaywallModal } from "@/components/PaywallModal";
 import { useGoals } from "@/hooks/use-goals";
 import { usePlanLimits, LimitType } from "@/hooks/use-plan-limits";
 import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { Plus, Target } from "lucide-react";
+import { getHabits } from "@/services/firestore/habits";
 // SEO meta tags handled in index.html
 
 type FilterType = "all" | "active" | "completed" | "quarterly" | "yearly";
@@ -34,17 +34,12 @@ export default function Goals() {
     setGoalsCount(goals.length);
   }, [goals.length, setGoalsCount]);
 
-  // Fetch habits for linking
+  // Fetch habits for linking from Firestore
   const { data: habits = [] } = useQuery({
     queryKey: ["habits", user?.id],
     queryFn: async () => {
       if (!user) return [];
-      const { data, error } = await supabase
-        .from("habits")
-        .select("*")
-        .eq("user_id", user.id);
-      if (error) throw error;
-      return data;
+      return await getHabits(user.id);
     },
     enabled: !!user,
   });
