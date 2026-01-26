@@ -4,15 +4,15 @@ import { initializeApp, FirebaseApp } from "firebase/app";
 import { getAuth, Auth } from "firebase/auth";
 import { getFirestore, Firestore } from "firebase/firestore";
 
-// Firebase configuration - to be filled with user's credentials
-// Get these from Firebase Console → Project Settings → Your Apps → Web App
+// Firebase configuration
 const firebaseConfig = {
-  apiKey: import.meta.env.VITE_FIREBASE_API_KEY || "",
-  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN || "",
-  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID || "",
-  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET || "",
-  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID || "",
-  appId: import.meta.env.VITE_FIREBASE_APP_ID || "",
+  apiKey: "AIzaSyDt3WRB004pUyHqHWPlF-8tSGFAzaFndA0",
+  authDomain: "neyler-c1735.firebaseapp.com",
+  projectId: "neyler-c1735",
+  storageBucket: "neyler-c1735.firebasestorage.app",
+  messagingSenderId: "6573961881",
+  appId: "1:6573961881:web:1c3ac099dfafb2b745fe08",
+  measurementId: "G-YTJGLKTVYY"
 };
 
 // Check if Firebase is configured
