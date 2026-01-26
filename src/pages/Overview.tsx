@@ -17,8 +17,9 @@ import { PaywallModal } from "@/components/PaywallModal";
 import { usePlanLimits, LimitType } from "@/hooks/use-plan-limits";
 import { useHabitsData } from "@/hooks/use-habits-data";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
 import { format } from "date-fns";
+import { getHabits } from "@/services/firestore/habits";
+import { getTodosForDate, createTodo as createTodoService, toggleTodo as toggleTodoService } from "@/services/firestore/todos";
 
 interface TodoItem {
   id: string;
@@ -78,11 +79,8 @@ export default function Overview() {
     queryKey: ["habits-overview", user?.id],
     queryFn: async () => {
       if (!user) return [];
-      const { data } = await supabase
-        .from("habits")
-        .select("id, target, importance")
-        .eq("user_id", user.id);
-      return data || [];
+      const data = await getHabits(user.id);
+      return data.map(h => ({ id: h.id, target: h.target, importance: h.importance }));
     },
     enabled: !!user,
     staleTime: 1000 * 60 * 5,
@@ -97,13 +95,8 @@ export default function Overview() {
     queryKey: ["daily_todos", user?.id, todayStr],
     queryFn: async () => {
       if (!user) return [];
-      const { data, error } = await supabase
-        .from("daily_todos")
-        .select("*")
-        .eq("user_id", user.id)
-        .eq("date", todayStr);
-      if (error) throw error;
-      return (data || []).map(t => ({
+      const data = await getTodosForDate(user.id, todayStr);
+      return data.map(t => ({
         id: t.id,
         text: t.text,
         completed: t.completed,
@@ -117,15 +110,9 @@ export default function Overview() {
   
   // Create todo mutation
   const createTodo = useMutation({
-    mutationFn: async ({ text, date, emoji }: { text: string; date: string; emoji: string }) => {
+    mutationFn: async ({ text, date }: { text: string; date: string }) => {
       if (!user) return null;
-      const { data, error } = await supabase
-        .from("daily_todos")
-        .insert({ user_id: user.id, text, date, completed: false })
-        .select()
-        .single();
-      if (error) throw error;
-      return data;
+      return await createTodoService(user.id, text, date);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["daily_todos"] });
@@ -140,12 +127,7 @@ export default function Overview() {
   const toggleTodo = useMutation({
     mutationFn: async ({ todoId, completed }: { todoId: string; completed: boolean }) => {
       if (!user) return;
-      const { error } = await supabase
-        .from("daily_todos")
-        .update({ completed })
-        .eq("id", todoId)
-        .eq("user_id", user.id);
-      if (error) throw error;
+      await toggleTodoService(todoId, user.id, completed);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["daily_todos"] });
@@ -166,7 +148,7 @@ export default function Overview() {
       setDemoTodos(prev => [...prev, newTodo]);
       incrementTodos();
     } else {
-      createTodo.mutate({ text: newTodoText.trim(), date: todayStr, emoji: selectedEmoji });
+      createTodo.mutate({ text: newTodoText.trim(), date: todayStr });
       incrementTodos();
     }
     
