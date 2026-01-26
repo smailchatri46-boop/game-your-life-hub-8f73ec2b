@@ -31,6 +31,11 @@ export default function Auth() {
 
   useEffect(() => {
     if (!loading && user && !checkoutShown) {
+      // Check if user has completed onboarding
+      const hasCompletedOnboarding = 
+        localStorage.getItem("locked_onboarding_complete") === "true" ||
+        localStorage.getItem("locked_onboarding_skipped") === "true";
+      
       // User just logged in - check for pending plan
       const pendingPlanStr = localStorage.getItem("neyler_pending_plan");
       
@@ -39,10 +44,10 @@ export default function Auth() {
           const pendingPlan: PendingPlan = JSON.parse(pendingPlanStr);
           
           if (pendingPlan.plan === "starter" || pendingPlan.plan === "free") {
-            // Free plan - just go to onboarding
+            // Free plan - go to onboarding if not completed
             localStorage.setItem("neyler_current_plan", "free");
             localStorage.removeItem("neyler_pending_plan");
-            navigate("/onboarding");
+            navigate(hasCompletedOnboarding ? "/dashboard" : "/onboarding");
           } else {
             // Paid plan (pro) - show checkout
             setCheckoutShown(true);
@@ -50,13 +55,13 @@ export default function Auth() {
             openCheckout("pro", pendingPlan.period);
           }
         } catch {
-          // Invalid pending plan, go to onboarding
+          // Invalid pending plan, go to onboarding if not completed
           localStorage.removeItem("neyler_pending_plan");
-          navigate("/onboarding");
+          navigate(hasCompletedOnboarding ? "/dashboard" : "/onboarding");
         }
       } else {
-        // No pending plan, go to dashboard
-        navigate("/dashboard");
+        // No pending plan - first-time users go to onboarding, returning users go to dashboard
+        navigate(hasCompletedOnboarding ? "/dashboard" : "/onboarding");
       }
     }
   }, [user, loading, navigate, openCheckout, checkoutShown]);
