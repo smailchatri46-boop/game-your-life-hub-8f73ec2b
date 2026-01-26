@@ -369,7 +369,7 @@ export default function Landing() {
             <span className="w-6 h-6 bg-white rounded-full flex items-center justify-center flex-shrink-0">
               <img src={googleLogo} alt="Google" className="w-4 h-4 block" loading="eager" width={16} height={16} style={{ opacity: 1 }} />
             </span>
-            Continue with Google now
+            Start your journey now
           </Link>
         </Button>
       </div>
