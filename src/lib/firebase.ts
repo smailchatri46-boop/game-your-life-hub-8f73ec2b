@@ -11,8 +11,7 @@ const firebaseConfig = {
   projectId: "neyler-c1735",
   storageBucket: "neyler-c1735.firebasestorage.app",
   messagingSenderId: "6573961881",
-  appId: "1:6573961881:web:1c3ac099dfafb2b745fe08",
-  measurementId: "G-YTJGLKTVYY"
+  appId: "1:6573961881:web:1c3ac099dfafb2b745fe08"
 };
 
 // Check if Firebase is configured
