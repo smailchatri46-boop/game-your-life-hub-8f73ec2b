@@ -83,7 +83,7 @@ function useCountdown() {
 export function PaywallStep({ commitmentName }: PaywallStepProps) {
   const [isYearly, setIsYearly] = useState(true);
   const { openCheckout, isLoading } = usePolarCheckout({ theme: "light" });
-  const { minutes, seconds } = useCountdown();
+  const { minutes, seconds, isExpired } = useCountdown();
 
   const monthlyPrice = 14;
   const yearlyPrice = 7;
@@ -118,10 +118,16 @@ export function PaywallStep({ commitmentName }: PaywallStepProps) {
               background: 'linear-gradient(135deg, hsl(25 95% 60%), hsl(35 100% 65%), hsl(25 95% 55%))',
             }}
           >
-            This discount ends in{" "}
-            <span className="font-bold">
-              {formatTime(minutes)}:{formatTime(seconds)}
-            </span>
+            {isExpired ? (
+              "This discount ends soon"
+            ) : (
+              <>
+                This discount ends in{" "}
+                <span className="font-bold">
+                  {formatTime(minutes)}:{formatTime(seconds)}
+                </span>
+              </>
+            )}
           </div>
           
           <div className="relative rounded-3xl p-8 lg:p-10 bg-card/70 backdrop-blur-xl border border-white/50 flex flex-col justify-center pt-10">
