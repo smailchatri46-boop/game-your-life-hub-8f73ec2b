@@ -51,8 +51,8 @@ export function AIBuddyShowcase({ isOnboarding = false }: AIBuddyShowcaseProps) 
 
   // Adjust sizes - smaller title for onboarding, taller chatbox
   const chatboxHeight = isOnboarding ? "min(420px, 55vh)" : "min(400px, 55vh)";
-  const titleSize = isOnboarding ? "text-xl md:text-4xl" : "text-4xl md:text-6xl";
-  const descriptionSize = isOnboarding ? "text-sm md:text-base" : "text-lg md:text-xl";
+  const titleSize = isOnboarding ? "text-xl md:text-4xl" : "text-3xl md:text-5xl";
+  const descriptionSize = isOnboarding ? "text-sm md:text-base" : "text-base md:text-lg";
 
   // Different title for onboarding vs homepage
   const titleContent = isOnboarding ? (
@@ -62,9 +62,9 @@ export function AIBuddyShowcase({ isOnboarding = false }: AIBuddyShowcaseProps) 
   );
 
   return (
-    <section className={`${isOnboarding ? 'py-4' : 'py-20'} px-4 overflow-hidden w-full`}>
+    <section className={`${isOnboarding ? 'py-4' : 'py-12'} px-4 overflow-hidden w-full`}>
       {/* Title - centered at top with more space below */}
-      <div className="max-w-6xl mx-auto text-center mb-6">
+      <div className="max-w-6xl mx-auto text-center mb-8">
         <ScrollReveal animation="fade-up">
           <h2 
             className={`font-display ${titleSize} font-semibold`}
@@ -74,17 +74,6 @@ export function AIBuddyShowcase({ isOnboarding = false }: AIBuddyShowcaseProps) 
           </h2>
         </ScrollReveal>
       </div>
-      
-      {/* Description - below title for landing page */}
-      {!isOnboarding && (
-        <div className="max-w-3xl mx-auto text-center mb-12">
-          <ScrollReveal animation="fade-up" delay={50}>
-            <p className={`text-muted-foreground ${descriptionSize} leading-relaxed`}>
-              Your personal AI companion that sees all your goals, tasks, habits, and journal entries.
-            </p>
-          </ScrollReveal>
-        </div>
-      )}
 
       {/* Chat box container - with more space below */}
       <div className={`w-full ${isOnboarding ? 'mb-6' : 'mb-10'}`}>
@@ -165,16 +154,17 @@ export function AIBuddyShowcase({ isOnboarding = false }: AIBuddyShowcaseProps) 
         </ScrollReveal>
       </div>
 
-      {/* Description - only show for onboarding since landing shows it above */}
-      {isOnboarding && (
-        <div className="max-w-3xl mx-auto text-center mt-4">
-          <ScrollReveal animation="fade-up" delay={200}>
-            <p className={`text-muted-foreground ${descriptionSize} leading-relaxed`}>
-              Chat with your AI Buddy to understand your habits, goals, tasks, and reflections in a smarter way. Get personalized insights from your real data and make better decisions without overthinking everything.
-            </p>
-          </ScrollReveal>
-        </div>
-      )}
+      {/* Description - centered below content, matching GoalsShowcase */}
+      <div className="max-w-3xl mx-auto text-center mt-4">
+        <ScrollReveal animation="fade-up" delay={200}>
+          <p className={`text-muted-foreground ${descriptionSize} leading-relaxed`}>
+            {isOnboarding 
+              ? "Chat with your AI Buddy to understand your habits, goals, tasks, and reflections in a smarter way. Get personalized insights from your real data and make better decisions without overthinking everything."
+              : "Your personal AI companion that sees all your goals, tasks, habits, and journal entries. Get personalized insights and actionable advice based on your real data."
+            }
+          </p>
+        </ScrollReveal>
+      </div>
     </section>
   );
 }
