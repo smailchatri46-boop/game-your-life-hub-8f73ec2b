@@ -199,7 +199,7 @@ export function PaywallStep({ commitmentName }: PaywallStepProps) {
 
         {/* Feature Cards Section */}
         <div className="w-full max-w-5xl mb-12">
-          <h2 className="font-display text-2xl md:text-3xl font-semibold text-center mb-8">
+          <h2 className="font-display text-3xl md:text-4xl font-semibold text-center mb-8">
             Unlock everything you need to succeed
           </h2>
           
