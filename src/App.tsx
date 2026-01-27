@@ -31,6 +31,7 @@ const Cookies = lazy(() => import("./pages/Cookies"));
 const Refund = lazy(() => import("./pages/Refund"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 const CancellationTest = lazy(() => import("./pages/CancellationTest"));
+const Paywall = lazy(() => import("./pages/Paywall"));
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -70,6 +71,7 @@ const App = () => (
                 <Route path="/cancel-test" element={<CancellationTest />} />
                 <Route path="/contact" element={<Contact />} />
                 <Route path="/onboarding" element={<Onboarding />} />
+                <Route path="/paywall" element={<Paywall />} />
                 <Route path="/auth" element={<Auth />} />
                 <Route path="/signup" element={<Auth />} />
                 <Route path="/login" element={<Auth />} />
