@@ -135,12 +135,12 @@ export function GoalsShowcase({ isOnboarding = false }: GoalsShowcaseProps) {
   const duplicatedGoals = [...demoGoals, ...demoGoals];
 
   // Adjust sizes - LARGER for onboarding to fill screen
-  const titleSize = isOnboarding ? "text-2xl md:text-5xl" : "text-3xl md:text-5xl";
+  const titleSize = isOnboarding ? "text-2xl md:text-5xl" : "text-4xl md:text-6xl";
   const cardSize = isOnboarding ? "w-[320px] md:w-[360px]" : "w-[300px] md:w-[340px]";
-  const descriptionSize = isOnboarding ? "text-sm md:text-base" : "text-base md:text-lg";
+  const descriptionSize = isOnboarding ? "text-sm md:text-base" : "text-lg md:text-xl";
 
   return (
-    <section className={`${isOnboarding ? 'py-4' : 'py-12'} px-4 overflow-hidden w-full`}>
+    <section className={`${isOnboarding ? 'py-4' : 'py-20'} px-4 overflow-hidden w-full`}>
       {/* Title - centered at top */}
       <div className="max-w-6xl mx-auto text-center mb-6">
         <ScrollReveal animation="fade-up">
@@ -149,6 +149,17 @@ export function GoalsShowcase({ isOnboarding = false }: GoalsShowcaseProps) {
           </h2>
         </ScrollReveal>
       </div>
+      
+      {/* Description - below title for landing page */}
+      {!isOnboarding && (
+        <div className="max-w-3xl mx-auto text-center mb-12">
+          <ScrollReveal animation="fade-up" delay={50}>
+            <p className={`text-muted-foreground ${descriptionSize} leading-relaxed`}>
+              Create meaningful goals, link them to your daily habits, and watch your progress grow.
+            </p>
+          </ScrollReveal>
+        </div>
+      )}
 
       {/* Goal Cards - scrolling carousel with transparency mask fade - full width */}
       <div className={`w-full ${isOnboarding ? 'mb-4' : 'mb-10'}`}>
@@ -228,14 +239,16 @@ export function GoalsShowcase({ isOnboarding = false }: GoalsShowcaseProps) {
         </ScrollReveal>
       </div>
 
-      {/* Description - centered below cards, wider */}
-      <div className="max-w-3xl mx-auto text-center mt-4">
-        <ScrollReveal animation="fade-up" delay={200}>
-          <p className={`text-muted-foreground ${descriptionSize} leading-relaxed`}>
-            Create meaningful goals, link them to your daily habits, and watch your progress grow. Stay motivated with visual progress tracking, pace indicators, and deadline reminders.
-          </p>
-        </ScrollReveal>
-      </div>
+      {/* Description - only show for onboarding since landing shows it above */}
+      {isOnboarding && (
+        <div className="max-w-3xl mx-auto text-center mt-4">
+          <ScrollReveal animation="fade-up" delay={200}>
+            <p className={`text-muted-foreground ${descriptionSize} leading-relaxed`}>
+              Create meaningful goals, link them to your daily habits, and watch your progress grow. Stay motivated with visual progress tracking, pace indicators, and deadline reminders.
+            </p>
+          </ScrollReveal>
+        </div>
+      )}
     </section>
   );
 }

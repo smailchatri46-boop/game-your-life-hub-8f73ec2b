@@ -67,20 +67,20 @@ export default function Landing() {
       <LandingNavbar />
       
       {/* Hero Section */}
-      <section className="pt-32 pb-20 px-4">
+      <section className="pt-32 pb-24 px-4">
         <div className="max-w-7xl mx-auto">
-          <div className="grid lg:grid-cols-[5fr_7fr] gap-10 lg:gap-12 items-start">
+          <div className="grid lg:grid-cols-[5fr_7fr] gap-12 lg:gap-16 items-start">
             {/* Left Column - Title, Description, CTA */}
             <div className="order-2 lg:order-1 flex flex-col lg:justify-end lg:pb-0">
-              <h1 className="font-display text-4xl md:text-5xl lg:text-6xl font-semibold mb-6 animate-fade-in text-center lg:text-left">
+              <h1 className="font-display text-5xl md:text-6xl lg:text-7xl font-semibold mb-8 animate-fade-in text-center lg:text-left leading-[1.1]">
                 <span className="italic gradient-text">Turn your life</span>
                 <br />
                 <span className="text-foreground">into a Game</span>
                 <span className="gradient-text"> with AI</span>
               </h1>
               
-              <p className="text-lg md:text-xl text-muted-foreground max-w-lg mb-8 animate-fade-in delay-100 text-center lg:text-left mx-auto lg:mx-0">
-                Analyze your life with AI using the most beautiful tracker you've ever used. Track habits & tasks, set goals, level up, and turn your data into insights.
+              <p className="text-xl md:text-2xl text-muted-foreground max-w-xl mb-10 animate-fade-in delay-100 text-center lg:text-left mx-auto lg:mx-0 leading-relaxed">
+                Analyze your life with AI using the most beautiful tracker you've ever used. Track tasks and habits, level up, and turn your data into insights.
               </p>
 
               {/* Sign Up Button */}
@@ -90,7 +90,7 @@ export default function Landing() {
                     <span className="w-6 h-6 bg-white rounded-full flex items-center justify-center">
                       <img src={googleLogo} alt="Google" className="w-4 h-4" loading="eager" width={16} height={16} />
                     </span>
-                    Continue with Google
+                    Continue for free
                   </Link>
                 </Button>
               </div>
