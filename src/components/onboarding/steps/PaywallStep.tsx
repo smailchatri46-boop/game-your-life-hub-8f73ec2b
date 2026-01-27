@@ -102,18 +102,18 @@ export function PaywallStep({ commitmentName }: PaywallStepProps) {
     <div className="fixed inset-0 overflow-y-auto gradient-hero">
       <div className="min-h-screen flex flex-col items-center justify-start py-10 px-4">
         {/* Header */}
-        <div className="text-center mb-12 max-w-4xl">
-          <h1 className="font-display text-3xl md:text-4xl lg:text-5xl font-bold text-foreground mb-2 tracking-tight whitespace-nowrap">
+        <div className="text-center mb-10 max-w-4xl">
+          <h1 className="font-display text-2xl md:text-3xl lg:text-4xl font-semibold text-foreground mb-2 tracking-tight whitespace-nowrap">
             It's time to invest in yourself
             {commitmentName ? `, ${commitmentName}` : ""}
           </h1>
         </div>
 
         {/* Pricing Card with Badge */}
-        <div className="w-full max-w-[620px] mb-12 relative">
+        <div className="w-full max-w-[420px] mb-10 relative">
           {/* Countdown Badge - positioned at top of card */}
           <div 
-            className="absolute left-1/2 -translate-x-1/2 -top-5 z-10 rounded-full px-5 py-2.5 text-white font-medium text-sm shadow-lg whitespace-nowrap"
+            className="absolute left-1/2 -translate-x-1/2 -top-4 z-10 rounded-full px-4 py-2 text-white font-medium text-xs shadow-lg whitespace-nowrap"
             style={{
               background: 'linear-gradient(135deg, hsl(25 95% 60%), hsl(35 100% 65%), hsl(25 95% 55%))',
             }}
@@ -124,12 +124,12 @@ export function PaywallStep({ commitmentName }: PaywallStepProps) {
             </span>
           </div>
           
-          <div className="relative rounded-2xl p-6 lg:p-8 bg-card border border-border/50 shadow-xl flex flex-col justify-center pt-8">
+          <div className="relative rounded-2xl p-5 lg:p-6 bg-card border border-border/50 shadow-xl flex flex-col justify-center pt-6">
             {/* Monthly/Yearly Toggle */}
-            <div className="flex items-center justify-center gap-4 mb-6">
+            <div className="flex items-center justify-center gap-3 mb-4">
               <span
                 className={cn(
-                  "text-sm font-medium transition-colors",
+                  "text-xs font-medium transition-colors",
                   !isYearly ? "text-foreground" : "text-muted-foreground"
                 )}
               >
@@ -138,7 +138,7 @@ export function PaywallStep({ commitmentName }: PaywallStepProps) {
               <Switch
                 checked={isYearly}
                 onCheckedChange={setIsYearly}
-                className="data-[state=checked]:bg-transparent [&[data-state=checked]>span]:bg-white"
+                className="data-[state=checked]:bg-transparent [&[data-state=checked]>span]:bg-white scale-90"
                 style={{
                   background: isYearly 
                     ? 'linear-gradient(135deg, hsl(25 95% 60%), hsl(35 100% 65%), hsl(25 95% 55%))'
@@ -147,44 +147,44 @@ export function PaywallStep({ commitmentName }: PaywallStepProps) {
               />
               <span
                 className={cn(
-                  "text-sm font-medium transition-colors",
+                  "text-xs font-medium transition-colors",
                   isYearly ? "text-foreground" : "text-muted-foreground"
                 )}
               >
                 Yearly
-                <span className="ml-1.5 text-xs text-primary font-semibold">
+                <span className="ml-1 text-[10px] text-primary font-semibold">
                   Save 50%
                 </span>
               </span>
             </div>
 
             {/* Price Display */}
-            <div className="text-center mb-6">
-              <div className="flex items-baseline justify-center gap-2">
-                <span className="relative text-3xl text-muted-foreground">
+            <div className="text-center mb-4">
+              <div className="flex items-baseline justify-center gap-1.5">
+                <span className="relative text-xl text-muted-foreground">
                   ${originalPrice}
                   <span 
-                    className="absolute left-[-4px] right-[-4px] top-1/2 h-[2px] bg-destructive rounded-full"
+                    className="absolute left-[-3px] right-[-3px] top-1/2 h-[1.5px] bg-destructive rounded-full"
                     style={{ transform: 'rotate(-12deg)' }}
                   />
                 </span>
-                <span className="text-5xl lg:text-6xl font-bold text-foreground">
+                <span className="text-4xl lg:text-5xl font-bold text-foreground">
                   ${displayPrice}
                 </span>
-                <span className="text-muted-foreground text-lg">
+                <span className="text-muted-foreground text-base">
                   /mo
                 </span>
               </div>
-              <p className="text-sm text-muted-foreground mt-2">
+              <p className="text-xs text-muted-foreground mt-1.5">
                 {isYearly ? "Billed yearly" : "Billed monthly"}
               </p>
             </div>
 
             {/* CTA Button */}
-            <div className="px-4 lg:px-8">
+            <div className="px-2 lg:px-4">
               <Button
                 variant="gradient"
-                className="w-full h-14 text-lg font-semibold shadow-lg hover:shadow-xl hover:opacity-90 transition-all"
+                className="w-full h-11 text-base font-semibold shadow-lg hover:shadow-xl hover:opacity-90 transition-all"
                 onClick={handleSubscribe}
                 disabled={isLoading}
               >
@@ -193,7 +193,7 @@ export function PaywallStep({ commitmentName }: PaywallStepProps) {
             </div>
 
             {/* Guarantee Text */}
-            <p className="text-sm text-muted-foreground text-center mt-4">
+            <p className="text-xs text-muted-foreground text-center mt-3">
               Cancel anytime. 7-Day Money-Back Guarantee.
             </p>
           </div>
@@ -231,16 +231,16 @@ export function PaywallStep({ commitmentName }: PaywallStepProps) {
         </div>
 
         {/* Bottom CTA */}
-        <div className="w-full max-w-[620px] text-center pb-10 px-4 lg:px-8">
+        <div className="w-full max-w-[420px] text-center pb-10 px-2 lg:px-4">
           <Button
             variant="gradient"
-            className="w-full h-14 text-lg font-semibold shadow-lg hover:shadow-xl hover:opacity-90 transition-all"
+            className="w-full h-11 text-base font-semibold shadow-lg hover:shadow-xl hover:opacity-90 transition-all"
             onClick={handleSubscribe}
             disabled={isLoading}
           >
             Get Started Now
           </Button>
-          <p className="text-sm text-muted-foreground mt-4">
+          <p className="text-xs text-muted-foreground mt-3">
             Cancel anytime. 7-Day Money-Back Guarantee.
           </p>
         </div>
