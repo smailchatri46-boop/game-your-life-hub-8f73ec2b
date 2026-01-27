@@ -44,7 +44,7 @@ const FEATURE_CARDS = [
   },
 ];
 
-const COUNTDOWN_HOURS = 16;
+const COUNTDOWN_MINUTES = 45;
 
 function useCountdown() {
   const [timeLeft, setTimeLeft] = useState(() => {
@@ -54,10 +54,10 @@ function useCountdown() {
       const remaining = Math.max(0, endTime - Date.now());
       return remaining;
     }
-    // Set new countdown
-    const endTime = Date.now() + COUNTDOWN_HOURS * 60 * 60 * 1000;
+    // Set new countdown (45 minutes)
+    const endTime = Date.now() + COUNTDOWN_MINUTES * 60 * 1000;
     localStorage.setItem("paywall_countdown_end", endTime.toString());
-    return COUNTDOWN_HOURS * 60 * 60 * 1000;
+    return COUNTDOWN_MINUTES * 60 * 1000;
   });
 
   useEffect(() => {
@@ -83,7 +83,7 @@ function useCountdown() {
 export function PaywallStep({ commitmentName }: PaywallStepProps) {
   const [isYearly, setIsYearly] = useState(true);
   const { openCheckout, isLoading } = usePolarCheckout({ theme: "light" });
-  const { hours, minutes, seconds } = useCountdown();
+  const { minutes, seconds } = useCountdown();
 
   const monthlyPrice = 14;
   const yearlyPrice = 7;
@@ -109,22 +109,22 @@ export function PaywallStep({ commitmentName }: PaywallStepProps) {
           </h1>
         </div>
 
-        {/* Countdown Badge */}
-        <div 
-          className="rounded-full px-6 py-3 mb-6 text-white font-medium text-sm md:text-base shadow-lg"
-          style={{
-            background: 'linear-gradient(135deg, hsl(25 95% 60%), hsl(35 100% 65%), hsl(25 95% 55%))',
-          }}
-        >
-          This offer is available only for the next{" "}
-          <span className="font-bold">
-            {formatTime(hours)}:{formatTime(minutes)}:{formatTime(seconds)}
-          </span>
-        </div>
-
-        {/* Pricing Card */}
-        <div className="w-full max-w-[480px] mb-12">
-          <div className="relative rounded-3xl p-8 lg:p-10 bg-card border border-border/50 shadow-xl flex flex-col justify-center">
+        {/* Pricing Card with Badge */}
+        <div className="w-full max-w-[480px] mb-12 relative">
+          {/* Countdown Badge - positioned at top of card */}
+          <div 
+            className="absolute left-1/2 -translate-x-1/2 -top-5 z-10 rounded-xl px-5 py-2.5 text-white font-medium text-sm shadow-lg whitespace-nowrap"
+            style={{
+              background: 'linear-gradient(135deg, hsl(25 95% 60%), hsl(35 100% 65%), hsl(25 95% 55%))',
+            }}
+          >
+            This discount ends in{" "}
+            <span className="font-bold">
+              {formatTime(minutes)}:{formatTime(seconds)}
+            </span>
+          </div>
+          
+          <div className="relative rounded-2xl p-8 lg:p-10 bg-card border border-border/50 shadow-xl flex flex-col justify-center pt-10">
             {/* Monthly/Yearly Toggle */}
             <div className="flex items-center justify-center gap-4 mb-8">
               <span
@@ -160,8 +160,8 @@ export function PaywallStep({ commitmentName }: PaywallStepProps) {
 
             {/* Price Display */}
             <div className="text-center mb-10">
-              <div className="flex items-baseline justify-center gap-3">
-                <span className="relative text-2xl text-muted-foreground">
+              <div className="flex items-baseline justify-center gap-2">
+                <span className="relative text-4xl lg:text-5xl text-muted-foreground font-medium">
                   ${originalPrice}
                   <span 
                     className="absolute left-[-4px] right-[-4px] top-1/2 h-[3px] bg-red-500 rounded-full"
