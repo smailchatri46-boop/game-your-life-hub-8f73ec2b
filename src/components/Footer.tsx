@@ -80,12 +80,16 @@ export function Footer() {
         </div>
 
         {/* Bottom section with logo, centered partner links, and copyright */}
-        <div className="pt-6 border-t border-border/30 flex flex-col items-center gap-4">
-          {/* Top row: Logo and Copyright on sides, links centered */}
-          <div className="w-full flex flex-col md:flex-row items-center justify-between gap-3">
-            <img src={neylerLogo} alt="Neyler" className="h-5" loading="lazy" decoding="async" width={71} height={20} />
+        <div className="pt-6 border-t border-border/30">
+          {/* Use grid with 3 equal columns for perfect centering */}
+          <div className="grid grid-cols-1 md:grid-cols-3 items-center gap-4">
+            {/* Left: Logo */}
+            <div className="flex justify-center md:justify-start">
+              <img src={neylerLogo} alt="Neyler" className="h-5" loading="lazy" decoding="async" width={71} height={20} />
+            </div>
             
-            <div className="flex items-center gap-3">
+            {/* Center: Partner links - perfectly centered */}
+            <div className="flex items-center justify-center gap-3">
               <a
                 href={AFFILIATE_SIGNUP_URL}
                 target="_blank"
@@ -105,7 +109,10 @@ export function Footer() {
               </a>
             </div>
             
-            <p className="font-body text-xs text-muted-foreground/60">© 2026 Neyler. All rights reserved.</p>
+            {/* Right: Copyright */}
+            <div className="flex justify-center md:justify-end">
+              <p className="font-body text-xs text-muted-foreground/60">© 2026 Neyler. All rights reserved.</p>
+            </div>
           </div>
         </div>
       </div>
