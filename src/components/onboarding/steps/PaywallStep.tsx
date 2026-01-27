@@ -112,7 +112,7 @@ export function PaywallStep({ commitmentName }: PaywallStepProps) {
             {/* Price Display */}
             <div className="text-center mb-10">
               <div className="flex items-baseline justify-center gap-3">
-                <span className="text-2xl text-muted-foreground line-through decoration-2">
+                <span className="text-2xl text-muted-foreground line-through decoration-red-500 decoration-2">
                   ${originalPrice}
                 </span>
                 <span className="text-5xl lg:text-6xl font-bold text-foreground">
