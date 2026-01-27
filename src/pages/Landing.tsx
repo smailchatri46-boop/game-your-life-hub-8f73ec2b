@@ -114,11 +114,11 @@ export default function Landing() {
 
       {/* Lazy loaded sections */}
       <Suspense fallback={<SectionPlaceholder />}>
-        <HabitsShowcase />
+        <AnalyticsCarousel />
       </Suspense>
       
       <Suspense fallback={<SectionPlaceholder />}>
-        <AnalyticsCarousel />
+        <HabitsShowcase />
       </Suspense>
       
       <Suspense fallback={<SectionPlaceholder />}>
@@ -215,14 +215,9 @@ export default function Landing() {
       <section className="py-16 px-4">
         <div className="max-w-5xl mx-auto">
           <ScrollReveal animation="fade-up">
-            <h2 className="font-display text-3xl md:text-5xl font-semibold text-center mb-6">
+            <h2 className="font-display text-3xl md:text-5xl font-semibold text-center mb-14">
               Everything you need to <span className="gradient-text italic">succeed</span>
             </h2>
-          </ScrollReveal>
-          <ScrollReveal animation="fade-up" delay={50}>
-            <p className="text-muted-foreground text-lg text-center mb-14 max-w-2xl mx-auto">
-              A complete system to track, analyze, and improve every area of your life with AI-powered insights.
-            </p>
           </ScrollReveal>
           
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
