@@ -68,7 +68,7 @@ export default function Landing() {
       <LandingNavbar />
       
       {/* Hero Background Image */}
-      <div className="absolute top-0 left-0 w-full h-[60vh] overflow-hidden z-0">
+      <div className="absolute top-0 left-0 w-full h-[85vh] overflow-hidden z-0">
         <img 
           src={heroBackground} 
           alt="" 
@@ -76,7 +76,12 @@ export default function Landing() {
           loading="eager"
           fetchPriority="high"
         />
-        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-background" />
+        {/* Bottom fade to match gradient-hero background */}
+        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-[hsl(30,70%,96%)]" />
+        {/* Left fade */}
+        <div className="absolute inset-0 bg-gradient-to-r from-[hsl(30,70%,96%)] via-transparent to-transparent opacity-60" />
+        {/* Right fade */}
+        <div className="absolute inset-0 bg-gradient-to-l from-[hsl(30,70%,96%)] via-transparent to-transparent opacity-60" />
       </div>
       
       {/* Hero Section */}
@@ -86,10 +91,10 @@ export default function Landing() {
             {/* Left Column - Title, Description, CTA */}
             <div className="order-2 lg:order-1 flex flex-col lg:justify-end lg:pb-0">
               <h1 className="font-display text-4xl md:text-5xl lg:text-6xl font-semibold mb-6 animate-fade-in text-center lg:text-left">
-                <span className="italic gradient-text">Turn your life</span>
+                <span className="italic text-white drop-shadow-md">Turn your life</span>
                 <br />
-                <span className="text-foreground">into a Game</span>
-                <span className="gradient-text"> with AI</span>
+                <span className="text-white drop-shadow-md">into a Game</span>
+                <span className="text-white drop-shadow-md italic"> with AI</span>
               </h1>
               
               <p className="text-lg md:text-xl text-muted-foreground max-w-lg mb-8 animate-fade-in delay-100 text-center lg:text-left mx-auto lg:mx-0">
