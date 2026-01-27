@@ -38,10 +38,6 @@ const plans: Plan[] = [
       { text: "Unlimited goals", included: true },
       { text: "Unlimited to-do lists", included: true },
       { text: "Full AI Buddy chat access", included: true },
-      { text: "AI habit insights & recommendations", included: true },
-      { text: "AI trend analysis", included: true },
-      { text: "Deep analytics dashboard", included: true },
-      { text: "Streak protection", included: true },
       { text: "Priority updates", included: true },
     ],
   },
@@ -140,7 +136,7 @@ export function PricingSection() {
         </div>
 
         {/* Pricing Cards */}
-        <div className="flex justify-center mt-8">
+        <div className="flex justify-center mt-14">
           {plans.map((plan) => (
             <div
               key={plan.name}
