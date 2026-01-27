@@ -1,5 +1,4 @@
 import { Link } from "react-router-dom";
-import { ExternalLink } from "lucide-react";
 import neylerLogo from "@/assets/neyler-logo.png";
 
 const resourceLinks = [
@@ -80,33 +79,34 @@ export function Footer() {
           </div>
         </div>
 
-        {/* Bottom section with logo left, partner links center, and copyright right */}
-        <div className="pt-6 border-t border-border/30 flex flex-col md:flex-row items-center justify-between gap-3">
-          <img src={neylerLogo} alt="Neyler" className="h-5" loading="lazy" decoding="async" width={71} height={20} />
-          
-          <div className="flex items-center gap-4">
-            <a
-              href={AFFILIATE_SIGNUP_URL}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="font-body text-sm text-primary hover:text-primary/80 transition-colors flex items-center gap-1.5 font-medium"
-            >
-              Become an Affiliate
-              <ExternalLink className="w-3.5 h-3.5" />
-            </a>
-            <span className="text-muted-foreground/40">•</span>
-            <a
-              href={EARN_PER_VIEWS_URL}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="font-body text-sm text-primary hover:text-primary/80 transition-colors flex items-center gap-1.5 font-medium"
-            >
-              Earn Per 1K Views
-              <ExternalLink className="w-3.5 h-3.5" />
-            </a>
+        {/* Bottom section with logo, centered partner links, and copyright */}
+        <div className="pt-6 border-t border-border/30 flex flex-col items-center gap-4">
+          {/* Top row: Logo and Copyright on sides, links centered */}
+          <div className="w-full flex flex-col md:flex-row items-center justify-between gap-3">
+            <img src={neylerLogo} alt="Neyler" className="h-5" loading="lazy" decoding="async" width={71} height={20} />
+            
+            <div className="flex items-center gap-3">
+              <a
+                href={AFFILIATE_SIGNUP_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="font-body text-sm text-muted-foreground hover:text-foreground transition-colors"
+              >
+                Become an Affiliate
+              </a>
+              <span className="text-muted-foreground/40">•</span>
+              <a
+                href={EARN_PER_VIEWS_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="font-body text-sm text-muted-foreground hover:text-foreground transition-colors"
+              >
+                Earn Per 1K Views
+              </a>
+            </div>
+            
+            <p className="font-body text-xs text-muted-foreground/60">© 2026 Neyler. All rights reserved.</p>
           </div>
-          
-          <p className="font-body text-xs text-muted-foreground/60">© 2026 Neyler. All rights reserved.</p>
         </div>
       </div>
     </footer>
