@@ -130,7 +130,7 @@ export default function Landing() {
       </Suspense>
       
       {/* Value Proposition - Combined section */}
-      <section className="py-16 px-4">
+      <section className="py-10 px-4">
         <div className="max-w-5xl mx-auto text-center">
           {/* Single Title */}
           <ScrollReveal animation="fade-up">
@@ -212,10 +212,10 @@ export default function Landing() {
       </section>
       
       {/* Features Grid */}
-      <section className="py-16 px-4">
+      <section className="py-10 px-4">
         <div className="max-w-5xl mx-auto">
           <ScrollReveal animation="fade-up">
-            <h2 className="font-display text-3xl md:text-5xl font-semibold text-center mb-14">
+            <h2 className="font-display text-2xl md:text-4xl font-semibold text-center mb-10">
               Everything you need to <span className="gradient-text italic">succeed</span>
             </h2>
           </ScrollReveal>
@@ -297,11 +297,11 @@ export default function Landing() {
       </section>
       
       {/* CTA Section */}
-      <section className="py-16 px-4">
+      <section className="py-10 px-4">
         <ScrollReveal animation="zoom-in" duration={800}>
           <div className="max-w-2xl mx-auto text-center">
-            <GlassCard className="p-12" glow>
-              <h2 className="font-display text-3xl md:text-4xl font-semibold mb-4">
+            <GlassCard className="p-10" glow>
+              <h2 className="font-display text-2xl md:text-3xl font-semibold mb-4">
                 Ready to level up?
               </h2>
               <p className="text-muted-foreground text-lg mb-8">
@@ -328,11 +328,11 @@ export default function Landing() {
       </Suspense>
       
       {/* Final CTA Section - Duplicate of "Ready to level up" */}
-      <section className="py-16 px-4" ref={finalCtaRef}>
+      <section className="py-10 px-4" ref={finalCtaRef}>
         <ScrollReveal animation="zoom-in" duration={800}>
           <div className="max-w-2xl mx-auto text-center">
-            <GlassCard className="p-12" glow>
-              <h2 className="font-display text-3xl md:text-4xl font-semibold mb-4">
+            <GlassCard className="p-10" glow>
+              <h2 className="font-display text-2xl md:text-3xl font-semibold mb-4">
                 Ready to level up?
               </h2>
               <p className="text-muted-foreground text-lg mb-8">

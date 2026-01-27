@@ -69,7 +69,7 @@ export function HabitsShowcase({ isOnboarding = false }: HabitsShowcaseProps) {
   const descriptionSize = isOnboarding ? "text-sm md:text-base" : "text-base md:text-lg";
 
   return (
-    <section className={`${isOnboarding ? 'py-4' : 'py-12'} px-4 overflow-hidden w-full`}>
+    <section className={`${isOnboarding ? 'py-4' : 'py-8'} px-4 overflow-hidden w-full`}>
       {/* Title - centered at top */}
       <div className="max-w-6xl mx-auto text-center mb-4">
         <ScrollReveal animation="fade-up">
@@ -91,8 +91,8 @@ export function HabitsShowcase({ isOnboarding = false }: HabitsShowcaseProps) {
         </ScrollReveal>
       </div>
 
-      {/* Habits Grid - with more space below */}
-      <div className={`w-full ${isOnboarding ? 'mb-6' : 'mb-10'}`}>
+      {/* Habits Grid */}
+      <div className={`w-full ${isOnboarding ? 'mb-6' : 'mb-0'}`}>
         <ScrollReveal animation="zoom-in" delay={100}>
         <div className="max-w-6xl mx-auto">
           <GlassCard className="p-2 sm:p-3 lg:p-4 overflow-x-auto">

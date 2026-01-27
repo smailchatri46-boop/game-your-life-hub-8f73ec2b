@@ -62,7 +62,7 @@ export function AIBuddyShowcase({ isOnboarding = false }: AIBuddyShowcaseProps) 
   );
 
   return (
-    <section className={`${isOnboarding ? 'py-4' : 'py-12'} px-4 overflow-hidden w-full`}>
+    <section className={`${isOnboarding ? 'py-4' : 'py-8'} px-4 overflow-hidden w-full`}>
       {/* Title - centered at top with more space below */}
       <div className="max-w-6xl mx-auto text-center mb-8">
         <ScrollReveal animation="fade-up">
@@ -75,8 +75,8 @@ export function AIBuddyShowcase({ isOnboarding = false }: AIBuddyShowcaseProps) 
         </ScrollReveal>
       </div>
 
-      {/* Chat box container - with more space below */}
-      <div className={`w-full ${isOnboarding ? 'mb-6' : 'mb-10'}`}>
+      {/* Chat box container */}
+      <div className={`w-full ${isOnboarding ? 'mb-6' : 'mb-6'}`}>
         <ScrollReveal animation="zoom-in" delay={100}>
           <div className="max-w-4xl mx-auto">
             <div className="w-full">

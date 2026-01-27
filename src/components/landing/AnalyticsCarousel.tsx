@@ -205,7 +205,7 @@ export function AnalyticsCarousel({ isOnboarding = false }: AnalyticsCarouselPro
   const cardScale = isOnboarding ? "scale-110" : "";
 
   return (
-    <section className={`${isOnboarding ? 'py-6' : 'py-12'} px-4 overflow-hidden w-full`}>
+    <section className={`${isOnboarding ? 'py-6' : 'py-8'} px-4 overflow-hidden w-full`}>
       {/* Title - centered with more space below */}
       <div className="max-w-6xl mx-auto text-center mb-4">
         <ScrollReveal animation="fade-up">
@@ -227,8 +227,8 @@ export function AnalyticsCarousel({ isOnboarding = false }: AnalyticsCarouselPro
         </ScrollReveal>
       </div>
 
-      {/* Cards carousel - with more space below */}
-      <div className={`w-full ${isOnboarding ? 'mb-6' : 'mb-10'}`}>
+      {/* Cards carousel */}
+      <div className={`w-full ${isOnboarding ? 'mb-6' : 'mb-6'}`}>
         <ScrollReveal animation="zoom-in" delay={100}>
           <div 
             className="relative"
