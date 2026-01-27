@@ -84,8 +84,8 @@ export default function About() {
                 <p className="text-muted-foreground text-center">
                   We're a small team passionate about helping people grow. If you have any questions 
                   or feedback, we'd love to hear from you at{" "}
-                  <a href="mailto:support@neyler.com" className="text-primary hover:underline">
-                    support@neyler.com
+                  <a href="mailto:hello@neyler.com" className="text-primary hover:underline">
+                    hello@neyler.com
                   </a>
                 </p>
               </div>

@@ -126,7 +126,7 @@ export default function Cookies() {
                   For more information about how we handle your data, please see our{" "}
                   <a href="/privacy" className="text-primary hover:underline">Privacy Policy</a>. 
                   If you have questions about our use of cookies, contact us at{" "}
-                  <a href="mailto:support@neyler.com" className="text-primary hover:underline">support@neyler.com</a>.
+                  <a href="mailto:hello@neyler.com" className="text-primary hover:underline">hello@neyler.com</a>.
                 </p>
               </section>
             </div>
