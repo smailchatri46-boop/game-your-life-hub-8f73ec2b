@@ -19,7 +19,7 @@ const legalLinks = [
   { name: "Refund Policy", path: "/refund" },
 ];
 
-const AFFILIATE_SIGNUP_URL = "https://app.endorsely.com/l/b6603ddd-9a20-453a-ad37-2b1d95f16810";
+const AFFILIATE_SIGNUP_URL = "https://neylercom-7c64.endorsely.com/";
 const EARN_PER_VIEWS_URL = "https://forms.gle/ekE542XjQjcAx2NFA";
 
 export function Footer() {
