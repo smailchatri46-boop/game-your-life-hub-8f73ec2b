@@ -287,4 +287,18 @@
   .animate-pulse-float-slow {
     animation: pulse-float-slow 3.5s ease-in-out infinite;
   }
+
+  /* Paywall marquee animation */
+  @keyframes marquee-paywall {
+    0% {
+      transform: translateX(0);
+    }
+    100% {
+      transform: translateX(-50%);
+    }
+  }
+
+  .animate-marquee-paywall {
+    animation: marquee-paywall 60s linear infinite;
+  }
 }
