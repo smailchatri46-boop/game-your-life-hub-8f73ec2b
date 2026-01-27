@@ -103,14 +103,14 @@ export function PaywallStep({ commitmentName }: PaywallStepProps) {
       <div className="min-h-screen flex flex-col items-center justify-start py-10 px-4">
         {/* Header */}
         <div className="text-center mb-12 max-w-2xl">
-          <h1 className="font-display text-4xl md:text-5xl lg:text-6xl font-bold text-foreground mb-2 tracking-tight">
+          <h1 className="font-display text-3xl md:text-4xl font-semibold text-foreground mb-2 tracking-tight">
             It's time to invest in yourself
             {commitmentName ? `, ${commitmentName}` : ""}
           </h1>
         </div>
 
         {/* Pricing Card with Badge */}
-        <div className="w-full max-w-[620px] mb-12 relative">
+        <div className="w-full max-w-[540px] mb-12 relative">
           {/* Countdown Badge - positioned at top of card */}
           <div 
             className="absolute left-1/2 -translate-x-1/2 -top-5 z-10 rounded-full px-5 py-2.5 text-white font-medium text-sm shadow-lg whitespace-nowrap"
@@ -124,9 +124,9 @@ export function PaywallStep({ commitmentName }: PaywallStepProps) {
             </span>
           </div>
           
-          <div className="relative rounded-2xl p-6 lg:p-8 bg-card border border-border/50 shadow-xl flex flex-col justify-center pt-8">
+          <div className="relative rounded-2xl p-8 lg:p-10 bg-card border border-border/50 shadow-xl flex flex-col justify-center pt-10">
             {/* Monthly/Yearly Toggle */}
-            <div className="flex items-center justify-center gap-4 mb-6">
+            <div className="flex items-center justify-center gap-4 mb-8">
               <span
                 className={cn(
                   "text-sm font-medium transition-colors",
@@ -181,19 +181,17 @@ export function PaywallStep({ commitmentName }: PaywallStepProps) {
             </div>
 
             {/* CTA Button */}
-            <div className="px-4 lg:px-8">
-              <Button
-                variant="gradient"
-                className="w-full h-14 text-lg font-semibold shadow-lg hover:shadow-xl hover:opacity-90 transition-all"
-                onClick={handleSubscribe}
-                disabled={isLoading}
-              >
-                Get Started Now
-              </Button>
-            </div>
+            <Button
+              variant="gradient"
+              className="w-full h-14 text-lg font-semibold shadow-lg hover:shadow-xl hover:opacity-90 transition-all"
+              onClick={handleSubscribe}
+              disabled={isLoading}
+            >
+              Get Started Now
+            </Button>
 
             {/* Guarantee Text */}
-            <p className="text-sm text-muted-foreground text-center mt-4">
+            <p className="text-sm text-muted-foreground text-center mt-5">
               Cancel anytime. 7-Day Money-Back Guarantee.
             </p>
           </div>
@@ -201,7 +199,7 @@ export function PaywallStep({ commitmentName }: PaywallStepProps) {
 
         {/* Feature Cards Section */}
         <div className="w-full max-w-5xl mb-12">
-          <h2 className="font-display text-2xl md:text-3xl lg:text-4xl font-semibold text-center mb-8">
+          <h2 className="font-display text-2xl md:text-3xl font-semibold text-center mb-8">
             Unlock everything you need to succeed
           </h2>
           
@@ -231,7 +229,7 @@ export function PaywallStep({ commitmentName }: PaywallStepProps) {
         </div>
 
         {/* Bottom CTA */}
-        <div className="w-full max-w-[620px] text-center pb-10 px-4 lg:px-8">
+        <div className="w-full max-w-[540px] text-center pb-10">
           <Button
             variant="gradient"
             className="w-full h-14 text-lg font-semibold shadow-lg hover:shadow-xl hover:opacity-90 transition-all"
