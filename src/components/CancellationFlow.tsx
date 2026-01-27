@@ -54,12 +54,7 @@ export function CancellationFlow({
         setCurrentStep("liked");
         break;
       case "liked":
-        // Skip offer step for yearly plans
-        if (isYearlyPlan) {
-          setCurrentStep("confirm");
-        } else {
-          setCurrentStep("offer");
-        }
+        setCurrentStep("offer");
         break;
       case "offer":
         setCurrentStep("confirm");
@@ -79,12 +74,7 @@ export function CancellationFlow({
         setCurrentStep("liked");
         break;
       case "confirm":
-        // Go back to offer for monthly, or liked for yearly
-        if (isYearlyPlan) {
-          setCurrentStep("liked");
-        } else {
-          setCurrentStep("offer");
-        }
+        setCurrentStep("offer");
         break;
     }
   };
@@ -177,6 +167,7 @@ export function CancellationFlow({
               onAccept={handleAcceptOffer}
               onDecline={() => setCurrentStep("confirm")}
               onBack={() => setCurrentStep("liked")}
+              isYearlyPlan={isYearlyPlan}
             />
           )}
           
@@ -287,7 +278,7 @@ function FeedbackStep({
             value={feedbackText}
             onChange={(e) => setFeedbackText(e.target.value)}
             placeholder="We read every answer..."
-            className="resize-none border-2 border-border/50 focus:border-primary rounded-xl bg-secondary/30"
+            className="resize-none border-2 border-border/50 focus:border-border/50 focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0 rounded-xl bg-secondary/30"
             rows={3}
           />
         </div>
@@ -353,7 +344,7 @@ function LikedStep({
             value={likedText}
             onChange={(e) => setLikedText(e.target.value)}
             placeholder="We read every answer..."
-            className="resize-none border-2 border-border/50 focus:border-primary rounded-xl bg-secondary/30"
+            className="resize-none border-2 border-border/50 focus:border-border/50 focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0 rounded-xl bg-secondary/30"
             rows={3}
           />
         </div>
@@ -366,11 +357,19 @@ function OfferStep({
   onAccept,
   onDecline,
   onBack,
+  isYearlyPlan = false,
 }: {
   onAccept: () => void;
   onDecline: () => void;
   onBack: () => void;
+  isYearlyPlan?: boolean;
 }) {
+  const discountPercent = isYearlyPlan ? "50%" : "50%";
+  const discountDuration = isYearlyPlan ? "for 1 year" : "for 3 months";
+  const discountDescription = isYearlyPlan 
+    ? "This exclusive discount will be applied to your next yearly billing cycle."
+    : "This exclusive discount will be applied to your next 3 billing cycles.";
+
   return (
     <div className="space-y-5">
       <div className="text-center">
@@ -388,18 +387,11 @@ function OfferStep({
           background: 'linear-gradient(135deg, hsl(25 95% 60% / 0.15), hsl(35 100% 65% / 0.1))',
         }}
       >
-        <p className="text-sm font-medium text-primary mb-1">Limited Time Offer</p>
-        <h4 
-          className="font-display text-4xl font-bold mb-1"
-          style={{
-            background: 'linear-gradient(135deg, hsl(25 95% 55%), hsl(35 100% 60%))',
-            WebkitBackgroundClip: 'text',
-            WebkitTextFillColor: 'transparent',
-          }}
-        >
-          50% off
+        <p className="text-sm font-medium text-muted-foreground mb-1">Limited Time Offer</p>
+        <h4 className="font-display text-4xl font-bold mb-1 text-foreground">
+          {discountPercent} off
         </h4>
-        <p className="text-foreground font-semibold text-lg">for 3 months</p>
+        <p className="text-foreground font-semibold text-lg">{discountDuration}</p>
 
         <Button
           onClick={onAccept}
@@ -413,7 +405,7 @@ function OfferStep({
       </div>
 
       <p className="text-xs text-muted-foreground text-center">
-        This exclusive discount will be applied to your next 3 billing cycles.
+        {discountDescription}
       </p>
 
       <div className="flex justify-between items-center pt-2">
@@ -423,13 +415,12 @@ function OfferStep({
         >
           Back
         </button>
-        <Button
-          variant="ghost"
+        <button
           onClick={onDecline}
-          className="rounded-xl text-muted-foreground hover:text-foreground"
+          className="text-muted-foreground hover:text-foreground hover:font-medium transition-all text-sm"
         >
           No thanks, cancel anyway
-        </Button>
+        </button>
       </div>
     </div>
   );
