@@ -56,11 +56,15 @@ export function usePolarCheckout(options: UsePolarCheckoutOptions = {}) {
         const url = new URL(checkoutLink);
         url.searchParams.set("theme", theme);
         
+        // Add success URL to redirect back to auth after payment
+        const successUrl = `${window.location.origin}/auth`;
+        url.searchParams.set("success_url", successUrl);
+        
         // Calculate the amount based on plan and period for affiliate tracking
         // These amounts should match your Polar pricing
         let amount = 0;
         if (plan === "pro") {
-          amount = period === "yearly" ? 48 : 9; // $48/year or $9/month
+          amount = period === "yearly" ? 85 : 14; // $85/year or $14/month
         }
         
         // Track the referral before redirecting

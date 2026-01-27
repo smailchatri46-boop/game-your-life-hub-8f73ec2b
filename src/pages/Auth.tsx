@@ -31,10 +31,23 @@ export default function Auth() {
 
   useEffect(() => {
     if (!loading && user && !checkoutShown) {
+      // Check if user paid before signing up (should skip onboarding)
+      const paidBeforeSignup = localStorage.getItem("neyler_payment_before_signup") === "true";
+      
       // Check if user has completed onboarding
       const hasCompletedOnboarding = 
         localStorage.getItem("locked_onboarding_complete") === "true" ||
         localStorage.getItem("locked_onboarding_skipped") === "true";
+      
+      // If user paid before signup, skip onboarding and go to dashboard
+      if (paidBeforeSignup) {
+        localStorage.removeItem("neyler_payment_before_signup");
+        localStorage.removeItem("neyler_pending_plan");
+        localStorage.setItem("locked_onboarding_complete", "true");
+        localStorage.setItem("neyler_current_plan", "pro");
+        navigate("/dashboard");
+        return;
+      }
       
       // User just logged in - check for pending plan
       const pendingPlanStr = localStorage.getItem("neyler_pending_plan");
