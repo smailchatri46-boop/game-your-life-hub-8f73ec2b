@@ -64,8 +64,8 @@ export function PaywallStep({ commitmentName }: PaywallStepProps) {
       <div className="min-h-screen flex flex-col items-center justify-start py-10 px-4">
         {/* Header */}
         <div className="text-center mb-6 max-w-2xl">
-          <h1 className="font-display text-3xl md:text-4xl font-semibold text-foreground mb-2 tracking-tight italic">
-            It's time to invest in yourself
+          <h1 className="font-display text-3xl md:text-4xl font-semibold text-foreground mb-2 tracking-tight">
+            It's time to invest in <span className="gradient-text italic">yourself</span>
             {commitmentName ? `, ${commitmentName}` : ""}
           </h1>
           <p className="text-muted-foreground text-base md:text-lg">
@@ -74,8 +74,8 @@ export function PaywallStep({ commitmentName }: PaywallStepProps) {
         </div>
 
         {/* Pricing Card */}
-        <div className="w-full max-w-[440px] mb-12">
-          <div className="relative rounded-3xl p-8 lg:p-10 bg-card border border-border/50 shadow-xl min-h-[380px] flex flex-col justify-center">
+        <div className="w-full max-w-[480px] mb-12">
+          <div className="relative rounded-3xl p-8 lg:p-10 bg-card border border-border/50 shadow-xl flex flex-col justify-center">
             {/* Monthly/Yearly Toggle */}
             <div className="flex items-center justify-center gap-4 mb-8">
               <span
@@ -109,8 +109,8 @@ export function PaywallStep({ commitmentName }: PaywallStepProps) {
               </span>
             </div>
 
-            {/* Price Display - Fixed height container to prevent layout shift */}
-            <div className="text-center h-[110px] flex flex-col justify-between">
+            {/* Price Display */}
+            <div className="text-center mb-10">
               <div className="flex items-baseline justify-center gap-3">
                 <span className="text-2xl text-muted-foreground line-through decoration-2">
                   ${originalPrice}
@@ -122,16 +122,9 @@ export function PaywallStep({ commitmentName }: PaywallStepProps) {
                   /mo
                 </span>
               </div>
-              <p className={cn(
-                "text-primary text-sm font-medium h-5",
-                isYearly ? "visible" : "invisible"
-              )}>
-                Billed yearly
-              </p>
             </div>
 
             {/* CTA Button */}
-            <div className="mt-6">
             <Button
               variant="gradient"
               className="w-full h-14 text-lg font-semibold shadow-lg hover:shadow-xl hover:opacity-90 transition-all"
@@ -145,14 +138,13 @@ export function PaywallStep({ commitmentName }: PaywallStepProps) {
             <p className="text-sm text-muted-foreground text-center mt-5">
               Cancel anytime. 7-Day Money-Back Guarantee.
             </p>
-            </div>
           </div>
         </div>
 
         {/* Feature Cards Section */}
         <div className="w-full max-w-5xl mb-12">
-          <h2 className="font-display text-2xl md:text-3xl font-semibold text-center mb-8 italic">
-            Get access to everything you need to succeed
+          <h2 className="font-display text-2xl md:text-3xl font-semibold text-center mb-8">
+            Get access to everything you need to <span className="gradient-text italic">succeed</span>
           </h2>
           
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-5">
@@ -181,7 +173,7 @@ export function PaywallStep({ commitmentName }: PaywallStepProps) {
         </div>
 
         {/* Bottom CTA */}
-        <div className="w-full max-w-[440px] text-center pb-10">
+        <div className="w-full max-w-[480px] text-center pb-10">
           <Button
             variant="gradient"
             className="w-full h-14 text-lg font-semibold shadow-lg hover:shadow-xl hover:opacity-90 transition-all"
