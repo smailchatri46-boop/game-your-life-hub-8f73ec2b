@@ -6,7 +6,6 @@ import { AppleEmoji } from "@/components/AppleEmoji";
 import { cn } from "@/lib/utils";
 import { usePolarCheckout } from "@/hooks/use-polar-checkout";
 import type { BillingPeriod } from "@/lib/polar";
-import { PaywallMarquee } from "@/components/onboarding/PaywallMarquee";
 
 interface PaywallStepProps {
   commitmentName?: string;
@@ -150,18 +149,10 @@ export function PaywallStep({ commitmentName }: PaywallStepProps) {
           </div>
         </div>
 
-        {/* Scrolling Marquee Section */}
-        <div className="w-full mb-10">
-          <h2 className="font-display text-xl md:text-2xl font-semibold text-center mb-6">
-            Everything you need to <span className="gradient-text italic">succeed</span>
-          </h2>
-          <PaywallMarquee />
-        </div>
-
         {/* Feature Cards Section */}
         <div className="w-full max-w-5xl mb-10">
           <h2 className="font-display text-xl md:text-2xl font-semibold text-center mb-6">
-            What you'll <span className="gradient-text italic">unlock</span>
+            Everything you need to <span className="gradient-text italic">succeed</span>
           </h2>
           
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
