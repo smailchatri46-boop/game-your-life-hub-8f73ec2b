@@ -112,8 +112,12 @@ export function PaywallStep({ commitmentName }: PaywallStepProps) {
             {/* Price Display */}
             <div className="text-center mb-10">
               <div className="flex items-baseline justify-center gap-3">
-                <span className="text-2xl text-muted-foreground line-through decoration-red-500 decoration-2">
+                <span className="relative text-2xl text-muted-foreground">
                   ${originalPrice}
+                  <span 
+                    className="absolute left-[-4px] right-[-4px] top-1/2 h-[3px] bg-red-500 rounded-full"
+                    style={{ transform: 'rotate(-12deg)' }}
+                  />
                 </span>
                 <span className="text-5xl lg:text-6xl font-bold text-foreground">
                   ${displayPrice}
