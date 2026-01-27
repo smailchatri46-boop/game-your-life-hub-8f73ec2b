@@ -109,14 +109,6 @@ export default function Settings() {
     }
   };
 
-  const handlePauseSubscription = async () => {
-    // Note: Polar doesn't have native pause functionality
-    // We'll redirect to the portal for now
-    toast.info("Redirecting to subscription portal...");
-    window.open("https://polar.sh/neyler/portal", "_blank");
-    setShowCancellationFlow(false);
-  };
-
   const getPlanDisplayName = () => {
     if (!isSubscribed) return "Free Plan";
     if (isYearlyPlan) return "Pro Plan (Yearly)";
@@ -264,7 +256,6 @@ export default function Settings() {
         onClose={() => setShowCancellationFlow(false)}
         onConfirmCancel={handleConfirmCancel}
         onAcceptOffer={handleAcceptOffer}
-        onPauseSubscription={handlePauseSubscription}
         isYearlyPlan={isYearlyPlan}
       />
 

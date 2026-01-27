@@ -1,12 +1,11 @@
 import { useState } from "react";
-import { X, Heart, ThumbsUp, Gift, AlertTriangle, Pause } from "lucide-react";
+import { X, Heart, ThumbsUp, Gift, AlertTriangle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 
 type CancellationStep = 
   | "feedback"
   | "liked"
-  | "pause"
   | "offer"
   | "confirm";
 
@@ -15,7 +14,6 @@ interface CancellationFlowProps {
   onClose: () => void;
   onConfirmCancel: () => void;
   onAcceptOffer?: () => void;
-  onPauseSubscription?: (months: number) => void;
   isYearlyPlan?: boolean;
 }
 
@@ -28,7 +26,7 @@ const FEEDBACK_REASONS = [
 ];
 
 const LIKED_FEATURES = [
-  { id: "A", label: "Habits <span style='font-family: Inter'>&amp;</span> Tasks Tracking" },
+  { id: "A", label: "Habits & Tasks Tracking" },
   { id: "B", label: "AI Buddy Coaching" },
   { id: "C", label: "Goal Setting" },
   { id: "D", label: "Analytics Dashboard" },
@@ -40,7 +38,6 @@ export function CancellationFlow({
   onClose,
   onConfirmCancel,
   onAcceptOffer,
-  onPauseSubscription,
   isYearlyPlan = false,
 }: CancellationFlowProps) {
   const [currentStep, setCurrentStep] = useState<CancellationStep>("feedback");
@@ -48,7 +45,6 @@ export function CancellationFlow({
   const [selectedLiked, setSelectedLiked] = useState<string | null>(null);
   const [feedbackText, setFeedbackText] = useState("");
   const [likedText, setLikedText] = useState("");
-  const [pauseMonths, setPauseMonths] = useState(1);
 
   if (!open) return null;
 
@@ -58,15 +54,12 @@ export function CancellationFlow({
         setCurrentStep("liked");
         break;
       case "liked":
-        // Skip pause and offer steps for yearly plans
+        // Skip offer step for yearly plans
         if (isYearlyPlan) {
           setCurrentStep("confirm");
         } else {
-          setCurrentStep("pause");
+          setCurrentStep("offer");
         }
-        break;
-      case "pause":
-        setCurrentStep("offer");
         break;
       case "offer":
         setCurrentStep("confirm");
@@ -82,11 +75,8 @@ export function CancellationFlow({
       case "liked":
         setCurrentStep("feedback");
         break;
-      case "pause":
-        setCurrentStep("liked");
-        break;
       case "offer":
-        setCurrentStep("pause");
+        setCurrentStep("liked");
         break;
       case "confirm":
         // Go back to offer for monthly, or liked for yearly
@@ -99,11 +89,6 @@ export function CancellationFlow({
     }
   };
 
-  const handlePause = () => {
-    onPauseSubscription?.(pauseMonths);
-    onClose();
-  };
-
   const handleAcceptOffer = () => {
     onAcceptOffer?.();
     onClose();
@@ -112,15 +97,13 @@ export function CancellationFlow({
   const getHeaderConfig = () => {
     switch (currentStep) {
       case "feedback":
-        return { icon: Heart, title: "Your Feedback", bgColor: "bg-secondary" };
+        return { icon: Heart, title: "Your Feedback" };
       case "liked":
-        return { icon: ThumbsUp, title: "What did you like?", bgColor: "bg-secondary" };
-      case "pause":
-        return { icon: Pause, title: "Subscription Pause", bgColor: "bg-secondary" };
+        return { icon: ThumbsUp, title: "What did you like?" };
       case "offer":
-        return { icon: Gift, title: "Special Offer", bgColor: "bg-secondary" };
+        return { icon: Gift, title: "Special Offer" };
       case "confirm":
-        return { icon: AlertTriangle, title: "Confirm Cancellation", bgColor: "bg-destructive/10" };
+        return { icon: AlertTriangle, title: "Confirm Cancellation" };
     }
   };
 
@@ -136,18 +119,34 @@ export function CancellationFlow({
       />
       
       {/* Modal */}
-      <div className="relative w-full max-w-md bg-card rounded-3xl shadow-large overflow-hidden animate-scale-in">
-        {/* Header */}
-        <div className={`${headerConfig.bgColor} px-6 py-4 flex items-center justify-between`}>
-          <div className="flex items-center gap-2">
-            <HeaderIcon className={`w-5 h-5 ${currentStep === 'confirm' ? 'text-destructive' : 'text-primary'}`} />
-            <h2 className={`font-display text-lg font-semibold ${currentStep === 'confirm' ? 'text-destructive' : 'text-foreground'}`}>
+      <div className="relative w-full max-w-md bg-card/95 backdrop-blur-xl rounded-3xl shadow-2xl overflow-hidden animate-scale-in border border-border/30">
+        {/* Header with gradient */}
+        <div 
+          className="px-6 py-5 flex items-center justify-between"
+          style={{
+            background: currentStep === 'confirm' 
+              ? 'hsl(var(--destructive) / 0.1)' 
+              : 'linear-gradient(135deg, hsl(25 95% 60% / 0.15), hsl(35 100% 65% / 0.1))',
+          }}
+        >
+          <div className="flex items-center gap-3">
+            <div 
+              className="w-10 h-10 rounded-2xl flex items-center justify-center"
+              style={{
+                background: currentStep === 'confirm'
+                  ? 'hsl(var(--destructive) / 0.2)'
+                  : 'linear-gradient(135deg, hsl(25 95% 60%), hsl(35 100% 65%))',
+              }}
+            >
+              <HeaderIcon className={`w-5 h-5 ${currentStep === 'confirm' ? 'text-destructive' : 'text-white'}`} />
+            </div>
+            <h2 className={`font-display text-xl font-semibold ${currentStep === 'confirm' ? 'text-destructive' : 'text-foreground'}`}>
               {headerConfig.title}
             </h2>
           </div>
           <button
             onClick={onClose}
-            className="p-1 rounded-full hover:bg-black/5 transition-colors"
+            className="w-8 h-8 rounded-full flex items-center justify-center hover:bg-black/5 transition-colors"
           >
             <X className="w-5 h-5 text-muted-foreground" />
           </button>
@@ -173,21 +172,11 @@ export function CancellationFlow({
             />
           )}
           
-          {currentStep === "pause" && (
-            <PauseStep
-              pauseMonths={pauseMonths}
-              setPauseMonths={setPauseMonths}
-              onPause={handlePause}
-              onDecline={() => setCurrentStep("offer")}
-              onBack={() => setCurrentStep("liked")}
-            />
-          )}
-          
           {currentStep === "offer" && (
             <OfferStep
               onAccept={handleAcceptOffer}
               onDecline={() => setCurrentStep("confirm")}
-              onBack={() => setCurrentStep("pause")}
+              onBack={() => setCurrentStep("liked")}
             />
           )}
           
@@ -197,12 +186,12 @@ export function CancellationFlow({
         </div>
 
         {/* Footer */}
-        {currentStep !== "pause" && currentStep !== "offer" && (
+        {currentStep !== "offer" && (
           <div className="px-6 pb-6 flex justify-between items-center">
             {currentStep !== "feedback" ? (
               <button
                 onClick={handleBack}
-                className="text-muted-foreground hover:text-foreground transition-colors font-medium"
+                className="text-muted-foreground hover:text-foreground transition-colors font-medium text-sm"
               >
                 Back
               </button>
@@ -213,7 +202,7 @@ export function CancellationFlow({
             {currentStep === "confirm" ? (
               <Button
                 variant="outline"
-                className="border-destructive text-destructive hover:bg-destructive/10"
+                className="border-destructive text-destructive hover:bg-destructive/10 rounded-xl"
                 onClick={onConfirmCancel}
               >
                 Yes, Cancel Subscription
@@ -221,7 +210,10 @@ export function CancellationFlow({
             ) : (
               <Button
                 onClick={handleNext}
-                className="btn-primary-gradient rounded-xl px-6"
+                className="rounded-xl px-6 text-white font-medium"
+                style={{
+                  background: 'linear-gradient(135deg, hsl(25 95% 60%), hsl(35 100% 65%), hsl(25 95% 55%))',
+                }}
                 disabled={
                   (currentStep === "feedback" && !selectedReason) ||
                   (currentStep === "liked" && !selectedLiked)
@@ -255,12 +247,12 @@ function FeedbackStep({
         <h3 className="font-display text-xl font-semibold text-foreground mb-2">
           We're sad to see you leave.
         </h3>
-        <p className="text-muted-foreground">
+        <p className="text-muted-foreground text-sm">
           What's prompting your decision to leave?
         </p>
       </div>
 
-      <div className="space-y-3">
+      <div className="space-y-2.5">
         {FEEDBACK_REASONS.map((reason) => (
           <button
             key={reason.id}
@@ -268,15 +260,20 @@ function FeedbackStep({
             className={`w-full flex items-center gap-3 p-4 rounded-2xl border-2 transition-all ${
               selectedReason === reason.id
                 ? "border-primary bg-primary/5"
-                : "border-border hover:border-primary/30"
+                : "border-border/50 hover:border-primary/30 bg-secondary/30"
             }`}
           >
-            <span className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-semibold text-primary-foreground ${
-              selectedReason === reason.id ? "bg-primary" : "bg-primary/70"
-            }`}>
+            <span 
+              className="w-8 h-8 rounded-full flex items-center justify-center text-sm font-semibold text-white shrink-0"
+              style={{
+                background: selectedReason === reason.id 
+                  ? 'linear-gradient(135deg, hsl(25 95% 60%), hsl(35 100% 65%))'
+                  : 'hsl(var(--muted-foreground) / 0.5)',
+              }}
+            >
               {reason.id}
             </span>
-            <span className="text-foreground font-medium">{reason.label}</span>
+            <span className="text-foreground font-medium text-left">{reason.label}</span>
           </button>
         ))}
       </div>
@@ -290,7 +287,7 @@ function FeedbackStep({
             value={feedbackText}
             onChange={(e) => setFeedbackText(e.target.value)}
             placeholder="We read every answer..."
-            className="resize-none border-2 border-primary/30 focus:border-primary rounded-xl"
+            className="resize-none border-2 border-border/50 focus:border-primary rounded-xl bg-secondary/30"
             rows={3}
           />
         </div>
@@ -316,12 +313,12 @@ function LikedStep({
         <h3 className="font-display text-xl font-semibold text-foreground mb-2">
           What did you like about Neyler?
         </h3>
-        <p className="text-muted-foreground">
+        <p className="text-muted-foreground text-sm">
           Pick one area you valued most.
         </p>
       </div>
 
-      <div className="space-y-3">
+      <div className="space-y-2.5">
         {LIKED_FEATURES.map((feature) => (
           <button
             key={feature.id}
@@ -329,18 +326,20 @@ function LikedStep({
             className={`w-full flex items-center gap-3 p-4 rounded-2xl border-2 transition-all ${
               selectedLiked === feature.id
                 ? "border-primary bg-primary/5"
-                : "border-border hover:border-primary/30"
+                : "border-border/50 hover:border-primary/30 bg-secondary/30"
             }`}
           >
-            <span className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-semibold text-primary-foreground ${
-              selectedLiked === feature.id ? "bg-primary" : "bg-primary/70"
-            }`}>
+            <span 
+              className="w-8 h-8 rounded-full flex items-center justify-center text-sm font-semibold text-white shrink-0"
+              style={{
+                background: selectedLiked === feature.id 
+                  ? 'linear-gradient(135deg, hsl(25 95% 60%), hsl(35 100% 65%))'
+                  : 'hsl(var(--muted-foreground) / 0.5)',
+              }}
+            >
               {feature.id}
             </span>
-            <span 
-              className="text-foreground font-medium"
-              dangerouslySetInnerHTML={{ __html: feature.label }}
-            />
+            <span className="text-foreground font-medium text-left">{feature.label}</span>
           </button>
         ))}
       </div>
@@ -354,93 +353,11 @@ function LikedStep({
             value={likedText}
             onChange={(e) => setLikedText(e.target.value)}
             placeholder="We read every answer..."
-            className="resize-none border-2 border-primary/30 focus:border-primary rounded-xl"
+            className="resize-none border-2 border-border/50 focus:border-primary rounded-xl bg-secondary/30"
             rows={3}
           />
         </div>
       )}
-    </div>
-  );
-}
-
-function PauseStep({
-  pauseMonths,
-  setPauseMonths,
-  onPause,
-  onDecline,
-  onBack,
-}: {
-  pauseMonths: number;
-  setPauseMonths: (months: number) => void;
-  onPause: () => void;
-  onDecline: () => void;
-  onBack: () => void;
-}) {
-  return (
-    <div className="space-y-4">
-      <div className="text-center mb-6">
-        <h3 className="font-display text-xl font-semibold text-foreground mb-2">
-          Need a break? We've got you covered.
-        </h3>
-        <p className="text-muted-foreground">
-          We totally get it—sometimes life gets busy. Take a breather, and we'll be here when you're ready to dive back in.
-        </p>
-      </div>
-
-      <p className="text-center text-muted-foreground">
-        In the meantime, check out our{" "}
-        <a href="/tutorials" className="text-primary underline hover:text-primary-dark">
-          Tutorials
-        </a>{" "}
-        to discover new ways Neyler can work for you.
-      </p>
-
-      <div className="mt-4">
-        <select
-          value={pauseMonths}
-          onChange={(e) => setPauseMonths(Number(e.target.value))}
-          className="w-full p-4 rounded-2xl border-2 border-border bg-card text-foreground font-medium focus:border-primary outline-none"
-        >
-          <option value={1}>1 month</option>
-          <option value={2}>2 months</option>
-          <option value={3}>3 months</option>
-        </select>
-      </div>
-
-      <Button
-        onClick={onPause}
-        className="w-full btn-primary-gradient rounded-xl py-6 text-base font-semibold"
-      >
-        Pause Subscription
-      </Button>
-
-      <p className="text-sm text-muted-foreground text-center">
-        Your subscription will renew on{" "}
-        <span className="font-semibold">
-          {new Date(Date.now() + pauseMonths * 30 * 24 * 60 * 60 * 1000).toLocaleDateString("en-US", {
-            month: "long",
-            day: "numeric",
-            year: "numeric",
-          })}
-        </span>
-        .
-      </p>
-
-      <div className="flex justify-between items-center pt-2">
-        <button
-          onClick={onBack}
-          className="text-muted-foreground hover:text-foreground transition-colors font-medium"
-        >
-          Go Back
-        </button>
-        <Button
-          variant="outline"
-          onClick={onDecline}
-          className="rounded-xl"
-        >
-          Decline Offer
-        </Button>
-      </div>
     </div>
   );
 }
@@ -455,47 +372,63 @@ function OfferStep({
   onBack: () => void;
 }) {
   return (
-    <div className="space-y-4">
-      <div className="text-center mb-6">
+    <div className="space-y-5">
+      <div className="text-center">
         <h3 className="font-display text-xl font-semibold text-foreground mb-2">
           Wait! We have something special for you.
         </h3>
-        <p className="text-muted-foreground">
-          We'd hate to see you go! To make it easier to stay, here's an exclusive offer just for you.
+        <p className="text-muted-foreground text-sm">
+          We'd hate to see you go! Here's an exclusive offer just for you.
         </p>
       </div>
 
-      <div className="bg-secondary/50 rounded-3xl p-6 text-center">
-        <h4 className="font-display text-3xl font-bold text-primary mb-1">
-          50% off your subscription
+      <div 
+        className="rounded-3xl p-6 text-center"
+        style={{
+          background: 'linear-gradient(135deg, hsl(25 95% 60% / 0.15), hsl(35 100% 65% / 0.1))',
+        }}
+      >
+        <p className="text-sm font-medium text-primary mb-1">Limited Time Offer</p>
+        <h4 
+          className="font-display text-4xl font-bold mb-1"
+          style={{
+            background: 'linear-gradient(135deg, hsl(25 95% 55%), hsl(35 100% 60%))',
+            WebkitBackgroundClip: 'text',
+            WebkitTextFillColor: 'transparent',
+          }}
+        >
+          50% off
         </h4>
-        <p className="text-muted-foreground font-medium">For 3 months</p>
+        <p className="text-foreground font-semibold text-lg">for 3 months</p>
 
         <Button
           onClick={onAccept}
-          className="w-full mt-6 btn-primary-gradient rounded-xl py-6 text-base font-semibold"
+          className="w-full mt-5 rounded-xl py-6 text-base font-semibold text-white shadow-lg"
+          style={{
+            background: 'linear-gradient(135deg, hsl(25 95% 60%), hsl(35 100% 65%), hsl(25 95% 55%))',
+          }}
         >
           Accept This Offer
         </Button>
       </div>
 
-      <p className="text-sm text-muted-foreground text-center">
+      <p className="text-xs text-muted-foreground text-center">
         This exclusive discount will be applied to your next 3 billing cycles.
       </p>
 
       <div className="flex justify-between items-center pt-2">
         <button
           onClick={onBack}
-          className="text-muted-foreground hover:text-foreground transition-colors font-medium"
+          className="text-muted-foreground hover:text-foreground transition-colors font-medium text-sm"
         >
           Back
         </button>
         <Button
-          variant="outline"
+          variant="ghost"
           onClick={onDecline}
-          className="rounded-xl"
+          className="rounded-xl text-muted-foreground hover:text-foreground"
         >
-          Cancel Anyway
+          No thanks, cancel anyway
         </Button>
       </div>
     </div>
@@ -505,30 +438,34 @@ function OfferStep({
 function ConfirmStep() {
   return (
     <div className="space-y-4">
-      <div className="text-center mb-6">
+      <div className="text-center mb-4">
         <h3 className="font-display text-xl font-semibold text-foreground mb-2">
           Are you sure you want to cancel?
         </h3>
       </div>
 
-      <div className="bg-muted rounded-2xl p-4">
-        <p className="text-muted-foreground text-sm">
-          Your subscription will remain active until the end of your current billing period. After that, you'll lose access to all premium features.
+      <div className="bg-destructive/10 rounded-2xl p-4 border border-destructive/20">
+        <p className="text-foreground text-sm">
+          Your subscription will remain active until the end of your current billing period. After that, you'll lose access to:
         </p>
       </div>
 
-      <ul className="space-y-2 text-sm text-muted-foreground">
-        <li className="flex items-center gap-2">
-          <span className="w-1.5 h-1.5 rounded-full bg-destructive" />
-          No more AI Buddy coaching
+      <ul className="space-y-2.5">
+        <li className="flex items-center gap-3 text-sm text-muted-foreground">
+          <span className="w-2 h-2 rounded-full bg-destructive shrink-0" />
+          AI Buddy coaching & insights
         </li>
-        <li className="flex items-center gap-2">
-          <span className="w-1.5 h-1.5 rounded-full bg-destructive" />
-          Limited habit tracking
+        <li className="flex items-center gap-3 text-sm text-muted-foreground">
+          <span className="w-2 h-2 rounded-full bg-destructive shrink-0" />
+          Unlimited habits, goals & tasks
         </li>
-        <li className="flex items-center gap-2">
-          <span className="w-1.5 h-1.5 rounded-full bg-destructive" />
-          No deep analytics
+        <li className="flex items-center gap-3 text-sm text-muted-foreground">
+          <span className="w-2 h-2 rounded-full bg-destructive shrink-0" />
+          Deep analytics & mood tracking
+        </li>
+        <li className="flex items-center gap-3 text-sm text-muted-foreground">
+          <span className="w-2 h-2 rounded-full bg-destructive shrink-0" />
+          Priority support
         </li>
       </ul>
     </div>
