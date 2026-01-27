@@ -23,11 +23,13 @@ interface Plan {
   popular?: boolean;
 }
 
+const ORIGINAL_PRICE = 29;
+
 const plans: Plan[] = [
   {
     name: "Pro",
-    monthlyPrice: 9,
-    yearlyPrice: 49,
+    monthlyPrice: 14,
+    yearlyPrice: 85,
     subtitle: "Unlock the full experience",
     benefitText: "Everything in Neyler unlocked.",
     popular: true,
@@ -62,7 +64,7 @@ export function PricingSection() {
 
   const getPriceLabel = (plan: Plan) => {
     if (plan.monthlyPrice === 0) return "Free";
-    return `$${getPrice(plan)}`;
+    return getPrice(plan);
   };
 
   const getPeriodLabel = (plan: Plan) => {
@@ -186,9 +188,16 @@ export function PricingSection() {
 
               {/* Price */}
               <div className="text-center mb-5">
-                <div className="flex items-baseline justify-center gap-1">
+                <div className="flex items-baseline justify-center gap-2">
+                  <span className="relative text-2xl text-muted-foreground">
+                    ${ORIGINAL_PRICE}
+                    <span 
+                      className="absolute left-[-4px] right-[-4px] top-1/2 h-[2px] bg-destructive rounded-full"
+                      style={{ transform: 'rotate(-12deg)' }}
+                    />
+                  </span>
                   <span className="text-3xl lg:text-4xl font-bold text-foreground">
-                    {getPriceLabel(plan)}
+                    ${getPriceLabel(plan)}
                   </span>
                   <span className="text-muted-foreground text-sm">
                     {getPeriodLabel(plan)}
