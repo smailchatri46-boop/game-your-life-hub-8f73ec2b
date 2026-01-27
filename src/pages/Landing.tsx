@@ -9,7 +9,7 @@ import { Plus, Check } from "lucide-react";
 import googleLogo from "@/assets/google-logo.png";
 import { ScrollReveal } from "@/components/ScrollReveal";
 import { Footer } from "@/components/Footer";
-import dashboardThumbnail from "@/assets/dashboard-preview-optimized.jpg";
+import dashboardThumbnail from "@/assets/dashboard-thumbnail.png";
 
 // Lazy load below-fold sections for better initial load
 const AnalyticsCarousel = lazy(() => import("@/components/landing/AnalyticsCarousel").then(m => ({ default: m.AnalyticsCarousel })));
