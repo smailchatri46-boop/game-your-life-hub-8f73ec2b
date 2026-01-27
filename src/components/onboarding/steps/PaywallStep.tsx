@@ -102,8 +102,8 @@ export function PaywallStep({ commitmentName }: PaywallStepProps) {
     <div className="fixed inset-0 overflow-y-auto gradient-hero">
       <div className="min-h-screen flex flex-col items-center justify-start py-10 px-4">
         {/* Header */}
-        <div className="text-center mb-12 max-w-2xl">
-          <h1 className="font-display text-4xl md:text-5xl lg:text-6xl font-bold text-foreground mb-2 tracking-tight">
+        <div className="text-center mb-12 max-w-4xl">
+          <h1 className="font-display text-3xl md:text-4xl lg:text-5xl font-bold text-foreground mb-2 tracking-tight whitespace-nowrap">
             It's time to invest in yourself
             {commitmentName ? `, ${commitmentName}` : ""}
           </h1>
