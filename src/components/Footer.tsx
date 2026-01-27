@@ -20,6 +20,7 @@ const legalLinks = [
 ];
 
 const AFFILIATE_SIGNUP_URL = "https://app.endorsely.com/l/b6603ddd-9a20-453a-ad37-2b1d95f16810";
+const EARN_PER_VIEWS_URL = "https://forms.gle/ekE542XjQjcAx2NFA";
 
 export function Footer() {
   return (
@@ -79,19 +80,31 @@ export function Footer() {
           </div>
         </div>
 
-        {/* Bottom section with logo left, affiliate center, and copyright right */}
+        {/* Bottom section with logo left, partner links center, and copyright right */}
         <div className="pt-6 border-t border-border/30 flex flex-col md:flex-row items-center justify-between gap-3">
           <img src={neylerLogo} alt="Neyler" className="h-5" loading="lazy" decoding="async" width={71} height={20} />
           
-          <a
-            href={AFFILIATE_SIGNUP_URL}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="font-body text-sm text-primary hover:text-primary/80 transition-colors flex items-center gap-1.5 font-medium"
-          >
-            Become an Affiliate
-            <ExternalLink className="w-3.5 h-3.5" />
-          </a>
+          <div className="flex items-center gap-4">
+            <a
+              href={AFFILIATE_SIGNUP_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="font-body text-sm text-primary hover:text-primary/80 transition-colors flex items-center gap-1.5 font-medium"
+            >
+              Become an Affiliate
+              <ExternalLink className="w-3.5 h-3.5" />
+            </a>
+            <span className="text-muted-foreground/40">•</span>
+            <a
+              href={EARN_PER_VIEWS_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="font-body text-sm text-primary hover:text-primary/80 transition-colors flex items-center gap-1.5 font-medium"
+            >
+              Earn Per 1K Views
+              <ExternalLink className="w-3.5 h-3.5" />
+            </a>
+          </div>
           
           <p className="font-body text-xs text-muted-foreground/60">© 2026 Neyler. All rights reserved.</p>
         </div>
