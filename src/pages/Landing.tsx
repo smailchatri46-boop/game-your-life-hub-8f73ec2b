@@ -114,11 +114,11 @@ export default function Landing() {
 
       {/* Lazy loaded sections */}
       <Suspense fallback={<SectionPlaceholder />}>
-        <AnalyticsCarousel />
+        <HabitsShowcase />
       </Suspense>
       
       <Suspense fallback={<SectionPlaceholder />}>
-        <HabitsShowcase />
+        <AnalyticsCarousel />
       </Suspense>
       
       <Suspense fallback={<SectionPlaceholder />}>

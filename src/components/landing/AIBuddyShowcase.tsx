@@ -58,7 +58,7 @@ export function AIBuddyShowcase({ isOnboarding = false }: AIBuddyShowcaseProps) 
   const titleContent = isOnboarding ? (
     <>Analyze Your Progress With the <span className="gradient-text italic">AI Buddy</span></>
   ) : (
-    <>Ask the <span className="gradient-text italic">AI Buddy</span> <span className="font-sans not-italic">&</span> Get Deep Insights</>
+    <>Analyze your progress with the <span className="gradient-text italic">AI Buddy</span></>
   );
 
   return (
@@ -160,7 +160,7 @@ export function AIBuddyShowcase({ isOnboarding = false }: AIBuddyShowcaseProps) 
           <p className={`text-muted-foreground ${descriptionSize} leading-relaxed`}>
             {isOnboarding 
               ? "Chat with your AI Buddy to understand your habits, goals, tasks, and reflections in a smarter way. Get personalized insights from your real data and make better decisions without overthinking everything."
-              : "Your personal AI companion that sees all your goals, tasks, habits, and journal entries. Get personalized insights and actionable advice based on your real data."
+              : "AI Buddy sees all your goals, tasks, habits, and daily reflections, analyzes them, and helps you see patterns, find weaknesses, and reach your goals faster."
             }
           </p>
         </ScrollReveal>
