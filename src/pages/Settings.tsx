@@ -99,10 +99,17 @@ export default function Settings() {
   };
 
   const handleAcceptOffer = async () => {
-    // Apply the Neyler3 discount code (50% off for 3 months)
-    const result = await applyDiscount("Neyler3");
+    // Apply the correct discount code based on plan type
+    // Monthly: Neyler3 (50% off for 3 months)
+    // Yearly: Neyler4 (50% off for 1 year)
+    const discountCode = isYearlyPlan ? "Neyler4" : "Neyler3";
+    const successMessage = isYearlyPlan 
+      ? "50% discount applied for 1 year!" 
+      : "50% discount applied for 3 months!";
+    
+    const result = await applyDiscount(discountCode);
     if (result.success) {
-      toast.success("50% discount applied for 3 months!");
+      toast.success(successMessage);
       setShowCancellationFlow(false);
     } else {
       toast.error(result.error || "Failed to apply discount");
