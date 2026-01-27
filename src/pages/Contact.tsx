@@ -4,7 +4,7 @@ import { Mail } from "lucide-react";
 import { toast } from "sonner";
 
 export default function Contact() {
-  const email = "support@neyler.com";
+  const email = "hello@neyler.com";
 
   const handleCopyEmail = async () => {
     try {

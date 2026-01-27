@@ -97,7 +97,7 @@ export default function Refund() {
                 <p className="text-foreground/90 leading-relaxed">
                   If you have questions about this policy or need assistance with your subscription, 
                   please reach out to us at{" "}
-                  <a href="mailto:support@neyler.com" className="text-primary hover:underline">support@neyler.com</a>. 
+                  <a href="mailto:hello@neyler.com" className="text-primary hover:underline">hello@neyler.com</a>. 
                   We're always happy to help.
                 </p>
               </section>

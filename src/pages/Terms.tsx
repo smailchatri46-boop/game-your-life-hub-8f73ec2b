@@ -135,7 +135,7 @@ export default function Terms() {
                 <h2 className="font-display text-xl font-semibold text-foreground mb-3">Questions?</h2>
                 <p className="text-foreground/90 leading-relaxed">
                   If you have any questions about these Terms of Service, please contact us at{" "}
-                  <a href="mailto:support@neyler.com" className="text-primary hover:underline">support@neyler.com</a>.
+                  <a href="mailto:hello@neyler.com" className="text-primary hover:underline">hello@neyler.com</a>.
                 </p>
               </section>
             </div>

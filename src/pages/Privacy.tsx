@@ -91,7 +91,7 @@ export default function Privacy() {
                 <p className="text-foreground/90 leading-relaxed">
                   You can delete your account and all associated data at any time from your account settings. 
                   Once deleted, your data cannot be recovered. If you need help, contact us at{" "}
-                  <a href="mailto:support@neyler.com" className="text-primary hover:underline">support@neyler.com</a>.
+                  <a href="mailto:hello@neyler.com" className="text-primary hover:underline">hello@neyler.com</a>.
                 </p>
               </section>
 
@@ -118,7 +118,7 @@ export default function Privacy() {
                 <p className="text-foreground/90 leading-relaxed">
                   If you have questions about this Privacy Policy or how we handle your data, please reach 
                   out to us at{" "}
-                  <a href="mailto:support@neyler.com" className="text-primary hover:underline">support@neyler.com</a>.
+                  <a href="mailto:hello@neyler.com" className="text-primary hover:underline">hello@neyler.com</a>.
                 </p>
               </section>
             </div>
