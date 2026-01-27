@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { GlassCard } from "@/components/GlassCard";
@@ -44,9 +44,46 @@ const FEATURE_CARDS = [
   },
 ];
 
+const COUNTDOWN_HOURS = 16;
+
+function useCountdown() {
+  const [timeLeft, setTimeLeft] = useState(() => {
+    const stored = localStorage.getItem("paywall_countdown_end");
+    if (stored) {
+      const endTime = parseInt(stored, 10);
+      const remaining = Math.max(0, endTime - Date.now());
+      return remaining;
+    }
+    // Set new countdown
+    const endTime = Date.now() + COUNTDOWN_HOURS * 60 * 60 * 1000;
+    localStorage.setItem("paywall_countdown_end", endTime.toString());
+    return COUNTDOWN_HOURS * 60 * 60 * 1000;
+  });
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      const stored = localStorage.getItem("paywall_countdown_end");
+      if (stored) {
+        const endTime = parseInt(stored, 10);
+        const remaining = Math.max(0, endTime - Date.now());
+        setTimeLeft(remaining);
+      }
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, []);
+
+  const hours = Math.floor(timeLeft / (1000 * 60 * 60));
+  const minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
+  const seconds = Math.floor((timeLeft % (1000 * 60)) / 1000);
+
+  return { hours, minutes, seconds, isExpired: timeLeft === 0 };
+}
+
 export function PaywallStep({ commitmentName }: PaywallStepProps) {
   const [isYearly, setIsYearly] = useState(true);
   const { openCheckout, isLoading } = usePolarCheckout({ theme: "light" });
+  const { hours, minutes, seconds } = useCountdown();
 
   const monthlyPrice = 14;
   const yearlyPrice = 7;
@@ -59,6 +96,8 @@ export function PaywallStep({ commitmentName }: PaywallStepProps) {
     openCheckout("pro", period);
   };
 
+  const formatTime = (num: number) => num.toString().padStart(2, "0");
+
   return (
     <div className="fixed inset-0 overflow-y-auto gradient-hero">
       <div className="min-h-screen flex flex-col items-center justify-start py-10 px-4">
@@ -68,6 +107,19 @@ export function PaywallStep({ commitmentName }: PaywallStepProps) {
             It's time to invest in yourself
             {commitmentName ? `, ${commitmentName}` : ""}
           </h1>
+        </div>
+
+        {/* Countdown Badge */}
+        <div 
+          className="rounded-full px-6 py-3 mb-6 text-white font-medium text-sm md:text-base shadow-lg"
+          style={{
+            background: 'linear-gradient(135deg, hsl(25 95% 60%), hsl(35 100% 65%), hsl(25 95% 55%))',
+          }}
+        >
+          This offer is available only for the next{" "}
+          <span className="font-bold">
+            {formatTime(hours)}:{formatTime(minutes)}:{formatTime(seconds)}
+          </span>
         </div>
 
         {/* Pricing Card */}
