@@ -11,6 +11,7 @@ import { ScrollReveal } from "@/components/ScrollReveal";
 import { Footer } from "@/components/Footer";
 import dashboardThumbnail from "@/assets/dashboard-thumbnail.png";
 import { useReferral } from "@/hooks/use-referral";
+import heroBackground from "@/assets/hero-background.png";
 
 // Lazy load below-fold sections for better initial load
 const AnalyticsCarousel = lazy(() => import("@/components/landing/AnalyticsCarousel").then(m => ({ default: m.AnalyticsCarousel })));
@@ -66,8 +67,20 @@ export default function Landing() {
     <div className="min-h-screen gradient-hero overflow-hidden">
       <LandingNavbar />
       
+      {/* Hero Background Image */}
+      <div className="absolute top-0 left-0 w-full h-[60vh] overflow-hidden z-0">
+        <img 
+          src={heroBackground} 
+          alt="" 
+          className="w-full h-full object-cover object-center scale-110"
+          loading="eager"
+          fetchPriority="high"
+        />
+        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-background" />
+      </div>
+      
       {/* Hero Section */}
-      <section className="pt-32 pb-20 px-4">
+      <section className="pt-32 pb-20 px-4 relative z-10">
         <div className="max-w-7xl mx-auto">
           <div className="grid lg:grid-cols-[5fr_7fr] gap-10 lg:gap-12 items-start">
             {/* Left Column - Title, Description, CTA */}
