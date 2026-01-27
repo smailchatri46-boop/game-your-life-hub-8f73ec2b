@@ -72,9 +72,9 @@ export function PricingSection() {
     return "/ month";
   };
 
-  const getYearlyTotal = (plan: Plan) => {
-    if (plan.monthlyPrice === 0 || !isYearly) return null;
-    return `Pay only $${plan.yearlyPrice}/year`;
+  const getBillingText = (plan: Plan) => {
+    if (plan.monthlyPrice === 0) return null;
+    return isYearly ? "Billed yearly" : "Billed monthly";
   };
 
   const handleGetStarted = () => {
@@ -140,7 +140,7 @@ export function PricingSection() {
         </div>
 
         {/* Pricing Cards */}
-        <div className="flex justify-center">
+        <div className="flex justify-center mt-8">
           {plans.map((plan) => (
             <div
               key={plan.name}
@@ -164,7 +164,7 @@ export function PricingSection() {
                 </div>
               )}
 
-              {/* Most Popular Badge */}
+              {/* Special Offer Badge */}
               {plan.popular && (
                 <div className="absolute -top-4 left-1/2 -translate-x-1/2">
                   <div 
@@ -173,7 +173,7 @@ export function PricingSection() {
                       background: 'linear-gradient(135deg, hsl(25 95% 60%), hsl(35 100% 65%), hsl(25 95% 55%))',
                     }}
                   >
-                    Most Popular
+                    Special Offer
                   </div>
                 </div>
               )}
@@ -203,9 +203,9 @@ export function PricingSection() {
                     {getPeriodLabel(plan)}
                   </span>
                 </div>
-                {getYearlyTotal(plan) && (
-                  <p className="text-primary text-sm font-medium mt-1.5">
-                    {getYearlyTotal(plan)}
+                {getBillingText(plan) && (
+                  <p className="text-muted-foreground text-sm mt-1.5">
+                    {getBillingText(plan)}
                   </p>
                 )}
               </div>
