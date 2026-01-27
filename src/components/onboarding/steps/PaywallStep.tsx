@@ -102,7 +102,7 @@ export function PaywallStep({ commitmentName }: PaywallStepProps) {
     <div className="fixed inset-0 overflow-y-auto gradient-hero">
       <div className="min-h-screen flex flex-col items-center justify-start py-10 px-4">
         {/* Header */}
-        <div className="text-center mb-6 max-w-2xl">
+        <div className="text-center mb-12 max-w-2xl">
           <h1 className="font-display text-3xl md:text-4xl font-semibold text-foreground mb-2 tracking-tight">
             It's time to invest in yourself
             {commitmentName ? `, ${commitmentName}` : ""}
@@ -110,10 +110,10 @@ export function PaywallStep({ commitmentName }: PaywallStepProps) {
         </div>
 
         {/* Pricing Card with Badge */}
-        <div className="w-full max-w-[480px] mb-12 relative">
+        <div className="w-full max-w-[540px] mb-12 relative">
           {/* Countdown Badge - positioned at top of card */}
           <div 
-            className="absolute left-1/2 -translate-x-1/2 -top-5 z-10 rounded-xl px-5 py-2.5 text-white font-medium text-sm shadow-lg whitespace-nowrap"
+            className="absolute left-1/2 -translate-x-1/2 -top-5 z-10 rounded-full px-5 py-2.5 text-white font-medium text-sm shadow-lg whitespace-nowrap"
             style={{
               background: 'linear-gradient(135deg, hsl(25 95% 60%), hsl(35 100% 65%), hsl(25 95% 55%))',
             }}
@@ -159,12 +159,12 @@ export function PaywallStep({ commitmentName }: PaywallStepProps) {
             </div>
 
             {/* Price Display */}
-            <div className="text-center mb-10">
+            <div className="text-center mb-6">
               <div className="flex items-baseline justify-center gap-2">
-                <span className="relative text-4xl lg:text-5xl text-muted-foreground font-medium">
+                <span className="relative text-3xl text-muted-foreground">
                   ${originalPrice}
                   <span 
-                    className="absolute left-[-4px] right-[-4px] top-1/2 h-[3px] bg-red-500 rounded-full"
+                    className="absolute left-[-4px] right-[-4px] top-1/2 h-[2px] bg-destructive rounded-full"
                     style={{ transform: 'rotate(-12deg)' }}
                   />
                 </span>
@@ -175,6 +175,9 @@ export function PaywallStep({ commitmentName }: PaywallStepProps) {
                   /mo
                 </span>
               </div>
+              <p className="text-sm text-muted-foreground mt-2">
+                {isYearly ? "Billed yearly" : "Billed monthly"}
+              </p>
             </div>
 
             {/* CTA Button */}
@@ -226,7 +229,7 @@ export function PaywallStep({ commitmentName }: PaywallStepProps) {
         </div>
 
         {/* Bottom CTA */}
-        <div className="w-full max-w-[480px] text-center pb-10">
+        <div className="w-full max-w-[540px] text-center pb-10">
           <Button
             variant="gradient"
             className="w-full h-14 text-lg font-semibold shadow-lg hover:shadow-xl hover:opacity-90 transition-all"
