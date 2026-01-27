@@ -274,7 +274,7 @@ export function AnalyticsCarousel({ isOnboarding = false }: AnalyticsCarouselPro
           <p className={`text-muted-foreground ${descriptionSize} leading-relaxed`}>
             {isOnboarding 
               ? "See your patterns across progress, mood, motivation, and consistency with clean analytics that tell the full story. Understand what's working, what's not, and adjust faster with insights that feel clear and useful."
-              : "Understand your progress, mood trends, and patterns with beautiful analytics. See your full picture and make smarter decisions about your habits and goals."
+              : "Understand your progress and patterns with beautiful analytics that show you the full picture."
             }
           </p>
         </ScrollReveal>

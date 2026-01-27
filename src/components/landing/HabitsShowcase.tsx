@@ -74,7 +74,7 @@ export function HabitsShowcase({ isOnboarding = false }: HabitsShowcaseProps) {
       <div className="max-w-6xl mx-auto text-center mb-8">
         <ScrollReveal animation="fade-up">
           <h2 className={`font-display ${titleSize} font-semibold`}>
-            Track Habits <span className="font-body">&</span> Tasks <span className="gradient-text italic">Effortlessly</span>
+            Organize Your Daily Routine <span className="gradient-text italic">Effortlessly</span>
           </h2>
         </ScrollReveal>
       </div>
@@ -169,7 +169,7 @@ export function HabitsShowcase({ isOnboarding = false }: HabitsShowcaseProps) {
           <p className={`text-muted-foreground ${descriptionSize} leading-relaxed`}>
             {isOnboarding 
               ? "Plan your days with a clean system that makes habits and tasks easy to follow without stress. See your progress at a glance and stay consistent with a routine that actually feels simple."
-              : "Track your daily habits and one-time tasks with a beautiful spreadsheet-style grid. See your streaks, completion rates, and progress all in one clean view."
+              : "Track habits and tasks in a beautiful clean style. See your progress at a glance."
             }
           </p>
         </ScrollReveal>
