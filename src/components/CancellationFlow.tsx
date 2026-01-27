@@ -16,6 +16,7 @@ interface CancellationFlowProps {
   onConfirmCancel: () => void;
   onAcceptOffer?: () => void;
   onPauseSubscription?: (months: number) => void;
+  isYearlyPlan?: boolean;
 }
 
 const FEEDBACK_REASONS = [
@@ -40,6 +41,7 @@ export function CancellationFlow({
   onConfirmCancel,
   onAcceptOffer,
   onPauseSubscription,
+  isYearlyPlan = false,
 }: CancellationFlowProps) {
   const [currentStep, setCurrentStep] = useState<CancellationStep>("feedback");
   const [selectedReason, setSelectedReason] = useState<string | null>(null);
@@ -56,7 +58,12 @@ export function CancellationFlow({
         setCurrentStep("liked");
         break;
       case "liked":
-        setCurrentStep("pause");
+        // Skip pause and offer steps for yearly plans
+        if (isYearlyPlan) {
+          setCurrentStep("confirm");
+        } else {
+          setCurrentStep("pause");
+        }
         break;
       case "pause":
         setCurrentStep("offer");
@@ -82,7 +89,12 @@ export function CancellationFlow({
         setCurrentStep("pause");
         break;
       case "confirm":
-        setCurrentStep("offer");
+        // Go back to offer for monthly, or liked for yearly
+        if (isYearlyPlan) {
+          setCurrentStep("liked");
+        } else {
+          setCurrentStep("offer");
+        }
         break;
     }
   };
@@ -167,6 +179,7 @@ export function CancellationFlow({
               setPauseMonths={setPauseMonths}
               onPause={handlePause}
               onDecline={() => setCurrentStep("offer")}
+              onBack={() => setCurrentStep("liked")}
             />
           )}
           
@@ -174,6 +187,7 @@ export function CancellationFlow({
             <OfferStep
               onAccept={handleAcceptOffer}
               onDecline={() => setCurrentStep("confirm")}
+              onBack={() => setCurrentStep("pause")}
             />
           )}
           
@@ -354,11 +368,13 @@ function PauseStep({
   setPauseMonths,
   onPause,
   onDecline,
+  onBack,
 }: {
   pauseMonths: number;
   setPauseMonths: (months: number) => void;
   onPause: () => void;
   onDecline: () => void;
+  onBack: () => void;
 }) {
   return (
     <div className="space-y-4">
@@ -412,7 +428,7 @@ function PauseStep({
 
       <div className="flex justify-between items-center pt-2">
         <button
-          onClick={() => {}}
+          onClick={onBack}
           className="text-muted-foreground hover:text-foreground transition-colors font-medium"
         >
           Go Back
@@ -432,9 +448,11 @@ function PauseStep({
 function OfferStep({
   onAccept,
   onDecline,
+  onBack,
 }: {
   onAccept: () => void;
   onDecline: () => void;
+  onBack: () => void;
 }) {
   return (
     <div className="space-y-4">
@@ -449,7 +467,7 @@ function OfferStep({
 
       <div className="bg-secondary/50 rounded-3xl p-6 text-center">
         <h4 className="font-display text-3xl font-bold text-primary mb-1">
-          30% off your subscription
+          50% off your subscription
         </h4>
         <p className="text-muted-foreground font-medium">For 3 months</p>
 
@@ -462,12 +480,12 @@ function OfferStep({
       </div>
 
       <p className="text-sm text-muted-foreground text-center">
-        This exclusive discount will be applied to your next billing cycles.
+        This exclusive discount will be applied to your next 3 billing cycles.
       </p>
 
       <div className="flex justify-between items-center pt-2">
         <button
-          onClick={() => {}}
+          onClick={onBack}
           className="text-muted-foreground hover:text-foreground transition-colors font-medium"
         >
           Back
@@ -499,31 +517,20 @@ function ConfirmStep() {
         </p>
       </div>
 
-      <div className="space-y-3 mt-4">
-        <p className="font-semibold text-foreground">If you cancel:</p>
-        <div className="space-y-2">
-          <div className="flex items-start gap-2">
-            <X className="w-4 h-4 text-destructive mt-0.5 flex-shrink-0" />
-            <p className="text-muted-foreground text-sm">
-              You will lose access to all premium features at the end of your billing period.
-            </p>
-          </div>
-          <div className="flex items-start gap-2">
-            <X className="w-4 h-4 text-destructive mt-0.5 flex-shrink-0" />
-            <p className="text-muted-foreground text-sm">
-              Your special offer price, if any, will be lost.
-            </p>
-          </div>
-          <div className="flex items-start gap-2">
-            <X className="w-4 h-4 text-destructive mt-0.5 flex-shrink-0" />
-            <p className="text-muted-foreground text-sm">
-              You will be downgraded to the free version with limited features.
-            </p>
-          </div>
-        </div>
-      </div>
+      <ul className="space-y-2 text-sm text-muted-foreground">
+        <li className="flex items-center gap-2">
+          <span className="w-1.5 h-1.5 rounded-full bg-destructive" />
+          No more AI Buddy coaching
+        </li>
+        <li className="flex items-center gap-2">
+          <span className="w-1.5 h-1.5 rounded-full bg-destructive" />
+          Limited habit tracking
+        </li>
+        <li className="flex items-center gap-2">
+          <span className="w-1.5 h-1.5 rounded-full bg-destructive" />
+          No deep analytics
+        </li>
+      </ul>
     </div>
   );
 }
-
-export default CancellationFlow;

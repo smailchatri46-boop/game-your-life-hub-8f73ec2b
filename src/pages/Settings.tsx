@@ -5,9 +5,10 @@ import { GlassCard } from "@/components/GlassCard";
 import { Button } from "@/components/ui/button";
 import { PaywallModal } from "@/components/PaywallModal";
 import { EditProfileModal } from "@/components/EditProfileModal";
+import { CancellationFlow } from "@/components/CancellationFlow";
 import { useAuth } from "@/contexts/AuthContext";
+import { useSubscription } from "@/contexts/SubscriptionContext";
 import { toast } from "sonner";
-import { usePlanLimits } from "@/hooks/use-plan-limits";
 import { getProfile } from "@/services/firestore/profiles";
 import { 
   User, 
@@ -33,18 +34,20 @@ import { SettingsChecklist } from "@/components/SettingsChecklist";
 export default function Settings() {
   const navigate = useNavigate();
   const { user, signOut } = useAuth();
-  const { currentPlan } = usePlanLimits();
+  const { subscription, cancelSubscription, applyDiscount } = useSubscription();
   const [showPaywall, setShowPaywall] = useState(false);
   const [showEditProfile, setShowEditProfile] = useState(false);
   const [showSignOutConfirm, setShowSignOutConfirm] = useState(false);
+  const [showCancellationFlow, setShowCancellationFlow] = useState(false);
   const [profile, setProfile] = useState<{ full_name: string | null; email: string | null; avatar_url: string | null }>({ 
     full_name: null, 
     email: null, 
     avatar_url: null 
   });
   
-  const isPro = currentPlan === 'pro';
-  const isFree = currentPlan === 'free';
+  const isSubscribed = subscription?.isActive;
+  const isMonthlyPlan = subscription?.plan === "monthly";
+  const isYearlyPlan = subscription?.plan === "yearly";
 
   useEffect(() => {
     const loadProfile = async () => {
@@ -73,7 +76,7 @@ export default function Settings() {
   };
 
   const handleSubscriptionClick = () => {
-    if (isFree) {
+    if (!isSubscribed) {
       setShowPaywall(true);
     } else {
       // For paid users, open the Polar customer portal to manage subscription
@@ -82,10 +85,44 @@ export default function Settings() {
   };
 
   const handleCancelSubscription = () => {
-    // Open Polar customer portal for subscription management
-    window.open("https://polar.sh/neyler/portal", "_blank");
+    setShowCancellationFlow(true);
   };
 
+  const handleConfirmCancel = async () => {
+    const result = await cancelSubscription();
+    if (result.success) {
+      toast.success("Subscription cancelled. You'll have access until the end of your billing period.");
+      setShowCancellationFlow(false);
+    } else {
+      toast.error(result.error || "Failed to cancel subscription");
+    }
+  };
+
+  const handleAcceptOffer = async () => {
+    // Apply the Neyler3 discount code (50% off for 3 months)
+    const result = await applyDiscount("Neyler3");
+    if (result.success) {
+      toast.success("50% discount applied for 3 months!");
+      setShowCancellationFlow(false);
+    } else {
+      toast.error(result.error || "Failed to apply discount");
+    }
+  };
+
+  const handlePauseSubscription = async () => {
+    // Note: Polar doesn't have native pause functionality
+    // We'll redirect to the portal for now
+    toast.info("Redirecting to subscription portal...");
+    window.open("https://polar.sh/neyler/portal", "_blank");
+    setShowCancellationFlow(false);
+  };
+
+  const getPlanDisplayName = () => {
+    if (!isSubscribed) return "Free Plan";
+    if (isYearlyPlan) return "Pro Plan (Yearly)";
+    if (isMonthlyPlan) return "Pro Plan (Monthly)";
+    return "Pro Plan";
+  };
 
   return (
     <>
@@ -134,7 +171,7 @@ export default function Settings() {
               <div className="text-left">
                 <span className="font-medium block text-foreground">Subscription</span>
                 <span className="text-sm text-muted-foreground">
-                  {isPro ? "Pro Plan" : "Free Plan"}
+                  {getPlanDisplayName()}
                 </span>
               </div>
             </span>
@@ -142,7 +179,7 @@ export default function Settings() {
           </button>
           
           {/* Cancel Subscription - only show for paid users */}
-          {isPro && (
+          {isSubscribed && (
             <div className="px-5 pb-5">
               <Button 
                 variant="ghost"
@@ -156,7 +193,7 @@ export default function Settings() {
         </GlassCard>
         
         {/* Upgrade Card - only show for free users */}
-        {isFree && (
+        {!isSubscribed && (
           <GlassCard className="p-6 mb-6" glow>
             <div className="flex items-center gap-4 mb-4">
               <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-primary/20 to-accent/20 flex items-center justify-center">
@@ -219,6 +256,16 @@ export default function Settings() {
       <EditProfileModal 
         open={showEditProfile} 
         onClose={() => setShowEditProfile(false)} 
+      />
+
+      {/* Cancellation Flow */}
+      <CancellationFlow
+        open={showCancellationFlow}
+        onClose={() => setShowCancellationFlow(false)}
+        onConfirmCancel={handleConfirmCancel}
+        onAcceptOffer={handleAcceptOffer}
+        onPauseSubscription={handlePauseSubscription}
+        isYearlyPlan={isYearlyPlan}
       />
 
       {/* Sign Out Confirmation */}
