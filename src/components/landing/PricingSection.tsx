@@ -138,7 +138,7 @@ export function PricingSection() {
           {plans.map((plan) => (
             <div
               key={plan.name}
-              style={{ maxWidth: '620px', width: '100%' }}
+              style={{ maxWidth: '496px', width: '100%' }}
               className={cn(
                 "relative rounded-3xl p-6 lg:p-8 transition-all duration-300 glass-card flex flex-col",
                 plan.popular
