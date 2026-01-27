@@ -76,13 +76,13 @@ export function PricingSection() {
   const handleGetStarted = () => {
     const period: BillingPeriod = isYearly ? "yearly" : "monthly";
 
-    // Store plan info for after payment
+    // Store plan info for after Google sign-up
     localStorage.setItem("neyler_pending_plan", JSON.stringify({ plan: "pro", period }));
-    // Mark that user is paying before signup - they should skip onboarding
-    localStorage.setItem("neyler_payment_before_signup", "true");
+    // Mark that user should skip onboarding and go straight to checkout
+    localStorage.setItem("neyler_skip_onboarding_checkout", "true");
     
-    // Open checkout directly - user will sign up after payment
-    openCheckout("pro", period);
+    // Redirect to auth - after Google sign-up, they'll be taken to checkout
+    navigate("/auth");
   };
 
   return (
@@ -138,7 +138,7 @@ export function PricingSection() {
           {plans.map((plan) => (
             <div
               key={plan.name}
-              style={{ maxWidth: '480px' }}
+              style={{ maxWidth: '620px', width: '100%' }}
               className={cn(
                 "relative rounded-3xl p-6 lg:p-8 transition-all duration-300 glass-card flex flex-col",
                 plan.popular
