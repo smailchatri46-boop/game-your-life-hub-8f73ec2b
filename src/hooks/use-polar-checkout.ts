@@ -1,6 +1,8 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { getCheckoutLink, type PlanType, type BillingPeriod } from "@/lib/polar";
 import { toast } from "sonner";
+import { supabase } from "@/integrations/supabase/client";
+import { getReferralId, clearReferralId } from "@/hooks/use-referral";
 
 interface UsePolarCheckoutOptions {
   theme?: "light" | "dark";
@@ -8,12 +10,43 @@ interface UsePolarCheckoutOptions {
   onError?: (error: Error) => void;
 }
 
+// Track referral when a purchase is made
+async function trackReferralConversion(email: string | null, amount: number) {
+  const referralId = getReferralId();
+  
+  if (!referralId) {
+    console.log("No referral ID found, skipping affiliate tracking");
+    return;
+  }
+
+  try {
+    const { data, error } = await supabase.functions.invoke("track-referral", {
+      body: {
+        referralId,
+        email: email || undefined,
+        amount, // in dollars
+      },
+    });
+
+    if (error) {
+      console.error("Failed to track referral:", error);
+      return;
+    }
+
+    console.log("Referral tracked successfully:", data);
+    // Clear the referral ID after successful tracking
+    clearReferralId();
+  } catch (err) {
+    console.error("Error tracking referral:", err);
+  }
+}
+
 export function usePolarCheckout(options: UsePolarCheckoutOptions = {}) {
   const [isLoading, setIsLoading] = useState(false);
   const { theme = "light", onError } = options;
 
   const openCheckout = useCallback(
-    async (plan: PlanType, period: BillingPeriod) => {
+    async (plan: PlanType, period: BillingPeriod, userEmail?: string | null) => {
       setIsLoading(true);
 
       try {
@@ -22,6 +55,18 @@ export function usePolarCheckout(options: UsePolarCheckoutOptions = {}) {
         // Add theme parameter and redirect to full page checkout
         const url = new URL(checkoutLink);
         url.searchParams.set("theme", theme);
+        
+        // Calculate the amount based on plan and period for affiliate tracking
+        // These amounts should match your Polar pricing
+        let amount = 0;
+        if (plan === "pro") {
+          amount = period === "yearly" ? 48 : 9; // $48/year or $9/month
+        }
+        
+        // Track the referral before redirecting
+        if (amount > 0) {
+          await trackReferralConversion(userEmail || null, amount);
+        }
         
         // Redirect to full-page Polar checkout
         window.location.href = url.toString();

@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import { ExternalLink } from "lucide-react";
 import neylerLogo from "@/assets/neyler-logo.png";
 
 const resourceLinks = [
@@ -17,6 +18,8 @@ const legalLinks = [
   { name: "Cookie Policy", path: "/cookies" },
   { name: "Refund Policy", path: "/refund" },
 ];
+
+const AFFILIATE_SIGNUP_URL = "https://app.endorsely.com/l/b6603ddd-9a20-453a-ad37-2b1d95f16810";
 
 export function Footer() {
   return (
@@ -76,9 +79,20 @@ export function Footer() {
           </div>
         </div>
 
-        {/* Bottom section with logo left and copyright right */}
+        {/* Bottom section with logo left, affiliate center, and copyright right */}
         <div className="pt-6 border-t border-border/30 flex flex-col md:flex-row items-center justify-between gap-3">
           <img src={neylerLogo} alt="Neyler" className="h-5" loading="lazy" decoding="async" width={71} height={20} />
+          
+          <a
+            href={AFFILIATE_SIGNUP_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="font-body text-sm text-primary hover:text-primary/80 transition-colors flex items-center gap-1.5 font-medium"
+          >
+            Become an Affiliate
+            <ExternalLink className="w-3.5 h-3.5" />
+          </a>
+          
           <p className="font-body text-xs text-muted-foreground/60">© 2026 Neyler. All rights reserved.</p>
         </div>
       </div>

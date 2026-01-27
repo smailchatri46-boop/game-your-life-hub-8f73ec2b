@@ -10,6 +10,7 @@ import googleLogo from "@/assets/google-logo.png";
 import { ScrollReveal } from "@/components/ScrollReveal";
 import { Footer } from "@/components/Footer";
 import dashboardThumbnail from "@/assets/dashboard-thumbnail.png";
+import { useReferral } from "@/hooks/use-referral";
 
 // Lazy load below-fold sections for better initial load
 const AnalyticsCarousel = lazy(() => import("@/components/landing/AnalyticsCarousel").then(m => ({ default: m.AnalyticsCarousel })));
@@ -28,6 +29,9 @@ export default function Landing() {
   const finalCtaRef = useRef<HTMLDivElement>(null);
   const [showStickyButton, setShowStickyButton] = useState(false);
   const [nearFinalCta, setNearFinalCta] = useState(false);
+
+  // Capture affiliate referral ID from URL
+  useReferral();
 
   useEffect(() => {
     const signUpObserver = new IntersectionObserver(
