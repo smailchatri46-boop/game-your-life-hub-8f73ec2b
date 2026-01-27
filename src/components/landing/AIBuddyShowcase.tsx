@@ -58,7 +58,7 @@ export function AIBuddyShowcase({ isOnboarding = false }: AIBuddyShowcaseProps) 
   const titleContent = isOnboarding ? (
     <>Analyze Your Progress With the <span className="gradient-text italic">AI Buddy</span></>
   ) : (
-    <>Analyze your progress with the <span className="gradient-text italic">AI Buddy</span></>
+    <>An AI That Tracks, Understands, and <span className="gradient-text italic">Guides You</span></>
   );
 
   return (
@@ -78,7 +78,7 @@ export function AIBuddyShowcase({ isOnboarding = false }: AIBuddyShowcaseProps) 
       {/* Chat box container */}
       <div className={`w-full ${isOnboarding ? 'mb-6' : 'mb-6'}`}>
         <ScrollReveal animation="zoom-in" delay={100}>
-          <div className="max-w-4xl mx-auto">
+          <div className="max-w-3xl mx-auto">
             <div className="w-full">
               <div 
                 className="w-full bg-card/40 backdrop-blur-xl rounded-3xl shadow-soft flex flex-col relative border border-border/10" 
