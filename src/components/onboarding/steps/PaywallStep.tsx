@@ -101,16 +101,8 @@ export function PaywallStep({ commitmentName }: PaywallStepProps) {
   return (
     <div className="fixed inset-0 overflow-y-auto gradient-hero">
       <div className="min-h-screen flex flex-col items-center justify-start py-10 px-4">
-        {/* Header */}
-        <div className="text-center mb-12 max-w-2xl">
-          <h1 className="font-display text-3xl md:text-4xl font-semibold text-foreground mb-2 tracking-tight">
-            It's time to invest in yourself
-            {commitmentName ? `, ${commitmentName}` : ""}
-          </h1>
-        </div>
-
         {/* Pricing Card with Badge */}
-        <div className="w-full max-w-[540px] mb-12 relative">
+        <div className="w-full max-w-[650px] mb-12 relative">
           {/* Countdown Badge - positioned at top of card */}
           <div 
             className="absolute left-1/2 -translate-x-1/2 -top-5 z-10 rounded-full px-5 py-2.5 text-white font-medium text-sm shadow-lg whitespace-nowrap"
@@ -199,7 +191,7 @@ export function PaywallStep({ commitmentName }: PaywallStepProps) {
 
         {/* Feature Cards Section */}
         <div className="w-full max-w-5xl mb-12">
-          <h2 className="font-display text-2xl md:text-3xl font-semibold text-center mb-8">
+          <h2 className="font-display text-3xl md:text-[2.1rem] font-semibold text-center mb-8">
             Unlock everything you need to succeed
           </h2>
           
@@ -226,21 +218,6 @@ export function PaywallStep({ commitmentName }: PaywallStepProps) {
               </GlassCard>
             ))}
           </div>
-        </div>
-
-        {/* Bottom CTA */}
-        <div className="w-full max-w-[540px] text-center pb-10">
-          <Button
-            variant="gradient"
-            className="w-full h-14 text-lg font-semibold shadow-lg hover:shadow-xl hover:opacity-90 transition-all"
-            onClick={handleSubscribe}
-            disabled={isLoading}
-          >
-            Get Started Now
-          </Button>
-          <p className="text-sm text-muted-foreground mt-4">
-            Cancel anytime. 7-Day Money-Back Guarantee.
-          </p>
         </div>
       </div>
     </div>
