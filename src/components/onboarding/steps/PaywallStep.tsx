@@ -124,7 +124,7 @@ export function PaywallStep({ commitmentName }: PaywallStepProps) {
             </span>
           </div>
           
-          <div className="relative rounded-2xl p-8 lg:p-10 bg-card border border-border/50 shadow-xl flex flex-col justify-center pt-10">
+          <div className="relative rounded-3xl p-8 lg:p-10 bg-card/70 backdrop-blur-xl border border-white/50 flex flex-col justify-center pt-10">
             {/* Monthly/Yearly Toggle */}
             <div className="flex items-center justify-center gap-4 mb-8">
               <span
