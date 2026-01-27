@@ -200,18 +200,30 @@ export function AnalyticsCarousel({ isOnboarding = false }: AnalyticsCarouselPro
   }, []);
 
   // Adjust sizes - match other screens
-  const titleSize = isOnboarding ? "text-2xl md:text-4xl" : "text-3xl md:text-5xl";
+  const titleSize = isOnboarding ? "text-2xl md:text-4xl" : "text-2xl md:text-4xl";
   const descriptionSize = isOnboarding ? "text-sm md:text-base" : "text-base md:text-lg";
   const cardScale = isOnboarding ? "scale-110" : "";
 
   return (
     <section className={`${isOnboarding ? 'py-6' : 'py-12'} px-4 overflow-hidden w-full`}>
       {/* Title - centered with more space below */}
-      <div className="max-w-6xl mx-auto text-center mb-8">
+      <div className="max-w-6xl mx-auto text-center mb-4">
         <ScrollReveal animation="fade-up">
           <h2 className={`font-display ${titleSize} font-semibold`}>
             Get Deep <span className="gradient-text italic">Insights</span> About Your Life
           </h2>
+        </ScrollReveal>
+      </div>
+
+      {/* Description - between title and cards */}
+      <div className="max-w-3xl mx-auto text-center mb-8">
+        <ScrollReveal animation="fade-up" delay={100}>
+          <p className={`text-muted-foreground ${descriptionSize} leading-relaxed`}>
+            {isOnboarding 
+              ? "See your patterns across progress, mood, motivation, and consistency with clean analytics that tell the full story. Understand what's working, what's not, and adjust faster with insights that feel clear and useful."
+              : "Understand your progress and patterns with beautiful analytics that show you the full picture."
+            }
+          </p>
         </ScrollReveal>
       </div>
 
@@ -268,17 +280,6 @@ export function AnalyticsCarousel({ isOnboarding = false }: AnalyticsCarouselPro
         </ScrollReveal>
       </div>
 
-      {/* Description - centered below cards, matching GoalsShowcase */}
-      <div className="max-w-3xl mx-auto text-center mt-4">
-        <ScrollReveal animation="fade-up" delay={200}>
-          <p className={`text-muted-foreground ${descriptionSize} leading-relaxed`}>
-            {isOnboarding 
-              ? "See your patterns across progress, mood, motivation, and consistency with clean analytics that tell the full story. Understand what's working, what's not, and adjust faster with insights that feel clear and useful."
-              : "Understand your progress and patterns with beautiful analytics that show you the full picture."
-            }
-          </p>
-        </ScrollReveal>
-      </div>
     </section>
   );
 }
