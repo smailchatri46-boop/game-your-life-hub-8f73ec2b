@@ -295,33 +295,8 @@ export default function Landing() {
           </div>
         </div>
       </section>
+
       
-      {/* CTA Section */}
-      <section className="py-10 px-4">
-        <ScrollReveal animation="zoom-in" duration={800}>
-          <div className="max-w-2xl mx-auto text-center">
-            <GlassCard className="p-10" glow>
-              <h2 className="font-display text-2xl md:text-3xl font-semibold mb-4">
-                Ready to level up?
-              </h2>
-              <p className="text-muted-foreground text-lg mb-8">
-                Start your journey to a better you. Join thousands building better habits.
-              </p>
-              
-              <Button variant="gradient" size="xl" asChild>
-                <Link to="/signup" className="gap-3">
-                  <span className="w-6 h-6 bg-white rounded-full flex items-center justify-center">
-                    <img src={googleLogo} alt="Google" className="w-4 h-4" loading="lazy" decoding="async" width={16} height={16} />
-                  </span>
-                  Continue with Google
-                </Link>
-              </Button>
-            </GlassCard>
-          </div>
-        </ScrollReveal>
-      </section>
-
-
       {/* FAQ */}
       <Suspense fallback={<SectionPlaceholder />}>
         <LandingFAQ />
