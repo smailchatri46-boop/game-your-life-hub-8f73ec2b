@@ -1,62 +1,46 @@
 import { useState } from "react";
-import { Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { GlassCard } from "@/components/GlassCard";
 import { AppleEmoji } from "@/components/AppleEmoji";
-import { YouTubeEmbed } from "@/components/YouTubeEmbed";
 import { cn } from "@/lib/utils";
 import { usePolarCheckout } from "@/hooks/use-polar-checkout";
 import type { BillingPeriod } from "@/lib/polar";
 
-const OVERVIEW_VIDEO_ID = "0GO0SyFo8dc";
-
 interface PaywallStepProps {
-  commitmentName: string;
+  commitmentName?: string;
 }
-
-const FEATURES = [
-  { text: "Unlimited habits & tasks", included: true },
-  { text: "Unlimited goals", included: true },
-  { text: "Unlimited to-do lists", included: true },
-  { text: "Full AI Buddy chat access", included: true },
-  { text: "AI habit insights & recommendations", included: true },
-  { text: "AI trend analysis", included: true },
-  { text: "Deep analytics dashboard", included: true },
-  { text: "Streak protection", included: true },
-  { text: "Priority updates", included: true },
-];
 
 const FEATURE_CARDS = [
   {
     emoji: "🎯",
     title: "Habits & Tasks Tracking",
-    description: "Track your daily habits and tasks with a beautiful spreadsheet-style grid.",
+    description: "Track your daily habits and one-time tasks with a beautiful spreadsheet-style grid. See your progress at a glance and link them directly to your goals.",
   },
   {
     emoji: "🎯",
     title: "Set Goals & Track Them",
-    description: "Create meaningful goals, connect them to your daily habits.",
+    description: "Create meaningful goals, connect them to your daily habits, and see your progress toward them in a clear, visual way that keeps you motivated.",
   },
   {
     emoji: "🤖",
     title: "AI-Powered Deep Analytics",
-    description: "AI analyzes all your goals, tasks, and habits for personalized insights.",
+    description: "AI analyzes all your goals, tasks, and habits to give you personalized structure, actionable insights, and expert guidance to achieve your goals faster.",
   },
   {
     emoji: "📊",
-    title: "Analytics",
-    description: "Beautiful charts and insights to understand your patterns and growth.",
+    title: "Beautiful Analytics",
+    description: "Beautiful charts and insights to understand your patterns, mood trends, and growth over time. See the full picture of your progress.",
   },
   {
     emoji: "📝",
     title: "Add One-Time Tasks Too",
-    description: "Add to-do lists and one-time tasks to track your entire day.",
+    description: "Add to-do lists and one-time tasks alongside your habits, so you don't need any other app to track what you do throughout your day.",
   },
   {
     emoji: "💬",
-    title: "AI Buddy Chat",
-    description: "Get personalized guidance and motivation from your AI companion.",
+    title: "AI Buddy",
+    description: "Your personal AI companion that understands your habits, goals, and journal entries to provide personalized motivation and insights.",
   },
 ];
 
@@ -64,9 +48,11 @@ export function PaywallStep({ commitmentName }: PaywallStepProps) {
   const [isYearly, setIsYearly] = useState(true);
   const { openCheckout, isLoading } = usePolarCheckout({ theme: "light" });
 
-  const monthlyPrice = 9;
-  const yearlyPrice = 49;
-  const displayPrice = isYearly ? Math.floor(yearlyPrice / 12) : monthlyPrice;
+  const monthlyPrice = 14;
+  const yearlyPrice = 7;
+  const originalPrice = 29;
+
+  const displayPrice = isYearly ? yearlyPrice : monthlyPrice;
 
   const handleSubscribe = () => {
     const period: BillingPeriod = isYearly ? "yearly" : "monthly";
@@ -92,27 +78,9 @@ export function PaywallStep({ commitmentName }: PaywallStepProps) {
 
         {/* Pricing Card */}
         <div className="w-full max-w-md mb-10">
-          <div className="relative rounded-3xl p-6 lg:p-8 glass-card">
-            {/* Gradient border */}
-            <div 
-              className="absolute inset-0 rounded-3xl -z-10 p-[2px]"
-              style={{
-                background: 'linear-gradient(135deg, hsl(25 95% 60%), hsl(35 100% 65%), hsl(25 95% 55%))',
-              }}
-            >
-              <div className="w-full h-full rounded-3xl bg-background" />
-            </div>
-
-            {/* Plan Header */}
-            <div className="text-center mb-5">
-              <h3 className="text-xl lg:text-2xl font-bold text-foreground mb-1.5">
-                Pro
-              </h3>
-              <p className="text-muted-foreground text-sm">Unlock the full experience</p>
-            </div>
-
+          <div className="relative rounded-3xl p-6 lg:p-8 bg-card border border-border/50 shadow-xl">
             {/* Monthly/Yearly Toggle */}
-            <div className="flex items-center justify-center gap-4 mb-5">
+            <div className="flex items-center justify-center gap-4 mb-6">
               <span
                 className={cn(
                   "text-sm font-medium transition-colors",
@@ -139,76 +107,45 @@ export function PaywallStep({ commitmentName }: PaywallStepProps) {
               >
                 Yearly
                 <span className="ml-1.5 text-xs text-primary font-semibold">
-                  Save 55%
+                  Save 50%
                 </span>
               </span>
             </div>
 
-            {/* Price */}
-            <div className="text-center mb-5">
-              <div className="flex items-baseline justify-center gap-1">
-                <span className="text-4xl lg:text-5xl font-bold text-foreground">
+            {/* Price Display */}
+            <div className="text-center mb-6">
+              <div className="flex items-baseline justify-center gap-3">
+                <span className="text-2xl text-muted-foreground line-through decoration-2">
+                  ${originalPrice}
+                </span>
+                <span className="text-5xl lg:text-6xl font-bold text-foreground">
                   ${displayPrice}
                 </span>
-                <span className="text-muted-foreground text-sm">
-                  / month
+                <span className="text-muted-foreground text-lg">
+                  /mo
                 </span>
               </div>
               {isYearly && (
-                <p className="text-primary text-sm font-medium mt-1.5">
-                  Pay only ${yearlyPrice}/year
+                <p className="text-primary text-sm font-medium mt-2">
+                  Billed yearly at ${yearlyPrice * 12}
                 </p>
               )}
             </div>
 
-            {/* Divider */}
-            <div className="w-full h-px bg-gradient-to-r from-transparent via-border to-transparent mb-5" />
-
-            {/* Features */}
-            <ul className="space-y-3 mb-6">
-              {FEATURES.map((feature, index) => (
-                <li key={index} className="flex items-start gap-2.5">
-                  <div className="flex-shrink-0 w-4 h-4 rounded-full bg-primary/20 flex items-center justify-center mt-0.5">
-                    <Check className="w-2.5 h-2.5 text-primary" />
-                  </div>
-                  <span className="text-sm leading-tight text-foreground">
-                    {feature.text}
-                  </span>
-                </li>
-              ))}
-            </ul>
-
             {/* CTA Button */}
             <Button
               variant="gradient"
-              className="w-full h-12 text-base shadow-md hover:shadow-lg hover:opacity-90"
+              className="w-full h-14 text-lg font-semibold shadow-lg hover:shadow-xl hover:opacity-90 transition-all"
               onClick={handleSubscribe}
               disabled={isLoading}
             >
-              Start your journey now
+              Get Started Now
             </Button>
 
             {/* Guarantee Text */}
-            <p className="text-xs text-muted-foreground text-center mt-4">
-              Cancel anytime • 7-day money-back guarantee
+            <p className="text-sm text-muted-foreground text-center mt-4">
+              Cancel anytime. 7-Day Money-Back Guarantee.
             </p>
-          </div>
-        </div>
-
-        {/* Overview Video Section */}
-        <div className="w-full max-w-3xl mb-10">
-          <h2 className="font-display text-xl md:text-2xl font-semibold text-center mb-4">
-            See how <span className="gradient-text italic">Neyler</span> works
-          </h2>
-          <p className="text-muted-foreground text-sm text-center mb-6">
-            Watch this quick overview to see everything the app can do for you
-          </p>
-          <div className="rounded-2xl overflow-hidden shadow-xl">
-            <YouTubeEmbed 
-              videoId={OVERVIEW_VIDEO_ID} 
-              showThumbnailBottomFade
-              thumbnailClassName="scale-110 object-[50%_35%]"
-            />
           </div>
         </div>
 
@@ -220,12 +157,22 @@ export function PaywallStep({ commitmentName }: PaywallStepProps) {
           
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
             {FEATURE_CARDS.map((card, index) => (
-              <GlassCard key={index} className="p-5">
-                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-accent/30 to-primary/30 flex items-center justify-center mb-3">
-                  <AppleEmoji emoji={card.emoji} size="xl" />
+              <GlassCard key={index} className="p-6 h-full" hover>
+                <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-accent/30 to-primary/30 flex items-center justify-center mb-4">
+                  <AppleEmoji emoji={card.emoji} size="2xl" />
                 </div>
-                <h3 className="font-display text-base font-semibold mb-1.5">{card.title}</h3>
-                <p className="text-muted-foreground text-xs">
+                <h3 className="font-display text-xl font-semibold mb-3">
+                  {card.title.includes("&") ? (
+                    <>
+                      {card.title.split("&")[0]}
+                      <span className="font-body">&amp;</span>
+                      {card.title.split("&")[1]}
+                    </>
+                  ) : (
+                    card.title
+                  )}
+                </h3>
+                <p className="text-muted-foreground text-sm leading-relaxed">
                   {card.description}
                 </p>
               </GlassCard>
@@ -237,14 +184,14 @@ export function PaywallStep({ commitmentName }: PaywallStepProps) {
         <div className="w-full max-w-md text-center pb-8">
           <Button
             variant="gradient"
-            className="w-full h-12 text-base shadow-md hover:shadow-lg hover:opacity-90"
+            className="w-full h-14 text-lg font-semibold shadow-lg hover:shadow-xl hover:opacity-90 transition-all"
             onClick={handleSubscribe}
             disabled={isLoading}
           >
-            Start your journey now
+            Get Started Now
           </Button>
-          <p className="text-xs text-muted-foreground mt-3">
-            Cancel anytime • 7-day money-back guarantee
+          <p className="text-sm text-muted-foreground mt-3">
+            Cancel anytime. 7-Day Money-Back Guarantee.
           </p>
         </div>
       </div>
