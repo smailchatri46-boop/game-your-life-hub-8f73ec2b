@@ -30,7 +30,7 @@ export function AIDirectnessSlider({
   const currentEmoji = DIRECTNESS_EMOJIS[getEmojiIndex()];
 
   return (
-    <OnboardingCard className="py-8">
+    <OnboardingCard className="">
       {/* Title and subtitle at top (no emoji above) */}
       <div className="text-center mb-6">
         <h2 className="text-xl font-bold font-display text-foreground mb-2">
@@ -61,7 +61,7 @@ export function AIDirectnessSlider({
         </div>
 
         {/* Dynamic emoji indicator - much larger */}
-        <div className="text-center mt-8 mb-4">
+        <div className="text-center mt-6 mb-2">
           <AppleEmoji emoji={currentEmoji} size="10xl" />
         </div>
       </div>

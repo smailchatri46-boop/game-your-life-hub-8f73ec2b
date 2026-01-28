@@ -81,6 +81,7 @@ export const AppleEmoji = memo(function AppleEmoji({
       src={imageUrl}
       alt={emoji}
       className={`inline-block object-contain ${sizeClass} ${className}`}
+      style={size === "10xl" ? { width: 160, height: 160 } : size === "9xl" ? { width: 140, height: 140 } : size === "8xl" ? { width: 120, height: 120 } : undefined}
       draggable={false}
       loading="lazy"
       onError={() => setHasError(true)}
