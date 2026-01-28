@@ -25,6 +25,7 @@ export type OnboardingStep =
   | "feature-ai-buddy"
   | "feature-habits"
   | "feature-insights"
+  | "feature-journal"
   | "feature-outro"
   // Section C: AI Personalization (expanded to 6 cards)
   | "ai-tone"
@@ -160,6 +161,7 @@ const STEP_ORDER: OnboardingStep[] = [
   "feature-habits",
   "feature-insights",
   "feature-ai-buddy",
+  "feature-journal",
   "feature-outro",
   // Section C: AI Personalization (expanded to 6 cards)
   "ai-tone",
