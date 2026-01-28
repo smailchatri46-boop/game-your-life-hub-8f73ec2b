@@ -21,6 +21,7 @@ import { AIModeSelector } from "./steps/AIModeSelector";
 import { AIProactivenessToggle } from "./steps/AIProactivenessToggle";
 import { VideoPreviewStep } from "./steps/VideoPreviewStep";
 import { JourneyTransitionStep } from "./steps/JourneyTransitionStep";
+import { EvidenceStep } from "./steps/EvidenceStep";
 
 const SURVEY_QUESTIONS = {
   "survey-1": {
@@ -411,7 +412,17 @@ export function OnboardingFlow() {
           />
         );
 
-      // Section D: Video Preview (full-screen)
+      // Section D: Evidence Cards (science-backed trust builders)
+      case "evidence-tracking":
+        return <EvidenceStep variant="tracking" onNext={goToNext} />;
+
+      case "evidence-accountability":
+        return <EvidenceStep variant="accountability" onNext={goToNext} />;
+
+      case "evidence-reflect":
+        return <EvidenceStep variant="reflect" onNext={goToNext} />;
+
+      // Section E: Video Preview (full-screen)
       case "video-preview":
         return <VideoPreviewStep onNext={goToNext} />;
 
