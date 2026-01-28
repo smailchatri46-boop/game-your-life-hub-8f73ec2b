@@ -145,7 +145,7 @@ export function GoalsShowcase({ isOnboarding = false }: GoalsShowcaseProps) {
       <div className="max-w-6xl mx-auto text-center mb-6">
         <ScrollReveal animation="fade-up">
           <h2 className={`font-display ${titleSize} font-semibold`}>
-            Set Goals and <span className="gradient-text italic">Track Them</span>
+            Set Goals and <span className={`gradient-text ${isOnboarding ? 'italic' : ''}`}>Track Them</span>
           </h2>
         </ScrollReveal>
       </div>
