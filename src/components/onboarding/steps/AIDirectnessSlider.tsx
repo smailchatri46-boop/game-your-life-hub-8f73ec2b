@@ -1,7 +1,7 @@
+import { useEffect } from "react";
 import { OnboardingCard } from "../OnboardingCard";
 import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
-import { AppleEmoji } from "@/components/AppleEmoji";
 import { ChevronRight } from "lucide-react";
 
 interface AIDirectnessSliderProps {
@@ -10,16 +10,34 @@ interface AIDirectnessSliderProps {
   onNext: () => void;
 }
 
-// 5 emojis from gentle to direct
-const DIRECTNESS_EMOJIS = ["🌸", "🌿", "⚖️", "🔥", "💪"];
+// Descriptions from gentle to direct
+const DIRECTNESS_DESCRIPTIONS = [
+  "Soft encouragement with gentle suggestions",
+  "Supportive guidance with light nudges",
+  "Balanced feedback with honest insights",
+  "Direct advice with clear expectations",
+  "Straight talk with no sugarcoating"
+];
 
 export function AIDirectnessSlider({
   value,
   onChange,
   onNext,
 }: AIDirectnessSliderProps) {
-  // Determine which emoji to show based on slider value (0-100)
-  const getEmojiIndex = () => {
+  // Disable scrolling on this page
+  useEffect(() => {
+    const originalOverflow = document.documentElement.style.overflow;
+    document.documentElement.style.overflow = "hidden";
+    document.body.style.overflow = "hidden";
+    
+    return () => {
+      document.documentElement.style.overflow = originalOverflow;
+      document.body.style.overflow = "";
+    };
+  }, []);
+
+  // Determine which description to show based on slider value (0-100)
+  const getDescriptionIndex = () => {
     if (value <= 20) return 0;
     if (value <= 40) return 1;
     if (value <= 60) return 2;
@@ -27,13 +45,13 @@ export function AIDirectnessSlider({
     return 4;
   };
 
-  const currentEmoji = DIRECTNESS_EMOJIS[getEmojiIndex()];
+  const currentDescription = DIRECTNESS_DESCRIPTIONS[getDescriptionIndex()];
 
   return (
-    <OnboardingCard>
+    <OnboardingCard className="py-10 px-8">
       {/* Title and subtitle at top */}
-      <div className="text-center mb-4">
-        <h2 className="text-xl font-bold font-display text-foreground mb-1">
+      <div className="text-center mb-8">
+        <h2 className="text-xl font-bold font-display text-foreground mb-2">
           How direct should your AI Buddy be?
         </h2>
         <p className="text-muted-foreground text-sm">
@@ -42,8 +60,8 @@ export function AIDirectnessSlider({
       </div>
 
       {/* Slider */}
-      <div className="mb-3 px-2">
-        <div className="mb-3">
+      <div className="mb-6 px-2">
+        <div className="mb-4">
           <Slider
             value={[value]}
             onValueChange={(values) => onChange(values[0])}
@@ -61,13 +79,15 @@ export function AIDirectnessSlider({
         </div>
       </div>
 
-      {/* Dynamic emoji indicator - contained within card */}
-      <div className="flex justify-center items-center h-14 my-3">
-        <AppleEmoji emoji={currentEmoji} size="5xl" className="max-w-full" />
+      {/* Dynamic text description */}
+      <div className="flex justify-center items-center min-h-[48px] my-6">
+        <p className="text-muted-foreground text-sm text-center italic">
+          "{currentDescription}"
+        </p>
       </div>
 
       {/* Helper text */}
-      <p className="text-xs text-muted-foreground text-center mt-2 mb-3">
+      <p className="text-xs text-muted-foreground text-center mb-6">
         You can always change this later.
       </p>
 
