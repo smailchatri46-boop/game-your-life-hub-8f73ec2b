@@ -308,7 +308,7 @@ export default function Landing() {
                 Ready to level up?
               </h2>
               <p className="text-muted-foreground text-lg mb-8">
-                Start your journey to a better you. Join thousands building better habits.
+                Build habits, reflect on your days, and keep everything in one calm place designed to help you stay consistent without friction.
               </p>
               
               <Button variant="gradient" size="xl" asChild>
