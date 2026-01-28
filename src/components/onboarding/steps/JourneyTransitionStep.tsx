@@ -29,8 +29,8 @@ const CONTENT: Record<Variant, {
     ctaText: "Continue",
   },
   "add-first-habits": {
-    emoji: "✅",
-    title: "Add your first habits or tasks",
+    emoji: "😊",
+    title: "Add your first habits or tasks to start",
     subtitle: "Start building momentum with simple daily actions.",
     ctaText: "Start Now",
   },
