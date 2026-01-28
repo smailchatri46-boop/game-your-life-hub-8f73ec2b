@@ -131,7 +131,7 @@ export default function Landing() {
         <div className="max-w-5xl mx-auto text-center">
           {/* Single Title */}
           <ScrollReveal animation="fade-up">
-            <h2 className="font-display text-3xl md:text-5xl font-semibold mb-10">
+            <h2 className="font-display text-2xl md:text-4xl font-semibold mb-10">
               Your all in <span className="italic gradient-text">one tracker</span>
             </h2>
           </ScrollReveal>
