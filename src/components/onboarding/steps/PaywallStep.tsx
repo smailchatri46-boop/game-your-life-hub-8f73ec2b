@@ -24,7 +24,7 @@ const FEATURE_CARDS = [
   },
   {
     emoji: "🤖",
-    title: "AI-Powered Deep Analytics",
+    title: "AI-Powered Analytics",
     description: "AI analyzes all your goals, tasks, and habits to give you personalized structure, actionable insights, and expert guidance to achieve your goals faster.",
   },
   {
