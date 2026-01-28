@@ -89,11 +89,11 @@ export function PricingSection() {
   };
 
   return (
-    <section className="min-h-[calc(100vh-7rem)] flex items-center justify-center px-4 py-8">
+    <section className="flex items-center justify-center px-4">
       <div className="max-w-6xl mx-auto w-full">
         {/* Section Header */}
-        <div className="text-center mb-8">
-          <h2 className="font-display text-3xl md:text-4xl lg:text-5xl font-bold text-foreground mb-3">
+        <div className="text-center mb-4">
+          <h2 className="font-display text-3xl md:text-4xl lg:text-5xl font-bold text-foreground mb-2">
             Pricing
           </h2>
           <p className="text-muted-foreground text-lg md:text-xl max-w-2xl mx-auto">
@@ -135,7 +135,7 @@ export function PricingSection() {
         </div>
 
         {/* Pricing Cards */}
-        <div className="flex justify-center mt-14">
+        <div className="flex justify-center mt-8">
           {plans.map((plan) => (
             <div
               key={plan.name}
@@ -163,12 +163,12 @@ export function PricingSection() {
               {plan.popular && (
                 <div className="absolute -top-4 left-1/2 -translate-x-1/2">
                   <div 
-                    className="flex items-center justify-center text-primary-foreground px-4 py-1.5 rounded-full text-sm font-semibold shadow-md"
+                    className="flex items-center justify-center text-primary-foreground px-4 py-1.5 rounded-full text-sm font-semibold shadow-md whitespace-nowrap"
                     style={{
                       background: 'linear-gradient(135deg, hsl(25 95% 60%), hsl(35 100% 65%), hsl(25 95% 55%))',
                     }}
                   >
-                    Special Offer
+                    Special Offer Ending Soon
                   </div>
                 </div>
               )}
