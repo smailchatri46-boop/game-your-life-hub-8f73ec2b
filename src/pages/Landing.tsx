@@ -245,7 +245,7 @@ export default function Landing() {
             <ScrollReveal animation="zoom-in" delay={200}>
               <GlassCard className="p-6 h-full" hover>
                 <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-accent/30 to-primary/30 flex items-center justify-center mb-4">
-                  <AppleEmoji emoji="✨" size="2xl" />
+                  <AppleEmoji emoji="🧠" size="2xl" />
                 </div>
                 <h3 className="font-display text-xl font-semibold mb-3">AI-Powered</h3>
                 <p className="text-muted-foreground text-sm leading-relaxed">
