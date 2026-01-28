@@ -66,6 +66,24 @@ const GUIDANCE_SLIDES = [
   },
 ];
 
+// Confetti particle component
+function ConfettiParticle({ delay, left }: { delay: number; left: number }) {
+  const colors = ["#F97316", "#FBBF24", "#34D399", "#60A5FA", "#A78BFA", "#F472B6"];
+  const color = colors[Math.floor(Math.random() * colors.length)];
+  
+  return (
+    <div
+      className="absolute w-2 h-2 rounded-full animate-confetti"
+      style={{
+        left: `${left}%`,
+        backgroundColor: color,
+        animationDelay: `${delay}ms`,
+        top: "-10px",
+      }}
+    />
+  );
+}
+
 export interface ProgressiveBuildUp {
   enabled: boolean;
   startGoal: number;
@@ -115,6 +133,7 @@ export function AddHabitModal({ open, onOpenChange, onSave, skipGuidance = false
 
   const [step, setStep] = useState(1);
   const [isComplete, setIsComplete] = useState(false);
+  const [showConfetti, setShowConfetti] = useState(false);
 
   // Form state
   const [name, setName] = useState("");
@@ -201,6 +220,7 @@ export function AddHabitModal({ open, onOpenChange, onSave, skipGuidance = false
   const resetForm = () => {
     setStep(1);
     setIsComplete(false);
+    setShowConfetti(false);
     setName("");
     setCategory("");
     setIcon("🎯");
@@ -223,6 +243,15 @@ export function AddHabitModal({ open, onOpenChange, onSave, skipGuidance = false
       resetForm();
     }
   }, [open]);
+
+  // Trigger confetti when complete
+  useEffect(() => {
+    if (isComplete) {
+      setShowConfetti(true);
+      const timer = setTimeout(() => setShowConfetti(false), 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [isComplete]);
 
   const toggleWeekday = (day: number) => {
     setSelectedWeekdays(prev =>
@@ -276,6 +305,19 @@ export function AddHabitModal({ open, onOpenChange, onSave, skipGuidance = false
       <Dialog open={open} onOpenChange={handleClose}>
         <DialogContent className="sm:max-w-lg p-0 overflow-hidden bg-gradient-to-br from-[hsl(30,100%,98%)] to-[hsl(25,80%,95%)] border-0" hideCloseButton>
           <div className="p-8 text-center relative overflow-hidden">
+            {/* Confetti animation */}
+            {showConfetti && (
+              <div className="absolute inset-0 pointer-events-none overflow-hidden">
+                {Array.from({ length: 30 }).map((_, i) => (
+                  <ConfettiParticle 
+                    key={i} 
+                    delay={i * 100} 
+                    left={Math.random() * 100} 
+                  />
+                ))}
+              </div>
+            )}
+            
             <div className="w-20 h-20 mx-auto mb-6 rounded-full bg-gradient-to-br from-primary/20 to-accent/20 flex items-center justify-center animate-scale-in">
               <AppleEmoji emoji="🎉" size="3xl" />
             </div>
