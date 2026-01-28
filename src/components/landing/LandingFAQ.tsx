@@ -15,8 +15,8 @@ export function LandingFAQ() {
     <section className="py-10 px-4">
       <div className="max-w-3xl mx-auto">
         <ScrollReveal animation="fade-up">
-          <h2 className="font-display text-3xl md:text-4xl font-semibold text-center mb-4">
-            Frequently Asked <span className="gradient-text italic">Questions</span>
+          <h2 className="font-display text-3xl md:text-4xl font-semibold text-center mb-4 text-foreground">
+            Frequently Asked Questions
           </h2>
         </ScrollReveal>
         <ScrollReveal animation="fade-up" delay={100}>
@@ -31,7 +31,8 @@ export function LandingFAQ() {
               <AccordionItem
                 key={index}
                 value={`item-${index}`}
-                className="bg-background/60 backdrop-blur-sm border border-border/50 rounded-2xl px-5 overflow-hidden"
+                className="border border-border/50 rounded-2xl px-5 overflow-hidden"
+                style={{ background: 'linear-gradient(to right, hsl(30 70% 95%), hsl(0 0% 100%))' }}
               >
                 <AccordionTrigger className="text-left font-medium text-foreground py-4 hover:no-underline font-['Inter',sans-serif]">
                   {faq.question}
