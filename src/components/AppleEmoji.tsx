@@ -2,7 +2,7 @@ import { memo, useState, useMemo } from "react";
 
 interface AppleEmojiProps {
   emoji: string;
-  size?: "sm" | "md" | "lg" | "xl" | "2xl" | "3xl" | "4xl" | "5xl";
+  size?: "sm" | "md" | "lg" | "xl" | "2xl" | "3xl" | "4xl" | "5xl" | "6xl" | "7xl";
   className?: string;
 }
 
@@ -15,6 +15,8 @@ const sizeMap: Record<string, string> = {
   "3xl": "w-10 h-10",
   "4xl": "w-12 h-12",
   "5xl": "w-14 h-14",
+  "6xl": "w-20 h-20",
+  "7xl": "w-24 h-24",
 };
 
 /**
