@@ -10,9 +10,9 @@ interface AIProactivenessToggleProps {
 }
 
 const OPTIONS = [
-  { label: "Only when I ask", emoji: "🤫" },
-  { label: "Occasionally check in", emoji: "👋" },
-  { label: "Actively guide me", emoji: "🧭" },
+  { label: "Short & quick", emoji: "⚡" },
+  { label: "Balanced", emoji: "💬" },
+  { label: "Detailed", emoji: "📝" },
 ];
 
 export function AIProactivenessToggle({
@@ -23,49 +23,55 @@ export function AIProactivenessToggle({
   const canProceed = selectedOption !== null;
 
   return (
-    <OnboardingCard>
-      <div className="text-center mb-6">
+    <OnboardingCard className="py-10 px-8">
+      <div className="text-center mb-8">
         <div className="flex justify-center mb-4">
-          <AppleEmoji emoji="⚙️" size="3xl" />
+          <AppleEmoji emoji="💭" size="5xl" />
         </div>
         <h2 className="text-xl font-bold font-display text-foreground mb-2">
-          How proactive should your AI be?
+          How should your AI respond?
         </h2>
+        <p className="text-muted-foreground text-sm">
+          Choose your preferred response style
+        </p>
       </div>
 
-      {/* Segmented Control */}
-      <div className="bg-secondary/30 rounded-xl p-1.5 mb-4">
-        <div className="grid grid-cols-3 gap-1">
-          {OPTIONS.map((option) => {
-            const isSelected = selectedOption === option.label;
-            return (
-              <button
-                key={option.label}
-                onClick={() => onSelectOption(option.label)}
-                className={`flex flex-col items-center gap-1 p-3 rounded-lg text-center transition-all ${
-                  isSelected
-                    ? "bg-white shadow-md"
-                    : "hover:bg-white/50"
-                }`}
-                style={isSelected ? {
-                  background: "linear-gradient(to bottom right, white, hsl(35, 95%, 98%))",
-                } : undefined}
-              >
-                <AppleEmoji emoji={option.emoji} size="lg" />
-                <span className={`text-xs leading-tight ${
-                  isSelected ? "text-foreground font-medium" : "text-muted-foreground"
-                }`}>
-                  {option.label}
-                </span>
-              </button>
-            );
-          })}
-        </div>
+      {/* Pill Options with gradient stroke */}
+      <div className="flex flex-wrap justify-center gap-3 mb-8">
+        {OPTIONS.map((option) => {
+          const isSelected = selectedOption === option.label;
+          return (
+            <button
+              key={option.label}
+              onClick={() => onSelectOption(option.label)}
+              className={`flex items-center gap-2 px-5 py-3 rounded-full transition-all ${
+                isSelected
+                  ? "bg-white shadow-sm"
+                  : "bg-white/60 hover:bg-white/80"
+              }`}
+              style={isSelected ? {
+                border: "2px solid transparent",
+                backgroundImage: "linear-gradient(white, white), linear-gradient(135deg, hsl(35, 95%, 55%), hsl(25, 95%, 55%))",
+                backgroundOrigin: "border-box",
+                backgroundClip: "padding-box, border-box",
+              } : {
+                border: "2px solid hsl(35, 20%, 88%)",
+              }}
+            >
+              <AppleEmoji emoji={option.emoji} size="lg" />
+              <span className={`text-sm font-medium ${
+                isSelected ? "text-foreground" : "text-muted-foreground"
+              }`}>
+                {option.label}
+              </span>
+            </button>
+          );
+        })}
       </div>
 
       {/* Helper text */}
-      <p className="text-xs text-muted-foreground text-center mb-4">
-        You're always in control.
+      <p className="text-xs text-muted-foreground text-center mb-6">
+        You can always change this later.
       </p>
 
       <Button
