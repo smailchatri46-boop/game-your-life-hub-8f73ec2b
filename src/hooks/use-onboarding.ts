@@ -136,7 +136,8 @@ const STEP_ORDER: OnboardingStep[] = [
   // Initial surveys
   "survey-1",
   "survey-2",
-  // Section A: Past Experience (INSERT AFTER CARD 2)
+  "survey-3",
+  // Section A: Past Experience (INSERT AFTER CARD 3)
   "past-tracking",
   "why-stopped",
   "current-situation",
@@ -144,7 +145,6 @@ const STEP_ORDER: OnboardingStep[] = [
   "emotional-checkin",
   "readiness-signal",
   // Continue with original surveys (survey-4 removed - was repetitive)
-  "survey-3",
   "survey-5",
   "survey-6",
   // About steps

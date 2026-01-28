@@ -139,7 +139,7 @@ export function OnboardingFlow() {
             onNext={() => {
               // If user selected "No" or "I tried before but stopped using it", skip survey-2
               if (data.surveyAnswers.survey1 === "No" || data.surveyAnswers.survey1 === "I tried before but stopped using it") {
-                goToStep("past-tracking");
+                goToStep("survey-3");
               } else {
                 goToNext();
               }
