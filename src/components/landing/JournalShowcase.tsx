@@ -43,42 +43,42 @@ export function JournalShowcase({ isOnboarding = false }: JournalShowcaseProps) 
       emoji: "😊",
       date: "January 15, 2026",
       time: "9:30 AM",
-      content: "Today was a good day. I managed to complete my morning routine and felt really productive. Started the day with meditation, then worked on my project without any distractions. Feeling grateful for the progress I'm making.",
+      content: "Today was a good day. I managed to complete my morning routine and felt really productive. Started the day with meditation, then worked on my project without any distractions. Feeling grateful for the progress I'm making. The afternoon was spent organizing my workspace and planning tomorrow's tasks. I also had a great conversation with a friend that lifted my spirits. Looking forward to continuing this momentum.",
       bgColor: "bg-journal-green",
     },
     {
       emoji: "🌟",
       date: "January 14, 2026",
       time: "8:15 PM",
-      content: "Had an amazing breakthrough at work today! Finally solved that problem I've been stuck on for days. Sometimes stepping away and coming back with fresh eyes really helps. Celebrated with a nice walk in the evening.",
+      content: "Had an amazing breakthrough at work today! Finally solved that problem I've been stuck on for days. Sometimes stepping away and coming back with fresh eyes really helps. Celebrated with a nice walk in the evening. The sunset was beautiful and I felt this overwhelming sense of gratitude for where I am in life. These moments of clarity remind me why I keep pushing forward every single day.",
       bgColor: "bg-journal-yellow",
     },
     {
       emoji: "🧘",
       date: "January 13, 2026",
       time: "7:00 PM",
-      content: "Focused on mindfulness today. Spent 30 minutes in quiet reflection and journaling. Realized I need to be more patient with myself. Progress isn't always linear, and that's okay. Small steps lead to big changes.",
+      content: "Focused on mindfulness today. Spent 30 minutes in quiet reflection and journaling. Realized I need to be more patient with myself. Progress isn't always linear, and that's okay. Small steps lead to big changes. I've been practicing gratitude more consistently and it's shifting my perspective in beautiful ways. The evening meditation session was particularly peaceful and grounding.",
       bgColor: "bg-journal-purple",
     },
     {
       emoji: "💪",
       date: "January 12, 2026",
       time: "6:45 PM",
-      content: "Pushed through a tough workout even though I didn't feel like it. Proud of myself for showing up anyway. The hardest part is always getting started. Once I'm moving, the energy follows.",
+      content: "Pushed through a tough workout even though I didn't feel like it. Proud of myself for showing up anyway. The hardest part is always getting started. Once I'm moving, the energy follows. My body feels stronger each week and I'm noticing improvements in my stamina. The discipline is building and I can feel the positive effects spreading to other areas of my life as well.",
       bgColor: "bg-journal-pink",
     },
     {
       emoji: "📚",
       date: "January 11, 2026",
       time: "10:00 PM",
-      content: "Spent the evening reading and learning. Finished two chapters of the book I've been working through. Knowledge compounds over time, and I'm building habits that will serve me for years to come.",
+      content: "Spent the evening reading and learning. Finished two chapters of the book I've been working through. Knowledge compounds over time, and I'm building habits that will serve me for years to come. Made some notes about key insights that I want to apply in my daily routine. The more I read, the more I realize how much there is to discover and learn in this world.",
       bgColor: "bg-journal-yellow",
     },
     {
       emoji: "🎯",
       date: "January 10, 2026",
       time: "9:00 AM",
-      content: "Set my intentions for the week ahead. Breaking down big goals into smaller tasks makes everything feel more achievable. Feeling organized and ready to tackle whatever comes my way this week.",
+      content: "Set my intentions for the week ahead. Breaking down big goals into smaller tasks makes everything feel more achievable. Feeling organized and ready to tackle whatever comes my way this week. Created a detailed action plan and identified potential obstacles before they arise. This proactive approach has been helping me stay focused and maintain momentum throughout the week.",
       bgColor: "bg-journal-orange",
     },
   ];
@@ -97,7 +97,7 @@ export function JournalShowcase({ isOnboarding = false }: JournalShowcaseProps) 
       <div className="max-w-6xl mx-auto text-center mb-6">
         <ScrollReveal animation="fade-up">
           <h2 className={`font-display ${titleSize} font-semibold`}>
-            Add Journals <span className="gradient-text italic">with Ease</span>
+            Write Journals <span className="gradient-text italic">and Reflections</span>
           </h2>
         </ScrollReveal>
       </div>
