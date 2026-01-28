@@ -317,7 +317,7 @@ export function OnboardingFlow() {
             variant="goals"
             onNext={goToNext}
             currentIndex={0}
-            totalFeatures={4}
+            totalFeatures={5}
           />
         );
 
@@ -327,7 +327,7 @@ export function OnboardingFlow() {
             variant="habits"
             onNext={goToNext}
             currentIndex={1}
-            totalFeatures={4}
+            totalFeatures={5}
           />
         );
 
@@ -337,7 +337,7 @@ export function OnboardingFlow() {
             variant="insights"
             onNext={goToNext}
             currentIndex={2}
-            totalFeatures={4}
+            totalFeatures={5}
           />
         );
 
@@ -347,7 +347,17 @@ export function OnboardingFlow() {
             variant="ai-buddy"
             onNext={goToNext}
             currentIndex={3}
-            totalFeatures={4}
+            totalFeatures={5}
+          />
+        );
+
+      case "feature-journal":
+        return (
+          <FeatureShowcaseStep
+            variant="journal"
+            onNext={goToNext}
+            currentIndex={4}
+            totalFeatures={5}
           />
         );
 

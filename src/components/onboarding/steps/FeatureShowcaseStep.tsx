@@ -7,13 +7,14 @@ import { GoalsShowcase } from "@/components/landing/GoalsShowcase";
 import { HabitsShowcase } from "@/components/landing/HabitsShowcase";
 import { AIBuddyShowcase } from "@/components/landing/AIBuddyShowcase";
 import { AnalyticsCarousel } from "@/components/landing/AnalyticsCarousel";
+import { JournalShowcase } from "@/components/landing/JournalShowcase";
 
 // All-in-one section from Landing page
 import { AppleEmoji } from "@/components/AppleEmoji";
 import { Check, Plus } from "lucide-react";
 import { ScrollReveal } from "@/components/ScrollReveal";
 
-type FeatureVariant = "all-in-one" | "goals" | "habits" | "ai-buddy" | "insights";
+type FeatureVariant = "all-in-one" | "goals" | "habits" | "ai-buddy" | "insights" | "journal";
 
 interface FeatureShowcaseStepProps {
   variant: FeatureVariant;
@@ -141,6 +142,7 @@ export function FeatureShowcaseStep({ variant, onNext, currentIndex, totalFeatur
       case "habits": return <HabitsShowcase isOnboarding />;
       case "ai-buddy": return <AIBuddyShowcase isOnboarding />;
       case "insights": return <AnalyticsCarousel isOnboarding />;
+      case "journal": return <JournalShowcase isOnboarding />;
     }
   };
 
