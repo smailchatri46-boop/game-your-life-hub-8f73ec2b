@@ -18,7 +18,7 @@ const FEATURE_CARDS = [
     description: "Track your daily habits and one-time tasks with a beautiful spreadsheet-style grid. See your progress at a glance and link them directly to your goals.",
   },
   {
-    emoji: "🎯",
+    emoji: "🏆",
     title: "Set Goals & Track Them",
     description: "Create meaningful goals, connect them to your daily habits, and see your progress toward them in a clear, visual way that keeps you motivated.",
   },
