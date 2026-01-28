@@ -10,23 +10,29 @@ interface AIDirectnessSliderProps {
   onNext: () => void;
 }
 
+// 5 emojis from gentle to direct
+const DIRECTNESS_EMOJIS = ["🌸", "🌿", "⚖️", "🔥", "💪"];
+
 export function AIDirectnessSlider({
   value,
   onChange,
   onNext,
 }: AIDirectnessSliderProps) {
-  const getLabel = () => {
-    if (value <= 33) return "Very gentle";
-    if (value <= 66) return "Balanced";
-    return "Very direct";
+  // Determine which emoji to show based on slider value (0-100)
+  const getEmojiIndex = () => {
+    if (value <= 20) return 0;
+    if (value <= 40) return 1;
+    if (value <= 60) return 2;
+    if (value <= 80) return 3;
+    return 4;
   };
+
+  const currentEmoji = DIRECTNESS_EMOJIS[getEmojiIndex()];
 
   return (
     <OnboardingCard>
+      {/* Title and subtitle at top (no emoji above) */}
       <div className="text-center mb-6">
-        <div className="flex justify-center mb-4">
-          <AppleEmoji emoji="🎚️" size="3xl" />
-        </div>
         <h2 className="text-xl font-bold font-display text-foreground mb-2">
           How direct should your AI Buddy be?
         </h2>
@@ -54,11 +60,9 @@ export function AIDirectnessSlider({
           <span>Very direct</span>
         </div>
 
-        {/* Current value indicator */}
-        <div className="text-center mt-4">
-          <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-amber-50 to-orange-50 border border-primary/20">
-            <span className="text-sm font-medium text-foreground">{getLabel()}</span>
-          </span>
+        {/* Dynamic emoji indicator */}
+        <div className="text-center mt-6">
+          <AppleEmoji emoji={currentEmoji} size="4xl" />
         </div>
       </div>
 
