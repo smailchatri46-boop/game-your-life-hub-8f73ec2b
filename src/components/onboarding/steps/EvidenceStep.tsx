@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { ChevronRight, Info } from "lucide-react";
 import { AppleEmoji } from "@/components/AppleEmoji";
@@ -60,69 +61,88 @@ const EVIDENCE_DATA: Record<
 export function EvidenceStep({ variant, onNext }: EvidenceStepProps) {
   const data = EVIDENCE_DATA[variant];
 
+  // Hide the global scrollbar when this component mounts
+  useEffect(() => {
+    const html = document.documentElement;
+    const originalOverflow = html.style.overflow;
+    const originalOverflowY = html.style.overflowY;
+    
+    // Hide the scrollbar completely
+    html.style.overflow = 'hidden';
+    html.style.overflowY = 'hidden';
+    
+    return () => {
+      // Restore original scrollbar behavior on unmount
+      html.style.overflow = originalOverflow;
+      html.style.overflowY = originalOverflowY;
+    };
+  }, []);
+
   return (
-    <div
-      className={cn(
-        "bg-white rounded-[2rem] w-full max-w-xl mx-auto shadow-lg",
-        "border border-white/60",
-        "animate-fade-in",
-        "px-10 py-12"
-      )}
-    >
-      <div className="flex flex-col gap-8">
-        {/* Title with emoji */}
-        <div className="flex items-start gap-4">
-          <AppleEmoji emoji={data.emoji} size="4xl" className="flex-shrink-0 mt-0.5" />
-          <h2 className="text-2xl font-bold font-display text-foreground leading-snug">
-            {data.title}
-          </h2>
-        </div>
+    <div className="fixed inset-0 flex items-center justify-center gradient-hero overflow-hidden">
+      <div
+        className={cn(
+          "bg-white rounded-[2rem] w-full max-w-xl mx-4 shadow-lg",
+          "border border-white/60",
+          "animate-fade-in",
+          "px-10 py-12"
+        )}
+      >
+        <div className="flex flex-col gap-8">
+          {/* Title with emoji */}
+          <div className="flex items-start gap-4">
+            <AppleEmoji emoji={data.emoji} size="4xl" className="flex-shrink-0 mt-0.5" />
+            <h2 className="text-2xl font-bold font-display text-foreground leading-snug">
+              {data.title}
+            </h2>
+          </div>
 
-        {/* Body text */}
-        <p className="text-muted-foreground text-base leading-[1.8]">
-          {data.body}
-        </p>
-
-        {/* Data highlight box */}
-        <div className="bg-amber-50/80 rounded-xl px-6 py-5">
-          <p className="text-sm font-medium text-foreground/90 leading-relaxed">
-            {data.dataHighlight}
+          {/* Body text */}
+          <p className="text-muted-foreground text-base leading-[1.8]">
+            {data.body}
           </p>
+
+          {/* Data highlight box */}
+          <div className="bg-amber-50/80 rounded-xl px-6 py-5">
+            <p className="text-sm font-medium text-foreground/90 leading-relaxed">
+              {data.dataHighlight}
+            </p>
+          </div>
+
+          {/* Study reference with inline info icon */}
+          <TooltipProvider delayDuration={200}>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <div className="flex items-center gap-2 cursor-help">
+                  <Info className="w-4 h-4 text-muted-foreground/60 flex-shrink-0" />
+                  <span className="text-sm text-muted-foreground/60">
+                    {data.citation}
+                  </span>
+                </div>
+              </TooltipTrigger>
+              <TooltipContent side="top" className="max-w-xs p-3">
+                <p className="text-sm mb-2">{data.fullCitation}</p>
+                <a
+                  href={data.sourceUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-xs text-primary hover:underline"
+                >
+                  Read more →
+                </a>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+
+          {/* CTA Button */}
+          <Button
+            onClick={onNext}
+            variant="gradient"
+            className="h-14 w-full text-base hover:opacity-90 mt-2"
+          >
+            Next <ChevronRight className="w-4 h-4 ml-1" />
+          </Button>
         </div>
-
-        {/* Study reference with inline info icon */}
-        <TooltipProvider delayDuration={200}>
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <div className="flex items-center gap-2 cursor-help">
-                <Info className="w-4 h-4 text-muted-foreground/60 flex-shrink-0" />
-                <span className="text-sm text-muted-foreground/60">
-                  {data.citation}
-                </span>
-              </div>
-            </TooltipTrigger>
-            <TooltipContent side="top" className="max-w-xs p-3">
-              <p className="text-sm mb-2">{data.fullCitation}</p>
-              <a
-                href={data.sourceUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-xs text-primary hover:underline"
-              >
-                Read more →
-              </a>
-            </TooltipContent>
-          </Tooltip>
-        </TooltipProvider>
-
-        {/* CTA Button */}
-        <Button
-          onClick={onNext}
-          variant="gradient"
-          className="h-14 w-full text-base hover:opacity-90 mt-2"
-        >
-          Next <ChevronRight className="w-4 h-4 ml-1" />
-        </Button>
       </div>
     </div>
   );
