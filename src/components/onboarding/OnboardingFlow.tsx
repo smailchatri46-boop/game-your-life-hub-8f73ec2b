@@ -15,7 +15,7 @@ import { FeatureShowcaseStep } from "./steps/FeatureShowcaseStep";
 import { FeatureIntroStep } from "./steps/FeatureIntroStep";
 import { FeatureOutroStep } from "./steps/FeatureOutroStep";
 import { PastExperienceStep } from "./steps/PastExperienceStep";
-import { FeatureProofStep } from "./steps/FeatureProofStep";
+
 import { AIPersonalizationStep } from "./steps/AIPersonalizationStep";
 import { VideoPreviewStep } from "./steps/VideoPreviewStep";
 import { JourneyTransitionStep } from "./steps/JourneyTransitionStep";
@@ -366,57 +366,6 @@ export function OnboardingFlow() {
 
       case "feature-outro":
         return <FeatureOutroStep onComplete={goToNext} />;
-
-      // Section B: Feature Proof Steps
-      case "proof-goals":
-        return (
-          <FeatureProofStep
-            variant="goals"
-            onNext={goToNext}
-            currentIndex={0}
-            totalFeatures={5}
-          />
-        );
-
-      case "proof-habits":
-        return (
-          <FeatureProofStep
-            variant="habits"
-            onNext={goToNext}
-            currentIndex={1}
-            totalFeatures={5}
-          />
-        );
-
-      case "proof-journal":
-        return (
-          <FeatureProofStep
-            variant="journal"
-            onNext={goToNext}
-            currentIndex={2}
-            totalFeatures={5}
-          />
-        );
-
-      case "proof-insights":
-        return (
-          <FeatureProofStep
-            variant="insights"
-            onNext={goToNext}
-            currentIndex={3}
-            totalFeatures={5}
-          />
-        );
-
-      case "proof-ai-buddy":
-        return (
-          <FeatureProofStep
-            variant="ai-buddy"
-            onNext={goToNext}
-            currentIndex={4}
-            totalFeatures={5}
-          />
-        );
 
       // Section C: AI Personalization Steps
       case "ai-tone":
