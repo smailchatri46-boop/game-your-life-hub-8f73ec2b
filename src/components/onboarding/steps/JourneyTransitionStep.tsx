@@ -46,12 +46,10 @@ export function JourneyTransitionStep({
     <OnboardingCard className="text-center">
       <div className="py-4">
         <div className="flex justify-center mb-6">
-          <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-primary/10 to-accent/10 flex items-center justify-center">
-            <AppleEmoji emoji={content.emoji} size="4xl" />
-          </div>
+          <AppleEmoji emoji={content.emoji} size="4xl" />
         </div>
         
-        <h2 className="text-2xl font-bold font-display text-foreground mb-3">
+        <h2 className="text-xl font-bold font-display text-foreground mb-3 whitespace-nowrap">
           {content.title}
         </h2>
         <p className="text-muted-foreground text-base leading-relaxed mb-8 max-w-sm mx-auto">
