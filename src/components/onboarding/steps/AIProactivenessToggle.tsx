@@ -26,7 +26,7 @@ export function AIProactivenessToggle({
     <OnboardingCard className="py-10 px-8">
       <div className="text-center mb-8">
         <div className="flex justify-center mb-4">
-          <AppleEmoji emoji="💭" size="5xl" />
+          <AppleEmoji emoji="💭" size="3xl" />
         </div>
         <h2 className="text-xl font-bold font-display text-foreground mb-2">
           How should your AI respond?
@@ -36,7 +36,7 @@ export function AIProactivenessToggle({
         </p>
       </div>
 
-      {/* Pill Options with gradient stroke */}
+      {/* Pill Options with gradient stroke and shadow */}
       <div className="flex flex-wrap justify-center gap-3 mb-8">
         {OPTIONS.map((option) => {
           const isSelected = selectedOption === option.label;
@@ -44,19 +44,17 @@ export function AIProactivenessToggle({
             <button
               key={option.label}
               onClick={() => onSelectOption(option.label)}
-              className={`flex items-center gap-2 px-5 py-3 rounded-full transition-all ${
+              className={`flex items-center gap-2 px-5 py-3 rounded-full transition-all duration-200 ${
                 isSelected
-                  ? "bg-white shadow-sm"
-                  : "bg-white/60 hover:bg-white/80"
+                  ? "bg-white shadow-md"
+                  : "bg-white/60 hover:bg-white/80 border-2 border-border/30"
               }`}
               style={isSelected ? {
                 border: "2px solid transparent",
-                backgroundImage: "linear-gradient(white, white), linear-gradient(135deg, hsl(35, 95%, 55%), hsl(25, 95%, 55%))",
+                backgroundImage: "linear-gradient(white, white), linear-gradient(135deg, hsl(25, 95%, 53%), hsl(35, 95%, 60%))",
                 backgroundOrigin: "border-box",
                 backgroundClip: "padding-box, border-box",
-              } : {
-                border: "2px solid hsl(35, 20%, 88%)",
-              }}
+              } : undefined}
             >
               <AppleEmoji emoji={option.emoji} size="lg" />
               <span className={`text-sm font-medium ${
