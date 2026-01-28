@@ -62,7 +62,7 @@ export function AIDirectnessSlider({
 
         {/* Dynamic emoji indicator - much larger */}
         <div className="text-center mt-8 mb-4">
-          <AppleEmoji emoji={currentEmoji} size="7xl" />
+          <AppleEmoji emoji={currentEmoji} size="10xl" />
         </div>
       </div>
 
