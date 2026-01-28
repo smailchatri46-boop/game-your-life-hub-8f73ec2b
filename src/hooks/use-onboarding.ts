@@ -8,6 +8,14 @@ export type OnboardingStep =
   | "survey-4"
   | "survey-5"
   | "survey-6"
+  // Section A: Past Experience (after survey)
+  | "past-tracking"
+  | "why-stopped"
+  | "current-situation"
+  | "progress-visibility"
+  | "emotional-checkin"
+  | "readiness-signal"
+  // Original about steps
   | "about-focus"
   | "about-struggle"
   | "about-time"
@@ -19,6 +27,22 @@ export type OnboardingStep =
   | "feature-ai-buddy"
   | "feature-insights"
   | "feature-outro"
+  // Section B: Feature Proof with Screenshots
+  | "proof-goals"
+  | "proof-habits"
+  | "proof-journal"
+  | "proof-insights"
+  | "proof-ai-buddy"
+  // Section C: AI Personalization
+  | "ai-tone"
+  | "ai-feedback-style"
+  | "ai-insight-depth"
+  // Section D: Video Preview
+  | "video-preview"
+  // Section E: Journey Transition
+  | "journey-readiness"
+  | "journey-commitment"
+  // Original final steps
   | "habit-suggestions"
   | "goal-creation"
   | "commitment"
@@ -48,6 +72,21 @@ export interface OnboardingData {
     survey6: string | null;
   };
   createdHabits: CreatedHabit[];
+  // Section A: Past Experience
+  pastExperience: {
+    trackingExperience: string[];
+    whyStopped: string[];
+    currentSituation: string[];
+    progressVisibility: string[];
+    emotionalCheckin: string[];
+    readinessSignal: string[];
+  };
+  // Section C: AI Personalization
+  aiPreferences: {
+    tone: string | null;
+    feedbackStyle: string | null;
+    insightDepth: string | null;
+  };
 }
 
 const INITIAL_DATA: OnboardingData = {
@@ -72,26 +111,66 @@ const INITIAL_DATA: OnboardingData = {
     survey6: null,
   },
   createdHabits: [],
+  pastExperience: {
+    trackingExperience: [],
+    whyStopped: [],
+    currentSituation: [],
+    progressVisibility: [],
+    emotionalCheckin: [],
+    readinessSignal: [],
+  },
+  aiPreferences: {
+    tone: null,
+    feedbackStyle: null,
+    insightDepth: null,
+  },
 };
 
 const STEP_ORDER: OnboardingStep[] = [
+  // Initial surveys
   "survey-1",
   "survey-2",
+  // Section A: Past Experience (INSERT AFTER CARD 2)
+  "past-tracking",
+  "why-stopped",
+  "current-situation",
+  "progress-visibility",
+  "emotional-checkin",
+  "readiness-signal",
+  // Continue with original surveys
   "survey-4",
   "survey-3",
   "survey-5",
   "survey-6",
+  // About steps
   "about-focus",
   "about-struggle",
   "about-time",
   "tell-us-about-you",
   "why-we-exist",
   "feature-intro",
+  // Original feature showcases
   "feature-goals",
   "feature-ai-buddy",
   "feature-habits",
   "feature-insights",
   "feature-outro",
+  // Section B: Feature Proof (INSERT AFTER "Here is what you can do inside Neyler")
+  "proof-goals",
+  "proof-habits",
+  "proof-journal",
+  "proof-insights",
+  "proof-ai-buddy",
+  // Section C: AI Personalization (INSERT BEFORE VIDEO)
+  "ai-tone",
+  "ai-feedback-style",
+  "ai-insight-depth",
+  // Section D: Video Preview
+  "video-preview",
+  // Section E: Journey Transition (INSERT BEFORE habit selection)
+  "journey-readiness",
+  "journey-commitment",
+  // Final steps
   "habit-suggestions",
   "goal-creation",
   "commitment",
@@ -207,6 +286,36 @@ export function useOnboarding() {
     setData(prev => ({ ...prev, createdHabits: habits }));
   }, []);
 
+  // Past Experience toggles
+  const togglePastExperienceOption = useCallback((
+    key: keyof OnboardingData['pastExperience'], 
+    option: string
+  ) => {
+    setData(prev => ({
+      ...prev,
+      pastExperience: {
+        ...prev.pastExperience,
+        [key]: prev.pastExperience[key].includes(option)
+          ? prev.pastExperience[key].filter(o => o !== option)
+          : [...prev.pastExperience[key], option],
+      },
+    }));
+  }, []);
+
+  // AI Preferences setter
+  const setAIPreference = useCallback((
+    key: keyof OnboardingData['aiPreferences'],
+    value: string
+  ) => {
+    setData(prev => ({
+      ...prev,
+      aiPreferences: {
+        ...prev.aiPreferences,
+        [key]: value,
+      },
+    }));
+  }, []);
+
   const completeOnboarding = useCallback(() => {
     setIsComplete(true);
     localStorage.setItem("locked_onboarding_complete", "true");
@@ -254,6 +363,8 @@ export function useOnboarding() {
     toggleAffirmation,
     setSurveyAnswer,
     setCreatedHabits,
+    togglePastExperienceOption,
+    setAIPreference,
     completeOnboarding,
     skipOnboarding,
     getTotalSelectedHabits,

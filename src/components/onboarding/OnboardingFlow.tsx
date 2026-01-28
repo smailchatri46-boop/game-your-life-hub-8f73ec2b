@@ -14,6 +14,11 @@ import { SurveyQuestionStep } from "./steps/SurveyQuestionStep";
 import { FeatureShowcaseStep } from "./steps/FeatureShowcaseStep";
 import { FeatureIntroStep } from "./steps/FeatureIntroStep";
 import { FeatureOutroStep } from "./steps/FeatureOutroStep";
+import { PastExperienceStep } from "./steps/PastExperienceStep";
+import { FeatureProofStep } from "./steps/FeatureProofStep";
+import { AIPersonalizationStep } from "./steps/AIPersonalizationStep";
+import { VideoPreviewStep } from "./steps/VideoPreviewStep";
+import { JourneyTransitionStep } from "./steps/JourneyTransitionStep";
 
 const SURVEY_QUESTIONS = {
   "survey-1": {
@@ -99,6 +104,8 @@ export function OnboardingFlow() {
     toggleAffirmation,
     setSurveyAnswer,
     setCreatedHabits,
+    togglePastExperienceOption,
+    setAIPreference,
     completeOnboarding,
     skipOnboarding,
   } = useOnboarding();
@@ -106,10 +113,6 @@ export function OnboardingFlow() {
   const handleSkip = () => {
     skipOnboarding();
     navigate("/dashboard");
-  };
-
-  const handleSkipToWhyWeExist = () => {
-    goToStep("why-we-exist");
   };
 
   const handleGoToPaywall = () => {
@@ -141,7 +144,7 @@ export function OnboardingFlow() {
             onNext={() => {
               // If user selected "No" or "I tried before but stopped using it", skip survey-2
               if (data.surveyAnswers.survey1 === "No" || data.surveyAnswers.survey1 === "I tried before but stopped using it") {
-                goToStep("survey-4");
+                goToStep("past-tracking");
               } else {
                 goToNext();
               }
@@ -160,6 +163,67 @@ export function OnboardingFlow() {
             {...SURVEY_QUESTIONS["survey-2"]}
             selectedOption={data.surveyAnswers.survey2}
             onSelectOption={(answer) => setSurveyAnswer("survey2", answer)}
+            onNext={goToNext}
+          />
+        );
+
+      // Section A: Past Experience Steps
+      case "past-tracking":
+        return (
+          <PastExperienceStep
+            variant="tracking-experience"
+            selectedOptions={data.pastExperience.trackingExperience}
+            onToggleOption={(option) => togglePastExperienceOption("trackingExperience", option)}
+            onNext={goToNext}
+          />
+        );
+
+      case "why-stopped":
+        return (
+          <PastExperienceStep
+            variant="why-stopped"
+            selectedOptions={data.pastExperience.whyStopped}
+            onToggleOption={(option) => togglePastExperienceOption("whyStopped", option)}
+            onNext={goToNext}
+          />
+        );
+
+      case "current-situation":
+        return (
+          <PastExperienceStep
+            variant="current-situation"
+            selectedOptions={data.pastExperience.currentSituation}
+            onToggleOption={(option) => togglePastExperienceOption("currentSituation", option)}
+            onNext={goToNext}
+          />
+        );
+
+      case "progress-visibility":
+        return (
+          <PastExperienceStep
+            variant="progress-visibility"
+            selectedOptions={data.pastExperience.progressVisibility}
+            onToggleOption={(option) => togglePastExperienceOption("progressVisibility", option)}
+            onNext={goToNext}
+          />
+        );
+
+      case "emotional-checkin":
+        return (
+          <PastExperienceStep
+            variant="emotional-checkin"
+            selectedOptions={data.pastExperience.emotionalCheckin}
+            onToggleOption={(option) => togglePastExperienceOption("emotionalCheckin", option)}
+            onNext={goToNext}
+          />
+        );
+
+      case "readiness-signal":
+        return (
+          <PastExperienceStep
+            variant="readiness-signal"
+            selectedOptions={data.pastExperience.readinessSignal}
+            onToggleOption={(option) => togglePastExperienceOption("readinessSignal", option)}
             onNext={goToNext}
           />
         );
@@ -303,6 +367,109 @@ export function OnboardingFlow() {
       case "feature-outro":
         return <FeatureOutroStep onComplete={goToNext} />;
 
+      // Section B: Feature Proof Steps
+      case "proof-goals":
+        return (
+          <FeatureProofStep
+            variant="goals"
+            onNext={goToNext}
+            currentIndex={0}
+            totalFeatures={5}
+          />
+        );
+
+      case "proof-habits":
+        return (
+          <FeatureProofStep
+            variant="habits"
+            onNext={goToNext}
+            currentIndex={1}
+            totalFeatures={5}
+          />
+        );
+
+      case "proof-journal":
+        return (
+          <FeatureProofStep
+            variant="journal"
+            onNext={goToNext}
+            currentIndex={2}
+            totalFeatures={5}
+          />
+        );
+
+      case "proof-insights":
+        return (
+          <FeatureProofStep
+            variant="insights"
+            onNext={goToNext}
+            currentIndex={3}
+            totalFeatures={5}
+          />
+        );
+
+      case "proof-ai-buddy":
+        return (
+          <FeatureProofStep
+            variant="ai-buddy"
+            onNext={goToNext}
+            currentIndex={4}
+            totalFeatures={5}
+          />
+        );
+
+      // Section C: AI Personalization Steps
+      case "ai-tone":
+        return (
+          <AIPersonalizationStep
+            variant="tone"
+            selectedOption={data.aiPreferences.tone}
+            onSelectOption={(option) => setAIPreference("tone", option)}
+            onNext={goToNext}
+          />
+        );
+
+      case "ai-feedback-style":
+        return (
+          <AIPersonalizationStep
+            variant="feedback-style"
+            selectedOption={data.aiPreferences.feedbackStyle}
+            onSelectOption={(option) => setAIPreference("feedbackStyle", option)}
+            onNext={goToNext}
+          />
+        );
+
+      case "ai-insight-depth":
+        return (
+          <AIPersonalizationStep
+            variant="insight-depth"
+            selectedOption={data.aiPreferences.insightDepth}
+            onSelectOption={(option) => setAIPreference("insightDepth", option)}
+            onNext={goToNext}
+          />
+        );
+
+      // Section D: Video Preview
+      case "video-preview":
+        return <VideoPreviewStep onNext={goToNext} />;
+
+      // Section E: Journey Transition Steps
+      case "journey-readiness":
+        return (
+          <JourneyTransitionStep
+            variant="readiness"
+            onNext={goToNext}
+          />
+        );
+
+      case "journey-commitment":
+        return (
+          <JourneyTransitionStep
+            variant="gentle-commitment"
+            onNext={goToNext}
+          />
+        );
+
       case "habit-suggestions":
         return (
           <HabitSuggestionsStep
@@ -362,11 +529,13 @@ export function OnboardingFlow() {
     }
   };
 
+  // Determine which steps are full-screen vs card-based
   const isFeatureShowcase = currentStep.startsWith("feature-");
-  const isFullScreenStep = isFeatureShowcase || currentStep === "success" || currentStep === "loading" || currentStep === "paywall";
-  const showProgress = currentStep !== "loading" && currentStep !== "success" && currentStep !== "paywall" && !isFeatureShowcase;
+  const isFeatureProof = currentStep.startsWith("proof-");
+  const isFullScreenStep = isFeatureShowcase || isFeatureProof || currentStep === "success" || currentStep === "loading" || currentStep === "paywall";
+  const showProgress = currentStep !== "loading" && currentStep !== "success" && currentStep !== "paywall" && !isFeatureShowcase && !isFeatureProof;
 
-  // Feature showcase steps and success/loading render their own full-screen layout
+  // Feature showcase steps, feature proof, and success/loading render their own full-screen layout
   if (isFullScreenStep) {
     return renderStep();
   }
