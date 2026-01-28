@@ -15,8 +15,10 @@ import { FeatureShowcaseStep } from "./steps/FeatureShowcaseStep";
 import { FeatureIntroStep } from "./steps/FeatureIntroStep";
 import { FeatureOutroStep } from "./steps/FeatureOutroStep";
 import { PastExperienceStep } from "./steps/PastExperienceStep";
-
 import { AIPersonalizationStep } from "./steps/AIPersonalizationStep";
+import { AIDirectnessSlider } from "./steps/AIDirectnessSlider";
+import { AIModeSelector } from "./steps/AIModeSelector";
+import { AIProactivenessToggle } from "./steps/AIProactivenessToggle";
 import { VideoPreviewStep } from "./steps/VideoPreviewStep";
 import { JourneyTransitionStep } from "./steps/JourneyTransitionStep";
 
@@ -54,16 +56,7 @@ const SURVEY_QUESTIONS = {
       { label: "Pinterest" },
     ],
   },
-  "survey-4": {
-    emoji: "✨",
-    title: "Would you like one app to track your entire life?",
-    description: "Keep everything organized in one place",
-    options: [
-      { label: "Yes, that would be perfect" },
-      { label: "Maybe, I'd like to try it" },
-      { label: "I prefer using multiple apps" },
-    ],
-  },
+  // survey-4 removed (was repetitive "Would you like one app to track your entire life?")
   "survey-5": {
     emoji: "💬",
     title: "Do you ever chat with AI for advice or motivation?",
@@ -106,6 +99,7 @@ export function OnboardingFlow() {
     setCreatedHabits,
     togglePastExperienceOption,
     setAIPreference,
+    toggleAIMode,
     completeOnboarding,
     skipOnboarding,
   } = useOnboarding();
@@ -238,15 +232,7 @@ export function OnboardingFlow() {
           />
         );
 
-      case "survey-4":
-        return (
-          <SurveyQuestionStep
-            {...SURVEY_QUESTIONS["survey-4"]}
-            selectedOption={data.surveyAnswers.survey4}
-            onSelectOption={(answer) => setSurveyAnswer("survey4", answer)}
-            onNext={goToNext}
-          />
-        );
+      // survey-4 removed (was repetitive)
 
       case "survey-5":
         return (
@@ -398,7 +384,34 @@ export function OnboardingFlow() {
           />
         );
 
-      // Section D: Video Preview
+      case "ai-directness":
+        return (
+          <AIDirectnessSlider
+            value={data.aiPreferences.directness}
+            onChange={(value) => setAIPreference("directness", value)}
+            onNext={goToNext}
+          />
+        );
+
+      case "ai-modes":
+        return (
+          <AIModeSelector
+            selectedModes={data.aiPreferences.modes}
+            onToggleMode={toggleAIMode}
+            onNext={goToNext}
+          />
+        );
+
+      case "ai-proactiveness":
+        return (
+          <AIProactivenessToggle
+            selectedOption={data.aiPreferences.proactiveness}
+            onSelectOption={(option) => setAIPreference("proactiveness", option)}
+            onNext={goToNext}
+          />
+        );
+
+      // Section D: Video Preview (full-screen)
       case "video-preview":
         return <VideoPreviewStep onNext={goToNext} />;
 
@@ -480,9 +493,9 @@ export function OnboardingFlow() {
 
   // Determine which steps are full-screen vs card-based
   const isFeatureShowcase = currentStep.startsWith("feature-");
-  const isFeatureProof = currentStep.startsWith("proof-");
-  const isFullScreenStep = isFeatureShowcase || isFeatureProof || currentStep === "success" || currentStep === "loading" || currentStep === "paywall";
-  const showProgress = currentStep !== "loading" && currentStep !== "success" && currentStep !== "paywall" && !isFeatureShowcase && !isFeatureProof;
+  const isVideoPreview = currentStep === "video-preview";
+  const isFullScreenStep = isFeatureShowcase || isVideoPreview || currentStep === "success" || currentStep === "loading" || currentStep === "paywall";
+  const showProgress = currentStep !== "loading" && currentStep !== "success" && currentStep !== "paywall" && !isFeatureShowcase && !isVideoPreview;
 
   // Feature showcase steps, feature proof, and success/loading render their own full-screen layout
   if (isFullScreenStep) {

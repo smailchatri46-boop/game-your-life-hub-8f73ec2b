@@ -1,7 +1,7 @@
 import { OnboardingCard } from "../OnboardingCard";
 import { Button } from "@/components/ui/button";
 import { AppleEmoji } from "@/components/AppleEmoji";
-import { ChevronRight, Sparkles } from "lucide-react";
+import { ChevronRight } from "lucide-react";
 
 type Variant = "readiness" | "gentle-commitment";
 
@@ -57,7 +57,6 @@ export function JourneyTransitionStep({
           variant="gradient"
           className="w-full h-12 text-base hover:opacity-90"
         >
-          {variant === "readiness" && <Sparkles className="w-4 h-4 mr-2" />}
           {content.ctaText}
           <ChevronRight className="w-4 h-4 ml-1" />
         </Button>

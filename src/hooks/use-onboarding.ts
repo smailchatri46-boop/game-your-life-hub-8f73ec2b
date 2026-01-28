@@ -5,7 +5,6 @@ export type OnboardingStep =
   | "survey-1"
   | "survey-2"
   | "survey-3"
-  | "survey-4"
   | "survey-5"
   | "survey-6"
   // Section A: Past Experience (after survey)
@@ -27,10 +26,13 @@ export type OnboardingStep =
   | "feature-ai-buddy"
   | "feature-insights"
   | "feature-outro"
-  // Section C: AI Personalization
+  // Section C: AI Personalization (expanded to 6 cards)
   | "ai-tone"
   | "ai-feedback-style"
   | "ai-insight-depth"
+  | "ai-directness"
+  | "ai-modes"
+  | "ai-proactiveness"
   // Section D: Video Preview
   | "video-preview"
   // Section E: Journey Transition
@@ -75,11 +77,14 @@ export interface OnboardingData {
     emotionalCheckin: string[];
     readinessSignal: string[];
   };
-  // Section C: AI Personalization
+  // Section C: AI Personalization (expanded)
   aiPreferences: {
     tone: string | null;
     feedbackStyle: string | null;
     insightDepth: string | null;
+    directness: number;
+    modes: string[];
+    proactiveness: string | null;
   };
 }
 
@@ -117,6 +122,9 @@ const INITIAL_DATA: OnboardingData = {
     tone: null,
     feedbackStyle: null,
     insightDepth: null,
+    directness: 50,
+    modes: [],
+    proactiveness: null,
   },
 };
 
@@ -131,8 +139,7 @@ const STEP_ORDER: OnboardingStep[] = [
   "progress-visibility",
   "emotional-checkin",
   "readiness-signal",
-  // Continue with original surveys
-  "survey-4",
+  // Continue with original surveys (survey-4 removed - was repetitive)
   "survey-3",
   "survey-5",
   "survey-6",
@@ -149,13 +156,16 @@ const STEP_ORDER: OnboardingStep[] = [
   "feature-habits",
   "feature-insights",
   "feature-outro",
-  // Section C: AI Personalization (INSERT BEFORE VIDEO)
+  // Section C: AI Personalization (expanded to 6 cards)
   "ai-tone",
   "ai-feedback-style",
   "ai-insight-depth",
-  // Section D: Video Preview
+  "ai-directness",
+  "ai-modes",
+  "ai-proactiveness",
+  // Section D: Video Preview (full-screen)
   "video-preview",
-  // Section E: Journey Transition (INSERT BEFORE habit selection)
+  // Section E: Journey Transition
   "journey-readiness",
   "journey-commitment",
   // Final steps
@@ -293,13 +303,26 @@ export function useOnboarding() {
   // AI Preferences setter
   const setAIPreference = useCallback((
     key: keyof OnboardingData['aiPreferences'],
-    value: string
+    value: string | number
   ) => {
     setData(prev => ({
       ...prev,
       aiPreferences: {
         ...prev.aiPreferences,
         [key]: value,
+      },
+    }));
+  }, []);
+
+  // Toggle AI modes (multi-select)
+  const toggleAIMode = useCallback((mode: string) => {
+    setData(prev => ({
+      ...prev,
+      aiPreferences: {
+        ...prev.aiPreferences,
+        modes: prev.aiPreferences.modes.includes(mode)
+          ? prev.aiPreferences.modes.filter(m => m !== mode)
+          : [...prev.aiPreferences.modes, mode],
       },
     }));
   }, []);
@@ -353,6 +376,7 @@ export function useOnboarding() {
     setCreatedHabits,
     togglePastExperienceOption,
     setAIPreference,
+    toggleAIMode,
     completeOnboarding,
     skipOnboarding,
     getTotalSelectedHabits,
