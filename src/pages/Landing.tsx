@@ -247,7 +247,7 @@ export default function Landing() {
                 <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-accent/30 to-primary/30 flex items-center justify-center mb-4">
                   <AppleEmoji emoji="🤖" size="2xl" />
                 </div>
-                <h3 className="font-display text-xl font-semibold mb-3">AI-Powered Deep Analytics</h3>
+                <h3 className="font-display text-xl font-semibold mb-3">AI-Powered Analytics</h3>
                 <p className="text-muted-foreground text-sm leading-relaxed">
                   AI analyzes all your goals, tasks, and habits to give you personalized structure, actionable insights, and expert guidance to achieve your goals faster.
                 </p>

@@ -31,8 +31,7 @@ export function LandingFAQ() {
               <AccordionItem
                 key={index}
                 value={`item-${index}`}
-                className="border border-border/50 rounded-2xl px-5 overflow-hidden"
-                style={{ background: 'linear-gradient(to right, hsl(30 70% 95%), hsl(0 0% 100%))' }}
+                className="bg-white border-0 rounded-2xl px-5 overflow-hidden shadow-sm"
               >
                 <AccordionTrigger className="text-left font-medium text-foreground py-4 hover:no-underline font-['Inter',sans-serif]">
                   {faq.question}
