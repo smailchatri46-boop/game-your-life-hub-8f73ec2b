@@ -321,22 +321,12 @@ export function OnboardingFlow() {
           />
         );
 
-      case "feature-ai-buddy":
-        return (
-          <FeatureShowcaseStep
-            variant="ai-buddy"
-            onNext={goToNext}
-            currentIndex={1}
-            totalFeatures={4}
-          />
-        );
-
       case "feature-habits":
         return (
           <FeatureShowcaseStep
             variant="habits"
             onNext={goToNext}
-            currentIndex={2}
+            currentIndex={1}
             totalFeatures={4}
           />
         );
@@ -346,8 +336,18 @@ export function OnboardingFlow() {
           <FeatureShowcaseStep
             variant="insights"
             onNext={goToNext}
+            currentIndex={2}
+            totalFeatures={4}
+          />
+        );
+
+      case "feature-ai-buddy":
+        return (
+          <FeatureShowcaseStep
+            variant="ai-buddy"
+            onNext={goToNext}
             currentIndex={3}
-          totalFeatures={4}
+            totalFeatures={4}
           />
         );
 

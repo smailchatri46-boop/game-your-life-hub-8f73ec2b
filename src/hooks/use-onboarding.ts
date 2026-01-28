@@ -156,9 +156,9 @@ const STEP_ORDER: OnboardingStep[] = [
   "feature-intro",
   // Feature showcases
   "feature-goals",
-  "feature-ai-buddy",
   "feature-habits",
   "feature-insights",
+  "feature-ai-buddy",
   "feature-outro",
   // Section C: AI Personalization (expanded to 6 cards)
   "ai-tone",
