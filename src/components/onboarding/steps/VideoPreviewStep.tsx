@@ -10,7 +10,16 @@ interface VideoPreviewStepProps {
 
 export function VideoPreviewStep({ onNext }: VideoPreviewStepProps) {
   return (
-    <div className="fixed inset-0 flex flex-col items-center justify-center gradient-hero overflow-hidden">
+    <div 
+      className="fixed inset-0 flex flex-col items-center justify-center gradient-hero"
+      style={{ overflow: 'hidden', scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+    >
+      <style>{`
+        .video-preview-container::-webkit-scrollbar {
+          display: none;
+        }
+      `}</style>
+      
       {/* Header */}
       <div className="text-center mb-6">
         <div className="flex justify-center mb-3">
@@ -25,8 +34,8 @@ export function VideoPreviewStep({ onNext }: VideoPreviewStepProps) {
       </div>
 
       {/* Video Player - Full Width */}
-      <div className="w-full max-w-4xl px-4 rounded-2xl overflow-hidden shadow-2xl mb-8">
-        <div className="rounded-2xl overflow-hidden">
+      <div className="w-full max-w-4xl px-4 mb-8">
+        <div className="rounded-2xl overflow-hidden shadow-2xl">
           <YouTubeEmbed 
             videoId="0GO0SyFo8dc"
             thumbnail={dashboardThumbnail}
