@@ -1,4 +1,3 @@
-import { OnboardingCard } from "../OnboardingCard";
 import { Button } from "@/components/ui/button";
 import { AppleEmoji } from "@/components/AppleEmoji";
 import { ChevronRight } from "lucide-react";
@@ -11,34 +10,39 @@ interface VideoPreviewStepProps {
 
 export function VideoPreviewStep({ onNext }: VideoPreviewStepProps) {
   return (
-    <OnboardingCard className="max-w-lg">
-      <div className="text-center mb-5">
-        <div className="flex justify-center mb-3">
-          <AppleEmoji emoji="🎬" size="3xl" />
+    <div className="min-h-screen w-full flex flex-col gradient-hero">
+      {/* Content Container */}
+      <div className="flex-1 flex flex-col items-center justify-center px-4 py-8">
+        {/* Header */}
+        <div className="text-center mb-6">
+          <div className="flex justify-center mb-3">
+            <AppleEmoji emoji="🎬" size="3xl" />
+          </div>
+          <h2 className="text-2xl font-bold font-display text-foreground mb-2">
+            See Neyler in action
+          </h2>
+          <p className="text-muted-foreground text-base max-w-md mx-auto">
+            A quick walkthrough of how everything comes together.
+          </p>
         </div>
-        <h2 className="text-xl font-bold font-display text-foreground mb-2">
-          See Neyler in action
-        </h2>
-        <p className="text-muted-foreground text-sm">
-          A quick look at how everything comes together.
-        </p>
-      </div>
 
-      {/* Video Player */}
-      <div className="rounded-xl overflow-hidden mb-6 shadow-soft">
-        <YouTubeEmbed 
-          videoId="0GO0SyFo8dc"
-          thumbnail={dashboardThumbnail}
-        />
-      </div>
+        {/* Video Player - Full Width */}
+        <div className="w-full max-w-4xl rounded-2xl overflow-hidden shadow-2xl mb-8">
+          <YouTubeEmbed 
+            videoId="0GO0SyFo8dc"
+            thumbnail={dashboardThumbnail}
+          />
+        </div>
 
-      <Button
-        onClick={onNext}
-        variant="gradient"
-        className="w-full h-11 hover:opacity-90"
-      >
-        Continue <ChevronRight className="w-4 h-4 ml-1" />
-      </Button>
-    </OnboardingCard>
+        {/* CTA Button */}
+        <Button
+          onClick={onNext}
+          variant="gradient"
+          className="h-12 px-8 text-base hover:opacity-90"
+        >
+          Continue <ChevronRight className="w-4 h-4 ml-1" />
+        </Button>
+      </div>
+    </div>
   );
 }
