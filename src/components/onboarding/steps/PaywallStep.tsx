@@ -23,8 +23,8 @@ const FEATURE_CARDS = [
     description: "Create meaningful goals, connect them to your daily habits, and see your progress toward them in a clear, visual way that keeps you motivated.",
   },
   {
-    emoji: "🤖",
-    title: "AI-Powered Analytics",
+    emoji: "✨",
+    title: "AI-Powered",
     description: "AI analyzes all your goals, tasks, and habits to give you personalized structure, actionable insights, and expert guidance to achieve your goals faster.",
   },
   {
