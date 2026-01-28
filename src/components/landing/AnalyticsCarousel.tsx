@@ -210,7 +210,7 @@ export function AnalyticsCarousel({ isOnboarding = false }: AnalyticsCarouselPro
       <div className="max-w-6xl mx-auto text-center mb-4">
         <ScrollReveal animation="fade-up">
           <h2 className={`font-display ${titleSize} font-semibold`}>
-            Get Deep <span className="gradient-text italic">Insights</span> About Your Life
+            Get Deep <span className="gradient-text">Insights</span> About Your Life
           </h2>
         </ScrollReveal>
       </div>
