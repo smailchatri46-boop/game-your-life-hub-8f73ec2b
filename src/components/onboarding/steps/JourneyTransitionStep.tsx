@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { AppleEmoji } from "@/components/AppleEmoji";
 import { ChevronRight } from "lucide-react";
 
-type Variant = "readiness" | "gentle-commitment";
+type Variant = "readiness" | "gentle-commitment" | "add-first-habits";
 
 interface JourneyTransitionStepProps {
   variant: Variant;
@@ -25,8 +25,14 @@ const CONTENT: Record<Variant, {
   "gentle-commitment": {
     emoji: "🌱",
     title: "Small steps, real change",
-    subtitle: "You don't need perfection — just consistency.",
+    subtitle: "You don't need perfection, just consistency.",
     ctaText: "Continue",
+  },
+  "add-first-habits": {
+    emoji: "✅",
+    title: "Add your first habits or tasks",
+    subtitle: "Start building momentum with simple daily actions.",
+    ctaText: "Start Now",
   },
 };
 
