@@ -135,7 +135,7 @@ export function GoalsShowcase({ isOnboarding = false }: GoalsShowcaseProps) {
   const duplicatedGoals = [...demoGoals, ...demoGoals];
 
   // Adjust sizes - LARGER for onboarding to fill screen
-  const titleSize = isOnboarding ? "text-2xl md:text-5xl" : "text-3xl md:text-5xl";
+  const titleSize = isOnboarding ? "text-2xl md:text-5xl" : "text-2xl md:text-4xl";
   const cardSize = isOnboarding ? "w-[320px] md:w-[360px]" : "w-[300px] md:w-[340px]";
   const descriptionSize = isOnboarding ? "text-sm md:text-base" : "text-base md:text-lg";
 
