@@ -15,7 +15,7 @@ import { useReferral } from "@/hooks/use-referral";
 // Lazy load below-fold sections for better initial load
 const AnalyticsCarousel = lazy(() => import("@/components/landing/AnalyticsCarousel").then(m => ({ default: m.AnalyticsCarousel })));
 const HabitsShowcase = lazy(() => import("@/components/landing/HabitsShowcase").then(m => ({ default: m.HabitsShowcase })));
-const AIBuddyShowcase = lazy(() => import("@/components/landing/AIBuddyShowcase").then(m => ({ default: m.AIBuddyShowcase })));
+
 const GoalsShowcase = lazy(() => import("@/components/landing/GoalsShowcase").then(m => ({ default: m.GoalsShowcase })));
 
 
@@ -121,9 +121,6 @@ export default function Landing() {
         <HabitsShowcase />
       </Suspense>
       
-      <Suspense fallback={<SectionPlaceholder />}>
-        <AIBuddyShowcase />
-      </Suspense>
       
       <Suspense fallback={<SectionPlaceholder />}>
         <GoalsShowcase />
@@ -338,8 +335,8 @@ export default function Landing() {
             : 'opacity-0 translate-y-4 pointer-events-none'
         }`}
       >
-        <Button variant="gradient" size="lg" asChild className="shadow-lg">
-          <Link to="/signup" className="gap-2">
+        <Button variant="gradient" size="xl" asChild className="shadow-lg">
+          <Link to="/signup" className="gap-3">
             <span className="w-6 h-6 bg-white rounded-full flex items-center justify-center flex-shrink-0">
               <img src={googleLogo} alt="Google" className="w-4 h-4 block" loading="eager" width={16} height={16} style={{ opacity: 1 }} />
             </span>
