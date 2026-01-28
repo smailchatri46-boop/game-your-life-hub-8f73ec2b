@@ -27,12 +27,6 @@ export type OnboardingStep =
   | "feature-ai-buddy"
   | "feature-insights"
   | "feature-outro"
-  // Section B: Feature Proof with Screenshots
-  | "proof-goals"
-  | "proof-habits"
-  | "proof-journal"
-  | "proof-insights"
-  | "proof-ai-buddy"
   // Section C: AI Personalization
   | "ai-tone"
   | "ai-feedback-style"
@@ -155,12 +149,6 @@ const STEP_ORDER: OnboardingStep[] = [
   "feature-habits",
   "feature-insights",
   "feature-outro",
-  // Section B: Feature Proof (INSERT AFTER "Here is what you can do inside Neyler")
-  "proof-goals",
-  "proof-habits",
-  "proof-journal",
-  "proof-insights",
-  "proof-ai-buddy",
   // Section C: AI Personalization (INSERT BEFORE VIDEO)
   "ai-tone",
   "ai-feedback-style",
