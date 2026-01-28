@@ -22,7 +22,6 @@ import { AIProactivenessToggle } from "./steps/AIProactivenessToggle";
 import { VideoPreviewStep } from "./steps/VideoPreviewStep";
 import { JourneyTransitionStep } from "./steps/JourneyTransitionStep";
 import { EvidenceStep } from "./steps/EvidenceStep";
-import { DashboardPreviewStep } from "./steps/DashboardPreviewStep";
 
 const SURVEY_QUESTIONS = {
   "survey-1": {
@@ -322,9 +321,6 @@ export function OnboardingFlow() {
           />
         );
 
-      case "preview-after-goals":
-        return <DashboardPreviewStep onNext={goToNext} />;
-
       case "feature-ai-buddy":
         return (
           <FeatureShowcaseStep
@@ -334,9 +330,6 @@ export function OnboardingFlow() {
             totalFeatures={4}
           />
         );
-
-      case "preview-after-ai-buddy":
-        return <DashboardPreviewStep onNext={goToNext} />;
 
       case "feature-habits":
         return (
@@ -348,21 +341,15 @@ export function OnboardingFlow() {
           />
         );
 
-      case "preview-after-habits":
-        return <DashboardPreviewStep onNext={goToNext} />;
-
       case "feature-insights":
         return (
           <FeatureShowcaseStep
             variant="insights"
             onNext={goToNext}
             currentIndex={3}
-            totalFeatures={4}
+          totalFeatures={4}
           />
         );
-
-      case "preview-after-insights":
-        return <DashboardPreviewStep onNext={goToNext} />;
 
       case "feature-outro":
         return <FeatureOutroStep onComplete={goToNext} />;
@@ -517,10 +504,9 @@ export function OnboardingFlow() {
 
   // Determine which steps are full-screen vs card-based
   const isFeatureShowcase = currentStep.startsWith("feature-");
-  const isPreviewStep = currentStep.startsWith("preview-");
   const isVideoPreview = currentStep === "video-preview";
-  const isFullScreenStep = isFeatureShowcase || isPreviewStep || isVideoPreview || currentStep === "success" || currentStep === "loading" || currentStep === "paywall";
-  const showProgress = currentStep !== "loading" && currentStep !== "success" && currentStep !== "paywall" && !isFeatureShowcase && !isPreviewStep && !isVideoPreview;
+  const isFullScreenStep = isFeatureShowcase || isVideoPreview || currentStep === "success" || currentStep === "loading" || currentStep === "paywall";
+  const showProgress = currentStep !== "loading" && currentStep !== "success" && currentStep !== "paywall" && !isFeatureShowcase && !isVideoPreview;
 
   // Feature showcase steps, feature proof, and success/loading render their own full-screen layout
   if (isFullScreenStep) {

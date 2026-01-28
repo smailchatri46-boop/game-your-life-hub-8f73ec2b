@@ -22,13 +22,9 @@ export type OnboardingStep =
   | "why-we-exist"
   | "feature-intro"
   | "feature-goals"
-  | "preview-after-goals"
   | "feature-ai-buddy"
-  | "preview-after-ai-buddy"
   | "feature-habits"
-  | "preview-after-habits"
   | "feature-insights"
-  | "preview-after-insights"
   | "feature-outro"
   // Section C: AI Personalization (expanded to 6 cards)
   | "ai-tone"
@@ -158,15 +154,11 @@ const STEP_ORDER: OnboardingStep[] = [
   "tell-us-about-you",
   "why-we-exist",
   "feature-intro",
-  // Original feature showcases with preview steps after each
+  // Feature showcases
   "feature-goals",
-  "preview-after-goals",
   "feature-ai-buddy",
-  "preview-after-ai-buddy",
   "feature-habits",
-  "preview-after-habits",
   "feature-insights",
-  "preview-after-insights",
   "feature-outro",
   // Section C: AI Personalization (expanded to 6 cards)
   "ai-tone",
