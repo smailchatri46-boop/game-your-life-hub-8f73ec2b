@@ -70,11 +70,11 @@ export function HabitsShowcase({ isOnboarding = false }: HabitsShowcaseProps) {
 
   return (
     <section className={`${isOnboarding ? 'py-4' : 'py-8'} px-4 overflow-hidden w-full`}>
-      {/* Title - centered at top, closer to card */}
-      <div className="max-w-6xl mx-auto text-center mb-2">
+      {/* Title - centered at top */}
+      <div className={`max-w-6xl mx-auto text-center ${isOnboarding ? 'mb-2' : 'mb-6'}`}>
         <ScrollReveal animation="fade-up">
           <h2 className={`font-display ${titleSize} font-semibold`}>
-            Organize Your Daily Routine <span className="gradient-text italic">Effortlessly</span>
+            Organize Your Daily Routine <span className={`gradient-text ${isOnboarding ? 'italic' : ''}`}>Effortlessly</span>
           </h2>
         </ScrollReveal>
       </div>
