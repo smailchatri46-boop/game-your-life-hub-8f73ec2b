@@ -443,6 +443,14 @@ export function OnboardingFlow() {
           />
         );
 
+      case "add-first-habits":
+        return (
+          <JourneyTransitionStep
+            variant="add-first-habits"
+            onNext={goToNext}
+          />
+        );
+
       case "habit-suggestions":
         return (
           <HabitSuggestionsStep

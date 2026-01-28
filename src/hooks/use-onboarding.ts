@@ -42,6 +42,7 @@ export type OnboardingStep =
   // Section F: Journey Transition
   | "journey-readiness"
   | "journey-commitment"
+  | "add-first-habits"
   // Original final steps
   | "habit-suggestions"
   | "goal-creation"
@@ -176,6 +177,7 @@ const STEP_ORDER: OnboardingStep[] = [
   // Section F: Journey Transition
   "journey-readiness",
   "journey-commitment",
+  "add-first-habits",
   // Final steps
   "habit-suggestions",
   "goal-creation",
