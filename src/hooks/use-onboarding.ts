@@ -33,9 +33,13 @@ export type OnboardingStep =
   | "ai-directness"
   | "ai-modes"
   | "ai-proactiveness"
-  // Section D: Video Preview
+  // Section D: Evidence Cards (science-backed trust builders)
+  | "evidence-tracking"
+  | "evidence-accountability"
+  | "evidence-reflect"
+  // Section E: Video Preview
   | "video-preview"
-  // Section E: Journey Transition
+  // Section F: Journey Transition
   | "journey-readiness"
   | "journey-commitment"
   // Original final steps
@@ -163,9 +167,13 @@ const STEP_ORDER: OnboardingStep[] = [
   "ai-directness",
   "ai-modes",
   "ai-proactiveness",
-  // Section D: Video Preview (full-screen)
+  // Section D: Evidence Cards (science-backed trust builders)
+  "evidence-tracking",
+  "evidence-accountability",
+  "evidence-reflect",
+  // Section E: Video Preview (full-screen)
   "video-preview",
-  // Section E: Journey Transition
+  // Section F: Journey Transition
   "journey-readiness",
   "journey-commitment",
   // Final steps
