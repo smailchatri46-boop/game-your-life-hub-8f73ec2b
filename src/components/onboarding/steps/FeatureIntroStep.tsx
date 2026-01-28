@@ -74,7 +74,7 @@ export function FeatureIntroStep({ onComplete }: FeatureIntroStepProps) {
           transition: 'opacity 0.8s ease-in-out',
         }}
       >
-        Here is what you can do inside <span className="gradient-text italic">Neyler</span>
+        Here is what you can do
       </h2>
     </div>
   );

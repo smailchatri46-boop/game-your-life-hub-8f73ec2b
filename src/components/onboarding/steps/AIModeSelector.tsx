@@ -1,7 +1,7 @@
 import { OnboardingCard } from "../OnboardingCard";
 import { Button } from "@/components/ui/button";
 import { AppleEmoji } from "@/components/AppleEmoji";
-import { Check, ChevronRight } from "lucide-react";
+import { ChevronRight } from "lucide-react";
 
 interface AIModeSelectorProps {
   selectedModes: string[];
@@ -46,23 +46,14 @@ export function AIModeSelector({
             <button
               key={mode.label}
               onClick={() => onToggleMode(mode.label)}
-              className={`inline-flex items-center gap-2 px-4 py-2.5 rounded-full text-sm font-medium transition-all duration-200 relative ${
+              className={`inline-flex items-center gap-2 px-4 py-2.5 rounded-full text-sm font-medium transition-all duration-200 ${
                 isSelected
-                  ? "bg-white text-foreground shadow-md"
+                  ? "bg-white text-foreground shadow-md border-2 border-primary"
                   : "bg-white/80 text-foreground border-2 border-border/30 hover:border-primary/40 hover:bg-white"
               }`}
-              style={isSelected ? {
-                background: "linear-gradient(white, white) padding-box, linear-gradient(135deg, hsl(25, 95%, 53%), hsl(35, 95%, 60%)) border-box",
-                border: "2px solid transparent",
-              } : undefined}
             >
               <AppleEmoji emoji={mode.emoji} size="md" />
               {mode.label}
-              {isSelected && (
-                <div className="w-4 h-4 rounded-full bg-gradient-to-r from-amber-400 to-orange-500 flex items-center justify-center ml-1">
-                  <Check className="w-2.5 h-2.5 text-white" />
-                </div>
-              )}
             </button>
           );
         })}
