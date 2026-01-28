@@ -25,8 +25,8 @@ export function AIProactivenessToggle({
   return (
     <OnboardingCard className="py-10 px-8">
       <div className="text-center mb-8">
-        <div className="flex justify-center mb-5">
-          <AppleEmoji emoji="💭" size="7xl" />
+        <div className="flex justify-center mb-4">
+          <AppleEmoji emoji="💭" size="5xl" />
         </div>
         <h2 className="text-xl font-bold font-display text-foreground mb-2">
           How should your AI respond?
@@ -46,7 +46,7 @@ export function AIProactivenessToggle({
               onClick={() => onSelectOption(option.label)}
               className={`flex items-center gap-2 px-5 py-3 rounded-full transition-all ${
                 isSelected
-                  ? "bg-white shadow-md"
+                  ? "bg-white shadow-sm"
                   : "bg-white/60 hover:bg-white/80"
               }`}
               style={isSelected ? {
@@ -54,7 +54,6 @@ export function AIProactivenessToggle({
                 backgroundImage: "linear-gradient(white, white), linear-gradient(135deg, hsl(35, 95%, 55%), hsl(25, 95%, 55%))",
                 backgroundOrigin: "border-box",
                 backgroundClip: "padding-box, border-box",
-                boxShadow: "0 4px 12px rgba(234, 88, 12, 0.15)",
               } : {
                 border: "2px solid hsl(35, 20%, 88%)",
               }}
