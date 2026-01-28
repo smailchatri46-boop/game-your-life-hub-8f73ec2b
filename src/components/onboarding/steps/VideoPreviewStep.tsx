@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { AppleEmoji } from "@/components/AppleEmoji";
 import { ChevronRight } from "lucide-react";
@@ -9,17 +10,25 @@ interface VideoPreviewStepProps {
 }
 
 export function VideoPreviewStep({ onNext }: VideoPreviewStepProps) {
+  // Hide the global scrollbar when this component mounts
+  useEffect(() => {
+    const html = document.documentElement;
+    const originalOverflow = html.style.overflow;
+    const originalOverflowY = html.style.overflowY;
+    
+    // Hide the scrollbar completely
+    html.style.overflow = 'hidden';
+    html.style.overflowY = 'hidden';
+    
+    return () => {
+      // Restore original scrollbar behavior on unmount
+      html.style.overflow = originalOverflow;
+      html.style.overflowY = originalOverflowY;
+    };
+  }, []);
+
   return (
-    <div 
-      className="fixed inset-0 flex flex-col items-center justify-center gradient-hero"
-      style={{ overflow: 'hidden', scrollbarWidth: 'none', msOverflowStyle: 'none' }}
-    >
-      <style>{`
-        .video-preview-container::-webkit-scrollbar {
-          display: none;
-        }
-      `}</style>
-      
+    <div className="fixed inset-0 flex flex-col items-center justify-center gradient-hero overflow-hidden">
       {/* Header */}
       <div className="text-center mb-6">
         <div className="flex justify-center mb-3">
