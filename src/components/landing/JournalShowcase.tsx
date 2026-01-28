@@ -1,5 +1,4 @@
 import { useRef, useEffect } from "react";
-import { GlassCard } from "@/components/GlassCard";
 import { AppleEmoji } from "@/components/AppleEmoji";
 import { ScrollReveal } from "@/components/ScrollReveal";
 
@@ -43,38 +42,44 @@ export function JournalShowcase({ isOnboarding = false }: JournalShowcaseProps) 
     {
       emoji: "😊",
       date: "January 15, 2026",
+      time: "9:30 AM",
       content: "Today was a good day. I managed to complete my morning routine and felt really productive. Started the day with meditation, then worked on my project without any distractions. Feeling grateful for the progress I'm making.",
-      bgColor: "from-amber-50 to-orange-50",
+      bgColor: "bg-journal-green",
     },
     {
       emoji: "🌟",
       date: "January 14, 2026",
+      time: "8:15 PM",
       content: "Had an amazing breakthrough at work today! Finally solved that problem I've been stuck on for days. Sometimes stepping away and coming back with fresh eyes really helps. Celebrated with a nice walk in the evening.",
-      bgColor: "from-blue-50 to-cyan-50",
+      bgColor: "bg-journal-yellow",
     },
     {
       emoji: "🧘",
       date: "January 13, 2026",
+      time: "7:00 PM",
       content: "Focused on mindfulness today. Spent 30 minutes in quiet reflection and journaling. Realized I need to be more patient with myself. Progress isn't always linear, and that's okay. Small steps lead to big changes.",
-      bgColor: "from-purple-50 to-pink-50",
+      bgColor: "bg-journal-purple",
     },
     {
       emoji: "💪",
       date: "January 12, 2026",
+      time: "6:45 PM",
       content: "Pushed through a tough workout even though I didn't feel like it. Proud of myself for showing up anyway. The hardest part is always getting started. Once I'm moving, the energy follows.",
-      bgColor: "from-green-50 to-emerald-50",
+      bgColor: "bg-journal-pink",
     },
     {
       emoji: "📚",
       date: "January 11, 2026",
+      time: "10:00 PM",
       content: "Spent the evening reading and learning. Finished two chapters of the book I've been working through. Knowledge compounds over time, and I'm building habits that will serve me for years to come.",
-      bgColor: "from-rose-50 to-red-50",
+      bgColor: "bg-journal-yellow",
     },
     {
       emoji: "🎯",
       date: "January 10, 2026",
+      time: "9:00 AM",
       content: "Set my intentions for the week ahead. Breaking down big goals into smaller tasks makes everything feel more achievable. Feeling organized and ready to tackle whatever comes my way this week.",
-      bgColor: "from-yellow-50 to-amber-50",
+      bgColor: "bg-journal-orange",
     },
   ];
 
@@ -113,27 +118,26 @@ export function JournalShowcase({ isOnboarding = false }: JournalShowcaseProps) 
             }}
           >
             {duplicatedJournals.map((journal, index) => (
-              <GlassCard 
-                key={index} 
-                className={`p-5 hover:shadow-large transition-all duration-300 flex-shrink-0 ${cardSize} bg-gradient-to-br ${journal.bgColor}`}
+              <div
+                key={index}
+                className={`${journal.bgColor} rounded-3xl p-5 shadow-soft transition-all duration-300 hover:shadow-medium flex-shrink-0 ${cardSize} flex flex-col`}
               >
-                {/* Header with emoji and date */}
-                <div className="flex items-start justify-between mb-4">
-                  <p className="text-sm text-muted-foreground font-medium">
-                    {journal.date}
-                  </p>
-                  <div className="w-12 h-12 rounded-2xl bg-white/60 flex items-center justify-center shadow-sm">
+                {/* Header with emoji and date - matching Journal.tsx exactly */}
+                <div className="flex items-start justify-between mb-3">
+                  <div className="flex items-center gap-3">
                     <AppleEmoji emoji={journal.emoji} size="xl" />
+                    <div>
+                      <p className="font-semibold text-foreground text-sm">{journal.date}</p>
+                      <p className="text-xs text-muted-foreground">{journal.time}</p>
+                    </div>
                   </div>
                 </div>
 
                 {/* Journal content */}
-                <div className="text-left">
-                  <p className="text-sm text-foreground/80 leading-relaxed line-clamp-6">
-                    {journal.content}
-                  </p>
-                </div>
-              </GlassCard>
+                <p className="text-foreground leading-relaxed text-sm flex-1">
+                  {journal.content}
+                </p>
+              </div>
             ))}
           </div>
         </ScrollReveal>
