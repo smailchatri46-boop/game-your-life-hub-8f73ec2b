@@ -70,8 +70,8 @@ export function HabitsShowcase({ isOnboarding = false }: HabitsShowcaseProps) {
 
   return (
     <section className={`${isOnboarding ? 'py-4' : 'py-8'} px-4 overflow-hidden w-full`}>
-      {/* Title - centered at top */}
-      <div className="max-w-6xl mx-auto text-center mb-4">
+      {/* Title - centered at top, closer to card */}
+      <div className="max-w-6xl mx-auto text-center mb-2">
         <ScrollReveal animation="fade-up">
           <h2 className={`font-display ${titleSize} font-semibold`}>
             Organize Your Daily Routine <span className="gradient-text italic">Effortlessly</span>
@@ -79,20 +79,8 @@ export function HabitsShowcase({ isOnboarding = false }: HabitsShowcaseProps) {
         </ScrollReveal>
       </div>
 
-      {/* Description - between title and card */}
-      <div className="max-w-3xl mx-auto text-center mb-8">
-        <ScrollReveal animation="fade-up" delay={100}>
-          <p className={`text-muted-foreground ${descriptionSize} leading-relaxed`}>
-            {isOnboarding 
-              ? "Plan your days with a clean system that makes habits and tasks easy to follow without stress. See your progress at a glance and stay consistent with a routine that actually feels simple."
-              : "Track habits and tasks in a beautiful clean style. See your progress at a glance."
-            }
-          </p>
-        </ScrollReveal>
-      </div>
-
       {/* Habits Grid */}
-      <div className={`w-full ${isOnboarding ? 'mb-6' : 'mb-0'}`}>
+      <div className={`w-full ${isOnboarding ? 'mb-4' : 'mb-4'}`}>
         <ScrollReveal animation="zoom-in" delay={100}>
         <div className="max-w-6xl mx-auto">
           <GlassCard className="p-2 sm:p-3 lg:p-4 overflow-x-auto">
@@ -172,6 +160,18 @@ export function HabitsShowcase({ isOnboarding = false }: HabitsShowcaseProps) {
             </table>
           </GlassCard>
         </div>
+        </ScrollReveal>
+      </div>
+
+      {/* Description - below the card */}
+      <div className="max-w-3xl mx-auto text-center">
+        <ScrollReveal animation="fade-up" delay={200}>
+          <p className={`text-muted-foreground ${descriptionSize} leading-relaxed`}>
+            {isOnboarding 
+              ? "Plan your days with a clean system that makes habits and tasks easy to follow without stress. See your progress at a glance and stay consistent with a routine that actually feels simple."
+              : "Track habits and tasks in a beautiful clean style. See your progress at a glance."
+            }
+          </p>
         </ScrollReveal>
       </div>
 
