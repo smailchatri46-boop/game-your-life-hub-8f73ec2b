@@ -34,11 +34,14 @@ const plans: Plan[] = [
     benefitText: "Everything in Neyler unlocked.",
     popular: true,
     features: [
-      { text: "Unlimited habits & tasks", included: true },
+      { text: "Access to all features", included: true },
+      { text: "Beautiful analytics & insights", included: true },
       { text: "Unlimited goals", included: true },
       { text: "Unlimited to-do lists", included: true },
-      { text: "Full AI Buddy chat access", included: true },
-      { text: "Priority updates", included: true },
+      { text: "Unlimited journal entries", included: true },
+      { text: "Goal-habit linking", included: true },
+      { text: "Unlimited habits & tasks", included: true },
+      { text: "AI chat messages", included: true },
     ],
   },
 ];
@@ -91,9 +94,7 @@ export function PricingSection() {
         {/* Section Header */}
         <div className="text-center mb-8">
           <h2 className="font-display text-3xl md:text-4xl lg:text-5xl font-bold text-foreground mb-3">
-            <span className="font-display">Plans</span>
-            <span className="font-body">&nbsp;&amp;&nbsp;</span>
-            <span className="font-display">Pricing</span>
+            Pricing
           </h2>
           <p className="text-muted-foreground text-lg md:text-xl max-w-2xl mx-auto">
             Choose the plan that fits your journey
