@@ -23,10 +23,10 @@ export function AIProactivenessToggle({
   const canProceed = selectedOption !== null;
 
   return (
-    <OnboardingCard className="py-10 px-8">
-      <div className="text-center mb-8">
+    <OnboardingCard>
+      <div className="text-center mb-6">
         <div className="flex justify-center mb-4">
-          <AppleEmoji emoji="💭" size="3xl" />
+          <AppleEmoji emoji="💭" size="4xl" />
         </div>
         <h2 className="text-xl font-bold font-display text-foreground mb-2">
           How should your AI respond?
@@ -37,7 +37,7 @@ export function AIProactivenessToggle({
       </div>
 
       {/* Pill Options with gradient stroke and shadow */}
-      <div className="flex flex-wrap justify-center gap-3 mb-8">
+      <div className="flex flex-wrap justify-center gap-3 mb-4">
         {OPTIONS.map((option) => {
           const isSelected = selectedOption === option.label;
           return (
