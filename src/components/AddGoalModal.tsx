@@ -86,15 +86,6 @@ export function AddGoalModal({ open, onOpenChange, skipCommitment = false, onGoa
   const [commitmentChecks, setCommitmentChecks] = useState<boolean[]>([false, false, false, false]);
   const [signatureName, setSignatureName] = useState("");
 
-  // Demo habits for when user is not logged in (stored in state so we can add to it)
-  const [localDemoHabits, setLocalDemoHabits] = useState([
-    { id: "demo-1", name: "Morning Meditation", icon: "🧘", target: 1, oncePerDay: false },
-    { id: "demo-2", name: "Exercise", icon: "💪", target: 3, oncePerDay: false },
-    { id: "demo-3", name: "Read 30 mins", icon: "📚", target: 1, oncePerDay: false },
-    { id: "demo-4", name: "Drink Water", icon: "💧", target: 8, oncePerDay: true },
-    { id: "demo-5", name: "No Social Media", icon: "📵", target: 1, oncePerDay: false },
-  ]);
-
   // Fetch user's habits (only when logged in)
   const { data: fetchedHabits = [], refetch: refetchHabits } = useQuery({
     queryKey: ["habits", user?.id],
@@ -111,8 +102,8 @@ export function AddGoalModal({ open, onOpenChange, skipCommitment = false, onGoa
     enabled: !!user,
   });
 
-  // Use fetched habits if logged in, otherwise use local demo habits
-  const habits = user ? fetchedHabits : localDemoHabits;
+  // Only show real user habits - no demo habits
+  const habits = fetchedHabits;
 
   // Get currently selected habit objects
   const selectedHabitObjects = habits.filter((h) => selectedHabits.includes(h.id));
@@ -298,23 +289,7 @@ export function AddGoalModal({ open, onOpenChange, skipCommitment = false, onGoa
   // Handle inline habit creation
   const handleInlineHabitSave = async (newHabit: NewHabit) => {
     if (!user) {
-      // For demo mode, add to local demo habits state
-      const demoHabitId = `demo-${Date.now()}`;
-      const newDemoHabit = {
-        id: demoHabitId,
-        name: newHabit.name,
-        icon: newHabit.icon,
-        target: newHabit.target,
-        oncePerDay: false,
-      };
-      
-      // Add to local demo habits list
-      setLocalDemoHabits(prev => [...prev, newDemoHabit]);
-      
-      // Auto-select the newly created habit
-      setSelectedHabits(prev => [...prev, demoHabitId]);
-      
-      toast.success("Habit created and selected!");
+      toast.error("Please sign up to create habits");
       return;
     }
 
@@ -564,11 +539,23 @@ export function AddGoalModal({ open, onOpenChange, skipCommitment = false, onGoa
                   </div>
                 ) : (
                   <div className="text-center py-6">
-                    <p className="text-muted-foreground mb-4">No habits yet</p>
-                    <Button variant="outline" size="sm">
-                      <Plus className="w-4 h-4 mr-2" />
-                      Create habit first
-                    </Button>
+                    <AppleEmoji emoji="📝" size="2xl" className="mb-3" />
+                    <p className="text-muted-foreground mb-2">
+                      {user ? "You haven't created any habits yet" : "Sign up to create and link habits"}
+                    </p>
+                    <p className="text-xs text-muted-foreground mb-4">
+                      You can link habits to this goal later
+                    </p>
+                    {user && (
+                      <Button 
+                        variant="outline" 
+                        size="sm"
+                        onClick={() => setShowInlineHabitModal(true)}
+                      >
+                        <Plus className="w-4 h-4 mr-2" />
+                        Create a habit
+                      </Button>
+                    )}
                   </div>
                 )}
                 <p className="text-xs text-muted-foreground text-center">
