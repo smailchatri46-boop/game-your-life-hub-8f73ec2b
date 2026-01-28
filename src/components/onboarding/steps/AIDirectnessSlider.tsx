@@ -62,8 +62,8 @@ export function AIDirectnessSlider({
       </div>
 
       {/* Dynamic emoji indicator - contained within card */}
-      <div className="flex justify-center items-center h-16 my-3">
-        <AppleEmoji emoji={currentEmoji} size="6xl" className="max-w-full" />
+      <div className="flex justify-center items-center h-14 my-3">
+        <AppleEmoji emoji={currentEmoji} size="5xl" className="max-w-full" />
       </div>
 
       {/* Helper text */}
