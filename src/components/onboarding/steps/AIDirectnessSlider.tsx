@@ -30,10 +30,10 @@ export function AIDirectnessSlider({
   const currentEmoji = DIRECTNESS_EMOJIS[getEmojiIndex()];
 
   return (
-    <OnboardingCard className="">
-      {/* Title and subtitle at top (no emoji above) */}
-      <div className="text-center mb-6">
-        <h2 className="text-xl font-bold font-display text-foreground mb-2">
+    <OnboardingCard>
+      {/* Title and subtitle at top */}
+      <div className="text-center mb-4">
+        <h2 className="text-xl font-bold font-display text-foreground mb-1">
           How direct should your AI Buddy be?
         </h2>
         <p className="text-muted-foreground text-sm">
@@ -42,8 +42,8 @@ export function AIDirectnessSlider({
       </div>
 
       {/* Slider */}
-      <div className="mb-6 px-2">
-        <div className="mb-4">
+      <div className="mb-3 px-2">
+        <div className="mb-3">
           <Slider
             value={[value]}
             onValueChange={(values) => onChange(values[0])}
@@ -59,15 +59,20 @@ export function AIDirectnessSlider({
           <span>Balanced</span>
           <span>Very direct</span>
         </div>
+      </div>
 
-        {/* Dynamic emoji indicator - much larger */}
-        <div className="text-center mt-6 mb-2">
-          <AppleEmoji emoji={currentEmoji} size="10xl" />
-        </div>
+      {/* Dynamic emoji indicator - scaled up via transform */}
+      <div className="flex justify-center py-2">
+        <span 
+          className="inline-block"
+          style={{ transform: 'scale(2.5)', transformOrigin: 'center' }}
+        >
+          <AppleEmoji emoji={currentEmoji} size="4xl" />
+        </span>
       </div>
 
       {/* Helper text */}
-      <p className="text-xs text-muted-foreground text-center mb-4">
+      <p className="text-xs text-muted-foreground text-center mt-2 mb-3">
         You can always change this later.
       </p>
 
