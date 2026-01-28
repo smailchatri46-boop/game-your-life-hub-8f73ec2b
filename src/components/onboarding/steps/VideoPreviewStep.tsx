@@ -37,7 +37,7 @@ export function VideoPreviewStep({ onNext }: VideoPreviewStepProps) {
         <h2 className="text-2xl font-bold font-display text-foreground mb-2">
           See Neyler in action
         </h2>
-        <p className="text-muted-foreground text-base max-w-md mx-auto px-4">
+        <p className="text-muted-foreground text-base max-w-lg mx-auto px-4 whitespace-nowrap">
           A quick walkthrough of how everything comes together.
         </p>
       </div>

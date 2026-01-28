@@ -70,7 +70,7 @@ const SURVEY_QUESTIONS = {
   },
   "survey-6": {
     emoji: "🧠",
-    title: "Would an AI that sees your daily routine give better advice?",
+    title: "Would an AI that sees your daily routine give you better advice?",
     options: [
       { label: "Yes, that would be amazing" },
       { label: "Maybe, I'd like to try it" },

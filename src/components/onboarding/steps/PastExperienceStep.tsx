@@ -29,7 +29,7 @@ const CONTENT: Record<Variant, {
   "tracking-experience": {
     emoji: "🔍",
     title: "Have you ever tried tracking your life before?",
-    helperText: "There's no right answer — this helps us understand where you're coming from.",
+    helperText: "There's no right answer. This helps us understand where you're coming from.",
     multiSelect: false,
     options: [
       "Yes, and it worked for a while",
