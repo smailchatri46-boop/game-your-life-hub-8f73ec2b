@@ -135,7 +135,7 @@ export function PricingSection() {
         </div>
 
         {/* Pricing Cards */}
-        <div className="flex justify-center mt-8">
+        <div className="flex justify-center mt-12">
           {plans.map((plan) => (
             <div
               key={plan.name}
