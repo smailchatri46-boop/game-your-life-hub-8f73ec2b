@@ -44,12 +44,8 @@ const queryClient = new QueryClient({
   },
 });
 
-// Minimal loading fallback
-const PageLoader = () => (
-  <div className="min-h-screen flex items-center justify-center bg-background">
-    <div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin" />
-  </div>
-);
+// No loading fallback - instant navigation
+const PageLoader = () => null;
 
 const App = () => (
   <HelmetProvider>
