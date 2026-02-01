@@ -93,3 +93,12 @@ export {
   clearOldActivities,
 } from "./activity";
 export type { ActivityType, ActivityLog } from "./activity";
+
+// Onboarding
+export {
+  getOnboardingData,
+  hasCompletedOnboarding,
+  saveOnboardingData,
+  completeOnboardingInDb,
+} from "./onboarding";
+export type { OnboardingRecord } from "./onboarding";
