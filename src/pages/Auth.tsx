@@ -7,7 +7,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { usePolarCheckout } from "@/hooks/use-polar-checkout";
 import { toast } from "sonner";
 import googleLogo from "@/assets/google-logo.png";
-import type { PlanType, BillingPeriod } from "@/lib/polar";
+import type { BillingPeriod } from "@/lib/polar";
 
 interface PendingPlan {
   plan: string; // Can be "pro", "starter", "free", etc.
@@ -16,78 +16,114 @@ interface PendingPlan {
 
 export default function Auth() {
   const navigate = useNavigate();
-  const { user, loading, signInWithGoogle } = useAuth();
+  const { user, loading, isNewUser, signInWithGoogle, clearNewUserFlag } = useAuth();
   const [isSignUp, setIsSignUp] = useState(true);
   const [checkoutShown, setCheckoutShown] = useState(false);
+  const [waitingForUserCheck, setWaitingForUserCheck] = useState(false);
   
   const { openCheckout } = usePolarCheckout({ 
     theme: "light",
     onSuccess: () => {
-      // After successful payment, clear pending plan and go to onboarding
+      // After successful payment, clear pending plan and go to dashboard
       localStorage.removeItem("neyler_pending_plan");
-      navigate("/onboarding");
+      clearNewUserFlag();
+      navigate("/dashboard");
     }
   });
 
   useEffect(() => {
-    if (!loading && user && !checkoutShown) {
-      // Check if user should skip onboarding and go straight to checkout
-      const skipToCheckout = localStorage.getItem("neyler_skip_onboarding_checkout") === "true";
-      
-      // Check if user has completed onboarding
-      const hasCompletedOnboarding = 
-        localStorage.getItem("locked_onboarding_complete") === "true" ||
-        localStorage.getItem("locked_onboarding_skipped") === "true";
-      
-      // If user should skip onboarding and go to checkout
-      if (skipToCheckout) {
-        localStorage.removeItem("neyler_skip_onboarding_checkout");
-        const pendingPlanStr = localStorage.getItem("neyler_pending_plan");
-        
-        if (pendingPlanStr) {
-          try {
-            const pendingPlan: PendingPlan = JSON.parse(pendingPlanStr);
-            setCheckoutShown(true);
-            localStorage.setItem("neyler_current_plan", "pro");
-            // Mark onboarding as complete since they're paying directly
-            localStorage.setItem("locked_onboarding_complete", "true");
-            openCheckout("pro", pendingPlan.period);
-            return;
-          } catch {
-            // Fall through to normal flow
-          }
-        }
-      }
-      
-      // User just logged in - check for pending plan
+    // Wait until we have both user and isNewUser determined
+    if (loading) return;
+    
+    if (user && isNewUser === null) {
+      // User is logged in but we're still checking if they're new
+      setWaitingForUserCheck(true);
+      return;
+    }
+    
+    if (!user) {
+      setWaitingForUserCheck(false);
+      return;
+    }
+    
+    // User is authenticated and we know if they're new or returning
+    setWaitingForUserCheck(false);
+    
+    if (checkoutShown) return;
+
+    // Check if user should skip onboarding and go straight to checkout (from landing CTA)
+    const skipToCheckout = localStorage.getItem("neyler_skip_onboarding_checkout") === "true";
+    
+    if (skipToCheckout) {
+      localStorage.removeItem("neyler_skip_onboarding_checkout");
       const pendingPlanStr = localStorage.getItem("neyler_pending_plan");
       
       if (pendingPlanStr) {
         try {
           const pendingPlan: PendingPlan = JSON.parse(pendingPlanStr);
-          
-          if (pendingPlan.plan === "starter" || pendingPlan.plan === "free") {
-            // Free plan - go to onboarding if not completed
-            localStorage.setItem("neyler_current_plan", "free");
-            localStorage.removeItem("neyler_pending_plan");
-            navigate(hasCompletedOnboarding ? "/dashboard" : "/onboarding");
-          } else {
-            // Paid plan (pro) - show checkout
-            setCheckoutShown(true);
-            localStorage.setItem("neyler_current_plan", "pro");
-            openCheckout("pro", pendingPlan.period);
-          }
+          setCheckoutShown(true);
+          localStorage.setItem("neyler_current_plan", "pro");
+          // Mark onboarding as complete since they're paying directly
+          localStorage.setItem("locked_onboarding_complete", "true");
+          clearNewUserFlag();
+          openCheckout("pro", pendingPlan.period);
+          return;
         } catch {
-          // Invalid pending plan, go to onboarding if not completed
-          localStorage.removeItem("neyler_pending_plan");
-          navigate(hasCompletedOnboarding ? "/dashboard" : "/onboarding");
+          // Fall through to normal flow
         }
-      } else {
-        // No pending plan - first-time users go to onboarding, returning users go to dashboard
-        navigate(hasCompletedOnboarding ? "/dashboard" : "/onboarding");
       }
     }
-  }, [user, loading, navigate, openCheckout, checkoutShown]);
+    
+    // Check for pending plan
+    const pendingPlanStr = localStorage.getItem("neyler_pending_plan");
+    
+    if (pendingPlanStr) {
+      try {
+        const pendingPlan: PendingPlan = JSON.parse(pendingPlanStr);
+        
+        if (pendingPlan.plan === "starter" || pendingPlan.plan === "free") {
+          // Free plan - new users go to onboarding, returning users go to dashboard
+          localStorage.setItem("neyler_current_plan", "free");
+          localStorage.removeItem("neyler_pending_plan");
+          
+          if (isNewUser) {
+            navigate("/onboarding");
+          } else {
+            navigate("/dashboard");
+          }
+        } else {
+          // Paid plan (pro) - show checkout
+          setCheckoutShown(true);
+          localStorage.setItem("neyler_current_plan", "pro");
+          
+          if (isNewUser) {
+            // New user with paid plan - onboarding first, then paywall at end
+            navigate("/onboarding");
+          } else {
+            // Returning user - just show checkout
+            openCheckout("pro", pendingPlan.period);
+          }
+        }
+      } catch {
+        // Invalid pending plan
+        localStorage.removeItem("neyler_pending_plan");
+        if (isNewUser) {
+          navigate("/onboarding");
+        } else {
+          navigate("/dashboard");
+        }
+      }
+    } else {
+      // No pending plan - route based on new vs returning user
+      if (isNewUser) {
+        // New user - show onboarding
+        navigate("/onboarding");
+      } else {
+        // Returning user - go directly to dashboard
+        navigate("/dashboard");
+      }
+    }
+  }, [user, loading, isNewUser, navigate, openCheckout, checkoutShown, clearNewUserFlag]);
 
   const handleGoogleSignIn = async () => {
     const { error } = await signInWithGoogle();
@@ -97,7 +133,7 @@ export default function Auth() {
     }
   };
 
-  if (loading) {
+  if (loading || waitingForUserCheck) {
     return (
       <div className="min-h-screen gradient-hero flex items-center justify-center">
         <div className="animate-pulse text-muted-foreground">Loading...</div>
