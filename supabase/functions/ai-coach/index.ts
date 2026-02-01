@@ -6,9 +6,10 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version',
 };
 
-// Usage limits
-const MONTHLY_MESSAGE_LIMIT = 3000;
-const DAILY_MESSAGE_LIMIT = 180;
+// Cost-controlled usage limits ($2/month budget)
+// Monthly: 1200 messages, Daily: 40 messages
+const MONTHLY_MESSAGE_LIMIT = 1200;
+const DAILY_MESSAGE_LIMIT = 40;
 
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
@@ -61,7 +62,7 @@ serve(async (req) => {
       if (currentMonthCount >= MONTHLY_MESSAGE_LIMIT) {
         return new Response(JSON.stringify({ 
           error: "limit_reached",
-          message: "You've reached your AI coaching limit for this month 😊 Your usage resets at the start of next month."
+          message: "You've reached your AI limit for this month. It resets next month so we can keep Neyler sustainable 🌱"
         }), {
           status: 200,
           headers: { ...corsHeaders, "Content-Type": "application/json" },
@@ -72,7 +73,7 @@ serve(async (req) => {
       if (todayCount >= DAILY_MESSAGE_LIMIT) {
         return new Response(JSON.stringify({ 
           error: "daily_limit_reached",
-          message: "You've reached your AI coaching limit for today 😊 Come back tomorrow!"
+          message: "You've reached today's AI limit. Come back tomorrow for more guidance 🌱"
         }), {
           status: 200,
           headers: { ...corsHeaders, "Content-Type": "application/json" },
@@ -101,12 +102,11 @@ serve(async (req) => {
     }
 
     // Fetch user's data for context
-    let habitsSummary = 'No habits tracked yet';
-    let recentCompletions = 'No completions yet';
-    let journalSummary = 'No journal entries yet';
-    let moodSummary = 'No mood data yet';
     let completedToday = 0;
     let totalHabits = 0;
+    let weeklyAvg = 0;
+    let latestMood = '';
+    let latestJournal = '';
 
     if (userId) {
       const { data: habits } = await supabase
@@ -119,99 +119,57 @@ serve(async (req) => {
         .select('*')
         .eq('user_id', userId)
         .order('date', { ascending: false })
-        .limit(100);
+        .limit(50);
 
       const { data: journals } = await supabase
         .from('journal_entries')
         .select('*')
         .eq('user_id', userId)
         .order('created_at', { ascending: false })
-        .limit(20);
+        .limit(3);
 
       const { data: moodLogs } = await supabase
         .from('mood_logs')
         .select('*')
         .eq('user_id', userId)
         .order('date', { ascending: false })
-        .limit(30);
+        .limit(7);
 
-      habitsSummary = habits?.map(h => 
-        `- ${h.name} (${h.category}): target ${h.target}x/day, importance ${h.importance}%`
-      ).join('\n') || 'No habits tracked yet';
+      // Calculate weekly average
+      if (completions?.length) {
+        const weekAgo = new Date();
+        weekAgo.setDate(weekAgo.getDate() - 7);
+        const weeklyCompletions = completions.filter((c: { date: string }) => new Date(c.date) >= weekAgo);
+        weeklyAvg = Math.round((weeklyCompletions.length / 7) * 100);
+      }
 
-      recentCompletions = completions?.slice(0, 30).map(c => {
-        const habit = habits?.find(h => h.id === c.habit_id);
-        return `${c.date}: ${habit?.name || 'Unknown'} - ${c.value}x`;
-      }).join('\n') || 'No completions yet';
-
-      journalSummary = journals?.map(j => 
-        `[${new Date(j.created_at).toLocaleDateString()}] ${j.emoji || ''} ${j.content.substring(0, 200)}...`
-      ).join('\n\n') || 'No journal entries yet';
-
-      moodSummary = moodLogs?.map(m => 
-        `${m.date}: Mood ${m.mood}/10, Motivation ${m.motivation}/10${m.reflection ? ` - "${m.reflection}"` : ''}`
-      ).join('\n') || 'No mood data yet';
-
-      const todayCompletions = completions?.filter(c => c.date === today) || [];
-      completedToday = todayCompletions.filter(c => {
-        const habit = habits?.find(h => h.id === c.habit_id);
+      // Today's progress
+      const todayCompletions = completions?.filter((c: { date: string }) => c.date === today) || [];
+      completedToday = todayCompletions.filter((c: { habit_id: string; value: number }) => {
+        const habit = habits?.find((h: { id: string; target: number }) => h.id === c.habit_id);
         return habit && c.value >= habit.target;
       }).length;
       totalHabits = habits?.length || 0;
+
+      // Latest mood
+      if (moodLogs?.[0]) {
+        latestMood = `Mood: ${moodLogs[0].mood}/10`;
+      }
+
+      // Latest journal (truncated)
+      if (journals?.[0]) {
+        latestJournal = `Last note: "${journals[0].content.substring(0, 60)}..."`;
+      }
     }
 
-    const systemPrompt = `# Role & Identity
+    // Build concise data summary (cost control - minimal tokens)
+    const dataSummary = `Stats: ${completedToday}/${totalHabits} today, ${weeklyAvg}% weekly. ${latestMood} ${latestJournal}`.trim();
 
-You are an AI wellness coach built into a habit-tracking app.
-Your job is to help users with: habits, routine building, motivation, consistency, overwhelm & burnout prevention, mood & reflection.
-You are supportive but realistic, friendly and simple.
-You are NOT a therapist, doctor, or emergency support.
+    const systemPrompt = `You are a supportive wellness coach. Help with habits, motivation, consistency, avoiding burnout. Be warm, realistic, never shame. Max 120 words, 1 emoji max. No markdown or bullets.
 
-## User's Current Data:
+User data: ${dataSummary}
 
-### Habits Being Tracked:
-${habitsSummary}
-
-### Recent Habit Completions (last 30 days):
-${recentCompletions}
-
-### Recent Journal Entries:
-${journalSummary}
-
-### Mood & Motivation Logs:
-${moodSummary}
-
-### Today's Progress:
-- Completed ${completedToday} out of ${totalHabits} habits today
-
-# Core Behavior Rules
-
-1. Always be supportive + encouraging, but also realistic
-2. Keep answers SHORT (2-5 sentences max), straight to the point
-3. Use simple language anyone can understand
-4. Always include emojis (but don't overdo — 2-5 per answer)
-5. Avoid strange formatting or symbols
-6. Never lecture, shame, or guilt users
-7. Never tell users to "just try harder"
-8. Avoid extreme productivity culture
-9. Tone: warm, practical, kind, honest, normal human friend energy
-
-# Burnout-Prevention Philosophy (VERY IMPORTANT)
-
-You STRONGLY discourage "all-or-nothing" pushing.
-Consistently remind users that:
-- Starting small is best
-- Doing too much too fast causes burnout
-- Progress is built gradually
-- Habits compound slowly
-- Missing days is normal
-- Perfection is NOT the goal
-
-# Response Length Rule
-
-ALWAYS keep replies SHORT. Target: 1-2 short paragraphs maximum.
-
-Remember: You have access to their REAL data, so be specific! Reference their actual habits, journal entries, and progress.`;
+Rules: Encourage gently if behind. Suggest balance if over-performing. Prioritize emotional support if mood drops. Focus on progress, not perfection.`;
 
     console.log('Sending request to AI gateway');
 
@@ -222,12 +180,12 @@ Remember: You have access to their REAL data, so be specific! Reference their ac
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        model: "google/gemini-3-flash-preview",
+        model: "google/gemini-2.5-flash-lite",
         messages: [
           { role: "system", content: systemPrompt },
           ...messages,
         ],
-        max_tokens: 300,
+        max_tokens: 150, // ~120 words max for cost control
       }),
     });
 

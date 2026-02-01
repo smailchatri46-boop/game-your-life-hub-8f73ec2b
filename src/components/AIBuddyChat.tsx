@@ -9,16 +9,12 @@ import { AppleEmoji } from "@/components/AppleEmoji";
 import { parseTextWithEmojis } from "@/utils/parseTextWithEmojis";
 import GlowOrb from "@/components/GlowOrb";
 import { SuggestedQuestions } from "@/components/SuggestedQuestions";
-import { PaywallModal } from "@/components/PaywallModal";
-import { usePlanLimits } from "@/hooks/use-plan-limits";
 
 export function AIBuddyChat() {
   const [message, setMessage] = useState("");
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [showPaywall, setShowPaywall] = useState(false);
   const { user } = useAuth();
   const messagesEndRef = useRef<HTMLDivElement>(null);
-  const { limits } = usePlanLimits();
 
   const {
     messages,
@@ -45,11 +41,6 @@ export function AIBuddyChat() {
     e.preventDefault();
     if (!message.trim() || isLoading) return;
 
-    if (!limits.hasAIAccess) {
-      setShowPaywall(true);
-      return;
-    }
-
     const currentMessage = message;
     setMessage("");
     await sendMessage(currentMessage);
@@ -57,12 +48,6 @@ export function AIBuddyChat() {
 
   const handleSuggestionSelect = async (question: string) => {
     if (isLoading) return;
-
-    if (!limits.hasAIAccess) {
-      setShowPaywall(true);
-      return;
-    }
-
     await sendMessage(question);
   };
 
@@ -218,14 +203,6 @@ export function AIBuddyChat() {
           </div>
         </form>
       </div>
-
-      {/* Paywall Modal */}
-      <PaywallModal 
-        open={showPaywall} 
-        onOpenChange={setShowPaywall}
-        limitType="habits"
-        limitMessage="AI Buddy is a Pro feature. Upgrade to Pro to get personalized AI coaching, habit insights, and unlimited conversations."
-      />
     </div>
   );
 }
