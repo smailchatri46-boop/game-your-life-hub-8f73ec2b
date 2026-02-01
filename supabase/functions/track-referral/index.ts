@@ -1,4 +1,4 @@
-import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -16,13 +16,58 @@ interface TrackReferralRequest {
   customerId?: string;
 }
 
-serve(async (req) => {
+// Helper to create unauthorized response
+function unauthorizedResponse(message = "Unauthorized") {
+  return new Response(
+    JSON.stringify({ error: message }),
+    { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+  );
+}
+
+// Authenticate user from JWT token
+async function authenticateUser(req: Request): Promise<{
+  user: { id: string; email?: string } | null;
+  error: string | null;
+}> {
+  const authHeader = req.headers.get("Authorization");
+  if (!authHeader?.startsWith("Bearer ")) {
+    return { user: null, error: "Missing or invalid authorization header" };
+  }
+
+  const token = authHeader.replace("Bearer ", "");
+  
+  const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
+  const supabaseAnonKey = Deno.env.get("SUPABASE_ANON_KEY")!;
+  
+  const supabase = createClient(supabaseUrl, supabaseAnonKey, {
+    global: { headers: { Authorization: authHeader } }
+  });
+
+  const { data, error } = await supabase.auth.getUser(token);
+  
+  if (error || !data?.user) {
+    console.error("Auth error:", error);
+    return { user: null, error: "Invalid token" };
+  }
+
+  return { user: data.user, error: null };
+}
+
+Deno.serve(async (req) => {
   // Handle CORS preflight requests
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
   }
 
   try {
+    // Authenticate user - only authenticated users can track referrals
+    const { user, error: authError } = await authenticateUser(req);
+    
+    if (authError || !user) {
+      console.error("Authentication failed:", authError);
+      return unauthorizedResponse(authError || "Authentication required");
+    }
+
     const apiSecret = Deno.env.get("ENDORSELY_API_SECRET");
     
     if (!apiSecret) {
@@ -34,7 +79,10 @@ serve(async (req) => {
     }
 
     const body: TrackReferralRequest = await req.json();
-    const { referralId, email, amount, name, customerId } = body;
+    const { referralId, amount, name, customerId } = body;
+
+    // Use the authenticated user's email instead of accepting it from the request
+    const email = user.email;
 
     if (!referralId) {
       console.log("No referral ID provided, skipping tracking");
@@ -44,7 +92,16 @@ serve(async (req) => {
       );
     }
 
-    console.log(`Tracking referral: ${referralId}, amount: $${amount}, email: ${email || "not provided"}`);
+    // Validate amount is a reasonable subscription price
+    if (typeof amount !== 'number' || amount <= 0 || amount > 1000) {
+      console.error("Invalid amount provided:", amount);
+      return new Response(
+        JSON.stringify({ error: "Invalid amount" }),
+        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    console.log(`Tracking referral for user ${user.id}: referralId=${referralId}, amount=$${amount}, email=${email || "not provided"}`);
 
     // Call Endorsely API to track the referral
     const response = await fetch(ENDORSELY_API_URL, {
@@ -59,7 +116,8 @@ serve(async (req) => {
         email: email || undefined,
         amount: Math.round(amount * 100), // Convert to cents
         name: name || undefined,
-        customerId: customerId || undefined,
+        // Use authenticated user's ID as customerId for better tracking
+        customerId: customerId || user.id,
       }),
     });
 
@@ -73,7 +131,7 @@ serve(async (req) => {
     }
 
     const result = await response.json();
-    console.log("Referral tracked successfully:", result);
+    console.log("Referral tracked successfully for user", user.id, ":", result);
 
     return new Response(
       JSON.stringify({ success: true, data: result }),
