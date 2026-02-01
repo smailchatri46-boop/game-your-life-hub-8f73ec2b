@@ -112,15 +112,44 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const signInWithGoogle = async (): Promise<{ error: Error | null }> => {
     try {
-      const result = await lovable.auth.signInWithOAuth("google", {
-        redirect_uri: window.location.origin,
-      });
+      // Detect if we're on a custom domain (not Lovable preview/editor)
+      const isCustomDomain =
+        !window.location.hostname.includes("lovable.app") &&
+        !window.location.hostname.includes("lovableproject.com") &&
+        !window.location.hostname.includes("localhost");
 
-      if (result.error) {
-        return { error: result.error };
+      if (isCustomDomain) {
+        // Bypass Lovable auth-bridge for custom domains by using Supabase directly
+        const { data, error } = await supabase.auth.signInWithOAuth({
+          provider: "google",
+          options: {
+            redirectTo: window.location.origin,
+            skipBrowserRedirect: true,
+          },
+        });
+
+        if (error) {
+          console.error("Google sign-in error:", error);
+          return { error };
+        }
+
+        // Manually redirect to the OAuth URL
+        if (data?.url) {
+          window.location.href = data.url;
+        }
+        return { error: null };
+      } else {
+        // For Lovable domains, use the managed auth flow
+        const result = await lovable.auth.signInWithOAuth("google", {
+          redirect_uri: window.location.origin,
+        });
+
+        if (result.error) {
+          return { error: result.error };
+        }
+
+        return { error: null };
       }
-
-      return { error: null };
     } catch (error) {
       console.error("Google sign-in error:", error);
       return { error: error as Error };
