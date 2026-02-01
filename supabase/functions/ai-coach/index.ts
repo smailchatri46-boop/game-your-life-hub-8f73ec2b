@@ -3,11 +3,10 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version',
 };
 
-// Usage limits: ~$0.90/month budget (text only, ~$0.0003/msg)
-// 180 msgs/day, 3000/month cap
+// Usage limits
 const MONTHLY_MESSAGE_LIMIT = 3000;
 const DAILY_MESSAGE_LIMIT = 180;
 
@@ -34,128 +33,132 @@ serve(async (req) => {
     const monthYear = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
     const today = now.toISOString().split('T')[0];
 
-    // Check usage limits
-    const { data: usageData } = await supabase
-      .from('ai_usage')
-      .select('*')
-      .eq('user_id', userId)
-      .eq('month_year', monthYear)
-      .single();
-
-    let currentMonthCount = usageData?.message_count || 0;
-    let lastMessageDate = usageData?.last_message_date;
-    
-    // Count messages sent today
-    let todayCount = 0;
-    if (lastMessageDate === today && usageData) {
-      const { count } = await supabase
-        .from('chat_messages')
-        .select('*', { count: 'exact', head: true })
+    // Check usage limits if userId is provided
+    if (userId) {
+      const { data: usageData } = await supabase
+        .from('ai_usage')
+        .select('*')
         .eq('user_id', userId)
-        .eq('role', 'user')
-        .gte('created_at', `${today}T00:00:00Z`);
-      todayCount = count || 0;
-    }
+        .eq('month_year', monthYear)
+        .single();
 
-    // Check if user hit monthly limit
-    if (currentMonthCount >= MONTHLY_MESSAGE_LIMIT) {
-      return new Response(JSON.stringify({ 
-        error: "limit_reached",
-        message: "You've reached your AI coaching limit for this month 😊 Your usage resets at the start of next month. You can download your data as a PDF and continue chatting in any AI you like (ChatGPT, Gemini, etc.) 📄✨"
-      }), {
-        status: 429,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
-    }
+      let currentMonthCount = usageData?.message_count || 0;
+      let lastMessageDate = usageData?.last_message_date;
+      
+      // Count messages sent today
+      let todayCount = 0;
+      if (lastMessageDate === today && usageData) {
+        const { count } = await supabase
+          .from('chat_messages')
+          .select('*', { count: 'exact', head: true })
+          .eq('user_id', userId)
+          .eq('role', 'user')
+          .gte('created_at', `${today}T00:00:00Z`);
+        todayCount = count || 0;
+      }
 
-    // Check if user hit daily limit
-    if (todayCount >= DAILY_MESSAGE_LIMIT) {
-      return new Response(JSON.stringify({ 
-        error: "daily_limit_reached",
-        message: "You've reached your AI coaching limit for today 😊 To spread usage fairly across the month, come back tomorrow! You can also download your data as a PDF and continue chatting in any AI you like 📄✨"
-      }), {
-        status: 429,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
-    }
-
-    // Update or create usage record
-    if (usageData) {
-      await supabase
-        .from('ai_usage')
-        .update({ 
-          message_count: currentMonthCount + 1,
-          last_message_date: today
-        })
-        .eq('id', usageData.id);
-    } else {
-      await supabase
-        .from('ai_usage')
-        .insert({ 
-          user_id: userId,
-          month_year: monthYear,
-          message_count: 1,
-          last_message_date: today
+      // Check if user hit monthly limit
+      if (currentMonthCount >= MONTHLY_MESSAGE_LIMIT) {
+        return new Response(JSON.stringify({ 
+          error: "limit_reached",
+          message: "You've reached your AI coaching limit for this month 😊 Your usage resets at the start of next month."
+        }), {
+          status: 200,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
         });
+      }
+
+      // Check if user hit daily limit
+      if (todayCount >= DAILY_MESSAGE_LIMIT) {
+        return new Response(JSON.stringify({ 
+          error: "daily_limit_reached",
+          message: "You've reached your AI coaching limit for today 😊 Come back tomorrow!"
+        }), {
+          status: 200,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+
+      // Update or create usage record
+      if (usageData) {
+        await supabase
+          .from('ai_usage')
+          .update({ 
+            message_count: currentMonthCount + 1,
+            last_message_date: today
+          })
+          .eq('id', usageData.id);
+      } else {
+        await supabase
+          .from('ai_usage')
+          .insert({ 
+            user_id: userId,
+            month_year: monthYear,
+            message_count: 1,
+            last_message_date: today
+          });
+      }
     }
 
-    // Fetch user's habits with completions
-    const { data: habits } = await supabase
-      .from('habits')
-      .select('*')
-      .eq('user_id', userId);
+    // Fetch user's data for context
+    let habitsSummary = 'No habits tracked yet';
+    let recentCompletions = 'No completions yet';
+    let journalSummary = 'No journal entries yet';
+    let moodSummary = 'No mood data yet';
+    let completedToday = 0;
+    let totalHabits = 0;
 
-    const { data: completions } = await supabase
-      .from('habit_completions')
-      .select('*')
-      .eq('user_id', userId)
-      .order('date', { ascending: false })
-      .limit(100);
+    if (userId) {
+      const { data: habits } = await supabase
+        .from('habits')
+        .select('*')
+        .eq('user_id', userId);
 
-    // Fetch journal entries
-    const { data: journals } = await supabase
-      .from('journal_entries')
-      .select('*')
-      .eq('user_id', userId)
-      .order('created_at', { ascending: false })
-      .limit(20);
+      const { data: completions } = await supabase
+        .from('habit_completions')
+        .select('*')
+        .eq('user_id', userId)
+        .order('date', { ascending: false })
+        .limit(100);
 
-    // Fetch mood logs
-    const { data: moodLogs } = await supabase
-      .from('mood_logs')
-      .select('*')
-      .eq('user_id', userId)
-      .order('date', { ascending: false })
-      .limit(30);
+      const { data: journals } = await supabase
+        .from('journal_entries')
+        .select('*')
+        .eq('user_id', userId)
+        .order('created_at', { ascending: false })
+        .limit(20);
 
-    // Build context about user's data
-    const habitsSummary = habits?.map(h => 
-      `- ${h.name} (${h.category}): target ${h.target}x/day, importance ${h.importance}%`
-    ).join('\n') || 'No habits tracked yet';
+      const { data: moodLogs } = await supabase
+        .from('mood_logs')
+        .select('*')
+        .eq('user_id', userId)
+        .order('date', { ascending: false })
+        .limit(30);
 
-    const recentCompletions = completions?.slice(0, 30).map(c => {
-      const habit = habits?.find(h => h.id === c.habit_id);
-      return `${c.date}: ${habit?.name || 'Unknown'} - ${c.value}x`;
-    }).join('\n') || 'No completions yet';
+      habitsSummary = habits?.map(h => 
+        `- ${h.name} (${h.category}): target ${h.target}x/day, importance ${h.importance}%`
+      ).join('\n') || 'No habits tracked yet';
 
-    const journalSummary = journals?.map(j => 
-      `[${new Date(j.created_at).toLocaleDateString()}] ${j.emoji || ''} ${j.content.substring(0, 200)}...`
-    ).join('\n\n') || 'No journal entries yet';
+      recentCompletions = completions?.slice(0, 30).map(c => {
+        const habit = habits?.find(h => h.id === c.habit_id);
+        return `${c.date}: ${habit?.name || 'Unknown'} - ${c.value}x`;
+      }).join('\n') || 'No completions yet';
 
-    const moodSummary = moodLogs?.map(m => 
-      `${m.date}: Mood ${m.mood}/10, Motivation ${m.motivation}/10${m.reflection ? ` - "${m.reflection}"` : ''}`
-    ).join('\n') || 'No mood data yet';
+      journalSummary = journals?.map(j => 
+        `[${new Date(j.created_at).toLocaleDateString()}] ${j.emoji || ''} ${j.content.substring(0, 200)}...`
+      ).join('\n\n') || 'No journal entries yet';
 
-    // Calculate some stats
-    const todayCompletions = completions?.filter(c => c.date === today) || [];
-    const completedToday = todayCompletions.filter(c => {
-      const habit = habits?.find(h => h.id === c.habit_id);
-      return habit && c.value >= habit.target;
-    }).length;
+      moodSummary = moodLogs?.map(m => 
+        `${m.date}: Mood ${m.mood}/10, Motivation ${m.motivation}/10${m.reflection ? ` - "${m.reflection}"` : ''}`
+      ).join('\n') || 'No mood data yet';
 
-    // Calculate remaining messages for context
-    const remainingMonthly = MONTHLY_MESSAGE_LIMIT - currentMonthCount - 1;
-    const remainingDaily = DAILY_MESSAGE_LIMIT - todayCount - 1;
+      const todayCompletions = completions?.filter(c => c.date === today) || [];
+      completedToday = todayCompletions.filter(c => {
+        const habit = habits?.find(h => h.id === c.habit_id);
+        return habit && c.value >= habit.target;
+      }).length;
+      totalHabits = habits?.length || 0;
+    }
 
     const systemPrompt = `# Role & Identity
 
@@ -179,10 +182,7 @@ ${journalSummary}
 ${moodSummary}
 
 ### Today's Progress:
-- Completed ${completedToday} out of ${habits?.length || 0} habits today
-
-### Usage Info:
-- User has ${remainingDaily} messages left today, ${remainingMonthly} left this month
+- Completed ${completedToday} out of ${totalHabits} habits today
 
 # Core Behavior Rules
 
@@ -207,53 +207,13 @@ Consistently remind users that:
 - Missing days is normal
 - Perfection is NOT the goal
 
-Preferred phrases:
-- "start tiny and build up slowly 😊"
-- "half of what you think you can do is usually perfect 👍"
-- "consistency > intensity 🔁"
-- "avoid burnout, keep it light 🌱"
-
-Do NOT encourage:
-- Doubling or 10× habits suddenly
-- Extreme productivity challenges
-- Unrealistic goals
-
-If users ask for huge step-ups, gently slow them down.
-
-# Progressive Habit-Build Support
-
-When users want to start a new habit, encourage:
-- Start with one time per day
-- Add slowly over weeks
-- "Progressive ramp-up"
-- Celebrating small wins
-
-Example: "Let's start small and ramp it up over time 🌱 Tiny steps beat big bursts that burn out 🔥➡️💤"
-
-# Content Boundaries
-
-You mainly talk about: habits, wellness, goals, routines, mindset, journaling, motivation, discipline (healthy, non-harsh), balancing life and energy.
-
-Politely refuse unrelated topics: politics, programming, homework help, legal advice, explicit content.
-Redirect: "I'm here mainly to help with your habits and well-being 😊 Let's focus there."
-
-# Tutorials Redirection
-
-If users ask how to use the app or features, redirect them:
-"You can open the Tutorials tab to see short guides 🎓"
-
 # Response Length Rule
 
-ALWAYS keep replies SHORT. Avoid essays. Target: 1-2 short paragraphs maximum.
-${remainingDaily <= 3 ? "IMPORTANT: User is running low on daily messages - keep this response extra brief!" : ""}
-
-# Data Export
-
-If user asks about limits or exporting data, mention they can download their data as a PDF and continue in other AI tools.
+ALWAYS keep replies SHORT. Target: 1-2 short paragraphs maximum.
 
 Remember: You have access to their REAL data, so be specific! Reference their actual habits, journal entries, and progress.`;
 
-    console.log('Sending request to AI gateway with user context');
+    console.log('Sending request to AI gateway');
 
     const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
@@ -262,12 +222,11 @@ Remember: You have access to their REAL data, so be specific! Reference their ac
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        model: "google/gemini-2.5-flash",
+        model: "google/gemini-3-flash-preview",
         messages: [
           { role: "system", content: systemPrompt },
           ...messages,
         ],
-        stream: true,
         max_tokens: 300,
       }),
     });
@@ -293,8 +252,11 @@ Remember: You have access to their REAL data, so be specific! Reference their ac
       });
     }
 
-    return new Response(response.body, {
-      headers: { ...corsHeaders, "Content-Type": "text/event-stream" },
+    const data = await response.json();
+    const aiResponse = data.choices?.[0]?.message?.content || "I'm here to help with your habits and goals! What would you like to discuss?";
+
+    return new Response(JSON.stringify({ response: aiResponse }), {
+      headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   } catch (error) {
     console.error("AI coach error:", error);
