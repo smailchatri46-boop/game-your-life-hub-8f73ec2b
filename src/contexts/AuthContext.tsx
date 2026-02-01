@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useEffect, ReactNode } from "react";
+import { createContext, useContext, useState, useEffect, ReactNode, useCallback } from "react";
 import { 
   User as FirebaseUser,
   GoogleAuthProvider,
@@ -7,6 +7,7 @@ import {
   onAuthStateChanged
 } from "firebase/auth";
 import { auth, isFirebaseConfigured } from "@/lib/firebase";
+import { getProfile, createProfile } from "@/services/firestore/profiles";
 
 // User type matching Firebase User structure
 interface User {
@@ -27,8 +28,10 @@ interface AuthContextType {
   user: User | null;
   session: Session | null;
   loading: boolean;
+  isNewUser: boolean | null; // null = not yet determined, true = new user, false = returning user
   signInWithGoogle: () => Promise<{ error: Error | null }>;
   signOut: () => Promise<void>;
+  clearNewUserFlag: () => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -50,6 +53,32 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
+  const [isNewUser, setIsNewUser] = useState<boolean | null>(null);
+
+  // Check if user profile exists in Firestore to determine new vs returning user
+  const checkUserStatus = useCallback(async (firebaseUser: FirebaseUser) => {
+    try {
+      const profile = await getProfile(firebaseUser.uid);
+      
+      if (profile) {
+        // Profile exists - returning user
+        setIsNewUser(false);
+      } else {
+        // No profile - new user, create one
+        await createProfile(
+          firebaseUser.uid,
+          firebaseUser.email,
+          firebaseUser.displayName,
+          firebaseUser.photoURL
+        );
+        setIsNewUser(true);
+      }
+    } catch (error) {
+      console.error("Error checking user status:", error);
+      // Default to showing onboarding on error
+      setIsNewUser(true);
+    }
+  }, []);
 
   useEffect(() => {
     if (!auth || !isFirebaseConfigured()) {
@@ -69,15 +98,21 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           user: mappedUser!,
           access_token: token,
         });
+        
+        // Check if new or returning user (deferred to avoid deadlock)
+        setTimeout(() => {
+          checkUserStatus(firebaseUser);
+        }, 0);
       } else {
         setSession(null);
+        setIsNewUser(null);
       }
       
       setLoading(false);
     });
 
     return () => unsubscribe();
-  }, []);
+  }, [checkUserStatus]);
 
   const signInWithGoogle = async (): Promise<{ error: Error | null }> => {
     if (!auth || !isFirebaseConfigured()) {
@@ -104,13 +139,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       await firebaseSignOut(auth);
       setUser(null);
       setSession(null);
+      setIsNewUser(null);
     } catch (error) {
       console.error("Sign out error:", error);
     }
   };
 
+  const clearNewUserFlag = useCallback(() => {
+    setIsNewUser(false);
+  }, []);
+
   return (
-    <AuthContext.Provider value={{ user, session, loading, signInWithGoogle, signOut }}>
+    <AuthContext.Provider value={{ user, session, loading, isNewUser, signInWithGoogle, signOut, clearNewUserFlag }}>
       {children}
     </AuthContext.Provider>
   );
