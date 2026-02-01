@@ -1,6 +1,4 @@
-// Firestore services - now redirecting to Supabase
-// This file maintains backwards compatibility while using Supabase as the backend
-
+// Supabase services - centralized exports
 // Types
 export type {
   Profile,
@@ -14,9 +12,9 @@ export type {
   ChatConversation,
   ChatMessage,
   AIUsage,
-} from "./types";
+} from "@/services/firestore/types";
 
-// Re-export from Supabase services
+// Habits
 export {
   getHabits,
   createHabit,
@@ -26,8 +24,9 @@ export {
   getCompletionForDate,
   upsertCompletion,
   deleteCompletion,
-} from "@/services/supabase/habits";
+} from "./habits";
 
+// Goals
 export {
   getGoals,
   createGoal,
@@ -37,32 +36,36 @@ export {
   getGoalHabits,
   linkHabitToGoal,
   unlinkHabitFromGoal,
-} from "@/services/supabase/goals";
+} from "./goals";
 
+// Journal
 export {
   getJournalEntries,
   createJournalEntry,
   updateJournalEntry,
   deleteJournalEntry,
   getJournalEntryCount,
-} from "@/services/supabase/journal";
+} from "./journal";
 
+// Mood
 export {
   getMoodLogs,
   getMoodLogForDate,
   upsertMoodLog,
   deleteMoodLog,
   getRecentMoodLogs,
-} from "@/services/supabase/mood";
+} from "./mood";
 
+// Todos
 export {
   getTodosForDate,
   createTodo,
   updateTodo,
   toggleTodo,
   deleteTodo,
-} from "@/services/supabase/todos";
+} from "./todos";
 
+// Chat
 export {
   getConversations,
   createConversation,
@@ -73,11 +76,12 @@ export {
   getAIUsage,
   updateAIUsage,
   getTodayMessageCount,
-} from "@/services/supabase/chat";
+} from "./chat";
 
+// Profiles
 export {
   getProfile,
   createProfile,
   updateProfile,
   ensureProfile,
-} from "@/services/supabase/profiles";
+} from "./profiles";

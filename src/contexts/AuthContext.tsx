@@ -1,16 +1,9 @@
 import { createContext, useContext, useState, useEffect, ReactNode, useCallback } from "react";
-import { 
-  User as FirebaseUser,
-  GoogleAuthProvider,
-  signInWithPopup,
-  signOut as firebaseSignOut,
-  onAuthStateChanged
-} from "firebase/auth";
-import { auth, isFirebaseConfigured } from "@/lib/firebase";
-import { getProfile, createProfile } from "@/services/firestore/profiles";
+import { User, Session } from "@supabase/supabase-js";
+import { supabase } from "@/integrations/supabase/client";
+import { lovable } from "@/integrations/lovable/index";
 
-// User type matching Firebase User structure
-interface User {
+interface AuthUser {
   id: string;
   email: string | null;
   user_metadata?: {
@@ -19,16 +12,11 @@ interface User {
   };
 }
 
-interface Session {
-  user: User;
-  access_token: string;
-}
-
 interface AuthContextType {
-  user: User | null;
+  user: AuthUser | null;
   session: Session | null;
   loading: boolean;
-  isNewUser: boolean | null; // null = not yet determined, true = new user, false = returning user
+  isNewUser: boolean | null;
   signInWithGoogle: () => Promise<{ error: Error | null }>;
   signOut: () => Promise<void>;
   clearNewUserFlag: () => void;
@@ -36,95 +24,102 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-// Convert Firebase User to our User type
-const mapFirebaseUser = (firebaseUser: FirebaseUser | null): User | null => {
-  if (!firebaseUser) return null;
+// Convert Supabase User to our AuthUser type
+const mapSupabaseUser = (supabaseUser: User | null): AuthUser | null => {
+  if (!supabaseUser) return null;
   return {
-    id: firebaseUser.uid,
-    email: firebaseUser.email,
+    id: supabaseUser.id,
+    email: supabaseUser.email ?? null,
     user_metadata: {
-      full_name: firebaseUser.displayName || undefined,
-      avatar_url: firebaseUser.photoURL || undefined,
+      full_name: supabaseUser.user_metadata?.full_name || supabaseUser.user_metadata?.name,
+      avatar_url: supabaseUser.user_metadata?.avatar_url || supabaseUser.user_metadata?.picture,
     },
   };
 };
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState<AuthUser | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
   const [isNewUser, setIsNewUser] = useState<boolean | null>(null);
 
-  // Check if user profile exists in Firestore to determine new vs returning user
-  const checkUserStatus = useCallback(async (firebaseUser: FirebaseUser) => {
+  // Check if user profile exists to determine new vs returning user
+  const checkUserStatus = useCallback(async (userId: string) => {
     try {
-      const profile = await getProfile(firebaseUser.uid);
-      
+      const { data: profile, error } = await supabase
+        .from("profiles")
+        .select("id")
+        .eq("id", userId)
+        .maybeSingle();
+
+      if (error) {
+        console.error("Error checking profile:", error);
+        setIsNewUser(true);
+        return;
+      }
+
       if (profile) {
         // Profile exists - returning user
         setIsNewUser(false);
       } else {
-        // No profile - new user, create one
-        await createProfile(
-          firebaseUser.uid,
-          firebaseUser.email,
-          firebaseUser.displayName,
-          firebaseUser.photoURL
-        );
+        // No profile - new user (profile will be created by database trigger)
         setIsNewUser(true);
       }
     } catch (error) {
       console.error("Error checking user status:", error);
-      // Default to showing onboarding on error
       setIsNewUser(true);
     }
   }, []);
 
   useEffect(() => {
-    if (!auth || !isFirebaseConfigured()) {
-      console.warn("Firebase Auth not configured");
-      setLoading(false);
-      return;
-    }
+    // Set up auth state listener FIRST
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      (event, session) => {
+        setSession(session);
+        const mappedUser = mapSupabaseUser(session?.user ?? null);
+        setUser(mappedUser);
 
-    // Listen for auth state changes
-    const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
-      const mappedUser = mapFirebaseUser(firebaseUser);
-      setUser(mappedUser);
-      
-      if (firebaseUser) {
-        const token = await firebaseUser.getIdToken();
-        setSession({
-          user: mappedUser!,
-          access_token: token,
-        });
+        // Defer profile check to avoid deadlock
+        if (session?.user) {
+          setTimeout(() => {
+            checkUserStatus(session.user.id);
+          }, 0);
+        } else {
+          setIsNewUser(null);
+        }
         
-        // Check if new or returning user (deferred to avoid deadlock)
+        setLoading(false);
+      }
+    );
+
+    // THEN check for existing session
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setSession(session);
+      const mappedUser = mapSupabaseUser(session?.user ?? null);
+      setUser(mappedUser);
+
+      if (session?.user) {
         setTimeout(() => {
-          checkUserStatus(firebaseUser);
+          checkUserStatus(session.user.id);
         }, 0);
-      } else {
-        setSession(null);
-        setIsNewUser(null);
       }
       
       setLoading(false);
     });
 
-    return () => unsubscribe();
+    return () => subscription.unsubscribe();
   }, [checkUserStatus]);
 
   const signInWithGoogle = async (): Promise<{ error: Error | null }> => {
-    if (!auth || !isFirebaseConfigured()) {
-      return { error: new Error("Firebase Auth not configured. Please add your Firebase credentials.") };
-    }
-
     try {
-      const provider = new GoogleAuthProvider();
-      provider.addScope('email');
-      provider.addScope('profile');
-      
-      await signInWithPopup(auth, provider);
+      const result = await lovable.auth.signInWithOAuth("google", {
+        redirect_uri: window.location.origin,
+      });
+
+      if (result.error) {
+        return { error: result.error };
+      }
+
       return { error: null };
     } catch (error) {
       console.error("Google sign-in error:", error);
@@ -133,10 +128,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   const signOut = async () => {
-    if (!auth) return;
-    
     try {
-      await firebaseSignOut(auth);
+      await supabase.auth.signOut();
       setUser(null);
       setSession(null);
       setIsNewUser(null);

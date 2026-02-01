@@ -1,5 +1,14 @@
 import { useCallback, useRef, useState } from "react";
 import { useAuth } from "@/contexts/AuthContext";
+import { supabase } from "@/integrations/supabase/client";
+import {
+  getConversations,
+  createConversation,
+  updateConversation,
+  deleteConversation as deleteConversationService,
+  getMessages,
+  createMessage,
+} from "@/services/supabase/chat";
 
 export type Message = {
   id: string;
@@ -72,32 +81,74 @@ export function useAIChat() {
   const isAuthed = !!user;
 
   const loadConversations = useCallback(async () => {
-    if (!isAuthed) {
+    if (!isAuthed || !user) {
       setConversations([]);
       return;
     }
-    // TODO: Replace with Firebase Firestore query
-    setConversations([]);
-  }, [isAuthed]);
+    
+    try {
+      const convs = await getConversations(user.id);
+      setConversations(convs.map(c => ({
+        id: c.id,
+        title: c.title,
+        createdAt: new Date(c.created_at),
+        updatedAt: new Date(c.updated_at),
+      })));
+    } catch (error) {
+      console.error("Error loading conversations:", error);
+      setConversations([]);
+    }
+  }, [isAuthed, user]);
 
   const loadConversation = useCallback(
     async (conversationId: string) => {
       setCurrentConversationId(conversationId);
       currentConvIdRef.current = conversationId;
 
-      if (!isAuthed) {
-        // Dev mode: messages are local-only.
+      if (!isAuthed || !user) {
         return;
       }
 
-      // TODO: Replace with Firebase Firestore query
-      setMessages([]);
+      try {
+        const msgs = await getMessages(conversationId, user.id);
+        setMessages(msgs.map(m => ({
+          id: m.id,
+          role: m.role,
+          content: m.content,
+          timestamp: new Date(m.created_at),
+        })));
+      } catch (error) {
+        console.error("Error loading messages:", error);
+        setMessages([]);
+      }
     },
-    [isAuthed]
+    [isAuthed, user]
   );
 
   const startNewConversation = useCallback(async (): Promise<string | null> => {
     const now = new Date();
+    
+    if (isAuthed && user) {
+      try {
+        const conv = await createConversation(user.id, "New chat");
+        const newConv: Conversation = {
+          id: conv.id,
+          title: conv.title,
+          createdAt: new Date(conv.created_at),
+          updatedAt: new Date(conv.updated_at),
+        };
+        setConversations((prev) => [newConv, ...prev]);
+        setCurrentConversationId(conv.id);
+        currentConvIdRef.current = conv.id;
+        setMessages([]);
+        return conv.id;
+      } catch (error) {
+        console.error("Error creating conversation:", error);
+        return null;
+      }
+    }
+
+    // Local-only for unauthenticated users
     const id = crypto.randomUUID();
     const newConv: Conversation = {
       id,
@@ -110,7 +161,7 @@ export function useAIChat() {
     currentConvIdRef.current = id;
     setMessages([]);
     return id;
-  }, []);
+  }, [isAuthed, user]);
 
   const updateConversationTitle = useCallback(
     async (conversationId: string, title: string) => {
@@ -120,9 +171,15 @@ export function useAIChat() {
         prev.map((c) => (c.id === conversationId ? { ...c, title: title.trim(), updatedAt: new Date() } : c))
       );
       
-      // TODO: Persist to Firebase if authenticated
+      if (isAuthed && user) {
+        try {
+          await updateConversation(conversationId, user.id, { title: title.trim() });
+        } catch (error) {
+          console.error("Error updating conversation title:", error);
+        }
+      }
     },
-    []
+    [isAuthed, user]
   );
 
   const deleteConversation = useCallback(
@@ -134,9 +191,15 @@ export function useAIChat() {
         setMessages([]);
       }
       
-      // TODO: Delete from Firebase if authenticated
+      if (isAuthed && user) {
+        try {
+          await deleteConversationService(conversationId, user.id);
+        } catch (error) {
+          console.error("Error deleting conversation:", error);
+        }
+      }
     },
-    []
+    [isAuthed, user]
   );
 
   const sendMessage = useCallback(
@@ -162,15 +225,43 @@ export function useAIChat() {
       setIsLoading(true);
 
       try {
-        // TODO: Replace with Gemini API call via Firebase Cloud Function or direct API
-        // For now, show a placeholder response
-        const assistantContent = "AI chat is not configured yet. Please provide your Firebase config and Gemini API key to enable this feature.";
+        // Save user message to database if authenticated
+        if (isAuthed && user) {
+          await createMessage(user.id, convId, trimmed, "user");
+        }
+
+        // Build message history for AI
+        const messageHistory = [...messages, userMessage].map(m => ({
+          role: m.role,
+          content: m.content,
+        }));
+
+        // Call AI coach edge function
+        const { data, error } = await supabase.functions.invoke("ai-coach", {
+          body: { messages: messageHistory, userId: user?.id },
+        });
+
+        let assistantContent: string;
+        
+        if (error) {
+          console.error("AI error:", error);
+          assistantContent = "I'm having trouble connecting right now. Please try again in a moment.";
+        } else if (data?.error) {
+          assistantContent = data.message || data.error;
+        } else {
+          assistantContent = data?.response || "I'm here to help! What would you like to discuss about your habits and goals?";
+        }
         
         const assistantId = crypto.randomUUID();
         setMessages((prev) => [
           ...prev,
           { id: assistantId, role: "assistant", content: assistantContent, timestamp: new Date() },
         ]);
+
+        // Save assistant message to database if authenticated
+        if (isAuthed && user) {
+          await createMessage(user.id, convId, assistantContent, "assistant");
+        }
 
         // Auto-generate smart title from first AI response
         if (messages.length === 0) {
@@ -192,7 +283,7 @@ export function useAIChat() {
         setIsLoading(false);
       }
     },
-    [isLoading, messages, startNewConversation, updateConversationTitle]
+    [isLoading, messages, startNewConversation, updateConversationTitle, isAuthed, user]
   );
 
   const clearMessages = useCallback(() => {
