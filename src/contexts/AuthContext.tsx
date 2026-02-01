@@ -2,6 +2,7 @@ import { createContext, useContext, useState, useEffect, ReactNode, useCallback 
 import { User, Session } from "@supabase/supabase-js";
 import { supabase } from "@/integrations/supabase/client";
 import { lovable } from "@/integrations/lovable/index";
+import { hasCompletedOnboarding } from "@/services/supabase/onboarding";
 
 interface AuthUser {
   id: string;
@@ -43,30 +44,33 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(true);
   const [isNewUser, setIsNewUser] = useState<boolean | null>(null);
 
-  // Check if user profile exists to determine new vs returning user
+  // Check onboarding completion to determine new vs returning user
   const checkUserStatus = useCallback(async (userId: string) => {
     try {
-      const { data: profile, error } = await supabase
-        .from("profiles")
-        .select("id")
-        .eq("id", userId)
-        .maybeSingle();
-
-      if (error) {
-        console.error("Error checking profile:", error);
-        setIsNewUser(true);
+      // First check localStorage for quick response
+      const localOnboardingComplete = 
+        localStorage.getItem("locked_onboarding_complete") === "true" ||
+        localStorage.getItem("locked_onboarding_skipped") === "true";
+      
+      if (localOnboardingComplete) {
+        setIsNewUser(false);
         return;
       }
 
-      if (profile) {
-        // Profile exists - returning user
+      // Then check database for onboarding completion
+      const dbOnboardingComplete = await hasCompletedOnboarding(userId);
+      
+      if (dbOnboardingComplete) {
+        // Sync localStorage with database
+        localStorage.setItem("locked_onboarding_complete", "true");
         setIsNewUser(false);
       } else {
-        // No profile - new user (profile will be created by database trigger)
+        // User hasn't completed onboarding - treat as "new user"
         setIsNewUser(true);
       }
     } catch (error) {
       console.error("Error checking user status:", error);
+      // If we can't determine, assume new user to be safe
       setIsNewUser(true);
     }
   }, []);
