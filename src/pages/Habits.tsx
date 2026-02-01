@@ -254,6 +254,8 @@ export default function Habits() {
         date: dateKey,
         currentValue,
         target: habit.target,
+        habitName: habit.name,
+        habitIcon: habit.icon,
       });
     }
   };

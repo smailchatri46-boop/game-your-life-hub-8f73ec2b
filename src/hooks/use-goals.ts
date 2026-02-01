@@ -12,6 +12,7 @@ import {
   incrementGoalProgress as incrementGoalProgressService,
   getGoalHabits,
 } from "@/services/firestore/goals";
+import { logActivity } from "@/services/supabase/activity";
 
 export interface Goal {
   id: string;
@@ -129,7 +130,7 @@ export function useGoals() {
         return newGoal;
       }
 
-      return await createGoalService(
+      const goal = await createGoalService(
         user!.id,
         {
           name: input.name,
@@ -141,11 +142,17 @@ export function useGoals() {
         },
         input.habit_ids
       );
+      
+      // Log activity for goal creation
+      await logActivity(user!.id, "goal_created", input.name, input.category_emoji, goal.id);
+      
+      return goal;
     },
     onSuccess: (_, __, context) => {
       if (!isDemo) {
         queryClient.invalidateQueries({ queryKey: ["goals"] });
         queryClient.invalidateQueries({ queryKey: ["goal_habits"] });
+        queryClient.invalidateQueries({ queryKey: ["recent_activities"] });
         toast.success("Goal created successfully!");
       }
     },
