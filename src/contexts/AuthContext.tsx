@@ -112,18 +112,23 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const signInWithGoogle = async (): Promise<{ error: Error | null }> => {
     try {
-      // Detect if we're on a custom domain (not Lovable preview/editor)
+      // Detect if we're on a custom domain (not Lovable preview/editor/localhost)
       const isCustomDomain =
         !window.location.hostname.includes("lovable.app") &&
         !window.location.hostname.includes("lovableproject.com") &&
         !window.location.hostname.includes("localhost");
 
+      // Store the current origin to ensure proper redirect after OAuth
+      // This helps maintain the custom domain throughout the auth flow
+      sessionStorage.setItem("auth_redirect_origin", window.location.origin);
+
       if (isCustomDomain) {
         // Bypass Lovable auth-bridge for custom domains by using Supabase directly
+        // The redirectTo should be the custom domain origin to stay on the same domain
         const { data, error } = await supabase.auth.signInWithOAuth({
           provider: "google",
           options: {
-            redirectTo: window.location.origin,
+            redirectTo: `${window.location.origin}/onboarding`,
             skipBrowserRedirect: true,
           },
         });

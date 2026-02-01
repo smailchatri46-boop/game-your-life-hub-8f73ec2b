@@ -4,9 +4,18 @@ import { useAuth } from "@/contexts/AuthContext";
 /**
  * Redirects authenticated users away from auth pages.
  * Preserves intended destination for post-login redirect.
+ * New users are always sent to onboarding first.
  */
 interface AuthGuardProps {
   children: React.ReactNode;
+}
+
+// Helper to check if onboarding has been completed
+function hasCompletedOnboarding(): boolean {
+  return (
+    localStorage.getItem("locked_onboarding_complete") === "true" ||
+    localStorage.getItem("locked_onboarding_skipped") === "true"
+  );
 }
 
 export function AuthGuard({ children }: AuthGuardProps) {
@@ -24,18 +33,23 @@ export function AuthGuard({ children }: AuthGuardProps) {
 
   // If user is authenticated, redirect appropriately
   if (user) {
-    // Check if there's an intended destination
+    // Check if there's an intended destination (but not auth pages)
     const from = (location.state as { from?: { pathname: string } })?.from?.pathname;
     
-    if (from && from !== "/auth" && from !== "/login" && from !== "/signup") {
-      return <Navigate to={from} replace />;
-    }
-
-    // New users go to onboarding, returning users go to dashboard
-    if (isNewUser === true) {
+    // Check if user has completed onboarding
+    const onboardingComplete = hasCompletedOnboarding();
+    
+    // New users OR users who haven't completed onboarding go to onboarding
+    if (isNewUser === true || !onboardingComplete) {
       return <Navigate to="/onboarding" replace />;
     }
     
+    // If there's a valid "from" destination, redirect there
+    if (from && from !== "/auth" && from !== "/login" && from !== "/signup" && from !== "/onboarding") {
+      return <Navigate to={from} replace />;
+    }
+    
+    // Returning users who completed onboarding go to dashboard
     return <Navigate to="/dashboard" replace />;
   }
 
