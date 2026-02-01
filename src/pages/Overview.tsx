@@ -259,7 +259,12 @@ export default function Overview() {
             <div className="flex items-center gap-2 mb-2">
               <AppleEmoji emoji={habitStats.averageMoodEmoji} size="3xl" />
             </div>
-            <p className="text-xs text-muted-foreground">Your average mood is <span className="font-bold">{habitStats.averageMoodLabel}</span>.</p>
+            <p className="text-xs text-muted-foreground">
+              {habitStats.averageMoodLabel === "No mood data yet" 
+                ? habitStats.averageMoodLabel 
+                : <>Your average mood is <span className="font-bold">{habitStats.averageMoodLabel}</span>.</>
+              }
+            </p>
           </div>
 
           {/* Card 3 - Mood Stability */}
@@ -285,7 +290,7 @@ export default function Overview() {
             </div>
           </div>
 
-          {/* Card 4 - Daily Progress */}
+          {/* Card 4 - Daily Progress (Yesterday) */}
           <div className="glass-card p-5 min-w-[180px] hover:shadow-large transition-all duration-300">
             <div className="flex items-start justify-between mb-3">
               <div>
@@ -296,14 +301,14 @@ export default function Overview() {
               </div>
             </div>
             <div className="flex items-baseline gap-0.5 mb-2">
-              <span className="text-3xl font-bold gradient-text">{habitStats.monthPercent}</span>
+              <span className="text-3xl font-bold gradient-text">{habitStats.yesterdayPercent}</span>
               <span className="text-lg font-medium text-primary/70">%</span>
             </div>
-            <p className="text-xs text-muted-foreground">Average daily completion</p>
+            <p className="text-xs text-muted-foreground">Yesterday's completion</p>
             <div className="mt-3 h-1.5 bg-secondary rounded-full overflow-hidden">
               <div 
                 className="h-full progress-bar-orange rounded-full transition-all duration-500"
-                style={{ width: `${habitStats.monthPercent}%` }}
+                style={{ width: `${habitStats.yesterdayPercent}%` }}
               />
             </div>
           </div>
