@@ -1,5 +1,7 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import type { CreatedHabit } from "@/components/onboarding/steps/HabitSuggestionsStep";
+import { useAuth } from "@/contexts/AuthContext";
+import { saveOnboardingData, completeOnboardingInDb } from "@/services/supabase/onboarding";
 
 export type OnboardingStep = 
   | "survey-1"
@@ -190,6 +192,7 @@ const STEP_ORDER: OnboardingStep[] = [
 ];
 
 export function useOnboarding() {
+  const { user } = useAuth();
   const [currentStep, setCurrentStep] = useState<OnboardingStep>("survey-1");
   const [data, setData] = useState<OnboardingData>(INITIAL_DATA);
   const [isComplete, setIsComplete] = useState(false);
@@ -200,6 +203,22 @@ export function useOnboarding() {
 
   const canGoBack = currentIndex > 0 && currentStep !== "loading" && currentStep !== "success";
   const canGoNext = currentIndex < totalSteps - 1;
+
+  // Auto-save onboarding data when step changes (debounced)
+  useEffect(() => {
+    if (!user?.id) return;
+    
+    // Don't save on initial step or if no meaningful data yet
+    if (currentStep === "survey-1" && !data.surveyAnswers.survey1) return;
+    
+    // Save progress to database
+    const saveProgress = async () => {
+      await saveOnboardingData(user.id, data, false);
+    };
+    
+    const timeoutId = setTimeout(saveProgress, 1000);
+    return () => clearTimeout(timeoutId);
+  }, [currentStep, user?.id, data]);
 
   const goToNext = useCallback(() => {
     if (currentIndex < totalSteps - 1) {
@@ -339,15 +358,27 @@ export function useOnboarding() {
     }));
   }, []);
 
-  const completeOnboarding = useCallback(() => {
+  const completeOnboarding = useCallback(async () => {
     setIsComplete(true);
     localStorage.setItem("locked_onboarding_complete", "true");
-  }, []);
+    
+    // Save to database if user is logged in
+    if (user?.id) {
+      await saveOnboardingData(user.id, data, true);
+      await completeOnboardingInDb(user.id);
+    }
+  }, [user?.id, data]);
 
-  const skipOnboarding = useCallback(() => {
+  const skipOnboarding = useCallback(async () => {
     localStorage.setItem("locked_onboarding_skipped", "true");
     setIsComplete(true);
-  }, []);
+    
+    // Save to database if user is logged in
+    if (user?.id) {
+      await saveOnboardingData(user.id, data, true);
+      await completeOnboardingInDb(user.id);
+    }
+  }, [user?.id, data]);
 
   const getTotalSelectedHabits = useCallback(() => {
     return data.selectedHabits.length + data.customHabits.length;

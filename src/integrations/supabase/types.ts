@@ -387,6 +387,63 @@ export type Database = {
         }
         Relationships: []
       }
+      onboarding_data: {
+        Row: {
+          ai_preferences: Json | null
+          checked_affirmations: string[] | null
+          commitment_name: string | null
+          completed: boolean | null
+          completed_at: string | null
+          created_at: string
+          current_apps: string | null
+          focus_areas: string[] | null
+          id: string
+          past_experience: Json | null
+          struggles: string[] | null
+          survey_answers: Json | null
+          tracking_struggles: string[] | null
+          unique_about: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          ai_preferences?: Json | null
+          checked_affirmations?: string[] | null
+          commitment_name?: string | null
+          completed?: boolean | null
+          completed_at?: string | null
+          created_at?: string
+          current_apps?: string | null
+          focus_areas?: string[] | null
+          id?: string
+          past_experience?: Json | null
+          struggles?: string[] | null
+          survey_answers?: Json | null
+          tracking_struggles?: string[] | null
+          unique_about?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          ai_preferences?: Json | null
+          checked_affirmations?: string[] | null
+          commitment_name?: string | null
+          completed?: boolean | null
+          completed_at?: string | null
+          created_at?: string
+          current_apps?: string | null
+          focus_areas?: string[] | null
+          id?: string
+          past_experience?: Json | null
+          struggles?: string[] | null
+          survey_answers?: Json | null
+          tracking_struggles?: string[] | null
+          unique_about?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           avatar_url: string | null
