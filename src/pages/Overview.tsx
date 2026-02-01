@@ -16,6 +16,8 @@ import { useAuth } from "@/contexts/AuthContext";
 import { PaywallModal } from "@/components/PaywallModal";
 import { usePlanLimits, LimitType } from "@/hooks/use-plan-limits";
 import { useHabitsData } from "@/hooks/use-habits-data";
+import { useCalendarData, getCalendarDayColor } from "@/hooks/use-calendar-data";
+import { useRecentActivity } from "@/hooks/use-recent-activity";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { format } from "date-fns";
 import { getHabits } from "@/services/firestore/habits";
@@ -75,6 +77,18 @@ export default function Overview() {
   
   // Get habits data for calendar
   const { completionsMap, stats: habitsStats } = useHabitsData(year, month);
+  
+  // Calendar data with proper coloring
+  const { 
+    dayPercentages, 
+    getDayCompletionRate: getCalendarDayRate, 
+    currentDay: calendarCurrentDay,
+    refetch: refetchCalendar 
+  } = useCalendarData(year, month);
+  
+  // Recent activity
+  const { activities, logActivity } = useRecentActivity();
+  
   const habits = useQuery({
     queryKey: ["habits-overview", user?.id],
     queryFn: async () => {
@@ -131,6 +145,8 @@ export default function Overview() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["daily_todos"] });
+      queryClient.invalidateQueries({ queryKey: ["calendar-todos"] });
+      refetchCalendar();
     },
   });
   
@@ -177,39 +193,29 @@ export default function Overview() {
       const todo = todos.find(t => t.id === todoId);
       if (todo) {
         toggleTodo.mutate({ todoId, completed: !todo.completed });
+        
+        // Log activity if completing (not un-completing)
+        if (!todo.completed) {
+          logActivity({
+            activityType: "task_completed",
+            entityName: todo.text,
+            emoji: "📝",
+            entityId: todoId,
+          });
+        }
       }
     }
   };
   
   const weekDays = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
   
-  // Calculate completion rate for a day
-  const getCompletionRate = (day: number) => {
+  // Use the calendar hook for completion rates with proper coloring
+  const getCompletionRate = (day: number): number => {
     if (!user) {
-      // Demo mode - generate random data
-      return Math.floor(Math.random() * 100);
+      // Demo mode - consistent random based on day
+      return Math.floor((day * 17 + 23) % 101);
     }
-    
-    const dateKey = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
-    const habitsList = habits.data || [];
-    
-    if (habitsList.length === 0) return 0;
-    
-    let totalWeight = 0;
-    let weightedProgress = 0;
-    
-    habitsList.forEach((habit: { id: string; target: number; importance: number | null }) => {
-      const weight = habit.importance || 50;
-      totalWeight += weight;
-      const value = completionsMap[habit.id]?.[dateKey] || 0;
-      if (habit.target === 1) {
-        if (value >= 1) weightedProgress += weight;
-      } else {
-        weightedProgress += (Math.min(value, habit.target) / habit.target) * weight;
-      }
-    });
-    
-    return totalWeight > 0 ? Math.round((weightedProgress / totalWeight) * 100) : 0;
+    return dayPercentages[day] || 0;
   };
 
   return (
@@ -339,6 +345,7 @@ export default function Overview() {
                   const completionRate = getCompletionRate(day);
                   const isFuture = day > currentDay;
                   const isSelected = selectedDate === day;
+                  const colorClasses = getCalendarDayColor(completionRate);
                   
                   return (
                     <button
@@ -351,11 +358,7 @@ export default function Overview() {
                           ? 'bg-muted/30 cursor-not-allowed'
                           : isSelected
                             ? 'text-primary-foreground shadow-medium hover:brightness-[1.03]'
-                            : completionRate >= 80
-                              ? 'bg-primary/25 hover:bg-primary/35'
-                              : completionRate >= 50
-                                ? 'bg-accent/25 hover:bg-accent/35'
-                                : 'bg-secondary hover:bg-secondary/80'
+                            : `${colorClasses.bg} ${colorClasses.hover}`
                       }`}
                     >
                       <span className={`text-sm font-semibold ${isSelected ? 'text-primary-foreground' : ''}`}>
@@ -537,18 +540,21 @@ export default function Overview() {
           <GlassCard className="p-6">
             <h3 className="font-display text-xl font-semibold mb-4">Recent Activity</h3>
             <div className="space-y-3">
-              {[
-                { emoji: "💪", text: "Completed 'Exercise'", time: "2 hours ago" },
-                { emoji: "💧", text: "Completed 'Drink Water'", time: "3 hours ago" },
-                { emoji: "📓", text: "Wrote a journal entry", time: "Yesterday" },
-                { emoji: "🧘", text: "Completed 'Morning Meditation'", time: "Yesterday" },
-              ].map((activity, i) => (
-                <div key={i} className="flex items-center gap-3 py-2 border-b border-border/50 last:border-0">
-                  <AppleEmoji emoji={activity.emoji} size="xl" />
-                  <p className="flex-1 text-sm">{activity.text}</p>
-                  <span className="text-xs text-muted-foreground">{activity.time}</span>
+              {activities.length > 0 ? (
+                activities.map((activity) => (
+                  <div key={activity.id} className="flex items-center gap-3 py-2 border-b border-border/50 last:border-0">
+                    <AppleEmoji emoji={activity.emoji} size="xl" />
+                    <p className="flex-1 text-sm">{activity.text}</p>
+                    <span className="text-xs text-muted-foreground">{activity.timeAgo}</span>
+                  </div>
+                ))
+              ) : (
+                <div className="text-center py-4 text-muted-foreground">
+                  <AppleEmoji emoji="📭" size="2xl" className="mb-2" />
+                  <p className="text-sm">No recent activity yet</p>
+                  <p className="text-xs">Complete habits and tasks to see your activity here</p>
                 </div>
-              ))}
+              )}
             </div>
           </GlassCard>
         </div>

@@ -21,6 +21,7 @@ import {
   toggleTodo as toggleTodoService,
   deleteTodo as deleteTodoService,
 } from "@/services/firestore/todos";
+import { logActivity } from "@/services/supabase/activity";
 
 export interface Habit {
   id: string;
@@ -230,7 +231,14 @@ export function useHabitsData(selectedYear?: number, selectedMonth?: number) {
 
   // Toggle completion for a habit on a specific day
   const toggleCompletion = useMutation({
-    mutationFn: async ({ habitId, date, currentValue, target }: { habitId: string; date: string; currentValue: number; target: number }) => {
+    mutationFn: async ({ habitId, date, currentValue, target, habitName, habitIcon }: { 
+      habitId: string; 
+      date: string; 
+      currentValue: number; 
+      target: number;
+      habitName?: string;
+      habitIcon?: string;
+    }) => {
       if (!user) return null;
       
       // For boolean habits (target=1): toggle between 0 and 1
@@ -244,10 +252,22 @@ export function useHabitsData(selectedYear?: number, selectedMonth?: number) {
       
       // Use upsertCompletion which handles create/update/delete
       await upsertCompletion(habitId, user.id, date, newValue);
+      
+      // Log activity if habit was just completed (went from incomplete to complete)
+      const wasCompleted = target === 1 ? currentValue >= 1 : currentValue >= target;
+      const isNowCompleted = target === 1 ? newValue >= 1 : newValue >= target;
+      
+      if (!wasCompleted && isNowCompleted && habitName) {
+        await logActivity(user.id, "habit_completed", habitName, habitIcon || "✅", habitId);
+      }
+      
       return { habitId, date, newValue };
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["habit_completions"] });
+      queryClient.invalidateQueries({ queryKey: ["recent_activities"] });
+      queryClient.invalidateQueries({ queryKey: ["calendar-completions"] });
+      queryClient.invalidateQueries({ queryKey: ["goal_completions"] });
     },
     onError: () => {
       toast.error("Failed to update completion");
@@ -258,10 +278,16 @@ export function useHabitsData(selectedYear?: number, selectedMonth?: number) {
   const saveMoodLog = useMutation({
     mutationFn: async ({ date, mood, motivation, reflection }: { date: string; mood?: number; motivation?: number; reflection?: string }) => {
       if (!user) return null;
-      return await upsertMoodLog(user.id, date, mood, motivation, reflection);
+      const result = await upsertMoodLog(user.id, date, mood, motivation, reflection);
+      
+      // Log activity
+      await logActivity(user.id, "mood_logged", "Mood & Motivation", "💭");
+      
+      return result;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["mood_logs"] });
+      queryClient.invalidateQueries({ queryKey: ["recent_activities"] });
     },
     onError: () => {
       toast.error("Failed to save mood log");

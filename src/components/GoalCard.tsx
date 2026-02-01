@@ -1,7 +1,8 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useMemo } from "react";
 import { AppleEmoji } from "@/components/AppleEmoji";
 import { GlassCard } from "@/components/GlassCard";
 import { Goal, useGoals } from "@/hooks/use-goals";
+import { useGoalProgress } from "@/hooks/use-goal-progress";
 import { format } from "date-fns";
 import { Trash2, Calendar, Pencil, ChevronLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -21,7 +22,12 @@ interface GoalCardProps {
 }
 
 export function GoalCard({ goal, linkedHabits = [] }: GoalCardProps) {
-  const { getGoalProgress, getGoalPace, deleteGoal, updateGoal } = useGoals();
+  const { getGoalProgress: getStoredProgress, getGoalPace, deleteGoal, updateGoal, goalHabits } = useGoals();
+  
+  // Get real calculated progress from habit completions
+  const { getCalculatedProgress } = useGoalProgress([goal], goalHabits);
+  const calculatedProgress = getCalculatedProgress(goal.id);
+  
   const { toast } = useToast();
   const [showDeleteCarousel, setShowDeleteCarousel] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
@@ -30,7 +36,8 @@ export function GoalCard({ goal, linkedHabits = [] }: GoalCardProps) {
   const [isHovered, setIsHovered] = useState(false);
   const cardRef = useRef<HTMLDivElement>(null);
   
-  const progress = getGoalProgress(goal);
+  // Use the calculated progress instead of stored
+  const progress = calculatedProgress.percentage;
   const pace = getGoalPace(goal);
 
   const paceColor = {
@@ -201,8 +208,8 @@ export function GoalCard({ goal, linkedHabits = [] }: GoalCardProps) {
           />
         </div>
         <div className="flex justify-between mt-2 text-xs text-muted-foreground">
-          <span>{goal.completed_count} completed</span>
-          <span>{goal.target_count} target</span>
+          <span>{calculatedProgress.completed} completed</span>
+          <span>{calculatedProgress.target} target</span>
         </div>
       </div>
 

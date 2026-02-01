@@ -85,3 +85,11 @@ export {
   updateProfile,
   ensureProfile,
 } from "./profiles";
+
+// Activity Logs
+export {
+  getRecentActivities,
+  logActivity,
+  clearOldActivities,
+} from "./activity";
+export type { ActivityType, ActivityLog } from "./activity";
