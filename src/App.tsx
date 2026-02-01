@@ -11,6 +11,7 @@ import { AppLayout } from "@/components/AppLayout";
 import { SubscriptionGate } from "@/components/SubscriptionGate";
 import { AuthRedirect } from "@/components/AuthRedirect";
 import { AuthGuard } from "@/components/AuthGuard";
+import { DomainRedirect } from "@/components/DomainRedirect";
 
 // Critical path - load immediately
 import Landing from "./pages/Landing";
@@ -55,6 +56,7 @@ const App = () => (
       <TooltipProvider>
         <AuthProvider>
           <SubscriptionProvider>
+            <DomainRedirect />
             <Toaster />
             <Sonner />
             <BrowserRouter>
