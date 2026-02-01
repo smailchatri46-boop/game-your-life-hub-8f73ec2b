@@ -1,5 +1,6 @@
 
 import { GlassCard } from "@/components/GlassCard";
+import { CommunityLink } from "@/components/CommunityLink";
 import { AppleEmoji } from "@/components/AppleEmoji";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -280,6 +281,8 @@ export default function Journal() {
               );
             })}
           </div>
+          
+          <CommunityLink />
         </main>
       )}
 
