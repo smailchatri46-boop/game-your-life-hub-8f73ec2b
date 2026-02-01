@@ -1,5 +1,6 @@
 import { createContext, useContext, useState, useEffect, useCallback, ReactNode } from "react";
 import { useAuth } from "@/contexts/AuthContext";
+import { supabase } from "@/integrations/supabase/client";
 
 interface SubscriptionInfo {
   isActive: boolean;
@@ -33,13 +34,13 @@ const defaultSubscription: SubscriptionInfo = {
 const SubscriptionContext = createContext<SubscriptionContextType | undefined>(undefined);
 
 export function SubscriptionProvider({ children }: { children: ReactNode }) {
-  const { user } = useAuth();
+  const { user, session } = useAuth();
   const [subscription, setSubscription] = useState<SubscriptionInfo | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   const fetchSubscription = useCallback(async () => {
-    if (!user?.email) {
+    if (!user?.email || !session?.access_token) {
       setSubscription(defaultSubscription);
       setIsLoading(false);
       return;
@@ -49,19 +50,21 @@ export function SubscriptionProvider({ children }: { children: ReactNode }) {
     setError(null);
 
     try {
+      // Use the user's JWT token for authentication
       const response = await fetch(
-        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/subscription?action=status&email=${encodeURIComponent(user.email)}`,
+        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/subscription?action=status`,
         {
           method: "GET",
           headers: {
-            "Authorization": `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
+            "Authorization": `Bearer ${session.access_token}`,
             "Content-Type": "application/json",
           },
         }
       );
 
       if (!response.ok) {
-        throw new Error("Failed to fetch subscription status");
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.error || "Failed to fetch subscription status");
       }
 
       const subscriptionData = await response.json();
@@ -73,14 +76,14 @@ export function SubscriptionProvider({ children }: { children: ReactNode }) {
     } finally {
       setIsLoading(false);
     }
-  }, [user?.email]);
+  }, [user?.email, session?.access_token]);
 
   useEffect(() => {
     fetchSubscription();
   }, [fetchSubscription]);
 
   const cancelSubscription = useCallback(async (): Promise<{ success: boolean; error?: string }> => {
-    if (!subscription?.subscriptionId) {
+    if (!subscription?.subscriptionId || !session?.access_token) {
       return { success: false, error: "No active subscription" };
     }
 
@@ -90,7 +93,7 @@ export function SubscriptionProvider({ children }: { children: ReactNode }) {
         {
           method: "POST",
           headers: {
-            "Authorization": `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
+            "Authorization": `Bearer ${session.access_token}`,
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
@@ -111,10 +114,10 @@ export function SubscriptionProvider({ children }: { children: ReactNode }) {
       console.error("Error cancelling subscription:", err);
       return { success: false, error: err instanceof Error ? err.message : "Failed to cancel" };
     }
-  }, [subscription?.subscriptionId, fetchSubscription]);
+  }, [subscription?.subscriptionId, session?.access_token, fetchSubscription]);
 
   const applyDiscount = useCallback(async (discountCode: string): Promise<{ success: boolean; error?: string }> => {
-    if (!subscription?.subscriptionId) {
+    if (!subscription?.subscriptionId || !session?.access_token) {
       return { success: false, error: "No active subscription" };
     }
 
@@ -124,7 +127,7 @@ export function SubscriptionProvider({ children }: { children: ReactNode }) {
         {
           method: "POST",
           headers: {
-            "Authorization": `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
+            "Authorization": `Bearer ${session.access_token}`,
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
@@ -146,7 +149,7 @@ export function SubscriptionProvider({ children }: { children: ReactNode }) {
       console.error("Error applying discount:", err);
       return { success: false, error: err instanceof Error ? err.message : "Failed to apply discount" };
     }
-  }, [subscription?.subscriptionId, fetchSubscription]);
+  }, [subscription?.subscriptionId, session?.access_token, fetchSubscription]);
 
   return (
     <SubscriptionContext.Provider

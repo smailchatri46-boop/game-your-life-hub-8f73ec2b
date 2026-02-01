@@ -1,4 +1,6 @@
-// Subscription management edge function
+// Subscription management edge function with JWT authentication
+
+import { createClient, SupabaseClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -18,7 +20,46 @@ interface SubscriptionInfo {
   status: string | null;
 }
 
-async function getSubscriptionByEmail(email: string): Promise<SubscriptionInfo> {
+// Helper to create unauthorized response
+function unauthorizedResponse(message = "Unauthorized") {
+  return new Response(
+    JSON.stringify({ error: message }),
+    { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+  );
+}
+
+// Authenticate user from JWT token
+async function authenticateUser(req: Request): Promise<{
+  user: { id: string; email?: string } | null;
+  error: string | null;
+  supabase: SupabaseClient | null;
+}> {
+  const authHeader = req.headers.get("Authorization");
+  if (!authHeader?.startsWith("Bearer ")) {
+    return { user: null, error: "Missing or invalid authorization header", supabase: null };
+  }
+
+  const token = authHeader.replace("Bearer ", "");
+  
+  const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
+  const supabaseAnonKey = Deno.env.get("SUPABASE_ANON_KEY")!;
+  
+  const supabase = createClient(supabaseUrl, supabaseAnonKey, {
+    global: { headers: { Authorization: authHeader } }
+  });
+
+  const { data, error } = await supabase.auth.getUser(token);
+  
+  if (error || !data?.user) {
+    console.error("Auth error:", error);
+    return { user: null, error: "Invalid token", supabase: null };
+  }
+
+  return { user: data.user, error: null, supabase };
+}
+
+// Get subscription from Polar by email
+async function getSubscriptionFromPolar(email: string): Promise<SubscriptionInfo> {
   const POLAR_ACCESS_TOKEN = Deno.env.get("POLAR_ACCESS_TOKEN");
   
   if (!POLAR_ACCESS_TOKEN) {
@@ -120,11 +161,64 @@ async function getSubscriptionByEmail(email: string): Promise<SubscriptionInfo> 
   };
 }
 
-async function cancelSubscription(subscriptionId: string): Promise<{ success: boolean; error?: string }> {
+// Sync subscription data to database using service role
+async function syncSubscriptionToDatabase(
+  userId: string,
+  subscription: SubscriptionInfo
+) {
+  const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
+  const serviceRoleKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
+  
+  // Use service role client for insert/upsert operations
+  const adminClient = createClient(supabaseUrl, serviceRoleKey);
+
+  const { error } = await adminClient
+    .from("subscriptions")
+    .upsert({
+      user_id: userId,
+      polar_customer_id: subscription.customerId,
+      polar_subscription_id: subscription.subscriptionId,
+      plan: subscription.plan,
+      status: subscription.isActive ? "active" : "inactive",
+      current_period_end: subscription.currentPeriodEnd,
+      cancel_at_period_end: subscription.cancelAtPeriodEnd,
+      updated_at: new Date().toISOString(),
+    }, {
+      onConflict: "user_id",
+    });
+
+  if (error) {
+    console.error("Failed to sync subscription to database:", error);
+  }
+}
+
+// Cancel subscription with ownership verification
+async function cancelSubscription(
+  userId: string,
+  subscriptionId: string
+): Promise<{ success: boolean; error?: string }> {
   const POLAR_ACCESS_TOKEN = Deno.env.get("POLAR_ACCESS_TOKEN");
+  const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
+  const serviceRoleKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
   
   if (!POLAR_ACCESS_TOKEN) {
     return { success: false, error: "POLAR_ACCESS_TOKEN not configured" };
+  }
+
+  // Use service role to verify ownership
+  const adminClient = createClient(supabaseUrl, serviceRoleKey);
+
+  // Verify ownership - check that this user owns this subscription
+  const { data: dbSubscription, error: dbError } = await adminClient
+    .from("subscriptions")
+    .select("*")
+    .eq("user_id", userId)
+    .eq("polar_subscription_id", subscriptionId)
+    .single();
+
+  if (dbError || !dbSubscription) {
+    console.error("Subscription ownership verification failed:", dbError);
+    return { success: false, error: "Subscription not found or unauthorized" };
   }
 
   const response = await fetch(`${POLAR_API_BASE}/subscriptions/${subscriptionId}`, {
@@ -144,11 +238,34 @@ async function cancelSubscription(subscriptionId: string): Promise<{ success: bo
   return { success: true };
 }
 
-async function applyDiscount(subscriptionId: string, discountCode: string): Promise<{ success: boolean; error?: string }> {
+// Apply discount with ownership verification
+async function applyDiscount(
+  userId: string,
+  subscriptionId: string,
+  discountCode: string
+): Promise<{ success: boolean; error?: string }> {
   const POLAR_ACCESS_TOKEN = Deno.env.get("POLAR_ACCESS_TOKEN");
+  const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
+  const serviceRoleKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
   
   if (!POLAR_ACCESS_TOKEN) {
     return { success: false, error: "POLAR_ACCESS_TOKEN not configured" };
+  }
+
+  // Use service role to verify ownership
+  const adminClient = createClient(supabaseUrl, serviceRoleKey);
+
+  // Verify ownership - check that this user owns this subscription
+  const { data: dbSubscription, error: dbError } = await adminClient
+    .from("subscriptions")
+    .select("*")
+    .eq("user_id", userId)
+    .eq("polar_subscription_id", subscriptionId)
+    .single();
+
+  if (dbError || !dbSubscription) {
+    console.error("Subscription ownership verification failed:", dbError);
+    return { success: false, error: "Subscription not found or unauthorized" };
   }
 
   // Look up the discount by code first
@@ -200,20 +317,30 @@ Deno.serve(async (req) => {
   }
 
   try {
+    // Authenticate user for all requests
+    const { user, error: authError } = await authenticateUser(req);
+    
+    if (authError || !user) {
+      console.error("Authentication failed:", authError);
+      return unauthorizedResponse(authError || "Authentication required");
+    }
+
     const url = new URL(req.url);
     const action = url.searchParams.get("action");
 
     if (req.method === "GET" && action === "status") {
-      const email = url.searchParams.get("email");
-      
-      if (!email) {
+      // Get subscription status for authenticated user
+      if (!user.email) {
         return new Response(
-          JSON.stringify({ error: "Email is required" }),
+          JSON.stringify({ error: "User email not available" }),
           { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
         );
       }
 
-      const subscription = await getSubscriptionByEmail(email);
+      const subscription = await getSubscriptionFromPolar(user.email);
+      
+      // Sync to database
+      await syncSubscriptionToDatabase(user.id, subscription);
       
       return new Response(
         JSON.stringify(subscription),
@@ -226,7 +353,8 @@ Deno.serve(async (req) => {
       const { action: postAction, subscriptionId, discountCode } = body;
 
       if (postAction === "cancel" && subscriptionId) {
-        const result = await cancelSubscription(subscriptionId);
+        // Cancel with ownership verification
+        const result = await cancelSubscription(user.id, subscriptionId);
         return new Response(
           JSON.stringify(result),
           { 
@@ -237,7 +365,8 @@ Deno.serve(async (req) => {
       }
 
       if (postAction === "apply-discount" && subscriptionId && discountCode) {
-        const result = await applyDiscount(subscriptionId, discountCode);
+        // Apply discount with ownership verification
+        const result = await applyDiscount(user.id, subscriptionId, discountCode);
         return new Response(
           JSON.stringify(result),
           { 
