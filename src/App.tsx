@@ -9,6 +9,8 @@ import { AuthProvider } from "@/contexts/AuthContext";
 import { SubscriptionProvider } from "@/contexts/SubscriptionContext";
 import { AppLayout } from "@/components/AppLayout";
 import { SubscriptionGate } from "@/components/SubscriptionGate";
+import { AuthRedirect } from "@/components/AuthRedirect";
+import { AuthGuard } from "@/components/AuthGuard";
 
 // Critical path - load immediately
 import Landing from "./pages/Landing";
@@ -58,8 +60,10 @@ const App = () => (
             <BrowserRouter>
               <Suspense fallback={<PageLoader />}>
                 <Routes>
-                  {/* Public routes - no subscription required */}
-                  <Route path="/" element={<Landing />} />
+                  {/* Root path - redirect authenticated users to dashboard */}
+                  <Route path="/" element={<AuthRedirect><Landing /></AuthRedirect>} />
+                  
+                  {/* Public routes - no authentication required */}
                   <Route path="/faq" element={<FAQ />} />
                   <Route path="/pricing" element={<Pricing />} />
                   <Route path="/about" element={<About />} />
@@ -69,11 +73,14 @@ const App = () => (
                   <Route path="/refund" element={<Refund />} />
                   <Route path="/contact" element={<Contact />} />
                   
+                  {/* Auth routes - redirect if already authenticated */}
+                  <Route path="/auth" element={<AuthGuard><Auth /></AuthGuard>} />
+                  <Route path="/signup" element={<AuthGuard><Auth /></AuthGuard>} />
+                  <Route path="/login" element={<AuthGuard><Auth /></AuthGuard>} />
+                  
+                  {/* Onboarding and paywall - require auth but not subscription */}
                   <Route path="/onboarding" element={<Onboarding />} />
                   <Route path="/paywall" element={<Paywall />} />
-                  <Route path="/auth" element={<Auth />} />
-                  <Route path="/signup" element={<Auth />} />
-                  <Route path="/login" element={<Auth />} />
                   
                   {/* Protected routes - require active subscription */}
                   <Route element={<SubscriptionGate><AppLayout /></SubscriptionGate>}>
@@ -86,7 +93,7 @@ const App = () => (
                     <Route path="/settings" element={<Settings />} />
                   </Route>
                   
-                  {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+                  {/* 404 - catch all unknown routes */}
                   <Route path="*" element={<NotFound />} />
                 </Routes>
               </Suspense>
