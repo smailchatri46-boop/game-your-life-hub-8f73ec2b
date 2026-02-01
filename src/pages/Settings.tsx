@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
 import { GlassCard } from "@/components/GlassCard";
+import { CommunityLink } from "@/components/CommunityLink";
 import { Button } from "@/components/ui/button";
 import { PaywallModal } from "@/components/PaywallModal";
 import { EditProfileModal } from "@/components/EditProfileModal";
@@ -242,6 +243,8 @@ export default function Settings() {
           <LogOut className="w-5 h-5 mr-2" />
           Sign Out
         </Button>
+        
+        <CommunityLink />
       </main>
 
       {/* Modals */}

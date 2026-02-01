@@ -1,5 +1,6 @@
 
 import { GlassCard } from "@/components/GlassCard";
+import { CommunityLink } from "@/components/CommunityLink";
 import { AppleEmoji } from "@/components/AppleEmoji";
 import { AlignedProgressChart } from "@/components/AlignedProgressChart";
 import { MoodMotivationChart } from "@/components/MoodMotivationChart";
@@ -738,6 +739,8 @@ export default function Habits() {
         <div className="max-w-7xl mx-auto">
           <AIBuddyChat />
         </div>
+        
+        <CommunityLink />
       </main>
 
       {/* Floating Add Habit Button */}

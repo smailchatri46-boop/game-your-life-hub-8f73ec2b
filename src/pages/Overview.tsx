@@ -1,5 +1,6 @@
 
 import { GlassCard } from "@/components/GlassCard";
+import { CommunityLink } from "@/components/CommunityLink";
 import { AppleEmoji } from "@/components/AppleEmoji";
 import { OnboardingQuestionsModal } from "@/components/OnboardingQuestionsModal";
 import { AIBuddyChat } from "@/components/AIBuddyChat";
@@ -572,6 +573,8 @@ export default function Overview() {
           limitType={paywallLimitType}
           limitMessage={getLimitMessage(paywallLimitType)}
         />
+        
+        <CommunityLink />
       </main>
     </>
   );

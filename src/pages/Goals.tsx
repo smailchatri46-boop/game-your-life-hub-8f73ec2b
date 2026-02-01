@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 
 import { GlassCard } from "@/components/GlassCard";
+import { CommunityLink } from "@/components/CommunityLink";
 import { AppleEmoji } from "@/components/AppleEmoji";
 import { Button } from "@/components/ui/button";
 import { GoalCard } from "@/components/GoalCard";
@@ -201,6 +202,8 @@ export default function Goals() {
             )}
           </>
         )}
+        
+        <CommunityLink />
       </main>
 
       {/* Floating Add Goal Button */}
