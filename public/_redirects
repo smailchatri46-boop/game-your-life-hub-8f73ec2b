@@ -4,5 +4,8 @@
 # Redirect www to non-www (primary domain)
 https://www.neyler.com/* https://neyler.com/:splat 301!
 
+# Lovable Cloud OAuth proxy - MUST be before the SPA fallback
+/~oauth/*  https://id-preview--8982e09f-fd5b-49f5-a8b5-0fb7110a3042.lovable.app/~oauth/:splat  200
+
 # SPA fallback - all paths serve index.html
 /*    /index.html   200
