@@ -15,7 +15,7 @@ export function AppLayout() {
   }, [location.pathname, markPageVisited]);
 
   return (
-    <div className="min-h-screen gradient-bg">
+    <div className="min-h-screen gradient-bg pb-12">
       <Navbar />
       <Outlet />
       
