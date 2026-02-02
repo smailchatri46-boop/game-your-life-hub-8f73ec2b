@@ -9,18 +9,17 @@ import {
   deleteHabit as deleteHabitService,
   getCompletions,
   upsertCompletion,
-  deleteCompletion,
-} from "@/services/firestore/habits";
+} from "@/services/supabase/habits";
 import {
   getMoodLogs,
   upsertMoodLog,
-} from "@/services/firestore/mood";
+} from "@/services/supabase/mood";
 import {
   getTodosForDate,
   createTodo as createTodoService,
   toggleTodo as toggleTodoService,
   deleteTodo as deleteTodoService,
-} from "@/services/firestore/todos";
+} from "@/services/supabase/todos";
 import { logActivity } from "@/services/supabase/activity";
 
 export interface Habit {
