@@ -56,8 +56,8 @@ export function usePolarCheckout(options: UsePolarCheckoutOptions = {}) {
         const url = new URL(checkoutLink);
         url.searchParams.set("theme", theme);
         
-        // Add success URL to redirect back to auth after payment
-        const successUrl = `${window.location.origin}/auth`;
+        // Add success URL to redirect to payment success page after payment
+        const successUrl = `${window.location.origin}/payment-success`;
         url.searchParams.set("success_url", successUrl);
         
         // Calculate the amount based on plan and period for affiliate tracking
