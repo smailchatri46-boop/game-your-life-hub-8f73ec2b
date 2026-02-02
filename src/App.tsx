@@ -36,6 +36,7 @@ const Cookies = lazy(() => import("./pages/Cookies"));
 const Refund = lazy(() => import("./pages/Refund"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 const Paywall = lazy(() => import("./pages/Paywall"));
+const PaymentSuccess = lazy(() => import("./pages/PaymentSuccess"));
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -80,9 +81,10 @@ const App = () => (
                   <Route path="/signup" element={<AuthGuard><Auth /></AuthGuard>} />
                   <Route path="/login" element={<AuthGuard><Auth /></AuthGuard>} />
                   
-                  {/* Onboarding and paywall - require auth but not subscription */}
+                  {/* Onboarding, paywall, and payment success - require auth but not subscription */}
                   <Route path="/onboarding" element={<Onboarding />} />
                   <Route path="/paywall" element={<Paywall />} />
+                  <Route path="/payment-success" element={<PaymentSuccess />} />
                   
                   {/* Protected routes - require active subscription */}
                   <Route element={<SubscriptionGate><AppLayout /></SubscriptionGate>}>
