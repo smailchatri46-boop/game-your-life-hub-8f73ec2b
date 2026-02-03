@@ -1,126 +1,59 @@
 
+# Custom Domain Configuration for neyler.com
 
-# Plan: Fix Google OAuth for Custom Domain (neyler.com)
+## Overview
+Your project is currently showing the Lovable domain (`game-your-life-hub.lovable.app`) instead of your custom domain (`neyler.com`) because the domain redirect component is disabled. I'll re-enable it and ensure all routing works correctly with your custom domain.
 
-## Problem Identified
+## Current State Analysis
+Based on my exploration, I found:
 
-From the error URL, I can see `project_env=dev` is being sent, which causes Lovable's OAuth server to reject the request when accessed from outside the Lovable editor. This is because:
+1. **DomainRedirect Component** (disabled) - The redirect logic exists but is commented out in `src/components/DomainRedirect.tsx`
+2. **Netlify _redirects** - Already configured correctly for neyler.com
+3. **OAuth Authentication** - Already handles custom domain detection properly
+4. **Checkout URLs** - Uses `window.location.origin` so will adapt automatically
+5. **SEO Configuration** - Already references neyler.com in index.html
 
-1. The current code uses `lovable.auth.signInWithOAuth()` which goes through Lovable's auth-bridge
-2. The auth-bridge doesn't properly handle custom domains like `neyler.com`
-3. Your Google Cloud Console and Lovable Cloud settings are correct, but the code needs to bypass the auth-bridge for custom domains
+## Implementation Plan
 
-## Solution
+### Step 1: Re-enable the Domain Redirect Component
+Update `src/components/DomainRedirect.tsx` to uncomment the redirect logic. This will automatically redirect users from any Lovable domain to neyler.com while preserving the full path, query parameters, and hash.
 
-Modify the `signInWithGoogle` function to detect when the app is running on a custom domain and use Supabase's native OAuth with `skipBrowserRedirect: true` to get the OAuth URL directly and redirect manually.
+### Step 2: Connect Custom Domain in Lovable Settings
+Before the redirect will work, you need to connect your custom domain in Lovable's project settings:
 
-## Technical Changes
+1. Go to **Project Settings** (click on your project name in the top left)
+2. Navigate to the **Domains** tab
+3. Click **Connect Domain** and enter `neyler.com`
+4. Add DNS records at your domain registrar:
+   - **A Record** for `@` (root) pointing to `185.158.133.1`
+   - **A Record** for `www` pointing to `185.158.133.1`
+   - **TXT Record** for `_lovable` with the verification value provided
+5. Wait for DNS propagation (usually a few minutes, up to 72 hours)
+6. Lovable will automatically provision SSL for your domain
 
-### File: `src/contexts/AuthContext.tsx`
+## Technical Details
 
-Update the `signInWithGoogle` function to:
-1. Detect if on custom domain (not `lovable.app` or `lovableproject.com`)
-2. If on custom domain: use `supabase.auth.signInWithOAuth` with `skipBrowserRedirect: true`
-3. If on Lovable domain: use the existing `lovable.auth.signInWithOAuth` flow
+### Files to Modify
+| File | Change |
+|------|--------|
+| `src/components/DomainRedirect.tsx` | Uncomment the redirect logic to enable automatic domain redirection |
 
+### How the Redirect Works
 ```text
-BEFORE (current flow):
-User clicks "Continue with Google"
-    |
-    v
-lovable.auth.signInWithOAuth() 
-    |
-    v
-Lovable auth-bridge (oauth.lovable.app)
-    |
-    v
-ERROR: "redirect_uri is not allowed" (because project_env=dev)
-
-AFTER (fixed flow for custom domain):
-User clicks "Continue with Google"
-    |
-    v
-Detect: Is this a custom domain?
-    |
-    +--[YES: neyler.com]--> supabase.auth.signInWithOAuth with skipBrowserRedirect
-    |                           |
-    |                           v
-    |                       Get OAuth URL directly from Google
-    |                           |
-    |                           v
-    |                       Manual redirect to Google
-    |                           |
-    |                           v
-    |                       Google redirects to https://oauth.lovable.app/callback
-    |                           |
-    |                           v
-    |                       Lovable redirects back to https://neyler.com
-    |
-    +--[NO: lovable.app]---> Use existing lovable.auth.signInWithOAuth (works fine)
+User visits game-your-life-hub.lovable.app/onboarding
+                    |
+                    v
+    DomainRedirect component detects Lovable domain
+                    |
+                    v
+    Redirects to neyler.com/onboarding (preserving path, query, hash)
 ```
 
-### Code Change Summary
+### What Already Works
+- OAuth will redirect back to neyler.com (using `window.location.origin`)
+- Polar checkout success URL will use neyler.com automatically
+- All internal navigation uses relative paths
+- SEO meta tags already reference neyler.com
 
-```typescript
-const signInWithGoogle = async (): Promise<{ error: Error | null }> => {
-  try {
-    // Detect if we're on a custom domain
-    const isCustomDomain =
-      !window.location.hostname.includes("lovable.app") &&
-      !window.location.hostname.includes("lovableproject.com") &&
-      !window.location.hostname.includes("localhost");
-
-    if (isCustomDomain) {
-      // Bypass auth-bridge by getting OAuth URL directly
-      const { data, error } = await supabase.auth.signInWithOAuth({
-        provider: "google",
-        options: {
-          redirectTo: window.location.origin,
-          skipBrowserRedirect: true,
-        },
-      });
-
-      if (error) return { error };
-
-      // Validate and redirect manually
-      if (data?.url) {
-        window.location.href = data.url;
-      }
-      return { error: null };
-    } else {
-      // For Lovable domains, use the normal flow
-      const result = await lovable.auth.signInWithOAuth("google", {
-        redirect_uri: window.location.origin,
-      });
-
-      if (result.error) return { error: result.error };
-      return { error: null };
-    }
-  } catch (error) {
-    return { error: error as Error };
-  }
-};
-```
-
-## Why This Works
-
-1. When on `neyler.com`, the code bypasses Lovable's auth-bridge entirely
-2. Uses Supabase's native OAuth which generates a proper Google OAuth URL
-3. Google redirects to `https://oauth.lovable.app/callback` (which you have configured)
-4. Lovable's callback handler then redirects back to your Site URL (`https://neyler.com`)
-5. Your current Google Cloud Console and Lovable Cloud settings are already correct for this flow
-
-## No Additional Configuration Needed
-
-Your current settings are already correct:
-- Google Cloud Console: `https://oauth.lovable.app/callback` is in allowed redirect URIs
-- Lovable Cloud: Site URL is `https://neyler.com`, redirect URLs include your domain
-
-## After Implementation
-
-Test by:
-1. Opening `https://neyler.com` in a fresh browser (not logged in)
-2. Click "Continue with Google"
-3. Should now redirect properly to Google's consent screen
-4. After signing in, should redirect back to your app
-
+## Important Note
+The redirect will only work after you've connected your custom domain in Lovable's settings. Once connected and DNS is propagated, any user landing on the Lovable subdomain will be automatically redirected to neyler.com.
