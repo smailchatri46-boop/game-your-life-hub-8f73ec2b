@@ -57,9 +57,17 @@ export const AppleEmoji = memo(function AppleEmoji({
   const [hasError, setHasError] = useState(false);
 
   const imageUrl = useMemo(() => {
+    if (!emoji || typeof emoji !== 'string') {
+      return '';
+    }
     const codePoints = emojiToCodePoints(emoji);
     return `https://cdn.jsdelivr.net/npm/emoji-datasource-apple@15.1.2/img/apple/64/${codePoints}.png`;
   }, [emoji]);
+
+  // Handle missing emoji prop
+  if (!emoji || typeof emoji !== 'string') {
+    return null;
+  }
 
   const sizeClass = sizeMap[size] || sizeMap.md;
 
