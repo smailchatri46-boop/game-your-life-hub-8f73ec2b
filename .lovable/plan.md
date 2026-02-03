@@ -1,143 +1,135 @@
 
-# Plan: Enhanced AI Buddy with Full User Data Context
 
-## Problem Analysis
+# Plan: Implement Hidden URL Routing (neyler.com only)
 
-The AI Buddy currently receives a severely limited data summary (approximately 30-50 tokens). It's missing:
-- Goals and goal progress
-- Daily tasks (todos)
-- Full habit names and their targets
-- Mood trends and patterns
-- Journal content beyond 60 characters
-- Historical completion rates per habit
+## Overview
 
-## Solution Overview
+We'll create a hybrid routing system where:
+- **Public pages** (landing, pricing, FAQ, etc.) use standard BrowserRouter with visible URLs
+- **Protected app pages** (dashboard, overview, goals, etc.) use MemoryRouter with hidden URLs
 
-Enhance the `ai-coach` edge function to fetch comprehensive user data and build a rich context document that the AI can actually use to provide meaningful insights.
+This approach keeps public pages SEO-friendly while giving logged-in users the clean URL experience you want.
 
-## Technical Implementation
-
-### 1. Expand Data Fetching in Edge Function
-
-Modify `supabase/functions/ai-coach/index.ts` to fetch:
-
-| Data Type | Current | Proposed |
-|-----------|---------|----------|
-| Habits | Names only | Full details with targets, categories |
-| Completions | Last 50 | Last 30 days with per-habit breakdown |
-| Goals | None | All active goals with progress % |
-| Daily Todos | None | Last 7 days of tasks |
-| Mood Logs | Last 7 (number only) | Last 30 days with trends |
-| Journal Entries | Last 3 (60 chars) | Last 10 entries (200 chars each) |
-
-### 2. Build Structured Context Document
-
-Create a formatted context block that reads like a "user profile document":
+## Architecture
 
 ```text
-=== USER PROGRESS REPORT ===
-
-HABITS (5 total):
-- Morning meditation (target: 1/day): 85% this week, 70% this month
-- Exercise (target: 3/day): 40% this week, streak: 2 days
-- Read 30 mins: 100% this week, streak: 7 days
-...
-
-GOALS (2 active):
-- "Run a marathon" - 45% complete (45/100 workouts), ends Mar 15
-- "Learn Spanish" - 20% complete, ends Jun 1
-...
-
-TODAY'S TASKS:
-- [x] Call mom
-- [ ] Finish report
-- [ ] Grocery shopping
-...
-
-MOOD TREND (last 7 days):
-Mon: 6/10, Tue: 7/10, Wed: 5/10 (declining trend)
-Average: 6.2/10, Motivation avg: 7.1/10
-...
-
-RECENT REFLECTIONS:
-- Jan 30: "Feeling overwhelmed with work deadlines..."
-- Jan 28: "Great progress on my morning routine..."
-...
-
-PATTERNS DETECTED:
-- Best habit day: Saturday (92% completion)
-- Weakest habit: Exercise (needs attention)
-- Mood dips on Wednesdays (workday stress?)
++------------------+     +-------------------+
+|  Public Routes   |     |  Protected Routes |
+|  BrowserRouter   |     |   MemoryRouter    |
++------------------+     +-------------------+
+| /pricing         |     | dashboard         |
+| /faq             |     | overview          |
+| /about           |     | journal           |
+| /auth            |     | goals             |
+| /onboarding      |     | tutorials         |
+| /paywall         |     | settings          |
++------------------+     +-------------------+
+       |                         |
+       v                         v
+  neyler.com/faq           neyler.com
 ```
-
-### 3. Upgrade System Prompt
-
-Create a comprehensive prompt that instructs the AI how to use this data:
-
-```text
-You are the Neyler AI Buddy - a personal wellness coach with full visibility 
-into the user's habits, goals, mood, and daily reflections.
-
-YOUR DATA ACCESS:
-You have the user's complete progress report below. Use it to:
-- Identify patterns (good and concerning)
-- Celebrate streaks and achievements
-- Gently address declining trends
-- Connect mood patterns to habit performance
-- Reference specific habits/goals by name
-
-RESPONSE STYLE:
-- Warm, supportive, never judgmental
-- Reference specific data ("I see your meditation streak is at 7 days!")
-- Provide actionable, personalized insights
-- Maximum 150 words, 1-2 emojis max
-- No markdown formatting
-
-USER DATA:
-{context_document}
-```
-
-### 4. Token Budget Management
-
-To stay within cost limits while providing rich context:
-
-| Component | Max Tokens |
-|-----------|------------|
-| System prompt base | ~100 |
-| Context document | ~400 |
-| Conversation history | ~300 |
-| AI response | ~150 |
-| **Total per request** | ~950 |
-
-Upgrade model from `gemini-2.5-flash-lite` to `gemini-2.5-flash` for better reasoning with this context (still cost-efficient).
-
-### 5. Files to Modify
-
-**Primary change:**
-- `supabase/functions/ai-coach/index.ts` - Complete rewrite of data fetching and prompt construction
-
-**No frontend changes needed** - the AI Buddy UI already works; only the backend intelligence needs enhancement.
 
 ## Implementation Steps
 
-1. **Expand database queries** - Fetch habits with details, goals, todos, mood logs (30 days), journals (10 entries)
+### Step 1: Create Internal App Router Component
 
-2. **Calculate analytics** - Per-habit completion rates, streaks, trends, weekly/monthly averages
+Create a new component `src/components/InternalAppRouter.tsx` that:
+- Uses React Router's `MemoryRouter` for internal navigation
+- Maintains current page in React state instead of URL
+- Provides a context for navigation between pages
 
-3. **Build context document** - Format all data into a readable text block (~400 tokens)
+### Step 2: Create Navigation Context
 
-4. **Update system prompt** - Instruct AI on how to use the data effectively
+Create `src/contexts/InternalNavigationContext.tsx` to:
+- Track current internal page (dashboard, overview, etc.)
+- Provide `navigateTo()` function for page switching
+- Persist last visited page to localStorage (so refresh remembers it)
 
-5. **Upgrade model** - Switch to `gemini-2.5-flash` for better reasoning
+### Step 3: Update App.tsx Routing Structure
 
-6. **Deploy and test** - Verify the AI can now reference specific habits, goals, and patterns
+Modify `src/App.tsx` to:
+- Keep BrowserRouter for public routes only
+- Render a single `/app` route that loads the internal router
+- Redirect authenticated users to `/app` instead of `/dashboard`
 
-## Expected Outcome
+### Step 4: Update Navbar Navigation
 
-After implementation, conversations will look like:
+Modify `src/components/Navbar.tsx` to:
+- Use internal navigation context instead of React Router's `Link`
+- Highlight active tab based on internal state, not URL
 
-**User**: "How am I doing with my habits?"
+### Step 5: Update Auth Redirects
 
-**AI**: "You're doing great! Your meditation streak is at 7 days - that's your longest yet! Exercise has been tricky this week (2/7 days), but I noticed you crushed it on weekends. Your mood averaged 7.2/10, which is up from last week. Want to focus on making exercise easier on weekdays?"
+Modify authentication guards to redirect to `/app` (which shows just `neyler.com`):
+- `src/components/AuthRedirect.tsx`
+- `src/components/AuthGuard.tsx`
+- `src/components/SubscriptionGate.tsx`
 
-Instead of the current generic responses that don't reference actual user data.
+### Step 6: Handle Page Persistence
+
+Add localStorage persistence so:
+- Last visited page is saved
+- Page refresh returns to that page (not always dashboard)
+- Default is dashboard for new sessions
+
+## Files to Create
+
+| File | Purpose |
+|------|---------|
+| `src/contexts/InternalNavigationContext.tsx` | State management for internal pages |
+| `src/components/InternalAppRouter.tsx` | MemoryRouter wrapper with page rendering |
+
+## Files to Modify
+
+| File | Changes |
+|------|---------|
+| `src/App.tsx` | Simplify protected routes to single `/app` entry point |
+| `src/components/Navbar.tsx` | Use internal navigation instead of Link |
+| `src/components/AuthRedirect.tsx` | Redirect to `/app` instead of `/dashboard` |
+| `src/components/AuthGuard.tsx` | Redirect to `/app` instead of `/dashboard` |
+| `src/components/AppLayout.tsx` | Get current page from context |
+
+## Technical Details
+
+### Navigation Context Structure
+
+```typescript
+interface InternalNavigationContextType {
+  currentPage: string;  // 'dashboard' | 'overview' | 'journal' | 'goals' | 'tutorials' | 'settings'
+  navigateTo: (page: string) => void;
+}
+```
+
+### Page Mapping
+
+```typescript
+const pageComponents = {
+  dashboard: Habits,
+  overview: Overview,
+  journal: Journal,
+  goals: Goals,
+  tutorials: Tutorials,
+  'video-tutorial': VideoTutorial,
+  settings: Settings,
+};
+```
+
+### URL Behavior After Implementation
+
+| Action | URL Shown |
+|--------|-----------|
+| Login | neyler.com |
+| Click "Overview" | neyler.com |
+| Click "Goals" | neyler.com |
+| Click "Settings" | neyler.com |
+| Page refresh | neyler.com (returns to last page) |
+| Browser back | Leaves the app entirely |
+| Visit neyler.com/pricing | neyler.com/pricing (public page) |
+
+## What Won't Change
+
+- Public pages (/pricing, /faq, /about, etc.) keep their URLs
+- Authentication flow (/auth, /onboarding, /paywall) keeps URLs
+- OAuth callbacks continue to work normally
+- Domain redirect logic remains intact
+
