@@ -10,7 +10,7 @@ import { CancellationFlow } from "@/components/CancellationFlow";
 import { useAuth } from "@/contexts/AuthContext";
 import { useSubscription } from "@/contexts/SubscriptionContext";
 import { toast } from "sonner";
-import { getProfile } from "@/services/firestore/profiles";
+import { getProfile } from "@/services/supabase/profiles";
 import { 
   User, 
   CreditCard, 
