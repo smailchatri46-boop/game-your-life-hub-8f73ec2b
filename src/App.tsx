@@ -88,16 +88,14 @@ const App = () => (
                   <Route path="/paywall" element={<Paywall />} />
                   <Route path="/payment-success" element={<PaymentSuccess />} />
                   
-                  {/* Protected routes with shared layout */}
-                  <Route element={<SubscriptionGate><AppLayout /></SubscriptionGate>}>
-                    <Route path="/dashboard" element={<Habits />} />
-                    <Route path="/overview" element={<Overview />} />
-                    <Route path="/journal" element={<Journal />} />
-                    <Route path="/goals" element={<Goals />} />
-                    <Route path="/tutorials" element={<Tutorials />} />
-                    <Route path="/video-tutorial" element={<VideoTutorial />} />
-                    <Route path="/settings" element={<Settings />} />
-                  </Route>
+                  {/* Protected routes - each with SubscriptionGate and AppLayout */}
+                  <Route path="/dashboard" element={<SubscriptionGate><AppLayout><Habits /></AppLayout></SubscriptionGate>} />
+                  <Route path="/overview" element={<SubscriptionGate><AppLayout><Overview /></AppLayout></SubscriptionGate>} />
+                  <Route path="/journal" element={<SubscriptionGate><AppLayout><Journal /></AppLayout></SubscriptionGate>} />
+                  <Route path="/goals" element={<SubscriptionGate><AppLayout><Goals /></AppLayout></SubscriptionGate>} />
+                  <Route path="/tutorials" element={<SubscriptionGate><AppLayout><Tutorials /></AppLayout></SubscriptionGate>} />
+                  <Route path="/video-tutorial" element={<SubscriptionGate><AppLayout><VideoTutorial /></AppLayout></SubscriptionGate>} />
+                  <Route path="/settings" element={<SubscriptionGate><AppLayout><Settings /></AppLayout></SubscriptionGate>} />
                   
                   {/* 404 - catch all unknown routes */}
                   <Route path="*" element={<NotFound />} />
