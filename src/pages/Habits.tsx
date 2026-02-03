@@ -496,11 +496,11 @@ export default function Habits() {
                         <button
                           disabled={isFuture}
                           onClick={() => !isFuture && toggleHabitCompletion(habit.id, day)}
-                          className={`w-5 h-5 lg:w-6 lg:h-6 xl:w-7 xl:h-7 mx-auto rounded-md flex items-center justify-center text-xs transition-all duration-200 ${
+                          className={`w-5 h-5 lg:w-6 lg:h-6 xl:w-7 xl:h-7 mx-auto rounded-md flex items-center justify-center text-xs ${
                             isFuture 
                               ? 'bg-muted/30 cursor-not-allowed'
                               : isCompleted
-                                ? 'bg-gradient-to-br from-accent to-primary text-primary-foreground shadow-sm hover:scale-105'
+                                ? 'bg-gradient-to-br from-accent to-primary text-primary-foreground shadow-sm'
                                 : 'bg-secondary hover:bg-secondary/80 cursor-pointer'
                           }`}
                         >
