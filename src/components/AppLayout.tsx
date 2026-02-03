@@ -10,7 +10,7 @@ export function AppLayout() {
 
   // Track page visits
   useEffect(() => {
-    const path = location.pathname.replace("/", "").toLowerCase() || "overview";
+    const path = location.pathname.replace("/", "").toLowerCase() || "dashboard";
     markPageVisited(path);
   }, [location.pathname, markPageVisited]);
 

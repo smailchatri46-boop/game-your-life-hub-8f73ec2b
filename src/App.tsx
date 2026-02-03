@@ -11,7 +11,7 @@ import { SubscriptionGate } from "@/components/SubscriptionGate";
 import { AuthRedirect } from "@/components/AuthRedirect";
 import { AuthGuard } from "@/components/AuthGuard";
 import { DomainRedirect } from "@/components/DomainRedirect";
-import { InternalAppRouter } from "@/components/InternalAppRouter";
+import { AppLayout } from "@/components/AppLayout";
 
 // Critical path - load immediately
 import Landing from "./pages/Landing";
@@ -30,6 +30,15 @@ const Refund = lazy(() => import("./pages/Refund"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 const Paywall = lazy(() => import("./pages/Paywall"));
 const PaymentSuccess = lazy(() => import("./pages/PaymentSuccess"));
+
+// Protected pages
+const Habits = lazy(() => import("./pages/Habits"));
+const Overview = lazy(() => import("./pages/Overview"));
+const Journal = lazy(() => import("./pages/Journal"));
+const Goals = lazy(() => import("./pages/Goals"));
+const Tutorials = lazy(() => import("./pages/Tutorials"));
+const VideoTutorial = lazy(() => import("./pages/VideoTutorial"));
+const Settings = lazy(() => import("./pages/Settings"));
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -56,7 +65,7 @@ const App = () => (
             <BrowserRouter>
               <Suspense fallback={<PageLoader />}>
                 <Routes>
-                  {/* Root path - redirect authenticated users to /app */}
+                  {/* Root path - redirect authenticated users to /dashboard */}
                   <Route path="/" element={<AuthRedirect><Landing /></AuthRedirect>} />
                   
                   {/* Public routes - no authentication required */}
@@ -79,17 +88,16 @@ const App = () => (
                   <Route path="/paywall" element={<Paywall />} />
                   <Route path="/payment-success" element={<PaymentSuccess />} />
                   
-                  {/* Protected app - single entry point with memory-based internal routing */}
-                  <Route path="/app" element={<SubscriptionGate><InternalAppRouter /></SubscriptionGate>} />
-                  
-                  {/* Legacy routes - redirect to /app for backwards compatibility */}
-                  <Route path="/dashboard" element={<SubscriptionGate><InternalAppRouter /></SubscriptionGate>} />
-                  <Route path="/overview" element={<SubscriptionGate><InternalAppRouter /></SubscriptionGate>} />
-                  <Route path="/journal" element={<SubscriptionGate><InternalAppRouter /></SubscriptionGate>} />
-                  <Route path="/goals" element={<SubscriptionGate><InternalAppRouter /></SubscriptionGate>} />
-                  <Route path="/tutorials" element={<SubscriptionGate><InternalAppRouter /></SubscriptionGate>} />
-                  <Route path="/video-tutorial" element={<SubscriptionGate><InternalAppRouter /></SubscriptionGate>} />
-                  <Route path="/settings" element={<SubscriptionGate><InternalAppRouter /></SubscriptionGate>} />
+                  {/* Protected routes with shared layout */}
+                  <Route element={<SubscriptionGate><AppLayout /></SubscriptionGate>}>
+                    <Route path="/dashboard" element={<Habits />} />
+                    <Route path="/overview" element={<Overview />} />
+                    <Route path="/journal" element={<Journal />} />
+                    <Route path="/goals" element={<Goals />} />
+                    <Route path="/tutorials" element={<Tutorials />} />
+                    <Route path="/video-tutorial" element={<VideoTutorial />} />
+                    <Route path="/settings" element={<Settings />} />
+                  </Route>
                   
                   {/* 404 - catch all unknown routes */}
                   <Route path="*" element={<NotFound />} />
