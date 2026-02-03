@@ -8,7 +8,7 @@ import { hasCompletedOnboarding as checkDbOnboarding } from "@/services/supabase
  * Handles root path redirect for authenticated users.
  * - Authenticated users without onboarding -> /onboarding
  * - Authenticated users without subscription -> /paywall
- * - Authenticated users with subscription -> /dashboard
+ * - Authenticated users with subscription -> /app (hidden URL)
  * - Unauthenticated users → Landing page (passed as children)
  */
 interface AuthRedirectProps {
@@ -84,8 +84,8 @@ export function AuthRedirect({ children }: AuthRedirectProps) {
       return <Navigate to="/paywall" replace />;
     }
     
-    // Step 3: Users with active subscription go to dashboard
-    return <Navigate to="/dashboard" replace />;
+    // Step 3: Users with active subscription go to /app (hidden URL)
+    return <Navigate to="/app" replace />;
   }
 
   // Otherwise, show the landing page
