@@ -202,9 +202,14 @@ export default function Goals() {
             )}
           </>
         )}
-        
-        <CommunityLink />
       </main>
+
+      {/* Fixed community link at bottom */}
+      <div className="fixed bottom-0 left-0 right-0 bg-gradient-to-t from-background via-background/80 to-transparent pb-4 pt-8 pointer-events-none z-40">
+        <div className="pointer-events-auto">
+          <CommunityLink />
+        </div>
+      </div>
 
       {/* Floating Add Goal Button */}
       <Button 

@@ -126,9 +126,9 @@ const RAMP_DURATION_OPTIONS = [
 ];
 
 export function AddHabitModal({ open, onOpenChange, onSave, skipGuidance = false }: AddHabitModalProps) {
-  // Total steps: 4 guidance + 5 habit creation = 9 steps (or 5 if skipping guidance)
+  // Total steps: 4 guidance + 6 habit creation = 10 steps (or 6 if skipping guidance)
   const guidanceSteps = skipGuidance ? 0 : GUIDANCE_SLIDES.length;
-  const habitSteps = 5; // Icon → Name → Category → Frequency → Importance
+  const habitSteps = 6; // Icon → Name → Type → Category → Frequency → Importance
   const totalSteps = guidanceSteps + habitSteps;
 
   const [step, setStep] = useState(1);
@@ -139,8 +139,8 @@ export function AddHabitModal({ open, onOpenChange, onSave, skipGuidance = false
   const [name, setName] = useState("");
   const [category, setCategory] = useState("");
   const [icon, setIcon] = useState("🎯");
-  const [habitType] = useState<"boolean" | "numeric">("boolean");
-  const [numericTarget] = useState(8);
+  const [habitType, setHabitType] = useState<"boolean" | "numeric">("boolean");
+  const [numericTarget, setNumericTarget] = useState(5);
   const [frequency, setFrequency] = useState<"daily" | "weekdays" | "monthly" | "progressive">("daily");
   const [selectedWeekdays, setSelectedWeekdays] = useState<number[]>([1, 2, 3, 4, 5]);
   const [selectedDays, setSelectedDays] = useState<number[]>([1, 15]);
@@ -224,6 +224,8 @@ export function AddHabitModal({ open, onOpenChange, onSave, skipGuidance = false
     setName("");
     setCategory("");
     setIcon("🎯");
+    setHabitType("boolean");
+    setNumericTarget(5);
     setFrequency("daily");
     setSelectedWeekdays([1, 2, 3, 4, 5]);
     setSelectedDays([1, 15]);
@@ -273,12 +275,13 @@ export function AddHabitModal({ open, onOpenChange, onSave, skipGuidance = false
     switch (habitStep) {
       case 1: return icon.length > 0;
       case 2: return name.trim().length > 0;
-      case 3: return category.length > 0;
-      case 4: 
+      case 3: return habitType === "boolean" || (habitType === "numeric" && numericTarget > 0);
+      case 4: return category.length > 0;
+      case 5: 
         if (frequency === "weekdays") return selectedWeekdays.length > 0;
         if (frequency === "monthly") return selectedDays.length > 0;
         return true;
-      case 5: return true;
+      case 6: return true;
       default: return false;
     }
   };
@@ -438,8 +441,101 @@ export function AddHabitModal({ open, onOpenChange, onSave, skipGuidance = false
               </div>
             )}
 
-            {/* Habit Step 3: Choose a category */}
+            {/* Habit Step 3: Choose habit type (checkbox or number-based) */}
             {!isGuidancePhase && habitStep === 3 && (
+              <div className="space-y-4">
+                <div className="text-center mb-6">
+                  <AppleEmoji emoji="🔢" size="3xl" className="mb-4" />
+                  <h2 className="font-display text-xl font-semibold text-foreground">
+                    How do you want to track it?
+                  </h2>
+                  <p className="text-sm text-muted-foreground mt-2">
+                    Choose between a simple check or counting
+                  </p>
+                </div>
+                <div className="space-y-3">
+                  {/* Checkbox option */}
+                  <button
+                    type="button"
+                    onClick={() => setHabitType("boolean")}
+                    className={`w-full p-4 rounded-2xl text-left flex items-center gap-4 transition-all ${
+                      habitType === "boolean"
+                        ? "bg-gradient-to-br from-primary/20 to-accent/20 border-2 border-primary/50"
+                        : "bg-white/80 hover:bg-white border-2 border-transparent"
+                    }`}
+                  >
+                    <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-primary/10 to-accent/10 flex items-center justify-center">
+                      <AppleEmoji emoji="✅" size="xl" />
+                    </div>
+                    <div className="flex-1">
+                      <p className="font-medium text-foreground">Just check it off</p>
+                      <p className="text-sm text-muted-foreground">Mark as done once per day</p>
+                    </div>
+                    <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all ${
+                      habitType === "boolean" ? "border-primary bg-primary" : "border-muted-foreground/30"
+                    }`}>
+                      {habitType === "boolean" && <div className="w-2 h-2 bg-primary-foreground rounded-full" />}
+                    </div>
+                  </button>
+
+                  {/* Number-based option */}
+                  <button
+                    type="button"
+                    onClick={() => setHabitType("numeric")}
+                    className={`w-full p-4 rounded-2xl text-left flex items-center gap-4 transition-all ${
+                      habitType === "numeric"
+                        ? "bg-gradient-to-br from-primary/20 to-accent/20 border-2 border-primary/50"
+                        : "bg-white/80 hover:bg-white border-2 border-transparent"
+                    }`}
+                  >
+                    <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-primary/10 to-accent/10 flex items-center justify-center">
+                      <AppleEmoji emoji="🔢" size="xl" />
+                    </div>
+                    <div className="flex-1">
+                      <p className="font-medium text-foreground">Count repetitions</p>
+                      <p className="text-sm text-muted-foreground">Track how many times per day</p>
+                    </div>
+                    <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all ${
+                      habitType === "numeric" ? "border-primary bg-primary" : "border-muted-foreground/30"
+                    }`}>
+                      {habitType === "numeric" && <div className="w-2 h-2 bg-primary-foreground rounded-full" />}
+                    </div>
+                  </button>
+
+                  {/* Target input when numeric selected */}
+                  {habitType === "numeric" && (
+                    <div className="mt-4 p-4 bg-white/60 rounded-2xl">
+                      <label className="block text-sm font-medium text-foreground mb-3">
+                        Daily target
+                      </label>
+                      <div className="flex items-center gap-4">
+                        <button
+                          type="button"
+                          onClick={() => setNumericTarget(Math.max(1, numericTarget - 1))}
+                          className="w-12 h-12 rounded-xl bg-white hover:bg-muted/40 border border-border/20 flex items-center justify-center text-xl font-semibold text-foreground transition-colors"
+                        >
+                          −
+                        </button>
+                        <div className="flex-1 text-center">
+                          <span className="text-3xl font-bold gradient-text">{numericTarget}</span>
+                          <p className="text-xs text-muted-foreground mt-1">times per day</p>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => setNumericTarget(Math.min(100, numericTarget + 1))}
+                          className="w-12 h-12 rounded-xl bg-white hover:bg-muted/40 border border-border/20 flex items-center justify-center text-xl font-semibold text-foreground transition-colors"
+                        >
+                          +
+                        </button>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
+
+            {/* Habit Step 4: Choose a category */}
+            {!isGuidancePhase && habitStep === 4 && (
               <div className="space-y-4">
                 <div className="text-center mb-6">
                   <AppleEmoji emoji="📂" size="3xl" className="mb-4" />
@@ -470,8 +566,8 @@ export function AddHabitModal({ open, onOpenChange, onSave, skipGuidance = false
               </div>
             )}
 
-            {/* Habit Step 4: Choose frequency */}
-            {!isGuidancePhase && habitStep === 4 && (
+            {/* Habit Step 5: Choose frequency */}
+            {!isGuidancePhase && habitStep === 5 && (
               <div className="space-y-4">
                 <div className="text-center mb-6">
                   <AppleEmoji emoji="📅" size="3xl" className="mb-4" />
@@ -682,8 +778,8 @@ export function AddHabitModal({ open, onOpenChange, onSave, skipGuidance = false
               </div>
             )}
 
-            {/* Habit Step 5: Set importance */}
-            {!isGuidancePhase && habitStep === 5 && (
+            {/* Habit Step 6: Set importance */}
+            {!isGuidancePhase && habitStep === 6 && (
               <div className="flex flex-col justify-center h-full min-h-[280px]">
                 <div className="text-center mb-8">
                   <AppleEmoji emoji="🤔" size="3xl" className="mb-4" />
