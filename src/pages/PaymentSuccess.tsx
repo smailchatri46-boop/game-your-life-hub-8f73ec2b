@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { useSubscription } from "@/contexts/SubscriptionContext";
 import { useAuth } from "@/contexts/AuthContext";
@@ -16,7 +16,14 @@ export default function PaymentSuccess() {
   const { subscription, isLoading: subLoading, refetch } = useSubscription();
   const [pollCount, setPollCount] = useState(0);
   const [redirecting, setRedirecting] = useState(false);
-  const MAX_POLLS = 10; // Poll up to 10 times (20 seconds total)
+  const MAX_POLLS = 15; // Poll up to 15 times (30 seconds total)
+  const POLL_INTERVAL = 2000; // 2 seconds
+
+  // Mark onboarding as complete immediately when landing on this page
+  // since they've just completed payment
+  useEffect(() => {
+    localStorage.setItem("locked_onboarding_complete", "true");
+  }, []);
 
   useEffect(() => {
     // If not authenticated, redirect to auth
@@ -26,37 +33,42 @@ export default function PaymentSuccess() {
     }
   }, [user, authLoading, navigate]);
 
+  // Stable redirect function
+  const redirectToDashboard = useCallback(() => {
+    if (redirecting) return;
+    setRedirecting(true);
+    console.log("Payment confirmed! Redirecting to dashboard...");
+    // Use setTimeout to ensure state updates are processed
+    setTimeout(() => {
+      navigate("/dashboard", { replace: true });
+    }, 1000);
+  }, [navigate, redirecting]);
+
   useEffect(() => {
     // If subscription is already active, redirect immediately
     if (!subLoading && subscription?.isActive) {
-      setRedirecting(true);
-      // Mark onboarding as complete since they've paid
-      localStorage.setItem("locked_onboarding_complete", "true");
-      setTimeout(() => {
-        navigate("/dashboard", { replace: true });
-      }, 1500); // Brief delay to show success message
+      redirectToDashboard();
       return;
     }
 
     // Poll for subscription status if not active yet
-    if (!subLoading && !subscription?.isActive && pollCount < MAX_POLLS && user) {
+    if (!subLoading && !subscription?.isActive && pollCount < MAX_POLLS && user && !redirecting) {
       const timer = setTimeout(() => {
         console.log(`Polling for subscription status... (${pollCount + 1}/${MAX_POLLS})`);
         refetch();
         setPollCount((prev) => prev + 1);
-      }, 2000); // Poll every 2 seconds
+      }, POLL_INTERVAL);
 
       return () => clearTimeout(timer);
     }
 
-    // If max polls reached without success, redirect to dashboard anyway
-    // The subscription gate will handle the redirect if still not active
+    // If max polls reached without success, still redirect to dashboard
+    // The subscription edge function might have a delay, but user has paid
     if (pollCount >= MAX_POLLS && !redirecting) {
-      console.log("Max polls reached, redirecting to dashboard");
-      localStorage.setItem("locked_onboarding_complete", "true");
-      navigate("/dashboard", { replace: true });
+      console.log("Max polls reached, redirecting to dashboard anyway (payment completed)");
+      redirectToDashboard();
     }
-  }, [subscription, subLoading, pollCount, refetch, navigate, user, redirecting]);
+  }, [subscription, subLoading, pollCount, refetch, user, redirecting, redirectToDashboard]);
 
   return (
     <>
@@ -85,7 +97,7 @@ export default function PaymentSuccess() {
             <div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin" />
           </div>
           
-          {pollCount > 3 && !subscription?.isActive && (
+          {pollCount > 5 && !subscription?.isActive && !redirecting && (
             <p className="text-sm text-muted-foreground">
               This may take a moment. Please don't close this page.
             </p>
