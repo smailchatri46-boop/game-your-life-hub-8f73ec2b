@@ -552,7 +552,10 @@ export default function Habits() {
                 {Array.from({ length: daysInMonth }, (_, i) => {
                   const day = i + 1;
                   const dateKey = getDateKey(day);
-                  const hasReflection = !!reflections[dateKey]?.text;
+                  // Check moodMap for Supabase data, fallback to local reflections for demo
+                  const hasReflection = isDemo 
+                    ? !!reflections[dateKey]?.text 
+                    : !!moodMap[dateKey]?.reflection;
                   const isFuture = day > currentDay;
                   
                   return (
@@ -584,10 +587,17 @@ export default function Habits() {
                 })}
                 <td className="p-1 lg:p-2 text-right">
                   <span className="text-xs lg:text-sm font-bold gradient-text">
-                    {currentDay > 0 ? Math.round((Object.keys(reflections).filter(key => {
-                      const [y, m] = key.split('-').map(Number);
-                      return y === year && m === month + 1 && reflections[key]?.text;
-                    }).length / currentDay) * 100) : 0}%
+                    {currentDay > 0 ? Math.round((
+                      isDemo 
+                        ? Object.keys(reflections).filter(key => {
+                            const [y, m] = key.split('-').map(Number);
+                            return y === year && m === month + 1 && reflections[key]?.text;
+                          }).length
+                        : Object.keys(moodMap).filter(key => {
+                            const [y, m] = key.split('-').map(Number);
+                            return y === year && m === month + 1 && moodMap[key]?.reflection;
+                          }).length
+                    ) / currentDay * 100) : 0}%
                   </span>
                 </td>
                 <td className="p-1 lg:p-2">
