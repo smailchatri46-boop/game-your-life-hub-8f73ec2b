@@ -345,28 +345,29 @@ export default function Overview() {
                 
                 {Array.from({ length: daysInMonth }, (_, i) => {
                   const day = i + 1;
-                  const completionRate = getCompletionRate(day);
                   const isFuture = day > currentDay;
                   const isSelected = selectedDate === day;
-                  const colorClasses = getCalendarDayColor(completionRate);
+                  // Only show completion rate for today and past days
+                  const completionRate = isFuture ? 0 : getCompletionRate(day);
+                  const colorClasses = isFuture 
+                    ? { bg: "bg-secondary/50", hover: "hover:bg-secondary/70" }
+                    : getCalendarDayColor(completionRate);
                   
                   return (
                     <button
                       key={day}
-                      onClick={() => !isFuture && setSelectedDate(day)}
-                      disabled={isFuture}
-                      style={isSelected && !isFuture ? { background: 'linear-gradient(135deg, hsl(38 100% 70%) 0%, hsl(24 95% 53%) 100%)' } : undefined}
+                      onClick={() => setSelectedDate(day)}
+                      style={isSelected ? { background: 'linear-gradient(135deg, hsl(38 100% 70%) 0%, hsl(24 95% 53%) 100%)' } : undefined}
                       className={`aspect-square rounded-2xl flex flex-col items-center justify-center transition-colors duration-200 ${
-                        isFuture 
-                          ? 'bg-muted/30 cursor-not-allowed'
-                          : isSelected
-                            ? 'text-primary-foreground shadow-medium hover:brightness-[1.03]'
-                            : `${colorClasses.bg} ${colorClasses.hover}`
+                        isSelected
+                          ? 'text-primary-foreground shadow-medium hover:brightness-[1.03]'
+                          : `${colorClasses.bg} ${colorClasses.hover}`
                       }`}
                     >
                       <span className={`text-sm font-semibold ${isSelected ? 'text-primary-foreground' : ''}`}>
                         {day}
                       </span>
+                      {/* Only show percentage for today and past days */}
                       {!isFuture && (
                         <span className={`text-xs ${isSelected ? 'text-primary-foreground/80' : 'text-muted-foreground'}`}>
                           {completionRate}%
