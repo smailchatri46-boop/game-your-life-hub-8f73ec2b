@@ -508,7 +508,7 @@ export default function Habits() {
                             <Check className="w-3 h-3 lg:w-4 lg:h-4" />
                           )}
                           {!isFuture && habit.target > 1 && (
-                            <span className="font-medium text-[10px] lg:text-xs">
+                            <span className={`font-medium text-[10px] lg:text-xs ${isCompleted ? '' : 'text-muted-foreground'}`}>
                               {value}
                             </span>
                           )}
