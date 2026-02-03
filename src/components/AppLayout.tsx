@@ -3,14 +3,10 @@ import { useEffect } from "react";
 import { Navbar } from "@/components/Navbar";
 import { ReviewRequestModal } from "@/components/ReviewRequestModal";
 import { usePageVisitTracker } from "@/hooks/use-page-visit-tracker";
-import { useUrlHide } from "@/hooks/use-url-hide";
 
 export function AppLayout() {
   const location = useLocation();
   const { markPageVisited, shouldShowReviewModal, markReviewModalShown } = usePageVisitTracker();
-  
-  // Hide URL paths for cleaner look
-  useUrlHide();
 
   // Track page visits
   useEffect(() => {
