@@ -127,40 +127,27 @@ export function useCalendarData(year: number, month: number) {
     return { completionsMap: compMap, todosMap: todoMap };
   }, [completionsQuery.data, todosQuery.data]);
 
-  // Calculate day completion percentage
+  // Calculate day completion percentage - ONLY based on to-dos (not habits)
   const getDayCompletionRate = useMemo(() => {
-    const habits = habitsQuery.data || [];
-    
     return (day: number): number => {
+      // Future days always return 0 (no progress shown)
+      if (day > currentDay) return 0;
+      
       if (isDemo) {
         // Demo mode - return random for past days
-        return day <= currentDay ? Math.floor(Math.random() * 100) : 0;
+        return Math.floor(Math.random() * 100);
       }
 
       const dateKey = `${year}-${String(month + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
       
-      if (habits.length === 0 && !todosMap[dateKey]) return 0;
-
-      // Count completed habits
-      let completedHabits = 0;
-      habits.forEach(habit => {
-        const value = completionsMap[habit.id]?.[dateKey] || 0;
-        if (habit.target === 1) {
-          if (value >= 1) completedHabits++;
-        } else {
-          if (value >= habit.target) completedHabits++;
-        }
-      });
-
-      // Count tasks
+      // Only count tasks (to-dos), NOT habits
       const dayTasks = todosMap[dateKey] || { total: 0, completed: 0 };
 
-      const totalCompleted = completedHabits + dayTasks.completed;
-      const totalExpected = habits.length + dayTasks.total;
+      if (dayTasks.total === 0) return 0;
 
-      return totalExpected > 0 ? Math.round((totalCompleted / totalExpected) * 100) : 0;
+      return Math.round((dayTasks.completed / dayTasks.total) * 100);
     };
-  }, [habitsQuery.data, completionsMap, todosMap, year, month, currentDay, isDemo]);
+  }, [todosMap, year, month, currentDay, isDemo]);
 
   // Precompute all day percentages
   const dayPercentages = useMemo(() => {
