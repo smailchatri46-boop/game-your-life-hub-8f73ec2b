@@ -1,19 +1,23 @@
-import { Link, useLocation } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { Settings } from "lucide-react";
 import neylerLogo from "@/assets/neyler-logo.png";
+import { useInternalNavigation } from "@/contexts/InternalNavigationContext";
 
-const navItems = [
-  { name: "Dashboard", path: "/dashboard" },
-  { name: "Overview", path: "/overview" },
-  { name: "Journal", path: "/journal" },
-  { name: "Goals", path: "/goals" },
-  { name: "Tutorials", path: "/tutorials" },
+type PageType = 'dashboard' | 'overview' | 'journal' | 'goals' | 'tutorials' | 'video-tutorial' | 'settings';
+
+const navItems: { name: string; page: PageType }[] = [
+  { name: "Dashboard", page: "dashboard" },
+  { name: "Overview", page: "overview" },
+  { name: "Journal", page: "journal" },
+  { name: "Goals", page: "goals" },
+  { name: "Tutorials", page: "tutorials" },
 ];
 
+
 export function Navbar() {
-  const location = useLocation();
-  const isSettingsActive = location.pathname === "/settings";
+  const { currentPage, navigateTo } = useInternalNavigation();
+  const isSettingsActive = currentPage === "settings";
 
   return (
     <nav className="fixed top-6 left-0 right-0 z-50 flex justify-center px-4">
@@ -31,23 +35,23 @@ export function Navbar() {
         {/* Glass navbar */}
         <div className="navbar-glass relative h-full px-5 flex items-center w-full">
           {/* Logo - fixed left */}
-          <Link 
-            to="/dashboard"
+          <button 
+            onClick={() => navigateTo("dashboard")}
             className="flex-shrink-0"
             style={{ width: '100px', minWidth: '100px' }}
           >
             <img src={neylerLogo} alt="Neyler" className="h-6 w-auto" loading="eager" fetchPriority="high" width={86} height={24} />
-          </Link>
+          </button>
           
           {/* Centered tabs */}
           <div className="flex-1 flex items-center justify-center gap-1">
             {navItems.map((item) => {
-              const isActive = location.pathname === item.path || 
-                (item.path === "/tutorials" && location.pathname === "/video-tutorial");
+              const isActive = currentPage === item.page || 
+                (item.page === "tutorials" && currentPage === "video-tutorial");
               return (
-                <Link
-                  key={item.path}
-                  to={item.path}
+                <button
+                  key={item.page}
+                  onClick={() => navigateTo(item.page)}
                   className={cn(
                     "px-4 py-2 rounded-2xl text-sm transition-all duration-200 whitespace-nowrap",
                     isActive
@@ -56,14 +60,14 @@ export function Navbar() {
                   )}
                 >
                   {item.name}
-                </Link>
+                </button>
               );
             })}
           </div>
 
           {/* Settings icon - fixed right */}
-          <Link
-            to="/settings"
+          <button
+            onClick={() => navigateTo("settings")}
             className={cn(
               "flex-shrink-0 p-2 rounded-2xl transition-all duration-200",
               isSettingsActive
@@ -76,7 +80,7 @@ export function Navbar() {
             }}
           >
             <Settings className={cn("w-5 h-5", isSettingsActive && "stroke-[2.5px]")} />
-          </Link>
+          </button>
         </div>
       </div>
     </nav>

@@ -8,7 +8,7 @@ import { hasCompletedOnboarding as checkDbOnboarding } from "@/services/supabase
  * Handles root path redirect for authenticated users.
  * - Authenticated users without onboarding -> /onboarding
  * - Authenticated users without subscription -> /paywall
- * - Authenticated users with subscription -> /dashboard
+ * - Authenticated users with subscription -> /app (hidden URL)
  * - Unauthenticated users → Landing page (passed as children)
  */
 interface AuthRedirectProps {
@@ -67,13 +67,9 @@ export function AuthRedirect({ children }: AuthRedirectProps) {
     }
   }, [user?.id]);
 
-  // Show loading spinner while checking auth/subscription for authenticated users
-  if (loading || (user && (checkingOnboarding || subscriptionLoading))) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-background">
-        <div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin" />
-      </div>
-    );
+  // Show nothing while loading to prevent flash
+  if (loading || checkingOnboarding || subscriptionLoading) {
+    return null;
   }
 
   // If user is authenticated and on root, redirect appropriately
@@ -88,8 +84,8 @@ export function AuthRedirect({ children }: AuthRedirectProps) {
       return <Navigate to="/paywall" replace />;
     }
     
-    // Step 3: Users with active subscription go to /dashboard
-    return <Navigate to="/dashboard" replace />;
+    // Step 3: Users with active subscription go to /app (hidden URL)
+    return <Navigate to="/app" replace />;
   }
 
   // Otherwise, show the landing page

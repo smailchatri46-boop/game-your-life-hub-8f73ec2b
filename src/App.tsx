@@ -11,7 +11,7 @@ import { SubscriptionGate } from "@/components/SubscriptionGate";
 import { AuthRedirect } from "@/components/AuthRedirect";
 import { AuthGuard } from "@/components/AuthGuard";
 import { DomainRedirect } from "@/components/DomainRedirect";
-import { AppLayout } from "@/components/AppLayout";
+import { InternalAppRouter } from "@/components/InternalAppRouter";
 
 // Critical path - load immediately
 import Landing from "./pages/Landing";
@@ -30,15 +30,6 @@ const Refund = lazy(() => import("./pages/Refund"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 const Paywall = lazy(() => import("./pages/Paywall"));
 const PaymentSuccess = lazy(() => import("./pages/PaymentSuccess"));
-
-// Protected pages
-const Habits = lazy(() => import("./pages/Habits"));
-const Overview = lazy(() => import("./pages/Overview"));
-const Journal = lazy(() => import("./pages/Journal"));
-const Goals = lazy(() => import("./pages/Goals"));
-const Tutorials = lazy(() => import("./pages/Tutorials"));
-const VideoTutorial = lazy(() => import("./pages/VideoTutorial"));
-const Settings = lazy(() => import("./pages/Settings"));
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -65,7 +56,7 @@ const App = () => (
             <BrowserRouter>
               <Suspense fallback={<PageLoader />}>
                 <Routes>
-                  {/* Root path - redirect authenticated users to /dashboard */}
+                  {/* Root path - redirect authenticated users to /app */}
                   <Route path="/" element={<AuthRedirect><Landing /></AuthRedirect>} />
                   
                   {/* Public routes - no authentication required */}
@@ -88,14 +79,17 @@ const App = () => (
                   <Route path="/paywall" element={<Paywall />} />
                   <Route path="/payment-success" element={<PaymentSuccess />} />
                   
-                  {/* Protected routes - each with SubscriptionGate and AppLayout */}
-                  <Route path="/dashboard" element={<SubscriptionGate><AppLayout><Habits /></AppLayout></SubscriptionGate>} />
-                  <Route path="/overview" element={<SubscriptionGate><AppLayout><Overview /></AppLayout></SubscriptionGate>} />
-                  <Route path="/journal" element={<SubscriptionGate><AppLayout><Journal /></AppLayout></SubscriptionGate>} />
-                  <Route path="/goals" element={<SubscriptionGate><AppLayout><Goals /></AppLayout></SubscriptionGate>} />
-                  <Route path="/tutorials" element={<SubscriptionGate><AppLayout><Tutorials /></AppLayout></SubscriptionGate>} />
-                  <Route path="/video-tutorial" element={<SubscriptionGate><AppLayout><VideoTutorial /></AppLayout></SubscriptionGate>} />
-                  <Route path="/settings" element={<SubscriptionGate><AppLayout><Settings /></AppLayout></SubscriptionGate>} />
+                  {/* Protected app - single entry point with memory-based internal routing */}
+                  <Route path="/app" element={<SubscriptionGate><InternalAppRouter /></SubscriptionGate>} />
+                  
+                  {/* Legacy routes - redirect to /app for backwards compatibility */}
+                  <Route path="/dashboard" element={<SubscriptionGate><InternalAppRouter /></SubscriptionGate>} />
+                  <Route path="/overview" element={<SubscriptionGate><InternalAppRouter /></SubscriptionGate>} />
+                  <Route path="/journal" element={<SubscriptionGate><InternalAppRouter /></SubscriptionGate>} />
+                  <Route path="/goals" element={<SubscriptionGate><InternalAppRouter /></SubscriptionGate>} />
+                  <Route path="/tutorials" element={<SubscriptionGate><InternalAppRouter /></SubscriptionGate>} />
+                  <Route path="/video-tutorial" element={<SubscriptionGate><InternalAppRouter /></SubscriptionGate>} />
+                  <Route path="/settings" element={<SubscriptionGate><InternalAppRouter /></SubscriptionGate>} />
                   
                   {/* 404 - catch all unknown routes */}
                   <Route path="*" element={<NotFound />} />

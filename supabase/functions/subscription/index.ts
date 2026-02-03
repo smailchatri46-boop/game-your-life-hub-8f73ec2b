@@ -28,7 +28,7 @@ function unauthorizedResponse(message = "Unauthorized") {
   );
 }
 
-// Authenticate user from JWT token using getClaims for secure validation
+// Authenticate user from JWT token
 async function authenticateUser(req: Request): Promise<{
   user: { id: string; email?: string } | null;
   error: string | null;
@@ -48,23 +48,14 @@ async function authenticateUser(req: Request): Promise<{
     global: { headers: { Authorization: authHeader } }
   });
 
-  // Use getClaims for secure JWT validation
-  const { data: claimsData, error: claimsError } = await supabase.auth.getClaims(token);
+  const { data, error } = await supabase.auth.getUser(token);
   
-  if (claimsError || !claimsData?.claims) {
-    console.error("Auth error:", claimsError);
+  if (error || !data?.user) {
+    console.error("Auth error:", error);
     return { user: null, error: "Invalid token", supabase: null };
   }
 
-  const claims = claimsData.claims;
-  const userId = claims.sub as string;
-  const email = claims.email as string | undefined;
-
-  if (!userId) {
-    return { user: null, error: "Invalid token claims", supabase: null };
-  }
-
-  return { user: { id: userId, email }, error: null, supabase };
+  return { user: data.user, error: null, supabase };
 }
 
 // Get subscription from Polar by email

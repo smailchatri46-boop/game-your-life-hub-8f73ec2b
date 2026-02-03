@@ -1,27 +1,23 @@
-import { useLocation } from "react-router-dom";
-import { useEffect, ReactNode } from "react";
+import { Outlet, useLocation } from "react-router-dom";
+import { useEffect } from "react";
 import { Navbar } from "@/components/Navbar";
 import { ReviewRequestModal } from "@/components/ReviewRequestModal";
 import { usePageVisitTracker } from "@/hooks/use-page-visit-tracker";
 
-interface AppLayoutProps {
-  children: ReactNode;
-}
-
-export function AppLayout({ children }: AppLayoutProps) {
+export function AppLayout() {
   const location = useLocation();
   const { markPageVisited, shouldShowReviewModal, markReviewModalShown } = usePageVisitTracker();
 
   // Track page visits
   useEffect(() => {
-    const path = location.pathname.replace("/", "").toLowerCase() || "dashboard";
+    const path = location.pathname.replace("/", "").toLowerCase() || "overview";
     markPageVisited(path);
   }, [location.pathname, markPageVisited]);
 
   return (
     <div className="min-h-screen gradient-bg">
       <Navbar />
-      {children}
+      <Outlet />
       
       {/* Review request modal - shows after visiting all main pages */}
       <ReviewRequestModal 
