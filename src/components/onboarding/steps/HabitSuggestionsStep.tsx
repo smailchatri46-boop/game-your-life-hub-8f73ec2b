@@ -4,6 +4,10 @@ import { Button } from "@/components/ui/button";
 import { AppleEmoji } from "@/components/AppleEmoji";
 import { ChevronLeft, ChevronRight, Plus, X } from "lucide-react";
 import { AddHabitModal, NewHabit } from "@/components/AddHabitModal";
+import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/contexts/AuthContext";
+import { useQueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
 
 export interface CreatedHabit {
   name: string;
@@ -31,6 +35,8 @@ export function HabitSuggestionsStep({
   onBack,
   onHabitsChange,
 }: HabitSuggestionsStepProps) {
+  const { user } = useAuth();
+  const queryClient = useQueryClient();
   const [showAddModal, setShowAddModal] = useState(false);
   const [createdHabits, setCreatedHabits] = useState<CreatedHabit[]>([]);
 
@@ -42,21 +48,67 @@ export function HabitSuggestionsStep({
     onHabitsChange?.(createdHabits);
   }, [createdHabits, onHabitsChange]);
 
-  const handleSaveHabit = (habit: NewHabit) => {
-    const newHabit: CreatedHabit = {
-      name: habit.name,
-      icon: habit.icon,
-      id: `onboarding-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
-    };
-    setCreatedHabits(prev => [...prev, newHabit]);
-    onAddCustomHabit(habit.name);
+  // Save habit to database and update local state
+  const handleSaveHabit = async (habit: NewHabit) => {
+    if (!user) {
+      toast.error("Please sign in to create habits");
+      return;
+    }
+
+    try {
+      // Save to database
+      const { data, error } = await supabase.from("habits").insert({
+        user_id: user.id,
+        name: habit.name,
+        icon: habit.icon,
+        category: habit.category,
+        category_color: habit.categoryColor,
+        target: habit.target,
+        importance: habit.importance,
+      }).select().single();
+
+      if (error) throw error;
+
+      // Update local state with the real database ID
+      const newHabit: CreatedHabit = {
+        name: data.name,
+        icon: data.icon,
+        id: data.id,
+      };
+      setCreatedHabits(prev => [...prev, newHabit]);
+      onAddCustomHabit(habit.name);
+
+      // Invalidate habits query so goal creation step sees the new habits
+      await queryClient.invalidateQueries({ queryKey: ["habits"] });
+      
+      toast.success("Habit created!");
+    } catch (error) {
+      console.error("Error creating habit:", error);
+      toast.error("Failed to create habit");
+    }
   };
 
-  const handleRemoveHabit = (habitId: string) => {
+  const handleRemoveHabit = async (habitId: string) => {
     const habit = createdHabits.find(h => h.id === habitId);
     if (habit) {
-      setCreatedHabits(prev => prev.filter(h => h.id !== habitId));
-      onRemoveCustomHabit(habit.name);
+      try {
+        // Delete from database
+        const { error } = await supabase
+          .from("habits")
+          .delete()
+          .eq("id", habitId);
+
+        if (error) throw error;
+
+        setCreatedHabits(prev => prev.filter(h => h.id !== habitId));
+        onRemoveCustomHabit(habit.name);
+
+        // Invalidate habits query
+        await queryClient.invalidateQueries({ queryKey: ["habits"] });
+      } catch (error) {
+        console.error("Error deleting habit:", error);
+        toast.error("Failed to remove habit");
+      }
     }
   };
 
