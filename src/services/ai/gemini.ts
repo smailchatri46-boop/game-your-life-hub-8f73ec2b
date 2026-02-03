@@ -9,7 +9,7 @@ import {
   getAIUsage,
   updateAIUsage,
   getTodayMessageCount,
-} from "@/services/firestore";
+} from "@/services/supabase";
 
 // Usage limits
 const MONTHLY_MESSAGE_LIMIT = 3000;

@@ -10,7 +10,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner";
-import { updateProfile, getProfile, ensureProfile } from "@/services/firestore/profiles";
+import { updateProfile, getProfile, ensureProfile } from "@/services/supabase/profiles";
 
 interface EditProfileModalProps {
   open: boolean;

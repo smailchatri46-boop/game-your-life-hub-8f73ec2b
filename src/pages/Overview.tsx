@@ -21,8 +21,8 @@ import { useCalendarData, getCalendarDayColor } from "@/hooks/use-calendar-data"
 import { useRecentActivity } from "@/hooks/use-recent-activity";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { format } from "date-fns";
-import { getHabits } from "@/services/firestore/habits";
-import { getTodosForDate, createTodo as createTodoService, toggleTodo as toggleTodoService } from "@/services/firestore/todos";
+import { getHabits } from "@/services/supabase/habits";
+import { getTodosForDate, createTodo as createTodoService, toggleTodo as toggleTodoService } from "@/services/supabase/todos";
 
 interface TodoItem {
   id: string;
@@ -129,8 +129,9 @@ export default function Overview() {
       if (!user) return null;
       return await createTodoService(user.id, text, date);
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["daily_todos"] });
+    onSuccess: async () => {
+      // CRITICAL: Immediately refetch to show new task
+      await queryClient.refetchQueries({ queryKey: ["daily_todos"] });
       toast.success("Task added!");
     },
     onError: () => {
@@ -144,9 +145,10 @@ export default function Overview() {
       if (!user) return;
       await toggleTodoService(todoId, user.id, completed);
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["daily_todos"] });
-      queryClient.invalidateQueries({ queryKey: ["calendar-todos"] });
+    onSuccess: async () => {
+      // CRITICAL: Immediately refetch to update UI
+      await queryClient.refetchQueries({ queryKey: ["daily_todos"] });
+      await queryClient.refetchQueries({ queryKey: ["calendar-todos"] });
       refetchCalendar();
     },
   });

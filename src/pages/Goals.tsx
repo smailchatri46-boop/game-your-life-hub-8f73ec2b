@@ -12,7 +12,7 @@ import { usePlanLimits, LimitType } from "@/hooks/use-plan-limits";
 import { useQuery } from "@tanstack/react-query";
 import { useAuth } from "@/contexts/AuthContext";
 import { Plus, Target } from "lucide-react";
-import { getHabits } from "@/services/firestore/habits";
+import { getHabits } from "@/services/supabase/habits";
 // SEO meta tags handled in index.html
 
 type FilterType = "all" | "active" | "completed" | "quarterly" | "yearly";

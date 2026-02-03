@@ -10,17 +10,17 @@ import {
   getCompletions,
   upsertCompletion,
   deleteCompletion,
-} from "@/services/firestore/habits";
+} from "@/services/supabase/habits";
 import {
   getMoodLogs,
   upsertMoodLog,
-} from "@/services/firestore/mood";
+} from "@/services/supabase/mood";
 import {
   getTodosForDate,
   createTodo as createTodoService,
   toggleTodo as toggleTodoService,
   deleteTodo as deleteTodoService,
-} from "@/services/firestore/todos";
+} from "@/services/supabase/todos";
 import { logActivity } from "@/services/supabase/activity";
 
 export interface Habit {
@@ -204,8 +204,9 @@ export function useHabitsData(selectedYear?: number, selectedMonth?: number) {
       
       return await createHabitService(user.id, habit);
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["habits"] });
+    onSuccess: async () => {
+      // CRITICAL: Immediately refetch to show new habit
+      await queryClient.refetchQueries({ queryKey: ["habits", user?.id] });
       toast.success("Habit created!");
     },
     onError: () => {
@@ -219,9 +220,10 @@ export function useHabitsData(selectedYear?: number, selectedMonth?: number) {
       if (!user) return;
       await deleteHabitService(habitId, user.id);
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["habits"] });
-      queryClient.invalidateQueries({ queryKey: ["habit_completions"] });
+    onSuccess: async () => {
+      // CRITICAL: Immediately refetch to update UI
+      await queryClient.refetchQueries({ queryKey: ["habits", user?.id] });
+      await queryClient.refetchQueries({ queryKey: ["habit_completions"] });
       toast.success("Habit deleted");
     },
     onError: () => {
@@ -263,11 +265,12 @@ export function useHabitsData(selectedYear?: number, selectedMonth?: number) {
       
       return { habitId, date, newValue };
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["habit_completions"] });
-      queryClient.invalidateQueries({ queryKey: ["recent_activities"] });
-      queryClient.invalidateQueries({ queryKey: ["calendar-completions"] });
-      queryClient.invalidateQueries({ queryKey: ["goal_completions"] });
+    onSuccess: async () => {
+      // CRITICAL: Immediately refetch to update UI
+      await queryClient.refetchQueries({ queryKey: ["habit_completions"] });
+      await queryClient.refetchQueries({ queryKey: ["recent_activities"] });
+      await queryClient.refetchQueries({ queryKey: ["calendar-completions"] });
+      await queryClient.refetchQueries({ queryKey: ["goal_completions"] });
     },
     onError: () => {
       toast.error("Failed to update completion");
@@ -300,8 +303,9 @@ export function useHabitsData(selectedYear?: number, selectedMonth?: number) {
       if (!user) return null;
       return await createTodoService(user.id, text, date);
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["daily_todos"] });
+    onSuccess: async () => {
+      // CRITICAL: Immediately refetch to show new task
+      await queryClient.refetchQueries({ queryKey: ["daily_todos"] });
       toast.success("Task added!");
     },
     onError: () => {
@@ -315,8 +319,8 @@ export function useHabitsData(selectedYear?: number, selectedMonth?: number) {
       if (!user) return;
       await toggleTodoService(todoId, user.id, completed);
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["daily_todos"] });
+    onSuccess: async () => {
+      await queryClient.refetchQueries({ queryKey: ["daily_todos"] });
     },
     onError: () => {
       toast.error("Failed to update task");
@@ -329,15 +333,14 @@ export function useHabitsData(selectedYear?: number, selectedMonth?: number) {
       if (!user) return;
       await deleteTodoService(todoId, user.id);
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["daily_todos"] });
+    onSuccess: async () => {
+      await queryClient.refetchQueries({ queryKey: ["daily_todos"] });
       toast.success("Task deleted");
     },
     onError: () => {
       toast.error("Failed to delete task");
     },
   });
-
   // Build completion map: habitId -> { dateKey -> value }
   const completionsMap = useMemo(() => {
     const map: Record<string, Record<string, number>> = {};

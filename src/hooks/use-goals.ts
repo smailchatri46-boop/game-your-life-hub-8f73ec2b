@@ -1,4 +1,4 @@
-// Goals management hook with Firebase/Firestore integration
+// Goals management hook with Supabase integration
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner";
@@ -11,7 +11,7 @@ import {
   deleteGoal as deleteGoalService,
   incrementGoalProgress as incrementGoalProgressService,
   getGoalHabits,
-} from "@/services/firestore/goals";
+} from "@/services/supabase/goals";
 import { logActivity } from "@/services/supabase/activity";
 
 export interface Goal {
