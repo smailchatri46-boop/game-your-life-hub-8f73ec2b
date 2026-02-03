@@ -367,13 +367,13 @@ export default function Overview() {
                           : `${colorClasses.bg} ${colorClasses.hover}`
                       }`}
                     >
-                      {/* Yellow dot indicator for future days with tasks */}
-                      {isFuture && hasTasks && (
-                        <span className="absolute top-1 right-1 w-2 h-2 rounded-full bg-amber-400" />
-                      )}
                       <span className={`text-sm font-semibold ${isSelected ? 'text-primary-foreground' : ''}`}>
                         {day}
                       </span>
+                      {/* Yellow dot indicator for future days with tasks - centered below day number */}
+                      {isFuture && hasTasks && (
+                        <span className="w-1.5 h-1.5 rounded-full bg-amber-400 mt-1" />
+                      )}
                       {/* Only show percentage for today and past days */}
                       {!isFuture && (
                         <span className={`text-xs ${isSelected ? 'text-primary-foreground/80' : 'text-muted-foreground'}`}>
