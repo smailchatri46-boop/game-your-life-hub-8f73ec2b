@@ -41,12 +41,9 @@ export function GoalCard({ goal, linkedHabits = [] }: GoalCardProps) {
   const pace = getGoalPace(goal);
 
   const paceColor = {
-    "Ahead of schedule": "text-green-600",
     "On track": "text-primary",
-    "Falling behind": "text-orange-500",
-    "Not started": "text-muted-foreground",
-    "Ended": "text-muted-foreground",
-    "Completed": "text-green-600",
+    "Achieved": "text-green-600",
+    "Not achieved": "text-muted-foreground",
   }[pace] || "text-muted-foreground";
 
   const handleSaveEdit = () => {

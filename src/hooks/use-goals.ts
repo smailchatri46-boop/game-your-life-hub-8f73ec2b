@@ -245,19 +245,16 @@ export function useGoals() {
 
   const getGoalPace = useCallback((goal: Goal) => {
     const now = new Date();
-    const start = new Date(goal.start_date);
     const end = new Date(goal.end_date);
-    
-    if (now < start) return "Not started";
-    if (now > end) return goal.status === "completed" ? "Completed" : "Ended";
-    
-    const totalDays = Math.ceil((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24));
-    const elapsedDays = Math.ceil((now.getTime() - start.getTime()) / (1000 * 60 * 60 * 24));
-    const expectedProgress = (elapsedDays / totalDays) * 100;
     const actualProgress = getGoalProgress(goal);
     
-    if (actualProgress >= expectedProgress + 10) return "Ahead of schedule";
-    if (actualProgress <= expectedProgress - 10) return "Falling behind";
+    // Goal is achieved if 100% complete
+    if (actualProgress >= 100) return "Achieved";
+    
+    // Goal has ended but not achieved
+    if (now > end) return "Not achieved";
+    
+    // Goal is still in progress
     return "On track";
   }, [getGoalProgress]);
 
