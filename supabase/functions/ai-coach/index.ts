@@ -7,9 +7,261 @@ const corsHeaders = {
 };
 
 // Cost-controlled usage limits ($2/month budget)
-// Monthly: 1200 messages, Daily: 40 messages
 const MONTHLY_MESSAGE_LIMIT = 1200;
 const DAILY_MESSAGE_LIMIT = 40;
+
+// Type definitions for database records
+interface Habit {
+  id: string;
+  name: string;
+  target: number;
+  category: string;
+  icon: string;
+}
+
+interface HabitCompletion {
+  habit_id: string;
+  date: string;
+  value: number;
+}
+
+interface Goal {
+  id: string;
+  name: string;
+  target_count: number;
+  completed_count: number;
+  start_date: string;
+  end_date: string;
+  status: string;
+  category_emoji: string;
+}
+
+interface Todo {
+  text: string;
+  completed: boolean;
+  date: string;
+}
+
+interface MoodLog {
+  date: string;
+  mood: number | null;
+  motivation: number | null;
+  reflection: string | null;
+}
+
+interface JournalEntry {
+  content: string;
+  created_at: string;
+  emoji: string | null;
+}
+
+// Calculate streak for a habit
+function calculateStreak(habitId: string, completions: HabitCompletion[], target: number): number {
+  const habitCompletions = completions
+    .filter(c => c.habit_id === habitId && c.value >= target)
+    .map(c => c.date)
+    .sort((a, b) => new Date(b).getTime() - new Date(a).getTime());
+
+  if (habitCompletions.length === 0) return 0;
+
+  let streak = 0;
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  for (let i = 0; i < habitCompletions.length; i++) {
+    const expectedDate = new Date(today);
+    expectedDate.setDate(expectedDate.getDate() - i);
+    const expectedStr = expectedDate.toISOString().split('T')[0];
+
+    if (habitCompletions.includes(expectedStr)) {
+      streak++;
+    } else {
+      break;
+    }
+  }
+
+  return streak;
+}
+
+// Calculate completion rate for a period
+function calculateCompletionRate(
+  habitId: string,
+  completions: HabitCompletion[],
+  target: number,
+  days: number
+): number {
+  const cutoff = new Date();
+  cutoff.setDate(cutoff.getDate() - days);
+  const cutoffStr = cutoff.toISOString().split('T')[0];
+
+  const relevantCompletions = completions.filter(
+    c => c.habit_id === habitId && c.date >= cutoffStr && c.value >= target
+  );
+
+  return Math.round((relevantCompletions.length / days) * 100);
+}
+
+// Detect best and worst performing habits
+function detectPatterns(habits: Habit[], completions: HabitCompletion[]): { bestHabit: string | null; worstHabit: string | null; bestDay: string | null } {
+  const habitRates: { name: string; rate: number }[] = [];
+
+  for (const habit of habits) {
+    const rate = calculateCompletionRate(habit.id, completions, habit.target, 7);
+    habitRates.push({ name: habit.name, rate });
+  }
+
+  habitRates.sort((a, b) => b.rate - a.rate);
+
+  // Calculate best day of week
+  const dayCompletions: Record<number, number> = { 0: 0, 1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0 };
+  const dayCounts: Record<number, number> = { 0: 0, 1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0 };
+
+  for (const completion of completions) {
+    const day = new Date(completion.date).getDay();
+    dayCompletions[day] += completion.value;
+    dayCounts[day]++;
+  }
+
+  const dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+  let bestDay: string | null = null;
+  let bestDayRate = 0;
+
+  for (let d = 0; d < 7; d++) {
+    if (dayCounts[d] > 0) {
+      const rate = dayCompletions[d] / dayCounts[d];
+      if (rate > bestDayRate) {
+        bestDayRate = rate;
+        bestDay = dayNames[d];
+      }
+    }
+  }
+
+  return {
+    bestHabit: habitRates.length > 0 && habitRates[0].rate > 50 ? habitRates[0].name : null,
+    worstHabit: habitRates.length > 0 && habitRates[habitRates.length - 1].rate < 50 ? habitRates[habitRates.length - 1].name : null,
+    bestDay,
+  };
+}
+
+// Build the structured context document
+function buildContextDocument(
+  habits: Habit[],
+  completions: HabitCompletion[],
+  goals: Goal[],
+  todos: Todo[],
+  moodLogs: MoodLog[],
+  journals: JournalEntry[],
+  today: string
+): string {
+  const lines: string[] = ['=== USER PROGRESS REPORT ===', ''];
+
+  // HABITS SECTION
+  lines.push(`HABITS (${habits.length} total):`);
+  if (habits.length === 0) {
+    lines.push('- No habits created yet');
+  } else {
+    for (const habit of habits) {
+      const weekRate = calculateCompletionRate(habit.id, completions, habit.target, 7);
+      const monthRate = calculateCompletionRate(habit.id, completions, habit.target, 30);
+      const streak = calculateStreak(habit.id, completions, habit.target);
+      lines.push(`- ${habit.icon} ${habit.name} (target: ${habit.target}/day): ${weekRate}% this week, ${monthRate}% this month${streak > 1 ? `, streak: ${streak} days` : ''}`);
+    }
+  }
+  lines.push('');
+
+  // GOALS SECTION
+  const activeGoals = goals.filter(g => g.status === 'active');
+  lines.push(`GOALS (${activeGoals.length} active):`);
+  if (activeGoals.length === 0) {
+    lines.push('- No active goals');
+  } else {
+    for (const goal of activeGoals) {
+      const progress = goal.target_count > 0 
+        ? Math.round((goal.completed_count / goal.target_count) * 100) 
+        : 0;
+      const endDate = new Date(goal.end_date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+      lines.push(`- ${goal.category_emoji} "${goal.name}" - ${progress}% complete (${goal.completed_count}/${goal.target_count}), ends ${endDate}`);
+    }
+  }
+  lines.push('');
+
+  // TODAY'S TASKS SECTION
+  const todayTodos = todos.filter(t => t.date === today);
+  lines.push(`TODAY'S TASKS (${todayTodos.length}):`);
+  if (todayTodos.length === 0) {
+    lines.push('- No tasks for today');
+  } else {
+    for (const todo of todayTodos) {
+      lines.push(`- [${todo.completed ? 'x' : ' '}] ${todo.text}`);
+    }
+  }
+  lines.push('');
+
+  // MOOD TREND SECTION
+  const recentMoods = moodLogs.slice(0, 7);
+  lines.push('MOOD TREND (last 7 days):');
+  if (recentMoods.length === 0) {
+    lines.push('- No mood logs recorded');
+  } else {
+    const moodAvg = recentMoods.reduce((sum, m) => sum + (m.mood || 0), 0) / recentMoods.length;
+    const motivationAvg = recentMoods.reduce((sum, m) => sum + (m.motivation || 0), 0) / recentMoods.length;
+    
+    const moodStrs = recentMoods.map(m => {
+      const day = new Date(m.date).toLocaleDateString('en-US', { weekday: 'short' });
+      return `${day}: ${m.mood || '?'}/10`;
+    });
+    lines.push(moodStrs.join(', '));
+    lines.push(`Average mood: ${moodAvg.toFixed(1)}/10, Motivation: ${motivationAvg.toFixed(1)}/10`);
+    
+    // Detect trend
+    if (recentMoods.length >= 3) {
+      const recent3 = recentMoods.slice(0, 3).map(m => m.mood || 5);
+      const older3 = recentMoods.slice(3, 6).map(m => m.mood || 5);
+      if (older3.length > 0) {
+        const recentAvg = recent3.reduce((a, b) => a + b, 0) / recent3.length;
+        const olderAvg = older3.reduce((a, b) => a + b, 0) / older3.length;
+        if (recentAvg > olderAvg + 0.5) {
+          lines.push('Trend: Improving 📈');
+        } else if (recentAvg < olderAvg - 0.5) {
+          lines.push('Trend: Declining 📉 (may need support)');
+        } else {
+          lines.push('Trend: Stable');
+        }
+      }
+    }
+  }
+  lines.push('');
+
+  // RECENT REFLECTIONS SECTION
+  lines.push('RECENT REFLECTIONS:');
+  if (journals.length === 0) {
+    lines.push('- No journal entries yet');
+  } else {
+    for (const journal of journals.slice(0, 5)) {
+      const date = new Date(journal.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+      const preview = journal.content.substring(0, 150).replace(/\n/g, ' ');
+      lines.push(`- ${date}: "${preview}${journal.content.length > 150 ? '...' : ''}"`);
+    }
+  }
+  lines.push('');
+
+  // PATTERNS SECTION
+  if (habits.length > 0 && completions.length > 0) {
+    const patterns = detectPatterns(habits, completions);
+    lines.push('PATTERNS DETECTED:');
+    if (patterns.bestDay) {
+      lines.push(`- Best habit day: ${patterns.bestDay}`);
+    }
+    if (patterns.bestHabit) {
+      lines.push(`- Strongest habit: ${patterns.bestHabit} (keep it up!)`);
+    }
+    if (patterns.worstHabit) {
+      lines.push(`- Needs attention: ${patterns.worstHabit}`);
+    }
+  }
+
+  return lines.join('\n');
+}
 
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
@@ -24,15 +276,15 @@ serve(async (req) => {
       throw new Error('LOVABLE_API_KEY is not configured');
     }
 
-    // Create Supabase client to fetch user data
     const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
     const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
-    // Get current month and today's date
     const now = new Date();
     const monthYear = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
     const today = now.toISOString().split('T')[0];
+    const thirtyDaysAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
+    const sevenDaysAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
 
     // Check usage limits if userId is provided
     if (userId) {
@@ -43,10 +295,9 @@ serve(async (req) => {
         .eq('month_year', monthYear)
         .single();
 
-      let currentMonthCount = usageData?.message_count || 0;
-      let lastMessageDate = usageData?.last_message_date;
-      
-      // Count messages sent today
+      const currentMonthCount = usageData?.message_count || 0;
+      const lastMessageDate = usageData?.last_message_date;
+
       let todayCount = 0;
       if (lastMessageDate === today && usageData) {
         const { count } = await supabase
@@ -58,7 +309,6 @@ serve(async (req) => {
         todayCount = count || 0;
       }
 
-      // Check if user hit monthly limit
       if (currentMonthCount >= MONTHLY_MESSAGE_LIMIT) {
         return new Response(JSON.stringify({ 
           error: "limit_reached",
@@ -69,7 +319,6 @@ serve(async (req) => {
         });
       }
 
-      // Check if user hit daily limit
       if (todayCount >= DAILY_MESSAGE_LIMIT) {
         return new Response(JSON.stringify({ 
           error: "daily_limit_reached",
@@ -80,98 +329,73 @@ serve(async (req) => {
         });
       }
 
-      // Update or create usage record
+      // Update usage record
       if (usageData) {
         await supabase
           .from('ai_usage')
-          .update({ 
-            message_count: currentMonthCount + 1,
-            last_message_date: today
-          })
+          .update({ message_count: currentMonthCount + 1, last_message_date: today })
           .eq('id', usageData.id);
       } else {
         await supabase
           .from('ai_usage')
-          .insert({ 
-            user_id: userId,
-            month_year: monthYear,
-            message_count: 1,
-            last_message_date: today
-          });
+          .insert({ user_id: userId, month_year: monthYear, message_count: 1, last_message_date: today });
       }
     }
 
-    // Fetch user's data for context
-    let completedToday = 0;
-    let totalHabits = 0;
-    let weeklyAvg = 0;
-    let latestMood = '';
-    let latestJournal = '';
+    // Fetch comprehensive user data
+    let contextDocument = 'No user data available - user is not logged in.';
 
     if (userId) {
-      const { data: habits } = await supabase
-        .from('habits')
-        .select('*')
-        .eq('user_id', userId);
+      // Parallel fetch all user data
+      const [habitsResult, completionsResult, goalsResult, todosResult, moodLogsResult, journalsResult] = await Promise.all([
+        supabase.from('habits').select('id, name, target, category, icon').eq('user_id', userId),
+        supabase.from('habit_completions').select('habit_id, date, value').eq('user_id', userId).gte('date', thirtyDaysAgo).order('date', { ascending: false }),
+        supabase.from('goals').select('id, name, target_count, completed_count, start_date, end_date, status, category_emoji').eq('user_id', userId),
+        supabase.from('daily_todos').select('text, completed, date').eq('user_id', userId).gte('date', sevenDaysAgo).order('date', { ascending: false }),
+        supabase.from('mood_logs').select('date, mood, motivation, reflection').eq('user_id', userId).gte('date', thirtyDaysAgo).order('date', { ascending: false }),
+        supabase.from('journal_entries').select('content, created_at, emoji').eq('user_id', userId).order('created_at', { ascending: false }).limit(10),
+      ]);
 
-      const { data: completions } = await supabase
-        .from('habit_completions')
-        .select('*')
-        .eq('user_id', userId)
-        .order('date', { ascending: false })
-        .limit(50);
+      const habits = (habitsResult.data || []) as Habit[];
+      const completions = (completionsResult.data || []) as HabitCompletion[];
+      const goals = (goalsResult.data || []) as Goal[];
+      const todos = (todosResult.data || []) as Todo[];
+      const moodLogs = (moodLogsResult.data || []) as MoodLog[];
+      const journals = (journalsResult.data || []) as JournalEntry[];
 
-      const { data: journals } = await supabase
-        .from('journal_entries')
-        .select('*')
-        .eq('user_id', userId)
-        .order('created_at', { ascending: false })
-        .limit(3);
-
-      const { data: moodLogs } = await supabase
-        .from('mood_logs')
-        .select('*')
-        .eq('user_id', userId)
-        .order('date', { ascending: false })
-        .limit(7);
-
-      // Calculate weekly average
-      if (completions?.length) {
-        const weekAgo = new Date();
-        weekAgo.setDate(weekAgo.getDate() - 7);
-        const weeklyCompletions = completions.filter((c: { date: string }) => new Date(c.date) >= weekAgo);
-        weeklyAvg = Math.round((weeklyCompletions.length / 7) * 100);
-      }
-
-      // Today's progress
-      const todayCompletions = completions?.filter((c: { date: string }) => c.date === today) || [];
-      completedToday = todayCompletions.filter((c: { habit_id: string; value: number }) => {
-        const habit = habits?.find((h: { id: string; target: number }) => h.id === c.habit_id);
-        return habit && c.value >= habit.target;
-      }).length;
-      totalHabits = habits?.length || 0;
-
-      // Latest mood
-      if (moodLogs?.[0]) {
-        latestMood = `Mood: ${moodLogs[0].mood}/10`;
-      }
-
-      // Latest journal (truncated)
-      if (journals?.[0]) {
-        latestJournal = `Last note: "${journals[0].content.substring(0, 60)}..."`;
-      }
+      contextDocument = buildContextDocument(habits, completions, goals, todos, moodLogs, journals, today);
     }
 
-    // Build concise data summary (cost control - minimal tokens)
-    const dataSummary = `Stats: ${completedToday}/${totalHabits} today, ${weeklyAvg}% weekly. ${latestMood} ${latestJournal}`.trim();
+    const systemPrompt = `You are the Neyler AI Buddy - a personal wellness coach with full visibility into the user's habits, goals, mood, and daily reflections.
 
-    const systemPrompt = `You are a supportive wellness coach. Help with habits, motivation, consistency, avoiding burnout. Be warm, realistic, never shame. Max 120 words, 1 emoji max. No markdown or bullets.
+YOUR DATA ACCESS:
+You have the user's complete progress report below. Use it to:
+- Identify patterns (good and concerning)
+- Celebrate streaks and achievements
+- Gently address declining trends
+- Connect mood patterns to habit performance
+- Reference specific habits/goals by name
 
-User data: ${dataSummary}
+RESPONSE STYLE:
+- Warm, supportive, never judgmental
+- Reference specific data when available ("I see your meditation streak is at 7 days!")
+- Provide actionable, personalized insights
+- Maximum 150 words
+- Use 1-2 emojis max
+- No markdown formatting (no bullets, bold, or headers)
+- Write in flowing sentences, not lists
 
-Rules: Encourage gently if behind. Suggest balance if over-performing. Prioritize emotional support if mood drops. Focus on progress, not perfection.`;
+IMPORTANT RULES:
+- If user asks about their data, reference the specific numbers from their report
+- If they're struggling, acknowledge it gently and offer one small actionable step
+- If they're doing well, celebrate specifically what's working
+- Never make up data - only reference what's in the report below
+- If no data exists for something, acknowledge it and encourage them to start tracking
 
-    console.log('Sending request to AI gateway');
+USER DATA:
+${contextDocument}`;
+
+    console.log('Sending request to AI gateway with enhanced context');
 
     const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
@@ -180,12 +404,12 @@ Rules: Encourage gently if behind. Suggest balance if over-performing. Prioritiz
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        model: "google/gemini-2.5-flash-lite",
+        model: "google/gemini-2.5-flash",
         messages: [
           { role: "system", content: systemPrompt },
           ...messages,
         ],
-        max_tokens: 150, // ~120 words max for cost control
+        max_tokens: 200,
       }),
     });
 
