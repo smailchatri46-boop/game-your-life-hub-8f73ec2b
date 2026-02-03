@@ -3,12 +3,12 @@ import { AppleEmoji } from "@/components/AppleEmoji";
 import { useGoals } from "@/hooks/use-goals";
 import { useGoalProgress } from "@/hooks/use-goal-progress";
 import { Link } from "react-router-dom";
-import { ChevronRight, Target } from "lucide-react";
-import { format, differenceInDays } from "date-fns";
+import { ChevronRight } from "lucide-react";
+import { differenceInDays } from "date-fns";
 import { useMemo } from "react";
 
 export function GoalProgressOverview() {
-  const { activeGoals, goalHabits, getGoalProgress: getStoredProgress } = useGoals();
+  const { activeGoals, goalHabits } = useGoals();
   const { getCalculatedProgress } = useGoalProgress(activeGoals, goalHabits);
 
   // Find the goal to display: closest upcoming deadline, then most recently created
@@ -27,6 +27,23 @@ export function GoalProgressOverview() {
     
     return sortedGoals[0];
   }, [activeGoals]);
+
+  // Calculate overall progress across all goals - MUST be before any conditional returns
+  const overallProgress = useMemo(() => {
+    if (activeGoals.length === 0) return 0;
+    
+    const totalProgress = activeGoals.reduce((sum, goal) => {
+      const goalProgress = getCalculatedProgress(goal.id);
+      return sum + goalProgress.percentage;
+    }, 0);
+    
+    return Math.round(totalProgress / activeGoals.length);
+  }, [activeGoals, getCalculatedProgress]);
+
+  // Get progress for the display goal - MUST be before any conditional returns
+  const progress = displayGoal ? getCalculatedProgress(displayGoal.id) : { completed: 0, target: 0, percentage: 0 };
+  const daysLeft = displayGoal ? differenceInDays(new Date(displayGoal.end_date), new Date()) : 0;
+  const isEnded = daysLeft < 0;
 
   if (activeGoals.length === 0) {
     return (
@@ -49,23 +66,6 @@ export function GoalProgressOverview() {
       </Link>
     );
   }
-
-  // Get real calculated progress
-  const progress = displayGoal ? getCalculatedProgress(displayGoal.id) : { completed: 0, target: 0, percentage: 0 };
-  const daysLeft = displayGoal ? differenceInDays(new Date(displayGoal.end_date), new Date()) : 0;
-  const isEnded = daysLeft < 0;
-
-  // Calculate overall progress across all goals
-  const overallProgress = useMemo(() => {
-    if (activeGoals.length === 0) return 0;
-    
-    const totalProgress = activeGoals.reduce((sum, goal) => {
-      const goalProgress = getCalculatedProgress(goal.id);
-      return sum + goalProgress.percentage;
-    }, 0);
-    
-    return Math.round(totalProgress / activeGoals.length);
-  }, [activeGoals, getCalculatedProgress]);
 
   return (
     <Link to="/goals">
