@@ -8,7 +8,7 @@ import { useSubscription } from "@/contexts/SubscriptionContext";
  * Redirects authenticated users away from auth pages.
  * New users -> onboarding
  * Users without subscription -> paywall (after onboarding)
- * Users with subscription -> /app (hidden URL)
+ * Users with subscription -> /dashboard
  */
 interface AuthGuardProps {
   children: React.ReactNode;
@@ -78,9 +78,6 @@ export function AuthGuard({ children }: AuthGuardProps) {
 
   // If user is authenticated, redirect appropriately
   if (user) {
-    // Check if there's an intended destination (but not auth pages)
-    const from = (location.state as { from?: { pathname: string } })?.from?.pathname;
-    
     // Step 1: Users who haven't completed onboarding go to onboarding
     if (!onboardingComplete) {
       return <Navigate to="/onboarding" replace />;
@@ -91,14 +88,8 @@ export function AuthGuard({ children }: AuthGuardProps) {
       return <Navigate to="/paywall" replace />;
     }
     
-    // Step 3: If there's a valid "from" destination, redirect there (but use /app for internal pages)
-    if (from && from !== "/auth" && from !== "/login" && from !== "/signup" && from !== "/onboarding" && from !== "/paywall") {
-      // Redirect to /app instead of internal page paths
-      return <Navigate to="/app" replace />;
-    }
-    
-    // Step 4: Returning users with active subscription go to /app (hidden URL)
-    return <Navigate to="/app" replace />;
+    // Step 3: Returning users with active subscription go to /dashboard
+    return <Navigate to="/dashboard" replace />;
   }
 
   // Not authenticated, show the auth page
