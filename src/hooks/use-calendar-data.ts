@@ -158,10 +158,21 @@ export function useCalendarData(year: number, month: number) {
     return percentages;
   }, [getDayCompletionRate, year, month]);
 
+  // Check if a day has any tasks
+  const dayHasTasks = useMemo(() => {
+    return (day: number): boolean => {
+      if (isDemo) return Math.random() > 0.5;
+      const dateKey = `${year}-${String(month + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
+      const dayTasks = todosMap[dateKey];
+      return dayTasks ? dayTasks.total > 0 : false;
+    };
+  }, [todosMap, year, month, isDemo]);
+
   return {
     dayPercentages,
     getDayCompletionRate,
     getCalendarDayColor,
+    dayHasTasks,
     currentDay,
     isCurrentMonth,
     isLoading: habitsQuery.isLoading || completionsQuery.isLoading || todosQuery.isLoading,
