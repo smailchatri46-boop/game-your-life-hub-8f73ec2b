@@ -7,9 +7,54 @@ const corsHeaders = {
 };
 
 // Cost-controlled usage limits ($2/month budget)
-// Monthly: 1200 messages, Daily: 40 messages
 const MONTHLY_MESSAGE_LIMIT = 1200;
 const DAILY_MESSAGE_LIMIT = 40;
+
+interface Habit {
+  id: string;
+  name: string;
+  icon: string;
+  category: string;
+  target: number;
+  importance: number | null;
+}
+
+interface HabitCompletion {
+  habit_id: string;
+  date: string;
+  value: number;
+}
+
+interface Goal {
+  id: string;
+  name: string;
+  category: string;
+  category_emoji: string;
+  start_date: string;
+  end_date: string;
+  target_count: number;
+  completed_count: number;
+  status: string;
+}
+
+interface MoodLog {
+  date: string;
+  mood: number | null;
+  motivation: number | null;
+  reflection: string | null;
+}
+
+interface JournalEntry {
+  content: string;
+  emoji: string | null;
+  created_at: string;
+}
+
+interface Todo {
+  text: string;
+  completed: boolean;
+  date: string;
+}
 
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
@@ -24,17 +69,15 @@ serve(async (req) => {
       throw new Error('LOVABLE_API_KEY is not configured');
     }
 
-    // Create Supabase client to fetch user data
     const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
     const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
-    // Get current month and today's date
     const now = new Date();
     const monthYear = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
     const today = now.toISOString().split('T')[0];
 
-    // Check usage limits if userId is provided
+    // Check usage limits
     if (userId) {
       const { data: usageData } = await supabase
         .from('ai_usage')
@@ -46,7 +89,6 @@ serve(async (req) => {
       let currentMonthCount = usageData?.message_count || 0;
       let lastMessageDate = usageData?.last_message_date;
       
-      // Count messages sent today
       let todayCount = 0;
       if (lastMessageDate === today && usageData) {
         const { count } = await supabase
@@ -58,7 +100,6 @@ serve(async (req) => {
         todayCount = count || 0;
       }
 
-      // Check if user hit monthly limit
       if (currentMonthCount >= MONTHLY_MESSAGE_LIMIT) {
         return new Response(JSON.stringify({ 
           error: "limit_reached",
@@ -69,7 +110,6 @@ serve(async (req) => {
         });
       }
 
-      // Check if user hit daily limit
       if (todayCount >= DAILY_MESSAGE_LIMIT) {
         return new Response(JSON.stringify({ 
           error: "daily_limit_reached",
@@ -80,7 +120,6 @@ serve(async (req) => {
         });
       }
 
-      // Update or create usage record
       if (usageData) {
         await supabase
           .from('ai_usage')
@@ -101,77 +140,235 @@ serve(async (req) => {
       }
     }
 
-    // Fetch user's data for context
-    let completedToday = 0;
-    let totalHabits = 0;
-    let weeklyAvg = 0;
-    let latestMood = '';
-    let latestJournal = '';
+    // ===== FETCH COMPREHENSIVE USER DATA =====
+    let userDataContext = "";
 
     if (userId) {
-      const { data: habits } = await supabase
-        .from('habits')
-        .select('*')
-        .eq('user_id', userId);
+      // Calculate date ranges
+      const thirtyDaysAgo = new Date();
+      thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+      const thirtyDaysAgoStr = thirtyDaysAgo.toISOString().split('T')[0];
+      
+      const sevenDaysAgo = new Date();
+      sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+      const sevenDaysAgoStr = sevenDaysAgo.toISOString().split('T')[0];
 
-      const { data: completions } = await supabase
-        .from('habit_completions')
-        .select('*')
-        .eq('user_id', userId)
-        .order('date', { ascending: false })
-        .limit(50);
+      // Fetch all user data in parallel
+      const [
+        { data: habits },
+        { data: completions },
+        { data: goals },
+        { data: moodLogs },
+        { data: journals },
+        { data: todos },
+        { data: profile }
+      ] = await Promise.all([
+        supabase.from('habits').select('*').eq('user_id', userId),
+        supabase.from('habit_completions').select('*').eq('user_id', userId).gte('date', thirtyDaysAgoStr).order('date', { ascending: false }),
+        supabase.from('goals').select('*').eq('user_id', userId).order('created_at', { ascending: false }),
+        supabase.from('mood_logs').select('*').eq('user_id', userId).gte('date', thirtyDaysAgoStr).order('date', { ascending: false }),
+        supabase.from('journal_entries').select('*').eq('user_id', userId).order('created_at', { ascending: false }).limit(10),
+        supabase.from('daily_todos').select('*').eq('user_id', userId).gte('date', sevenDaysAgoStr).order('date', { ascending: false }),
+        supabase.from('profiles').select('*').eq('id', userId).single()
+      ]);
 
-      const { data: journals } = await supabase
-        .from('journal_entries')
-        .select('*')
-        .eq('user_id', userId)
-        .order('created_at', { ascending: false })
-        .limit(3);
+      const typedHabits = (habits || []) as Habit[];
+      const typedCompletions = (completions || []) as HabitCompletion[];
+      const typedGoals = (goals || []) as Goal[];
+      const typedMoodLogs = (moodLogs || []) as MoodLog[];
+      const typedJournals = (journals || []) as JournalEntry[];
+      const typedTodos = (todos || []) as Todo[];
 
-      const { data: moodLogs } = await supabase
-        .from('mood_logs')
-        .select('*')
-        .eq('user_id', userId)
-        .order('date', { ascending: false })
-        .limit(7);
+      // Build comprehensive context
+      const contextParts: string[] = [];
 
-      // Calculate weekly average
-      if (completions?.length) {
-        const weekAgo = new Date();
-        weekAgo.setDate(weekAgo.getDate() - 7);
-        const weeklyCompletions = completions.filter((c: { date: string }) => new Date(c.date) >= weekAgo);
-        weeklyAvg = Math.round((weeklyCompletions.length / 7) * 100);
+      // User profile
+      if (profile?.full_name) {
+        contextParts.push(`User name: ${profile.full_name}`);
       }
 
-      // Today's progress
-      const todayCompletions = completions?.filter((c: { date: string }) => c.date === today) || [];
-      completedToday = todayCompletions.filter((c: { habit_id: string; value: number }) => {
-        const habit = habits?.find((h: { id: string; target: number }) => h.id === c.habit_id);
-        return habit && c.value >= habit.target;
+      // ===== HABITS SECTION =====
+      if (typedHabits.length > 0) {
+        const habitLines: string[] = [];
+        habitLines.push(`\n=== HABITS (${typedHabits.length} total) ===`);
+        
+        for (const habit of typedHabits) {
+          const habitCompletions = typedCompletions.filter(c => c.habit_id === habit.id);
+          
+          // Calculate stats
+          const last7Days = habitCompletions.filter(c => c.date >= sevenDaysAgoStr);
+          const last30Days = habitCompletions;
+          
+          const completedLast7 = last7Days.filter(c => c.value >= habit.target).length;
+          const completedLast30 = last30Days.filter(c => c.value >= habit.target).length;
+          
+          const todayCompletion = habitCompletions.find(c => c.date === today);
+          const todayStatus = todayCompletion 
+            ? (todayCompletion.value >= habit.target ? "✓ Done" : `${todayCompletion.value}/${habit.target}`)
+            : "Not done";
+          
+          // Calculate streak
+          let streak = 0;
+          const sortedDates = [...new Set(habitCompletions.filter(c => c.value >= habit.target).map(c => c.date))].sort().reverse();
+          for (let i = 0; i < sortedDates.length; i++) {
+            const expectedDate = new Date();
+            expectedDate.setDate(expectedDate.getDate() - i);
+            const expectedStr = expectedDate.toISOString().split('T')[0];
+            if (sortedDates[i] === expectedStr) {
+              streak++;
+            } else {
+              break;
+            }
+          }
+          
+          habitLines.push(`• ${habit.icon} ${habit.name} (${habit.category})`);
+          habitLines.push(`  Target: ${habit.target}/day | Today: ${todayStatus} | Streak: ${streak} days`);
+          habitLines.push(`  Last 7 days: ${completedLast7}/7 (${Math.round(completedLast7/7*100)}%) | Last 30 days: ${completedLast30}/30 (${Math.round(completedLast30/30*100)}%)`);
+        }
+        
+        contextParts.push(habitLines.join('\n'));
+      } else {
+        contextParts.push('\n=== HABITS ===\nNo habits created yet.');
+      }
+
+      // ===== GOALS SECTION =====
+      if (typedGoals.length > 0) {
+        const goalLines: string[] = [];
+        goalLines.push(`\n=== GOALS (${typedGoals.length} total) ===`);
+        
+        for (const goal of typedGoals) {
+          const progress = goal.target_count > 0 ? Math.round((goal.completed_count / goal.target_count) * 100) : 0;
+          const daysLeft = Math.ceil((new Date(goal.end_date).getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
+          
+          goalLines.push(`• ${goal.category_emoji} ${goal.name} (${goal.category})`);
+          goalLines.push(`  Progress: ${goal.completed_count}/${goal.target_count} (${progress}%) | Status: ${goal.status}`);
+          goalLines.push(`  Period: ${goal.start_date} to ${goal.end_date} | Days remaining: ${daysLeft > 0 ? daysLeft : 'Ended'}`);
+        }
+        
+        contextParts.push(goalLines.join('\n'));
+      } else {
+        contextParts.push('\n=== GOALS ===\nNo goals created yet.');
+      }
+
+      // ===== MOOD & MOTIVATION SECTION =====
+      if (typedMoodLogs.length > 0) {
+        const moodLines: string[] = [];
+        moodLines.push(`\n=== MOOD & MOTIVATION (Last 30 days) ===`);
+        
+        const avgMood = typedMoodLogs.filter(m => m.mood !== null).reduce((sum, m) => sum + (m.mood || 0), 0) / (typedMoodLogs.filter(m => m.mood !== null).length || 1);
+        const avgMotivation = typedMoodLogs.filter(m => m.motivation !== null).reduce((sum, m) => sum + (m.motivation || 0), 0) / (typedMoodLogs.filter(m => m.motivation !== null).length || 1);
+        
+        moodLines.push(`Average mood: ${avgMood.toFixed(1)}/10 | Average motivation: ${avgMotivation.toFixed(1)}/10`);
+        moodLines.push(`Total entries: ${typedMoodLogs.length}`);
+        
+        // Recent mood trend
+        moodLines.push('\nRecent entries:');
+        for (const log of typedMoodLogs.slice(0, 7)) {
+          const moodStr = log.mood !== null ? `Mood: ${log.mood}/10` : '';
+          const motivStr = log.motivation !== null ? `Motivation: ${log.motivation}/10` : '';
+          const reflectionStr = log.reflection ? ` - "${log.reflection.substring(0, 50)}..."` : '';
+          moodLines.push(`  ${log.date}: ${moodStr} ${motivStr}${reflectionStr}`);
+        }
+        
+        contextParts.push(moodLines.join('\n'));
+      } else {
+        contextParts.push('\n=== MOOD ===\nNo mood logs yet.');
+      }
+
+      // ===== JOURNAL SECTION =====
+      if (typedJournals.length > 0) {
+        const journalLines: string[] = [];
+        journalLines.push(`\n=== RECENT JOURNAL ENTRIES ===`);
+        
+        for (const entry of typedJournals.slice(0, 5)) {
+          const date = new Date(entry.created_at).toLocaleDateString();
+          const preview = entry.content.length > 150 ? entry.content.substring(0, 150) + '...' : entry.content;
+          journalLines.push(`\n${entry.emoji || '📝'} ${date}:`);
+          journalLines.push(`"${preview}"`);
+        }
+        
+        contextParts.push(journalLines.join('\n'));
+      } else {
+        contextParts.push('\n=== JOURNAL ===\nNo journal entries yet.');
+      }
+
+      // ===== TODAY'S TASKS =====
+      const todaysTodos = typedTodos.filter(t => t.date === today);
+      if (todaysTodos.length > 0) {
+        const todoLines: string[] = [];
+        todoLines.push(`\n=== TODAY'S TASKS ===`);
+        const completed = todaysTodos.filter(t => t.completed).length;
+        todoLines.push(`Progress: ${completed}/${todaysTodos.length} completed`);
+        for (const todo of todaysTodos) {
+          todoLines.push(`  ${todo.completed ? '✓' : '○'} ${todo.text}`);
+        }
+        contextParts.push(todoLines.join('\n'));
+      }
+
+      // ===== OVERALL STATISTICS =====
+      const statsLines: string[] = [];
+      statsLines.push(`\n=== OVERALL STATISTICS ===`);
+      statsLines.push(`Today's date: ${today}`);
+      
+      // Today's habit completion rate
+      const todayCompletions = typedCompletions.filter(c => c.date === today);
+      const habitsCompletedToday = typedHabits.filter(h => {
+        const comp = todayCompletions.find(c => c.habit_id === h.id);
+        return comp && comp.value >= h.target;
       }).length;
-      totalHabits = habits?.length || 0;
+      statsLines.push(`Today's habits: ${habitsCompletedToday}/${typedHabits.length} completed`);
+      
+      // 7-day habit completion rate
+      const last7DaysCompletions = typedCompletions.filter(c => c.date >= sevenDaysAgoStr);
+      const possibleCompletions7Days = typedHabits.length * 7;
+      const actualCompletions7Days = typedHabits.reduce((sum, h) => {
+        return sum + last7DaysCompletions.filter(c => c.habit_id === h.id && c.value >= h.target).length;
+      }, 0);
+      const weeklyRate = possibleCompletions7Days > 0 ? Math.round((actualCompletions7Days / possibleCompletions7Days) * 100) : 0;
+      statsLines.push(`7-day habit completion rate: ${weeklyRate}%`);
+      
+      // Active vs completed goals
+      const activeGoals = typedGoals.filter(g => g.status === 'active').length;
+      const completedGoals = typedGoals.filter(g => g.status === 'completed').length;
+      statsLines.push(`Goals: ${activeGoals} active, ${completedGoals} completed`);
+      
+      contextParts.push(statsLines.join('\n'));
 
-      // Latest mood
-      if (moodLogs?.[0]) {
-        latestMood = `Mood: ${moodLogs[0].mood}/10`;
-      }
-
-      // Latest journal (truncated)
-      if (journals?.[0]) {
-        latestJournal = `Last note: "${journals[0].content.substring(0, 60)}..."`;
-      }
+      userDataContext = contextParts.join('\n');
     }
 
-    // Build concise data summary (cost control - minimal tokens)
-    const dataSummary = `Stats: ${completedToday}/${totalHabits} today, ${weeklyAvg}% weekly. ${latestMood} ${latestJournal}`.trim();
+    // ===== BUILD SYSTEM PROMPT =====
+    const systemPrompt = `You are Neyler, a warm and insightful personal growth companion. You have full access to the user's data and can analyze their habits, goals, mood patterns, and journal entries to provide personalized guidance.
 
-    const systemPrompt = `You are a supportive wellness coach. Help with habits, motivation, consistency, avoiding burnout. Be warm, realistic, never shame. Max 120 words, 1 emoji max. No markdown or bullets.
+=== YOUR CAPABILITIES ===
+- Analyze habit completion patterns and identify trends
+- Track goal progress and provide actionable advice
+- Recognize mood patterns and their correlation with habits
+- Reference journal entries to understand the user's mindset
+- Identify areas of strength and areas needing improvement
+- Provide data-driven insights about consistency and progress
 
-User data: ${dataSummary}
+=== USER DATA ===
+${userDataContext || 'No user data available - the user may be new or not logged in.'}
 
-Rules: Encourage gently if behind. Suggest balance if over-performing. Prioritize emotional support if mood drops. Focus on progress, not perfection.`;
+=== RESPONSE GUIDELINES ===
+1. Always reference specific data when discussing progress (e.g., "Your meditation streak is at 5 days!")
+2. Recognize patterns (e.g., "I notice your mood tends to be higher on days you exercise")
+3. Be encouraging but honest - celebrate wins and gently address areas for improvement
+4. Keep responses conversational and supportive, not clinical
+5. When asked about specific habits/goals, provide detailed analysis
+6. Suggest actionable next steps based on the data
+7. Keep responses concise (2-4 paragraphs max) unless asked for detailed analysis
+8. Use 1-2 relevant emojis naturally
+9. Never shame or criticize - focus on growth and self-compassion
 
-    console.log('Sending request to AI gateway');
+=== IMPORTANT ===
+- If asked about data you can see, reference it directly
+- If a habit has low completion, explore why rather than just pointing it out
+- Connect dots between mood, habits, and journal entries when relevant
+- Remember: you're a supportive coach, not a data dashboard`;
+
+    console.log('Sending request to AI gateway with user context');
 
     const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
@@ -180,12 +377,12 @@ Rules: Encourage gently if behind. Suggest balance if over-performing. Prioritiz
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        model: "google/gemini-2.5-flash-lite",
+        model: "google/gemini-2.5-flash",
         messages: [
           { role: "system", content: systemPrompt },
           ...messages,
         ],
-        max_tokens: 150, // ~120 words max for cost control
+        max_tokens: 500,
       }),
     });
 
