@@ -249,14 +249,14 @@ export function useGoals() {
     const end = new Date(goal.end_date);
     
     if (now < start) return "Not started";
-    if (now > end) return goal.status === "completed" ? "Completed" : "Ended";
+    if (goal.status === "completed") return "Completed";
+    if (now > end) return "Overdue";
     
     const totalDays = Math.ceil((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24));
     const elapsedDays = Math.ceil((now.getTime() - start.getTime()) / (1000 * 60 * 60 * 24));
     const expectedProgress = (elapsedDays / totalDays) * 100;
     const actualProgress = getGoalProgress(goal);
     
-    if (actualProgress >= expectedProgress + 10) return "Ahead of schedule";
     if (actualProgress <= expectedProgress - 10) return "Falling behind";
     return "On track";
   }, [getGoalProgress]);

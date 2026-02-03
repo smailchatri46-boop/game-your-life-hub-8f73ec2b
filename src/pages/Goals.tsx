@@ -86,9 +86,9 @@ export default function Goals() {
   ];
 
   return (
-    <>
+    <div className="min-h-screen flex flex-col">
 
-      <main className="pt-28 pb-12 px-4 max-w-7xl mx-auto">
+      <main className="pt-28 pb-12 px-4 max-w-7xl mx-auto flex-1">
         {!hasGoals && !isLoading ? (
           /* Empty State */
           <div className="flex items-center justify-center min-h-[60vh]">
@@ -202,9 +202,9 @@ export default function Goals() {
             )}
           </>
         )}
-        
-        <CommunityLink />
       </main>
+      
+      <CommunityLink />
 
       {/* Floating Add Goal Button */}
       <Button 
@@ -233,6 +233,6 @@ export default function Goals() {
         limitType={paywallLimitType}
         limitMessage={getLimitMessage(paywallLimitType)}
       />
-    </>
+    </div>
   );
 }
