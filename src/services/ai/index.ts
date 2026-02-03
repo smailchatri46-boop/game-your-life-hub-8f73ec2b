@@ -1,11 +1,9 @@
-// AI service index - all AI calls go through edge functions
-// Types for AI chat
-export type ChatMessage = {
-  role: "user" | "assistant" | "model";
-  content: string;
-};
+// Gemini AI service index
+export {
+  isGeminiConfigured,
+  checkUsageLimits,
+  sendMessageToGemini,
+  getGeminiResponse,
+} from "./gemini";
 
-export type GeminiResponse = {
-  text: string;
-  error?: string;
-};
+export type { ChatMessage, GeminiResponse } from "./gemini";
