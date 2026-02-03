@@ -110,9 +110,9 @@ export function AddGoalModal({ open, onOpenChange, skipCommitment = false, onGoa
   const currentHabit = selectedHabitObjects[currentHabitIndex];
   const isLastHabitTarget = currentHabitIndex >= selectedHabitObjects.length - 1;
 
-  // Check if habit is once-per-day type (for testing, uses oncePerDay flag if present)
+  // Check if habit is once-per-day type (target === 1 means it's a daily checkmark habit)
   const isOncePerDayHabit = (habit: any) => {
-    return habit.oncePerDay === true;
+    return habit.target === 1;
   };
 
   // Total steps: 1-Goal, 2-Why, 3-Category, 4-Period, 5-Habits, 6-Target, 7-Commitment
