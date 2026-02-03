@@ -67,9 +67,13 @@ export function AuthRedirect({ children }: AuthRedirectProps) {
     }
   }, [user?.id]);
 
-  // Show nothing while loading to prevent flash
-  if (loading || checkingOnboarding || subscriptionLoading) {
-    return null;
+  // Show loading spinner while checking auth/subscription status
+  if (loading || (user && (checkingOnboarding || subscriptionLoading))) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-background">
+        <div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+      </div>
+    );
   }
 
   // If user is authenticated and on root, redirect appropriately

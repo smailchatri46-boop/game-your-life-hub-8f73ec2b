@@ -31,10 +31,14 @@ export function SubscriptionGate({ children }: SubscriptionGateProps) {
     }
   }, [location.pathname]);
 
-  // Replace URL with /app for clean URL experience
+  // Replace URL with /app for clean URL experience (only once after navigation is stable)
   useEffect(() => {
     if (location.pathname !== '/app' && pathToPage[location.pathname]) {
-      window.history.replaceState(null, '', '/app');
+      // Use timeout to avoid interfering with React Router's navigation
+      const timer = setTimeout(() => {
+        window.history.replaceState(null, '', '/app');
+      }, 100);
+      return () => clearTimeout(timer);
     }
   }, [location.pathname]);
 
