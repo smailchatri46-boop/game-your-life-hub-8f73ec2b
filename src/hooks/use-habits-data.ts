@@ -265,15 +265,65 @@ export function useHabitsData(selectedYear?: number, selectedMonth?: number) {
       
       return { habitId, date, newValue };
     },
-    onSuccess: async () => {
-      // CRITICAL: Immediately refetch to update UI
-      await queryClient.refetchQueries({ queryKey: ["habit_completions"] });
-      await queryClient.refetchQueries({ queryKey: ["recent_activities"] });
-      await queryClient.refetchQueries({ queryKey: ["calendar-completions"] });
-      await queryClient.refetchQueries({ queryKey: ["goal_completions"] });
+    // OPTIMISTIC UPDATE: Update UI immediately before server responds
+    onMutate: async ({ habitId, date, currentValue, target }) => {
+      // Cancel any outgoing refetches
+      await queryClient.cancelQueries({ queryKey: ["habit_completions", user?.id, year, month] });
+      
+      // Snapshot the previous value
+      const previousData = queryClient.getQueryData<HabitCompletion[]>(["habit_completions", user?.id, year, month]);
+      
+      // Calculate new value
+      let newValue: number;
+      if (target === 1) {
+        newValue = currentValue === 1 ? 0 : 1;
+      } else {
+        newValue = currentValue >= target ? 0 : currentValue + 1;
+      }
+      
+      // Optimistically update the cache
+      queryClient.setQueryData<HabitCompletion[]>(
+        ["habit_completions", user?.id, year, month],
+        (old = []) => {
+          const existingIndex = old.findIndex(c => c.habit_id === habitId && c.date === date);
+          
+          if (newValue === 0) {
+            // Remove the completion
+            return old.filter((_, i) => i !== existingIndex);
+          }
+          
+          if (existingIndex >= 0) {
+            // Update existing completion
+            return old.map((c, i) => i === existingIndex ? { ...c, value: newValue } : c);
+          } else {
+            // Add new completion
+            return [...old, {
+              id: `temp-${habitId}-${date}`,
+              habit_id: habitId,
+              user_id: user?.id || "",
+              date,
+              value: newValue,
+              created_at: new Date().toISOString(),
+            }];
+          }
+        }
+      );
+      
+      return { previousData };
     },
-    onError: () => {
+    onError: (_err, _variables, context) => {
+      // Rollback on error
+      if (context?.previousData) {
+        queryClient.setQueryData(["habit_completions", user?.id, year, month], context.previousData);
+      }
       toast.error("Failed to update completion");
+    },
+    onSettled: () => {
+      // Silently refetch in background to ensure consistency (no await)
+      queryClient.invalidateQueries({ queryKey: ["habit_completions"] });
+      queryClient.invalidateQueries({ queryKey: ["recent_activities"] });
+      queryClient.invalidateQueries({ queryKey: ["calendar-completions"] });
+      queryClient.invalidateQueries({ queryKey: ["goal_completions"] });
     },
   });
 
