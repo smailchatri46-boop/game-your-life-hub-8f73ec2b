@@ -729,12 +729,13 @@ export function AddGoalModal({ open, onOpenChange, skipCommitment = false, onGoa
         </div>
       </DialogContent>
 
-      {/* Inline Add Habit Modal - skips guidance carousel */}
+      {/* Inline Add Habit Modal - skips guidance carousel and celebration */}
       <AddHabitModal
         open={showInlineHabitModal}
         onOpenChange={setShowInlineHabitModal}
         onSave={handleInlineHabitSave}
         skipGuidance
+        skipCelebration
       />
     </Dialog>
   );
