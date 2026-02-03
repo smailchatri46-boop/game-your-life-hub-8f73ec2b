@@ -83,6 +83,7 @@ export default function Overview() {
   const { 
     dayPercentages, 
     getDayCompletionRate: getCalendarDayRate, 
+    dayHasTasks,
     currentDay: calendarCurrentDay,
     refetch: refetchCalendar 
   } = useCalendarData(year, month);
@@ -353,17 +354,23 @@ export default function Overview() {
                     ? { bg: "bg-secondary/50", hover: "hover:bg-secondary/70" }
                     : getCalendarDayColor(completionRate);
                   
+                  const hasTasks = dayHasTasks(day);
+                  
                   return (
                     <button
                       key={day}
                       onClick={() => setSelectedDate(day)}
                       style={isSelected ? { background: 'linear-gradient(135deg, hsl(38 100% 70%) 0%, hsl(24 95% 53%) 100%)' } : undefined}
-                      className={`aspect-square rounded-2xl flex flex-col items-center justify-center transition-colors duration-200 ${
+                      className={`aspect-square rounded-2xl flex flex-col items-center justify-center transition-colors duration-200 relative ${
                         isSelected
                           ? 'text-primary-foreground shadow-medium hover:brightness-[1.03]'
                           : `${colorClasses.bg} ${colorClasses.hover}`
                       }`}
                     >
+                      {/* Yellow dot indicator for future days with tasks */}
+                      {isFuture && hasTasks && (
+                        <span className="absolute top-1 right-1 w-2 h-2 rounded-full bg-amber-400" />
+                      )}
                       <span className={`text-sm font-semibold ${isSelected ? 'text-primary-foreground' : ''}`}>
                         {day}
                       </span>
