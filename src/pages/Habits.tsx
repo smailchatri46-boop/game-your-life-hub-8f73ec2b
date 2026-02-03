@@ -757,6 +757,7 @@ export default function Habits() {
         open={isModalOpen}
         onOpenChange={setIsModalOpen}
         onSave={handleAddHabit}
+        skipCelebration={true}
       />
 
       {selectedReflectionDay && (
