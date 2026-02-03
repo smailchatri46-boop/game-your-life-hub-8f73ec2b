@@ -3,8 +3,6 @@ import { Button } from "@/components/ui/button";
 import { useState, useEffect } from "react";
 import { AppleEmoji } from "@/components/AppleEmoji";
 import { format } from "date-fns";
-import { useFirstTimeTips } from "@/hooks/use-first-time-tips";
-import { FirstTimeTip } from "@/components/FirstTimeTip";
 
 interface UnifiedMoodMotivationModalProps {
   open: boolean;
@@ -70,7 +68,6 @@ export function UnifiedMoodMotivationModal({
 }: UnifiedMoodMotivationModalProps) {
   const [mood, setMood] = useState<number>(existingMood ?? 5);
   const [motivation, setMotivation] = useState<number>(existingMotivation ?? 5);
-  const { activeTip, tipMessage, triggerTip, dismissTip, shouldShowTip } = useFirstTimeTips();
 
   useEffect(() => {
     if (open) {
@@ -82,18 +79,12 @@ export function UnifiedMoodMotivationModal({
   const handleSave = () => {
     onSave(dateKey, mood, motivation);
     onOpenChange(false);
-    
-    // Trigger first-time tip after saving
-    if (shouldShowTip("mood")) {
-      setTimeout(() => triggerTip("mood"), 300);
-    }
   };
 
   const dayName = format(date, "EEEE");
   const fullDate = format(date, "MMMM d, yyyy");
 
   return (
-    <>
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-md bg-gradient-to-br from-orange-50 to-white dark:from-zinc-900 dark:to-zinc-800 border-orange-100 dark:border-zinc-700">
         <DialogHeader className="text-center">
@@ -182,14 +173,5 @@ export function UnifiedMoodMotivationModal({
         </div>
       </DialogContent>
     </Dialog>
-    
-    {/* First-time tip */}
-    <FirstTimeTip
-      open={activeTip === "mood"}
-      title={tipMessage?.title || ""}
-      message={tipMessage?.message || ""}
-      onDismiss={dismissTip}
-    />
-    </>
   );
 }

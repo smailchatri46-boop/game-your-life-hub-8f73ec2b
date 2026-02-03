@@ -262,10 +262,16 @@ export default function Habits() {
   };
 
   const handleSaveReflection = (dateKey: string, text: string) => {
-    setReflections(prev => ({
-      ...prev,
-      [dateKey]: { text, createdAt: new Date().toISOString() },
-    }));
+    if (isDemo) {
+      // Demo mode - save locally
+      setReflections(prev => ({
+        ...prev,
+        [dateKey]: { text, createdAt: new Date().toISOString() },
+      }));
+    } else {
+      // Save to Supabase via saveMoodLog mutation
+      saveMoodLog.mutate({ date: dateKey, reflection: text });
+    }
   };
 
   const getDayCompletionPercent = (day: number) => {
@@ -767,8 +773,8 @@ export default function Habits() {
           date={formatReflectionDate(selectedReflectionDay)}
           dateKey={getDateKey(selectedReflectionDay)}
           completionPercent={getDayCompletionPercent(selectedReflectionDay)}
-          existingReflection={reflections[getDateKey(selectedReflectionDay)]?.text}
-          reflectionCreatedAt={reflections[getDateKey(selectedReflectionDay)]?.createdAt}
+          existingReflection={isDemo ? reflections[getDateKey(selectedReflectionDay)]?.text : moodMap[getDateKey(selectedReflectionDay)]?.reflection || undefined}
+          reflectionCreatedAt={isDemo ? reflections[getDateKey(selectedReflectionDay)]?.createdAt : moodMap[getDateKey(selectedReflectionDay)]?.created_at}
           onSave={handleSaveReflection}
         />
       )}
