@@ -1,4 +1,3 @@
-
 import { GlassCard } from "@/components/GlassCard";
 import { CommunityLink } from "@/components/CommunityLink";
 import { AppleEmoji } from "@/components/AppleEmoji";
@@ -6,18 +5,22 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { DeleteJournalModal } from "@/components/DeleteJournalModal";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useAuth } from "@/contexts/AuthContext";
+import { getJournalEntries, createJournalEntry, updateJournalEntry, deleteJournalEntry } from "@/services/supabase/journal";
+import { toast } from "sonner";
 
 import { Plus, Pencil, Trash2 } from "lucide-react";
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo } from "react";
 
-interface JournalEntry {
+interface JournalEntryDisplay {
   id: string;
   content: string;
   date: string;
   time: string;
   emoji?: string;
   bgColor: string;
-  createdAt: number; // timestamp for 24-hour logic
+  createdAt: string; // ISO string for 24-hour logic
 }
 
 // Map emojis to specific background colors, modal tints, and button gradients
@@ -64,10 +67,11 @@ const ONBOARDING_SLIDES = [
 ];
 
 // Helper to check if entry is within 24 hours
-const isWithin24Hours = (createdAt: number): boolean => {
+const isWithin24Hours = (createdAt: string): boolean => {
   const now = Date.now();
+  const created = new Date(createdAt).getTime();
   const twentyFourHours = 24 * 60 * 60 * 1000;
-  return now - createdAt < twentyFourHours;
+  return now - created < twentyFourHours;
 };
 
 // Helper to get tailwind bg class for modal based on emoji
@@ -91,61 +95,138 @@ const getGlowColor = (emoji: string): string => {
 };
 
 export default function Journal() {
-  const [entries, setEntries] = useState<JournalEntry[]>([]);
+  const { user } = useAuth();
+  const queryClient = useQueryClient();
+  
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [newContent, setNewContent] = useState("");
   const [selectedEmoji, setSelectedEmoji] = useState("😊");
-  const [editingEntry, setEditingEntry] = useState<JournalEntry | null>(null);
+  const [editingEntry, setEditingEntry] = useState<JournalEntryDisplay | null>(null);
   const [currentSlideIndex, setCurrentSlideIndex] = useState(0);
-  const [deleteConfirmEntry, setDeleteConfirmEntry] = useState<JournalEntry | null>(null);
+  const [deleteConfirmEntry, setDeleteConfirmEntry] = useState<JournalEntryDisplay | null>(null);
+
+  // Fetch journal entries from Supabase
+  const { data: rawEntries = [], isLoading } = useQuery({
+    queryKey: ["journal-entries", user?.id],
+    queryFn: async () => {
+      if (!user?.id) return [];
+      return await getJournalEntries(user.id);
+    },
+    enabled: !!user?.id,
+  });
+
+  // Transform raw entries to display format
+  const entries: JournalEntryDisplay[] = useMemo(() => {
+    return rawEntries.map((entry) => {
+      const date = new Date(entry.created_at);
+      return {
+        id: entry.id,
+        content: entry.content,
+        date: date.toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" }),
+        time: date.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" }),
+        emoji: entry.emoji || "😊",
+        bgColor: entry.bg_color || getModalBgClass(entry.emoji || "😊"),
+        createdAt: entry.created_at,
+      };
+    });
+  }, [rawEntries]);
+
+  // Create mutation
+  const createMutation = useMutation({
+    mutationFn: async ({ content, emoji, bgColor }: { content: string; emoji: string; bgColor: string }) => {
+      if (!user?.id) throw new Error("Not authenticated");
+      return await createJournalEntry(user.id, {
+        content,
+        emoji,
+        bg_color: bgColor,
+      });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["journal-entries", user?.id] });
+      toast.success("Journal entry saved!");
+    },
+    onError: (error) => {
+      console.error("Failed to save journal entry:", error);
+      toast.error("Failed to save entry. Please try again.");
+    },
+  });
+
+  // Update mutation
+  const updateMutation = useMutation({
+    mutationFn: async ({ id, content, emoji, bgColor }: { id: string; content: string; emoji: string; bgColor: string }) => {
+      if (!user?.id) throw new Error("Not authenticated");
+      return await updateJournalEntry(id, user.id, {
+        content,
+        emoji,
+        bg_color: bgColor,
+      });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["journal-entries", user?.id] });
+      toast.success("Journal entry updated!");
+    },
+    onError: (error) => {
+      console.error("Failed to update journal entry:", error);
+      toast.error("Failed to update entry. Please try again.");
+    },
+  });
+
+  // Delete mutation
+  const deleteMutation = useMutation({
+    mutationFn: async (entryId: string) => {
+      if (!user?.id) throw new Error("Not authenticated");
+      return await deleteJournalEntry(entryId, user.id);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["journal-entries", user?.id] });
+      toast.success("Journal entry deleted");
+    },
+    onError: (error) => {
+      console.error("Failed to delete journal entry:", error);
+      toast.error("Failed to delete entry. Please try again.");
+    },
+  });
 
   const modalBgClass = useMemo(() => getModalBgClass(selectedEmoji), [selectedEmoji]);
-  const modalTintClass = useMemo(() => getModalTintClass(selectedEmoji), [selectedEmoji]);
   const buttonGradient = useMemo(() => getButtonGradient(selectedEmoji), [selectedEmoji]);
   const glowColor = useMemo(() => getGlowColor(selectedEmoji), [selectedEmoji]);
 
   const deleteEntry = (id: string) => {
-    setEntries(entries.filter(e => e.id !== id));
+    deleteMutation.mutate(id);
     setDeleteConfirmEntry(null);
   };
 
-  const handleDeleteClick = (entry: JournalEntry) => {
+  const handleDeleteClick = (entry: JournalEntryDisplay) => {
     setDeleteConfirmEntry(entry);
   };
 
-  const handleEdit = (entry: JournalEntry) => {
+  const handleEdit = (entry: JournalEntryDisplay) => {
     setEditingEntry(entry);
     setNewContent(entry.content);
     setSelectedEmoji(entry.emoji || "😊");
     setIsModalOpen(true);
   };
 
-  const handleSave = () => {
+  const handleSave = async () => {
     if (!newContent.trim()) return;
     
     const bgColor = getModalBgClass(selectedEmoji);
     
     if (editingEntry) {
       // Update existing entry
-      setEntries(entries.map(e => 
-        e.id === editingEntry.id 
-          ? { ...e, content: newContent.trim(), emoji: selectedEmoji, bgColor }
-          : e
-      ));
-    } else {
-      // Create new entry
-      const now = new Date();
-      const newEntry: JournalEntry = {
-        id: Date.now().toString(),
+      updateMutation.mutate({
+        id: editingEntry.id,
         content: newContent.trim(),
-        date: now.toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" }),
-        time: now.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" }),
         emoji: selectedEmoji,
         bgColor,
-        createdAt: Date.now(),
-      };
-      
-      setEntries([newEntry, ...entries]);
+      });
+    } else {
+      // Create new entry
+      createMutation.mutate({
+        content: newContent.trim(),
+        emoji: selectedEmoji,
+        bgColor,
+      });
     }
     
     resetModal();
@@ -174,10 +255,12 @@ export default function Journal() {
     }
   };
 
+  const isSaving = createMutation.isPending || updateMutation.isPending;
+
   return (
     <>
       
-      {entries.length === 0 ? (
+      {!isLoading && entries.length === 0 ? (
         /* Onboarding wrapper - full viewport centering */
         <div className="min-h-screen flex items-center justify-center px-4">
           <div className="bg-card/95 backdrop-blur-sm rounded-3xl shadow-2xl border border-border/10 overflow-hidden w-full max-w-md animate-scale-in">
@@ -374,10 +457,10 @@ export default function Journal() {
             <div className="flex justify-end">
               <button
                 onClick={handleSave}
-                disabled={!newContent.trim()}
+                disabled={!newContent.trim() || isSaving}
                 className={`px-6 py-2.5 rounded-full bg-gradient-to-br ${buttonGradient} shadow-medium hover:shadow-large hover:scale-105 transition-all duration-300 text-foreground font-medium disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100`}
               >
-                Save
+                {isSaving ? "Saving..." : "Save"}
               </button>
             </div>
           </div>
@@ -392,7 +475,6 @@ export default function Journal() {
           onClose={() => setDeleteConfirmEntry(null)}
         />
       )}
-
     </>
   );
 }
