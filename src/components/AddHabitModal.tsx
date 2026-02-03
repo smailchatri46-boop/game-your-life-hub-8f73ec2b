@@ -116,6 +116,7 @@ interface AddHabitModalProps {
   onOpenChange: (open: boolean) => void;
   onSave: (habit: NewHabit) => void;
   skipGuidance?: boolean; // Skip guidance slides when opening from goal flow or onboarding
+  skipCelebration?: boolean; // Skip celebration animation when opening from dashboard
 }
 
 const RAMP_DURATION_OPTIONS = [
@@ -125,7 +126,7 @@ const RAMP_DURATION_OPTIONS = [
   { value: "custom", label: "Custom" },
 ];
 
-export function AddHabitModal({ open, onOpenChange, onSave, skipGuidance = false }: AddHabitModalProps) {
+export function AddHabitModal({ open, onOpenChange, onSave, skipGuidance = false, skipCelebration = false }: AddHabitModalProps) {
   // Total steps: 4 guidance + 6 habit creation = 10 steps (or 6 if skipping guidance)
   const guidanceSteps = skipGuidance ? 0 : GUIDANCE_SLIDES.length;
   const habitSteps = 6; // Icon → Name → Category → Type → Frequency → Importance
@@ -209,7 +210,14 @@ export function AddHabitModal({ open, onOpenChange, onSave, skipGuidance = false
     };
 
     onSave(newHabit);
-    setIsComplete(true);
+    
+    // Skip celebration and close immediately when skipCelebration is true
+    if (skipCelebration) {
+      resetForm();
+      onOpenChange(false);
+    } else {
+      setIsComplete(true);
+    }
   };
 
   const handleClose = () => {
