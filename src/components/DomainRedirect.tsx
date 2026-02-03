@@ -20,19 +20,16 @@ function isLovableDomain(hostname: string): boolean {
 
 export function DomainRedirect() {
   useEffect(() => {
-    // TEMPORARILY DISABLED: Custom domain redirect is disabled while neyler.com is not hosted.
-    // Re-enable this when you reconnect the custom domain to Netlify.
-    // 
-    // const currentHost = window.location.hostname;
-    // 
-    // // Only redirect if we're on a Lovable domain (not already on custom domain)
-    // if (!isLovableDomain(currentHost)) {
-    //   return;
-    // }
-    // 
-    // // Always redirect to custom domain when on Lovable subdomain
-    // const newUrl = `${CUSTOM_DOMAIN}${window.location.pathname}${window.location.search}${window.location.hash}`;
-    // window.location.href = newUrl;
+    const currentHost = window.location.hostname;
+    
+    // Only redirect if we're on a Lovable domain (not already on custom domain)
+    if (!isLovableDomain(currentHost)) {
+      return;
+    }
+    
+    // Always redirect to custom domain when on Lovable subdomain
+    const newUrl = `${CUSTOM_DOMAIN}${window.location.pathname}${window.location.search}${window.location.hash}`;
+    window.location.href = newUrl;
   }, []);
   
   return null;
