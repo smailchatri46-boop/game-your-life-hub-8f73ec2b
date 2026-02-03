@@ -1,10 +1,14 @@
-import { Outlet, useLocation } from "react-router-dom";
-import { useEffect } from "react";
+import { useLocation } from "react-router-dom";
+import { useEffect, ReactNode } from "react";
 import { Navbar } from "@/components/Navbar";
 import { ReviewRequestModal } from "@/components/ReviewRequestModal";
 import { usePageVisitTracker } from "@/hooks/use-page-visit-tracker";
 
-export function AppLayout() {
+interface AppLayoutProps {
+  children: ReactNode;
+}
+
+export function AppLayout({ children }: AppLayoutProps) {
   const location = useLocation();
   const { markPageVisited, shouldShowReviewModal, markReviewModalShown } = usePageVisitTracker();
 
@@ -17,7 +21,7 @@ export function AppLayout() {
   return (
     <div className="min-h-screen gradient-bg">
       <Navbar />
-      <Outlet />
+      {children}
       
       {/* Review request modal - shows after visiting all main pages */}
       <ReviewRequestModal 
