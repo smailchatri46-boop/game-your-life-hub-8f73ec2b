@@ -32,6 +32,7 @@ interface HabitCategoryGroupProps {
 export function HabitCategoryGroup({
   category,
   categoryColor,
+  categoryEmoji,
   habits,
   completionsMap,
   getDateKey,
@@ -41,30 +42,9 @@ export function HabitCategoryGroup({
   onDelete,
   getProgress,
   categoryColors,
-}: HabitCategoryGroupProps) {
+}: HabitCategoryGroupProps & { categoryEmoji?: string }) {
   const shouldAutoCollapse = habits.length >= 3;
   const [isExpanded, setIsExpanded] = useState(!shouldAutoCollapse);
-
-  // Calculate group completion percentage
-  const groupCompletionPercent = useMemo(() => {
-    let totalCompleted = 0;
-    let totalPossible = 0;
-
-    habits.forEach(habit => {
-      for (let day = 1; day <= currentDay; day++) {
-        const dateKey = getDateKey(day);
-        const value = completionsMap[habit.id]?.[dateKey] || 0;
-        totalPossible++;
-        if (habit.target === 1) {
-          if (value >= 1) totalCompleted++;
-        } else {
-          if (value >= habit.target) totalCompleted++;
-        }
-      }
-    });
-
-    return totalPossible > 0 ? Math.round((totalCompleted / totalPossible) * 100) : 0;
-  }, [habits, completionsMap, currentDay, getDateKey]);
 
   // Check if habit should be visible on a specific day
   const isVisibleOnDay = (habit: Habit, dayOfWeek: number): boolean => {
@@ -73,6 +53,65 @@ export function HabitCategoryGroup({
     }
     return habit.schedule_days.includes(dayOfWeek);
   };
+
+  // Calculate group completion for a specific day
+  const getGroupDayCompletion = (day: number): { completed: number; total: number; percent: number } => {
+    const dateKey = getDateKey(day);
+    const [yearStr, monthStr] = dateKey.split('-');
+    const dateObj = new Date(parseInt(yearStr), parseInt(monthStr) - 1, day);
+    const dayOfWeek = dateObj.getDay();
+    
+    let completed = 0;
+    let total = 0;
+
+    habits.forEach(habit => {
+      if (isVisibleOnDay(habit, dayOfWeek)) {
+        total++;
+        const value = completionsMap[habit.id]?.[dateKey] || 0;
+        if (habit.target === 1) {
+          if (value >= 1) completed++;
+        } else {
+          if (value >= habit.target) completed++;
+        }
+      }
+    });
+
+    return {
+      completed,
+      total,
+      percent: total > 0 ? Math.round((completed / total) * 100) : 0
+    };
+  };
+
+  // Calculate overall group progress
+  const groupOverallProgress = useMemo(() => {
+    let totalCompleted = 0;
+    let totalPossible = 0;
+
+    habits.forEach(habit => {
+      for (let day = 1; day <= currentDay; day++) {
+        const dateKey = getDateKey(day);
+        const [yearStr, monthStr] = dateKey.split('-');
+        const dateObj = new Date(parseInt(yearStr), parseInt(monthStr) - 1, day);
+        const dayOfWeek = dateObj.getDay();
+        
+        if (isVisibleOnDay(habit, dayOfWeek)) {
+          totalPossible++;
+          const value = completionsMap[habit.id]?.[dateKey] || 0;
+          if (habit.target === 1) {
+            if (value >= 1) totalCompleted++;
+          } else {
+            if (value >= habit.target) totalCompleted++;
+          }
+        }
+      }
+    });
+
+    return totalPossible > 0 ? Math.round((totalCompleted / totalPossible) * 100) : 0;
+  }, [habits, completionsMap, currentDay, getDateKey]);
+
+  // Get first habit emoji for group icon
+  const groupEmoji = categoryEmoji || habits[0]?.icon || "📁";
 
   // If less than 3 habits, render directly without grouping header
   if (!shouldAutoCollapse) {
@@ -100,31 +139,82 @@ export function HabitCategoryGroup({
 
   return (
     <>
-      {/* Collapsed view - show group summary */}
+      {/* Collapsed view - group row that looks like a habit row */}
       {!isExpanded && (
         <tr className="border-t border-border/30">
-          <td className="p-1.5 lg:p-2" colSpan={daysInMonth + 3}>
-            <button
-              onClick={() => setIsExpanded(true)}
-              className="flex items-center gap-2 w-full hover:bg-secondary/50 rounded-lg p-1 transition-colors"
-            >
-              <ChevronRight className="w-4 h-4 text-muted-foreground" />
-              <div 
-                className="w-3 h-3 rounded-full flex-shrink-0"
-                style={{ backgroundColor: categoryColor || '#6B7280' }}
-              />
-              <span className="text-sm font-medium text-foreground">{category}</span>
-              <span className="text-xs text-muted-foreground">({habits.length} habits)</span>
-              <div className="ml-auto flex items-center gap-2">
-                <div className="h-2 w-24 bg-secondary rounded-full overflow-hidden">
-                  <div 
-                    className="h-full bg-gradient-to-r from-primary to-accent rounded-full transition-all"
-                    style={{ width: `${groupCompletionPercent}%` }}
-                  />
-                </div>
-                <span className="text-sm font-medium text-primary">{groupCompletionPercent}%</span>
+          <td className="p-1.5 lg:p-2">
+            <div className="flex items-center gap-1.5">
+              <button
+                className="touch-none cursor-grab active:cursor-grabbing p-0.5 rounded hover:bg-secondary/50 transition-colors"
+              >
+                <GripVertical className="w-3 h-3 text-muted-foreground/50 flex-shrink-0" />
+              </button>
+              <button
+                onClick={() => setIsExpanded(true)}
+                className="p-0.5 rounded hover:bg-secondary/50 transition-colors"
+              >
+                <ChevronRight className="w-4 h-4 text-muted-foreground" />
+              </button>
+              <AppleEmoji emoji={groupEmoji} size="lg" />
+              <div className="min-w-0 flex-1">
+                <button
+                  onClick={() => setIsExpanded(true)}
+                  className="text-left w-full"
+                >
+                  <MarqueeText text={category} className="text-xs lg:text-sm font-medium" index={0} />
+                  <div className="flex items-center gap-1.5">
+                    <span 
+                      className="w-2 h-2 rounded-full flex-shrink-0"
+                      style={{ backgroundColor: categoryColor || '#6B7280' }}
+                    />
+                    <p className="text-[10px] lg:text-xs text-muted-foreground">{habits.length} habits</p>
+                  </div>
+                </button>
               </div>
-            </button>
+            </div>
+          </td>
+          {/* Daily dots for group progress */}
+          {Array.from({ length: daysInMonth }, (_, i) => {
+            const day = i + 1;
+            const isFuture = day > currentDay;
+            const { percent, total } = getGroupDayCompletion(day);
+            const isFullyCompleted = percent === 100 && total > 0;
+            
+            return (
+              <td key={i} className="p-0.5 lg:p-1">
+                {total > 0 ? (
+                  <button
+                    disabled={isFuture}
+                    onClick={() => !isFuture && setIsExpanded(true)}
+                    className={`w-5 h-5 lg:w-6 lg:h-6 xl:w-7 xl:h-7 mx-auto rounded-md flex items-center justify-center text-xs ${
+                      isFuture 
+                        ? 'bg-muted/30 cursor-not-allowed'
+                        : isFullyCompleted
+                          ? 'bg-gradient-to-br from-accent to-primary text-primary-foreground shadow-sm'
+                          : 'bg-secondary hover:bg-secondary/80 cursor-pointer'
+                    }`}
+                  >
+                    {!isFuture && isFullyCompleted && (
+                      <Check className="w-3 h-3 lg:w-4 lg:h-4" />
+                    )}
+                    {!isFuture && !isFullyCompleted && percent > 0 && (
+                      <span className="font-medium text-[8px] lg:text-[10px] text-muted-foreground">
+                        {percent}
+                      </span>
+                    )}
+                  </button>
+                ) : (
+                  <div className="w-5 h-5 lg:w-6 lg:h-6 xl:w-7 xl:h-7 mx-auto" />
+                )}
+              </td>
+            );
+          })}
+          <td className="p-1 lg:p-2 text-right">
+            <span className="text-xs lg:text-sm font-bold gradient-text">{groupOverallProgress}%</span>
+          </td>
+          <td className="p-1 lg:p-2">
+            {/* Empty cell for alignment with delete button column */}
+            <div className="w-3.5 h-3.5 lg:w-4 lg:h-4" />
           </td>
         </tr>
       )}
@@ -133,19 +223,77 @@ export function HabitCategoryGroup({
       {isExpanded && (
         <>
           <tr className="border-t border-border/30">
-            <td className="p-1.5 lg:p-2" colSpan={daysInMonth + 3}>
-              <button
-                onClick={() => setIsExpanded(false)}
-                className="flex items-center gap-2 hover:bg-secondary/50 rounded-lg p-1 transition-colors"
-              >
-                <ChevronDown className="w-4 h-4 text-muted-foreground" />
-                <div 
-                  className="w-3 h-3 rounded-full flex-shrink-0"
-                  style={{ backgroundColor: categoryColor || '#6B7280' }}
-                />
-                <span className="text-sm font-medium text-foreground">{category}</span>
-                <span className="text-xs text-muted-foreground">({habits.length} habits)</span>
-              </button>
+            <td className="p-1.5 lg:p-2">
+              <div className="flex items-center gap-1.5">
+                <button
+                  className="touch-none cursor-grab active:cursor-grabbing p-0.5 rounded hover:bg-secondary/50 transition-colors"
+                >
+                  <GripVertical className="w-3 h-3 text-muted-foreground/50 flex-shrink-0" />
+                </button>
+                <button
+                  onClick={() => setIsExpanded(false)}
+                  className="p-0.5 rounded hover:bg-secondary/50 transition-colors"
+                >
+                  <ChevronDown className="w-4 h-4 text-muted-foreground" />
+                </button>
+                <AppleEmoji emoji={groupEmoji} size="lg" />
+                <div className="min-w-0 flex-1">
+                  <button
+                    onClick={() => setIsExpanded(false)}
+                    className="text-left w-full"
+                  >
+                    <MarqueeText text={category} className="text-xs lg:text-sm font-medium" index={0} />
+                    <div className="flex items-center gap-1.5">
+                      <span 
+                        className="w-2 h-2 rounded-full flex-shrink-0"
+                        style={{ backgroundColor: categoryColor || '#6B7280' }}
+                      />
+                      <p className="text-[10px] lg:text-xs text-muted-foreground">{habits.length} habits</p>
+                    </div>
+                  </button>
+                </div>
+              </div>
+            </td>
+            {/* Daily dots for expanded group header */}
+            {Array.from({ length: daysInMonth }, (_, i) => {
+              const day = i + 1;
+              const isFuture = day > currentDay;
+              const { percent, total } = getGroupDayCompletion(day);
+              const isFullyCompleted = percent === 100 && total > 0;
+              
+              return (
+                <td key={i} className="p-0.5 lg:p-1">
+                  {total > 0 ? (
+                    <div
+                      className={`w-5 h-5 lg:w-6 lg:h-6 xl:w-7 xl:h-7 mx-auto rounded-md flex items-center justify-center text-xs ${
+                        isFuture 
+                          ? 'bg-muted/30'
+                          : isFullyCompleted
+                            ? 'bg-gradient-to-br from-accent to-primary text-primary-foreground shadow-sm'
+                            : 'bg-secondary'
+                      }`}
+                    >
+                      {!isFuture && isFullyCompleted && (
+                        <Check className="w-3 h-3 lg:w-4 lg:h-4" />
+                      )}
+                      {!isFuture && !isFullyCompleted && percent > 0 && (
+                        <span className="font-medium text-[8px] lg:text-[10px] text-muted-foreground">
+                          {percent}
+                        </span>
+                      )}
+                    </div>
+                  ) : (
+                    <div className="w-5 h-5 lg:w-6 lg:h-6 xl:w-7 xl:h-7 mx-auto" />
+                  )}
+                </td>
+              );
+            })}
+            <td className="p-1 lg:p-2 text-right">
+              <span className="text-xs lg:text-sm font-bold gradient-text">{groupOverallProgress}%</span>
+            </td>
+            <td className="p-1 lg:p-2">
+              {/* Empty cell for alignment */}
+              <div className="w-3.5 h-3.5 lg:w-4 lg:h-4" />
             </td>
           </tr>
           {habits.map((habit, idx) => (
@@ -162,6 +310,7 @@ export function HabitCategoryGroup({
               getProgress={getProgress}
               categoryColors={categoryColors}
               isVisibleOnDay={isVisibleOnDay}
+              isGrouped
             />
           ))}
         </>
@@ -183,6 +332,7 @@ function HabitRow({
   getProgress,
   categoryColors,
   isVisibleOnDay,
+  isGrouped = false,
 }: {
   habit: Habit;
   habitIndex: number;
@@ -195,12 +345,20 @@ function HabitRow({
   getProgress: (habitId: string, target: number) => number;
   categoryColors: Record<string, string>;
   isVisibleOnDay: (habit: Habit, dayOfWeek: number) => boolean;
+  isGrouped?: boolean;
 }) {
   return (
     <tr className="border-t border-border/30">
       <td className="p-1.5 lg:p-2">
         <div className="flex items-center gap-1.5">
-          <div className="w-3 h-3 flex-shrink-0" /> {/* Spacer for alignment with grouped habits */}
+          <button
+            className="touch-none cursor-grab active:cursor-grabbing p-0.5 rounded hover:bg-secondary/50 transition-colors"
+          >
+            <GripVertical className="w-3 h-3 text-muted-foreground/50 flex-shrink-0" />
+          </button>
+          {isGrouped && (
+            <div className="w-4 h-4 flex-shrink-0" /> 
+          )}
           <AppleEmoji emoji={habit.icon} size="lg" />
           <div className="min-w-0 flex-1">
             <MarqueeText text={habit.name} className="text-xs lg:text-sm font-medium" index={habitIndex} />
