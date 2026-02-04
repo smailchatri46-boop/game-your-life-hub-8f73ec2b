@@ -225,16 +225,10 @@ export function MoodMotivationChart({ data, daysInMonth, currentDay }: MoodMotiv
             >
               <div className="font-semibold text-foreground">Day {tooltip.day}</div>
               {tooltip.mood !== undefined && (
-                <div className="text-muted-foreground flex items-center gap-2">
-                  <span className="w-2 h-2 rounded-full" style={{ backgroundColor: 'hsl(24, 95%, 53%)' }} />
-                  Mood: {tooltip.mood}%
-                </div>
+                <div className="text-muted-foreground">Mood: {tooltip.mood}%</div>
               )}
               {tooltip.motivation !== undefined && (
-                <div className="text-muted-foreground flex items-center gap-2">
-                  <span className="w-2 h-2 rounded-full" style={{ backgroundColor: 'hsl(280, 70%, 55%)' }} />
-                  Motivation: {tooltip.motivation}%
-                </div>
+                <div className="text-muted-foreground">Motivation: {tooltip.motivation}%</div>
               )}
             </div>
           )}
@@ -243,12 +237,9 @@ export function MoodMotivationChart({ data, daysInMonth, currentDay }: MoodMotiv
         <div style={{ width: '84px' }} className="flex-shrink-0"></div>
       </div>
       
-      {/* Legend - Mood only */}
+      {/* Legend - Wellbeing */}
       <div className="flex justify-center mt-3">
-        <div className="flex items-center gap-2">
-          <span className="w-3 h-3 rounded-full" style={{ backgroundColor: 'hsl(24, 95%, 53%)' }} />
-          <span className="text-xs text-muted-foreground">Mood</span>
-        </div>
+        <span className="text-xs text-muted-foreground">Wellbeing</span>
       </div>
     </div>
   );

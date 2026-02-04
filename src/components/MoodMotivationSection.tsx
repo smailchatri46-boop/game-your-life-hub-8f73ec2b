@@ -255,24 +255,19 @@ export function MoodMotivationSection({ daysInMonth, currentDay, year, month }: 
                 }}
               >
                 <p className="font-semibold text-foreground">Day {hoveredDay}</p>
-                <div className="flex items-center gap-2 text-muted-foreground">
-                  <span className="w-2 h-2 rounded-full bg-orange-400" />
-                  Mood: <span className="text-orange-500">{Math.round(((chartData.find(d => d.day === hoveredDay)?.mood || 3) / 5) * 100)}%</span>
+                <div className="text-muted-foreground">
+                  Mood: {Math.round(((chartData.find(d => d.day === hoveredDay)?.mood || 3) / 5) * 100)}%
                 </div>
-                <div className="flex items-center gap-2 text-muted-foreground">
-                  <span className="w-2 h-2 rounded-full bg-purple-500" />
-                  Motivation: <span className="text-purple-500">{Math.round(((chartData.find(d => d.day === hoveredDay)?.motivation || 5) / 10) * 100)}%</span>
+                <div className="text-muted-foreground">
+                  Motivation: {Math.round(((chartData.find(d => d.day === hoveredDay)?.motivation || 5) / 10) * 100)}%
                 </div>
               </div>
             )}
           </div>
 
-          {/* Legend - Wellbeing (combined) */}
+          {/* Legend - Wellbeing */}
           <div className="flex justify-center mt-3">
-            <div className="flex items-center gap-2">
-              <span className="w-3 h-3 rounded-full bg-orange-400" />
-              <span className="text-xs text-muted-foreground">Wellbeing</span>
-            </div>
+            <span className="text-xs text-muted-foreground">Wellbeing</span>
           </div>
 
           {/* X-axis labels */}
