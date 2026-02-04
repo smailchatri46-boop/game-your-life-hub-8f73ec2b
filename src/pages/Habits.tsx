@@ -20,6 +20,26 @@ import { useToast } from "@/hooks/use-toast";
 import { MarqueeText } from "@/components/MarqueeText";
 import { useHabitsData, Habit } from "@/hooks/use-habits-data";
 import { useAuth } from "@/contexts/AuthContext";
+import { HabitRowSkeleton } from "@/components/HabitRowSkeleton";
+import { SortableHabitRow } from "@/components/SortableHabitRow";
+import { HabitCategoryGroup } from "@/components/HabitCategoryGroup";
+import { updateHabitPositions } from "@/services/supabase/habits";
+import { useQueryClient } from "@tanstack/react-query";
+import {
+  DndContext,
+  closestCenter,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  DragEndEvent,
+} from "@dnd-kit/core";
+import {
+  arrayMove,
+  SortableContext,
+  sortableKeyboardCoordinates,
+  verticalListSortingStrategy,
+} from "@dnd-kit/sortable";
 
 import { Button } from "@/components/ui/button";
 import { Plus, Trash2, GripVertical, Check, Target, Calendar, TrendingUp, FileText } from "lucide-react";
@@ -43,6 +63,7 @@ const CATEGORY_COLORS: Record<string, string> = {
 
 export default function Habits() {
   const { user } = useAuth();
+  const queryClient = useQueryClient();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [reflectionModalOpen, setReflectionModalOpen] = useState(false);
   const [selectedReflectionDay, setSelectedReflectionDay] = useState<number | null>(null);
@@ -58,6 +79,18 @@ export default function Habits() {
   // Delete habit modal state
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [habitToDelete, setHabitToDelete] = useState<Habit | null>(null);
+  
+  // Drag-and-drop sensors
+  const sensors = useSensors(
+    useSensor(PointerSensor, {
+      activationConstraint: {
+        distance: 5,
+      },
+    }),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    })
+  );
   
   // Local state for demo mode habits
   const [demoHabits, setDemoHabits] = useState<Habit[]>([]);
@@ -153,6 +186,34 @@ export default function Habits() {
     return `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
   };
 
+  // Handle habit drag end
+  const handleHabitDragEnd = useCallback(async (event: DragEndEvent) => {
+    const { active, over } = event;
+    
+    if (!over || active.id === over.id) return;
+    
+    const oldIndex = displayHabits.findIndex(h => h.id === active.id);
+    const newIndex = displayHabits.findIndex(h => h.id === over.id);
+    
+    if (oldIndex === -1 || newIndex === -1) return;
+    
+    const newHabits = arrayMove(displayHabits, oldIndex, newIndex);
+    
+    if (isDemo) {
+      setDemoHabits(newHabits);
+    } else if (user) {
+      // Optimistically update local state
+      queryClient.setQueryData(["habits", user.id], newHabits);
+      
+      // Save new positions to database
+      const updates = newHabits.map((habit, index) => ({
+        id: habit.id,
+        position: index,
+      }));
+      await updateHabitPositions(user.id, updates);
+    }
+  }, [displayHabits, isDemo, user, queryClient, setDemoHabits]);
+
   const getLocalHabitProgress = useCallback((habitId: string, target: number): number => {
     const habitComps = completionsMap[habitId] || {};
     let completedDays = 0;
@@ -169,6 +230,17 @@ export default function Habits() {
     
     return currentDay > 0 ? Math.round((completedDays / currentDay) * 100) : 0;
   }, [completionsMap, currentDay, year, month]);
+
+  // Group habits by category for collapse functionality
+  const habitsByCategory = useMemo(() => {
+    const groups: Record<string, Habit[]> = {};
+    displayHabits.forEach(habit => {
+      const cat = habit.category || 'Other';
+      if (!groups[cat]) groups[cat] = [];
+      groups[cat].push(habit);
+    });
+    return groups;
+  }, [displayHabits]);
 
   const handleAddHabit = (newHabit: NewHabit) => {
     if (isDemo) {
@@ -461,91 +533,62 @@ export default function Habits() {
         
         {/* Habits Grid - fits all days on desktop without scroll */}
         <GlassCard className="p-2 sm:p-3 lg:p-4 mb-8 overflow-x-auto lg:overflow-visible">
-          <table className="w-full table-fixed" style={{ minWidth: '900px' }}>
-            <thead>
-              <tr>
-                <th className="text-left p-1.5 lg:p-2" style={{ width: '160px' }}>
-                  <span className="text-xs lg:text-sm font-semibold text-foreground">Habits and Tasks</span>
-                </th>
-                {Array.from({ length: daysInMonth }, (_, i) => (
-                  <th key={i} className="p-0.5 lg:p-1 text-center">
-                    <span className={`text-xs lg:text-sm font-medium ${i + 1 === currentDay ? 'text-primary font-bold' : 'text-muted-foreground'}`}>
-                      {i + 1}
-                    </span>
+          <DndContext
+            sensors={sensors}
+            collisionDetection={closestCenter}
+            onDragEnd={handleHabitDragEnd}
+          >
+            <table className="w-full table-fixed" style={{ minWidth: '900px' }}>
+              <thead>
+                <tr>
+                  <th className="text-left p-1.5 lg:p-2" style={{ width: '160px' }}>
+                    <span className="text-xs lg:text-sm font-semibold text-foreground">Habits and Tasks</span>
                   </th>
-                ))}
-                <th className="p-1 lg:p-2 text-right" style={{ width: '48px' }}>
-                  <span className="text-xs lg:text-sm font-semibold text-foreground">%</span>
-                </th>
-                <th style={{ width: '36px' }}></th>
-              </tr>
-            </thead>
-            <tbody>
-              {displayHabits.map((habit, habitIndex) => (
-                <tr key={habit.id} className="border-t border-border/30">
-                  <td className="p-1.5 lg:p-2">
-                    <div className="flex items-center gap-1.5">
-                      <GripVertical className="w-3 h-3 text-muted-foreground/50 cursor-grab flex-shrink-0 hidden lg:block" />
-                      <AppleEmoji emoji={habit.icon} size="lg" />
-                      <div className="min-w-0 flex-1">
-                        <MarqueeText text={habit.name} className="text-xs lg:text-sm font-medium" index={habitIndex} />
-                        <div className="flex items-center gap-1.5">
-                          <span 
-                            className="w-2 h-2 rounded-full flex-shrink-0"
-                            style={{ backgroundColor: habit.category_color || CATEGORY_COLORS[habit.category] || "#6B7280" }}
-                          />
-                          <p className="text-[10px] lg:text-xs text-muted-foreground">{habit.category}</p>
-                        </div>
-                      </div>
-                    </div>
-                  </td>
-                  {Array.from({ length: daysInMonth }, (_, i) => {
-                    const day = i + 1;
-                    const dateKey = getDateKey(day);
-                    const value = completionsMap[habit.id]?.[dateKey] || 0;
-                    const isCompleted = habit.target === 1 
-                      ? value >= 1 
-                      : value >= habit.target;
-                    const isFuture = day > currentDay;
-                    
-                    return (
-                      <td key={i} className="p-0.5 lg:p-1">
-                        <button
-                          disabled={isFuture}
-                          onClick={() => !isFuture && toggleHabitCompletion(habit.id, day)}
-                          className={`w-5 h-5 lg:w-6 lg:h-6 xl:w-7 xl:h-7 mx-auto rounded-md flex items-center justify-center text-xs ${
-                            isFuture 
-                              ? 'bg-muted/30 cursor-not-allowed'
-                              : isCompleted
-                                ? 'bg-gradient-to-br from-accent to-primary text-primary-foreground shadow-sm'
-                                : 'bg-secondary hover:bg-secondary/80 cursor-pointer'
-                          }`}
-                        >
-                          {!isFuture && habit.target === 1 && isCompleted && (
-                            <Check className="w-3 h-3 lg:w-4 lg:h-4" />
-                          )}
-                          {!isFuture && habit.target > 1 && (
-                            <span className={`font-medium text-[10px] lg:text-xs ${isCompleted ? '' : 'text-muted-foreground'}`}>
-                              {value}
-                            </span>
-                          )}
-                        </button>
-                      </td>
-                    );
-                  })}
-                  <td className="p-1 lg:p-2 text-right">
-                    <span className="text-xs lg:text-sm font-bold gradient-text">{getLocalHabitProgress(habit.id, habit.target)}%</span>
-                  </td>
-                  <td className="p-1 lg:p-2">
-                    <button 
-                      onClick={() => openDeleteModal(habit)}
-                      className="p-1 rounded-lg hover:bg-destructive/10 text-muted-foreground hover:text-destructive transition-colors"
-                    >
-                      <Trash2 className="w-3.5 h-3.5 lg:w-4 lg:h-4" />
-                    </button>
-                  </td>
+                  {Array.from({ length: daysInMonth }, (_, i) => (
+                    <th key={i} className="p-0.5 lg:p-1 text-center">
+                      <span className={`text-xs lg:text-sm font-medium ${i + 1 === currentDay ? 'text-primary font-bold' : 'text-muted-foreground'}`}>
+                        {i + 1}
+                      </span>
+                    </th>
+                  ))}
+                  <th className="p-1 lg:p-2 text-right" style={{ width: '48px' }}>
+                    <span className="text-xs lg:text-sm font-semibold text-foreground">%</span>
+                  </th>
+                  <th style={{ width: '36px' }}></th>
                 </tr>
-              ))}
+              </thead>
+              <tbody>
+                {isLoading && (
+                  <>
+                    <HabitRowSkeleton daysInMonth={daysInMonth} />
+                    <HabitRowSkeleton daysInMonth={daysInMonth} />
+                    <HabitRowSkeleton daysInMonth={daysInMonth} />
+                  </>
+                )}
+                {!isLoading && (
+                  <SortableContext
+                    items={displayHabits.map(h => h.id)}
+                    strategy={verticalListSortingStrategy}
+                  >
+                    {/* Render habits with category grouping for 3+ habits per category */}
+                    {Object.entries(habitsByCategory).map(([category, categoryHabits]) => (
+                      <HabitCategoryGroup
+                        key={category}
+                        category={category}
+                        categoryColor={categoryHabits[0]?.category_color || CATEGORY_COLORS[category] || null}
+                        habits={categoryHabits}
+                        completionsMap={completionsMap}
+                        getDateKey={getDateKey}
+                        currentDay={currentDay}
+                        daysInMonth={daysInMonth}
+                        onToggleCompletion={toggleHabitCompletion}
+                        onDelete={openDeleteModal}
+                        getProgress={getLocalHabitProgress}
+                        categoryColors={CATEGORY_COLORS}
+                      />
+                    ))}
+                  </SortableContext>
+                )}
               {/* Daily Reflection Row - inside habits table */}
               <tr className="border-t border-border/30">
                 <td className="p-1.5 lg:p-2">
@@ -617,6 +660,7 @@ export default function Habits() {
               </tr>
             </tbody>
           </table>
+          </DndContext>
         </GlassCard>
         
         {/* Progress Chart - perfectly aligned with table columns */}
