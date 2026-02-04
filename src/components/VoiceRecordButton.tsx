@@ -132,7 +132,7 @@ export function VoiceRecordButton({ onTranscription, className, disabled }: Voic
       disabled={disabled || isProcessing}
       className={cn(
         "h-9 w-9 rounded-full transition-all text-muted-foreground hover:text-foreground hover:bg-secondary/50",
-        isRecording && "bg-secondary text-foreground animate-pulse",
+        isRecording && "bg-secondary text-foreground",
         className
       )}
       title={isRecording ? "Stop recording" : "Record voice"}
