@@ -2,15 +2,21 @@
 import { supabase } from "@/integrations/supabase/client";
 import type { DailyTodo } from "@/services/firestore/types";
 
+export interface TodoWithEmoji extends DailyTodo {
+  emoji?: string;
+  position?: number;
+}
+
 export async function getTodosForDate(
   userId: string,
   date: string
-): Promise<DailyTodo[]> {
+): Promise<TodoWithEmoji[]> {
   const { data, error } = await supabase
     .from("daily_todos")
     .select("*")
     .eq("user_id", userId)
     .eq("date", date)
+    .order("position", { ascending: true })
     .order("created_at", { ascending: true });
 
   if (error) {
@@ -24,8 +30,20 @@ export async function getTodosForDate(
 export async function createTodo(
   userId: string,
   text: string,
-  date: string
-): Promise<DailyTodo> {
+  date: string,
+  emoji: string = "📝"
+): Promise<TodoWithEmoji> {
+  // Get max position for the date
+  const { data: existing } = await supabase
+    .from("daily_todos")
+    .select("position")
+    .eq("user_id", userId)
+    .eq("date", date)
+    .order("position", { ascending: false })
+    .limit(1);
+    
+  const nextPosition = existing && existing.length > 0 ? (existing[0].position || 0) + 1 : 0;
+  
   const { data, error } = await supabase
     .from("daily_todos")
     .insert({
@@ -33,6 +51,8 @@ export async function createTodo(
       text,
       date,
       completed: false,
+      emoji,
+      position: nextPosition,
     })
     .select()
     .single();
@@ -86,4 +106,20 @@ export async function deleteTodo(todoId: string, userId: string): Promise<void> 
   if (error) {
     throw new Error(`Failed to delete todo: ${error.message}`);
   }
+}
+
+export async function updateTodoPositions(
+  userId: string,
+  updates: { id: string; position: number }[]
+): Promise<void> {
+  // Update positions in parallel
+  await Promise.all(
+    updates.map(({ id, position }) =>
+      supabase
+        .from("daily_todos")
+        .update({ position })
+        .eq("id", id)
+        .eq("user_id", userId)
+    )
+  );
 }

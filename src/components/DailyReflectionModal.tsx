@@ -2,6 +2,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { AppleEmoji } from "@/components/AppleEmoji";
+import { VoiceRecordButton } from "@/components/VoiceRecordButton";
 import { Pencil } from "lucide-react";
 import { useState, useEffect } from "react";
 import { format } from "date-fns";
@@ -129,12 +130,21 @@ export function DailyReflectionModal({
         </DialogHeader>
 
         <div className="space-y-4 pt-4">
-          <Textarea
-            value={text}
-            onChange={(e) => setText(e.target.value)}
-            placeholder={PLACEHOLDER_PROMPTS[placeholderIndex]}
-            className="min-h-[150px] resize-none"
-          />
+          <div className="relative">
+            <Textarea
+              value={text}
+              onChange={(e) => setText(e.target.value)}
+              placeholder={PLACEHOLDER_PROMPTS[placeholderIndex]}
+              className="min-h-[150px] resize-none pr-12"
+            />
+            <div className="absolute right-2 bottom-2">
+              <VoiceRecordButton 
+                onTranscription={(transcribedText) => {
+                  setText(prev => prev ? `${prev} ${transcribedText}` : transcribedText);
+                }}
+              />
+            </div>
+          </div>
 
           <div className="flex justify-end gap-3">
             <Button variant="outline" onClick={() => {

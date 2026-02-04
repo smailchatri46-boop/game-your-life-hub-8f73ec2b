@@ -92,7 +92,7 @@ export function useCalendarData(year: number, month: number) {
     staleTime: 1000 * 60 * 2,
   });
 
-  // Fetch todos for month
+  // Fetch todos for month - with shorter stale time for immediate updates
   const todosQuery = useQuery({
     queryKey: ["calendar-todos", user?.id, year, month],
     queryFn: async () => {
@@ -106,7 +106,8 @@ export function useCalendarData(year: number, month: number) {
       return (data as Task[]) || [];
     },
     enabled: !!user,
-    staleTime: 1000 * 60 * 2,
+    staleTime: 0, // Always refetch for immediate updates
+    refetchOnMount: true,
   });
 
   // Build completion maps

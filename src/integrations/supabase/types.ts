@@ -147,7 +147,9 @@ export type Database = {
           completed: boolean
           created_at: string
           date: string
+          emoji: string | null
           id: string
+          position: number | null
           text: string
           user_id: string
         }
@@ -155,7 +157,9 @@ export type Database = {
           completed?: boolean
           created_at?: string
           date: string
+          emoji?: string | null
           id?: string
+          position?: number | null
           text: string
           user_id: string
         }
@@ -163,7 +167,9 @@ export type Database = {
           completed?: boolean
           created_at?: string
           date?: string
+          emoji?: string | null
           id?: string
+          position?: number | null
           text?: string
           user_id?: string
         }
@@ -297,6 +303,8 @@ export type Database = {
           id: string
           importance: number | null
           name: string
+          position: number | null
+          schedule_days: number[] | null
           target: number
           updated_at: string
           user_id: string
@@ -309,6 +317,8 @@ export type Database = {
           id?: string
           importance?: number | null
           name: string
+          position?: number | null
+          schedule_days?: number[] | null
           target?: number
           updated_at?: string
           user_id: string
@@ -321,6 +331,8 @@ export type Database = {
           id?: string
           importance?: number | null
           name?: string
+          position?: number | null
+          schedule_days?: number[] | null
           target?: number
           updated_at?: string
           user_id?: string
