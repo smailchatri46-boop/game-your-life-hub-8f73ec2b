@@ -16,6 +16,7 @@ export function VoiceRecordButton({ onTranscription, className, disabled }: Voic
   const [isProcessing, setIsProcessing] = useState(false);
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const audioChunksRef = useRef<Blob[]>([]);
+  const startTimeRef = useRef<number>(0);
 
   const startRecording = useCallback(async () => {
     try {
@@ -36,6 +37,7 @@ export function VoiceRecordButton({ onTranscription, className, disabled }: Voic
       const mediaRecorder = new MediaRecorder(stream, { mimeType });
       mediaRecorderRef.current = mediaRecorder;
       audioChunksRef.current = [];
+      startTimeRef.current = Date.now();
 
       mediaRecorder.ondataavailable = (event) => {
         if (event.data.size > 0) {
@@ -51,6 +53,9 @@ export function VoiceRecordButton({ onTranscription, className, disabled }: Voic
           return;
         }
 
+        // Calculate recording duration
+        const durationSeconds = Math.ceil((Date.now() - startTimeRef.current) / 1000);
+
         setIsProcessing(true);
         
         try {
@@ -61,14 +66,23 @@ export function VoiceRecordButton({ onTranscription, className, disabled }: Voic
             new Uint8Array(arrayBuffer).reduce((data, byte) => data + String.fromCharCode(byte), '')
           );
 
-          // Call edge function for transcription
+          // Call edge function for transcription with duration for usage tracking
           const { data, error } = await supabase.functions.invoke('voice-transcribe', {
-            body: { audioBase64: base64Audio }
+            body: { audioBase64: base64Audio, durationSeconds }
           });
 
           if (error) {
             console.error('Transcription error:', error);
-            toast.error("Failed to transcribe audio");
+            if (error.message?.includes('limit')) {
+              toast.error(error.message);
+            } else {
+              toast.error("Failed to transcribe audio");
+            }
+            return;
+          }
+
+          if (data?.error) {
+            toast.error(data.error);
             return;
           }
 
@@ -117,14 +131,14 @@ export function VoiceRecordButton({ onTranscription, className, disabled }: Voic
       onClick={handleClick}
       disabled={disabled || isProcessing}
       className={cn(
-        "h-9 w-9 rounded-full transition-all",
-        isRecording && "bg-red-100 text-red-600 hover:bg-red-200 animate-pulse",
+        "h-9 w-9 rounded-full transition-all text-muted-foreground hover:text-foreground hover:bg-secondary/50",
+        isRecording && "bg-secondary text-foreground animate-pulse",
         className
       )}
       title={isRecording ? "Stop recording" : "Record voice"}
     >
       {isProcessing ? (
-        <Loader2 className="h-4 w-4 animate-spin" />
+        <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
       ) : isRecording ? (
         <Square className="h-4 w-4" />
       ) : (
