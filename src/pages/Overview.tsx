@@ -22,8 +22,24 @@ import { useRecentActivity } from "@/hooks/use-recent-activity";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { format } from "date-fns";
 import { getHabits } from "@/services/supabase/habits";
-import { getTodosForDate, createTodo as createTodoService, toggleTodo as toggleTodoService, deleteTodo as deleteTodoService } from "@/services/supabase/todos";
-import { Trash2 } from "lucide-react";
+import { getTodosForDate, createTodo as createTodoService, toggleTodo as toggleTodoService, deleteTodo as deleteTodoService, updateTodoPositions } from "@/services/supabase/todos";
+import { TodoSkeleton } from "@/components/TodoSkeleton";
+import { SortableTodoItem } from "@/components/SortableTodoItem";
+import {
+  DndContext,
+  closestCenter,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  DragEndEvent,
+} from "@dnd-kit/core";
+import {
+  arrayMove,
+  SortableContext,
+  sortableKeyboardCoordinates,
+  verticalListSortingStrategy,
+} from "@dnd-kit/sortable";
 
 interface TodoItem {
   id: string;
@@ -77,6 +93,59 @@ export default function Overview() {
   // Demo mode todos
   const [demoTodos, setDemoTodos] = useState<TodoItem[]>([]);
   
+  // Drag-and-drop sensors
+  const sensors = useSensors(
+    useSensor(PointerSensor, {
+      activationConstraint: {
+        distance: 5,
+      },
+    }),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    })
+  );
+  
+  // Update todo positions mutation
+  const updatePositions = useMutation({
+    mutationFn: async (updates: { id: string; position: number }[]) => {
+      if (!user) return;
+      await updateTodoPositions(user.id, updates);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["daily_todos"] });
+    },
+  });
+  
+  const handleTodoDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event;
+    
+    if (!over || active.id === over.id) return;
+    
+    const oldIndex = todos.findIndex(t => t.id === active.id);
+    const newIndex = todos.findIndex(t => t.id === over.id);
+    
+    if (oldIndex === -1 || newIndex === -1) return;
+    
+    const newTodos = arrayMove(todos, oldIndex, newIndex);
+    
+    if (!user) {
+      setDemoTodos(newTodos);
+    } else {
+      // Optimistically update local state
+      queryClient.setQueryData(
+        ["daily_todos", user.id, todayStr],
+        newTodos.map((t, i) => ({ ...t, position: i }))
+      );
+      
+      // Save new positions to database
+      const updates = newTodos.map((todo, index) => ({
+        id: todo.id,
+        position: index,
+      }));
+      updatePositions.mutate(updates);
+    }
+  };
+  
   // Get habits data for calendar
   const { completionsMap, stats: habitsStats } = useHabitsData(year, month);
   
@@ -117,8 +186,9 @@ export default function Overview() {
         id: t.id,
         text: t.text,
         completed: t.completed,
-        emoji: "📝", // Default emoji since we don't store it
-      })) as TodoItem[];
+        emoji: t.emoji || "📝", // Use stored emoji
+        position: t.position ?? 0,
+      })).sort((a, b) => a.position - b.position) as (TodoItem & { position: number })[];
     },
     enabled: !!user,
   });
@@ -437,38 +507,32 @@ export default function Overview() {
               </div>
               
               <div className="space-y-2 mt-4">
-                {todos.map((todo) => (
-                  <div 
-                    key={todo.id}
-                    className="flex items-center gap-3 p-3 rounded-2xl bg-white/80 shadow-sm group"
+                {todosQuery.isLoading && user ? (
+                  <>
+                    <TodoSkeleton />
+                    <TodoSkeleton />
+                  </>
+                ) : (
+                  <DndContext
+                    sensors={sensors}
+                    collisionDetection={closestCenter}
+                    onDragEnd={handleTodoDragEnd}
                   >
-                    <AppleEmoji emoji={todo.emoji || "📝"} size="lg" />
-                    <span className={`text-sm flex-1 ${
-                      todo.completed 
-                        ? 'text-muted-foreground line-through' 
-                        : 'text-foreground'
-                    }`}>
-                      {todo.text}
-                    </span>
-                    <button
-                      onClick={() => handleDeleteTodo(todo.id)}
-                      className="opacity-0 group-hover:opacity-100 p-1.5 rounded-lg hover:bg-destructive/10 text-muted-foreground hover:text-destructive transition-all"
-                      title="Delete task"
+                    <SortableContext
+                      items={todos.map(t => t.id)}
+                      strategy={verticalListSortingStrategy}
                     >
-                      <Trash2 className="w-3.5 h-3.5" />
-                    </button>
-                    <button
-                      onClick={() => handleToggleTodo(todo.id)}
-                      className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-all flex-shrink-0 ${
-                        todo.completed 
-                          ? 'bg-[hsl(25,60%,70%)] border-[hsl(25,60%,70%)]' 
-                          : 'border-[hsl(25,40%,80%)] hover:border-[hsl(25,50%,65%)]'
-                      }`}
-                    >
-                      {todo.completed && <Check className="w-4 h-4 text-white" />}
-                    </button>
-                  </div>
-                ))}
+                      {todos.map((todo) => (
+                        <SortableTodoItem
+                          key={todo.id}
+                          todo={todo}
+                          onToggle={handleToggleTodo}
+                          onDelete={handleDeleteTodo}
+                        />
+                      ))}
+                    </SortableContext>
+                  </DndContext>
+                )}
                 
                 {isAddingTodo ? (
                   <div className="space-y-2">
