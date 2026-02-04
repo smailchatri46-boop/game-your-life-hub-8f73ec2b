@@ -74,6 +74,43 @@ export function HabitCategoryGroup({
     );
   }
 
+  // Calculate group progress for a specific day
+  const getGroupDayProgress = (day: number): { completed: number; total: number; percentage: number } => {
+    const dateKey = getDateKey(day);
+    const [yearStr, monthStr] = dateKey.split('-');
+    const dateObj = new Date(parseInt(yearStr), parseInt(monthStr) - 1, day);
+    const dayOfWeek = dateObj.getDay();
+    
+    let completed = 0;
+    let total = 0;
+    
+    habits.forEach(habit => {
+      // Only count habits scheduled for this day
+      if (!isVisibleOnDay(habit, dayOfWeek)) return;
+      
+      total++;
+      const value = completionsMap[habit.id]?.[dateKey] || 0;
+      const isCompleted = habit.target === 1 ? value >= 1 : value >= habit.target;
+      if (isCompleted) completed++;
+    });
+    
+    const percentage = total > 0 ? Math.round((completed / total) * 100) : 0;
+    return { completed, total, percentage };
+  };
+
+  // Calculate overall group progress (for the right-side percentage)
+  const getGroupOverallProgress = (): number => {
+    let totalProgress = 0;
+    let count = 0;
+    
+    habits.forEach(habit => {
+      totalProgress += getProgress(habit.id, habit.target);
+      count++;
+    });
+    
+    return count > 0 ? Math.round(totalProgress / count) : 0;
+  };
+
   return (
     <>
       {/* Group row - identical structure to habit rows */}
@@ -98,7 +135,7 @@ export function HabitCategoryGroup({
             </button>
             <div className="min-w-0 flex-1">
               <MarqueeText 
-                text={`${category} · ${habits.length} habits`} 
+                text={`${habits.length} Habits & Tasks`} 
                 className="text-xs lg:text-sm font-medium" 
                 index={0} 
               />
@@ -112,17 +149,46 @@ export function HabitCategoryGroup({
             </div>
           </div>
         </td>
-        {/* Same dot columns as habits - empty for groups */}
-        {Array.from({ length: daysInMonth }, (_, i) => (
-          <td key={i} className="p-0.5 lg:p-1">
-            <div className="w-5 h-5 lg:w-6 lg:h-6 xl:w-7 xl:h-7 mx-auto" />
-          </td>
-        ))}
-        {/* Same percentage column */}
+        {/* Daily progress circles for groups - show percentage or checkmark */}
+        {Array.from({ length: daysInMonth }, (_, i) => {
+          const day = i + 1;
+          const isFuture = day > currentDay;
+          const { percentage, total } = getGroupDayProgress(day);
+          const isComplete = percentage === 100;
+          const hasScheduledHabits = total > 0;
+          
+          return (
+            <td key={i} className="p-0.5 lg:p-1">
+              {hasScheduledHabits ? (
+                <div
+                  className={`w-5 h-5 lg:w-6 lg:h-6 xl:w-7 xl:h-7 mx-auto rounded-md flex items-center justify-center text-xs ${
+                    isFuture 
+                      ? 'bg-muted/30'
+                      : isComplete
+                        ? 'bg-gradient-to-br from-accent to-primary text-primary-foreground shadow-sm'
+                        : 'bg-secondary'
+                  }`}
+                >
+                  {!isFuture && isComplete && (
+                    <Check className="w-3 h-3 lg:w-4 lg:h-4" />
+                  )}
+                  {!isFuture && !isComplete && (
+                    <span className="font-medium text-[8px] lg:text-[9px] text-muted-foreground">
+                      {percentage}%
+                    </span>
+                  )}
+                </div>
+              ) : (
+                <div className="w-5 h-5 lg:w-6 lg:h-6 xl:w-7 xl:h-7 mx-auto" />
+              )}
+            </td>
+          );
+        })}
+        {/* Percentage column - show actual group average */}
         <td className="p-1 lg:p-2 text-right">
-          <span className="text-xs lg:text-sm font-bold gradient-text">—</span>
+          <span className="text-xs lg:text-sm font-bold gradient-text">{getGroupOverallProgress()}%</span>
         </td>
-        {/* Same delete column - empty for groups */}
+        {/* No delete icon for groups - just empty space to maintain alignment */}
         <td className="p-1 lg:p-2">
           <div className="p-1">
             <div className="w-3.5 h-3.5 lg:w-4 lg:h-4" />
