@@ -22,7 +22,8 @@ import { useRecentActivity } from "@/hooks/use-recent-activity";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { format } from "date-fns";
 import { getHabits } from "@/services/supabase/habits";
-import { getTodosForDate, createTodo as createTodoService, toggleTodo as toggleTodoService } from "@/services/supabase/todos";
+import { getTodosForDate, createTodo as createTodoService, toggleTodo as toggleTodoService, deleteTodo as deleteTodoService } from "@/services/supabase/todos";
+import { Trash2 } from "lucide-react";
 
 interface TodoItem {
   id: string;
@@ -126,13 +127,17 @@ export default function Overview() {
   
   // Create todo mutation
   const createTodo = useMutation({
-    mutationFn: async ({ text, date }: { text: string; date: string }) => {
+    mutationFn: async ({ text, date, emoji }: { text: string; date: string; emoji: string }) => {
       if (!user) return null;
-      return await createTodoService(user.id, text, date);
+      return await createTodoService(user.id, text, date, emoji);
     },
     onSuccess: async () => {
-      // CRITICAL: Immediately refetch to show new task
-      await queryClient.refetchQueries({ queryKey: ["daily_todos"] });
+      // CRITICAL: Immediately refetch ALL todo-related queries to show new task
+      await Promise.all([
+        queryClient.refetchQueries({ queryKey: ["daily_todos"] }),
+        queryClient.refetchQueries({ queryKey: ["calendar-todos"] }),
+      ]);
+      refetchCalendar();
       toast.success("Task added!");
     },
     onError: () => {
@@ -168,7 +173,7 @@ export default function Overview() {
       setDemoTodos(prev => [...prev, newTodo]);
       incrementTodos();
     } else {
-      createTodo.mutate({ text: newTodoText.trim(), date: todayStr });
+      createTodo.mutate({ text: newTodoText.trim(), date: todayStr, emoji: selectedEmoji });
       incrementTodos();
     }
     
@@ -176,6 +181,33 @@ export default function Overview() {
     setIsAddingTodo(false);
     setSelectedEmoji(null);
     setHasSelectedEmoji(false);
+  };
+  
+  // Delete todo mutation
+  const deleteTodo = useMutation({
+    mutationFn: async (todoId: string) => {
+      if (!user) return;
+      await deleteTodoService(todoId, user.id);
+    },
+    onSuccess: async () => {
+      await Promise.all([
+        queryClient.refetchQueries({ queryKey: ["daily_todos"] }),
+        queryClient.refetchQueries({ queryKey: ["calendar-todos"] }),
+      ]);
+      refetchCalendar();
+      toast.success("Task deleted");
+    },
+    onError: () => {
+      toast.error("Failed to delete task");
+    },
+  });
+  
+  const handleDeleteTodo = (todoId: string) => {
+    if (!user) {
+      setDemoTodos(prev => prev.filter(t => t.id !== todoId));
+    } else {
+      deleteTodo.mutate(todoId);
+    }
   };
   
   // Handle "Add task" button click - check limits first
@@ -408,9 +440,9 @@ export default function Overview() {
                 {todos.map((todo) => (
                   <div 
                     key={todo.id}
-                    className="flex items-center gap-3 p-3 rounded-2xl bg-white/80 shadow-sm"
+                    className="flex items-center gap-3 p-3 rounded-2xl bg-white/80 shadow-sm group"
                   >
-                    <AppleEmoji emoji={todo.emoji} size="lg" />
+                    <AppleEmoji emoji={todo.emoji || "📝"} size="lg" />
                     <span className={`text-sm flex-1 ${
                       todo.completed 
                         ? 'text-muted-foreground line-through' 
@@ -419,8 +451,15 @@ export default function Overview() {
                       {todo.text}
                     </span>
                     <button
+                      onClick={() => handleDeleteTodo(todo.id)}
+                      className="opacity-0 group-hover:opacity-100 p-1.5 rounded-lg hover:bg-destructive/10 text-muted-foreground hover:text-destructive transition-all"
+                      title="Delete task"
+                    >
+                      <Trash2 className="w-3.5 h-3.5" />
+                    </button>
+                    <button
                       onClick={() => handleToggleTodo(todo.id)}
-                      className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-all ${
+                      className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-all flex-shrink-0 ${
                         todo.completed 
                           ? 'bg-[hsl(25,60%,70%)] border-[hsl(25,60%,70%)]' 
                           : 'border-[hsl(25,40%,80%)] hover:border-[hsl(25,50%,65%)]'

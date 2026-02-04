@@ -8,6 +8,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useAuth } from "@/contexts/AuthContext";
 import { getJournalEntries, createJournalEntry, updateJournalEntry, deleteJournalEntry } from "@/services/supabase/journal";
 import { toast } from "sonner";
+import { VoiceRecordButton } from "@/components/VoiceRecordButton";
 
 import { Plus, Pencil, Trash2 } from "lucide-react";
 import { useState, useMemo } from "react";
@@ -442,13 +443,20 @@ export default function Journal() {
             </div>
 
             {/* Content with dynamic background */}
-            <div className={`${modalBgClass} rounded-2xl p-4 transition-colors duration-300`}>
+            <div className={`${modalBgClass} rounded-2xl p-4 transition-colors duration-300 relative`}>
               <Textarea
                 value={newContent}
                 onChange={(e) => setNewContent(e.target.value)}
                 placeholder="What's on your mind today?"
-                className="min-h-[180px] resize-none bg-transparent border-0 focus-visible:ring-0 focus-visible:ring-offset-0 placeholder:text-foreground/50"
+                className="min-h-[180px] resize-none bg-transparent border-0 focus-visible:ring-0 focus-visible:ring-offset-0 placeholder:text-foreground/50 pr-12"
               />
+              <div className="absolute right-6 bottom-6">
+                <VoiceRecordButton 
+                  onTranscription={(transcribedText) => {
+                    setNewContent(prev => prev ? `${prev} ${transcribedText}` : transcribedText);
+                  }}
+                />
+              </div>
             </div>
 
             <div className="flex justify-end">

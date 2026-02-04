@@ -4,11 +4,17 @@ import type { Habit, HabitCompletion } from "@/services/firestore/types";
 
 // ============ HABITS ============
 
-export async function getHabits(userId: string): Promise<Habit[]> {
+export interface HabitWithSchedule extends Habit {
+  schedule_days?: number[] | null;
+  position?: number;
+}
+
+export async function getHabits(userId: string): Promise<HabitWithSchedule[]> {
   const { data, error } = await supabase
     .from("habits")
     .select("*")
     .eq("user_id", userId)
+    .order("position", { ascending: true })
     .order("created_at", { ascending: true });
 
   if (error) {
@@ -21,13 +27,24 @@ export async function getHabits(userId: string): Promise<Habit[]> {
 
 export async function createHabit(
   userId: string,
-  habit: Omit<Habit, "id" | "user_id" | "created_at" | "updated_at">
-): Promise<Habit> {
+  habit: Omit<Habit, "id" | "user_id" | "created_at" | "updated_at"> & { schedule_days?: number[] }
+): Promise<HabitWithSchedule> {
+  // Get max position
+  const { data: existing } = await supabase
+    .from("habits")
+    .select("position")
+    .eq("user_id", userId)
+    .order("position", { ascending: false })
+    .limit(1);
+    
+  const nextPosition = existing && existing.length > 0 ? (existing[0].position || 0) + 1 : 0;
+  
   const { data, error } = await supabase
     .from("habits")
     .insert({
       ...habit,
       user_id: userId,
+      position: nextPosition,
     })
     .select()
     .single();
@@ -188,4 +205,35 @@ export async function deleteCompletion(
   if (error) {
     throw new Error(`Failed to delete completion: ${error.message}`);
   }
+}
+
+export async function updateHabitPositions(
+  userId: string,
+  updates: { id: string; position: number }[]
+): Promise<void> {
+  // Update positions in parallel
+  await Promise.all(
+    updates.map(({ id, position }) =>
+      supabase
+        .from("habits")
+        .update({ position })
+        .eq("id", id)
+        .eq("user_id", userId)
+    )
+  );
+}
+
+/**
+ * Check if a habit should be visible on a specific day
+ * @param habit - The habit to check
+ * @param dayOfWeek - Day of week (0=Sunday, 1=Monday, ..., 6=Saturday)
+ * @returns true if the habit should be shown on this day
+ */
+export function isHabitVisibleOnDay(habit: HabitWithSchedule, dayOfWeek: number): boolean {
+  // If no schedule_days or empty array, habit is daily (visible every day)
+  if (!habit.schedule_days || habit.schedule_days.length === 0) {
+    return true;
+  }
+  // Check if the day is in the schedule
+  return habit.schedule_days.includes(dayOfWeek);
 }

@@ -188,6 +188,16 @@ export default function Habits() {
       setDemoCompletions(prev => ({ ...prev, [habit.id]: {} }));
       toast({ title: "Habit created!", description: "Demo mode - sign up to save" });
     } else {
+      // Map frequency to schedule_days
+      let scheduleDays: number[] | undefined = undefined;
+      if (newHabit.frequency === "weekdays") {
+        scheduleDays = newHabit.selectedWeekdays;
+      } else if (newHabit.frequency === "monthly") {
+        // For monthly, we don't use schedule_days (handled differently)
+        scheduleDays = undefined;
+      }
+      // "daily" and "progressive" = no schedule_days (shows every day)
+      
       createHabit.mutate({
         name: newHabit.name,
         icon: newHabit.icon,
@@ -195,6 +205,7 @@ export default function Habits() {
         category_color: newHabit.categoryColor || null,
         target: newHabit.target,
         importance: newHabit.importance,
+        schedule_days: scheduleDays,
       });
     }
   };

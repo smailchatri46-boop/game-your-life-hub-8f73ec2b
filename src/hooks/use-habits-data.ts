@@ -34,6 +34,8 @@ export interface Habit {
   importance: number | null;
   created_at: string;
   updated_at: string;
+  schedule_days?: number[] | null;
+  position?: number;
 }
 
 export interface HabitCompletion {
