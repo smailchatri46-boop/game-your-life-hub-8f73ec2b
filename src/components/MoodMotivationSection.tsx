@@ -169,20 +169,9 @@ export function MoodMotivationSection({ daysInMonth, currentDay, year, month }: 
 
       {/* Trend Chart Card */}
       <GlassCard className="p-5 bg-white/80 dark:bg-zinc-900/80">
-        <h3 className="text-base font-semibold text-foreground mb-4">Monthly Mood & Motivation Trend</h3>
+        <h3 className="text-base font-semibold text-foreground mb-4">Monthly Mood Trend</h3>
         
         <div className="relative">
-          {/* Legend */}
-          <div className="flex gap-4 mb-3 text-xs">
-            <div className="flex items-center gap-1.5">
-              <div className="w-2.5 h-2.5 rounded-full bg-orange-400" />
-              <span className="text-muted-foreground">Mood</span>
-            </div>
-            <div className="flex items-center gap-1.5">
-              <div className="w-2.5 h-2.5 rounded-full bg-amber-300" />
-              <span className="text-muted-foreground">Motivation</span>
-            </div>
-          </div>
 
           {/* Chart */}
           <div 
@@ -200,10 +189,6 @@ export function MoodMotivationSection({ daysInMonth, currentDay, year, month }: 
                   <stop offset="0%" stopColor="#FB923C" stopOpacity={0.3} />
                   <stop offset="100%" stopColor="#FB923C" stopOpacity={0.02} />
                 </linearGradient>
-                <linearGradient id="motivationGrad" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stopColor="#FCD34D" stopOpacity={0.25} />
-                  <stop offset="100%" stopColor="#FCD34D" stopOpacity={0.02} />
-                </linearGradient>
               </defs>
 
               {/* Light grid */}
@@ -219,19 +204,10 @@ export function MoodMotivationSection({ daysInMonth, currentDay, year, month }: 
                 />
               ))}
 
-              {/* Area fills */}
-              <path d={motivationArea} fill="url(#motivationGrad)" />
+              {/* Mood Area fill */}
               <path d={moodArea} fill="url(#moodGrad)" />
 
-              {/* Lines */}
-              <path
-                d={motivationPath}
-                fill="none"
-                stroke="#FCD34D"
-                strokeWidth={0.5}
-                strokeLinecap="round"
-                vectorEffect="non-scaling-stroke"
-              />
+              {/* Mood Line */}
               <path
                 d={moodPath}
                 fill="none"
@@ -278,14 +254,24 @@ export function MoodMotivationSection({ daysInMonth, currentDay, year, month }: 
                 }}
               >
                 <p className="font-semibold text-foreground">Day {hoveredDay}</p>
-                <p className="text-muted-foreground">
-                  Mood: <span className="text-orange-500">{getMoodLabel(chartData.find(d => d.day === hoveredDay)?.mood || 3)}</span>
-                </p>
-                <p className="text-muted-foreground">
-                  Motivation: <span className="text-amber-500">{chartData.find(d => d.day === hoveredDay)?.motivation || 5}</span>
-                </p>
+                <div className="flex items-center gap-2 text-muted-foreground">
+                  <span className="w-2 h-2 rounded-full bg-orange-400" />
+                  Mood: <span className="text-orange-500">{Math.round(((chartData.find(d => d.day === hoveredDay)?.mood || 3) / 5) * 100)}%</span>
+                </div>
+                <div className="flex items-center gap-2 text-muted-foreground">
+                  <span className="w-2 h-2 rounded-full bg-purple-500" />
+                  Motivation: <span className="text-purple-500">{Math.round(((chartData.find(d => d.day === hoveredDay)?.motivation || 5) / 10) * 100)}%</span>
+                </div>
               </div>
             )}
+          </div>
+
+          {/* Legend - Mood only */}
+          <div className="flex justify-center mt-3">
+            <div className="flex items-center gap-2">
+              <span className="w-3 h-3 rounded-full bg-orange-400" />
+              <span className="text-xs text-muted-foreground">Mood</span>
+            </div>
           </div>
 
           {/* X-axis labels */}

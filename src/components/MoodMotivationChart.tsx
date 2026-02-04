@@ -41,63 +41,52 @@ export function MoodMotivationChart({ data, daysInMonth, currentDay }: MoodMotiv
 
   const cellWidth = containerWidth / daysInMonth;
 
-  const { moodPath, moodAreaPath, moodPoints, motivationPath, motivationAreaPath, motivationPoints } = useMemo(() => {
+  const { moodPath, moodAreaPath, moodPoints } = useMemo(() => {
     if (containerWidth === 0 || data.length === 0) {
-      return { moodPath: '', moodAreaPath: '', moodPoints: [], motivationPath: '', motivationAreaPath: '', motivationPoints: [] };
+      return { moodPath: '', moodAreaPath: '', moodPoints: [] };
     }
 
-    const createPathAndPoints = (getValue: (d: MoodMotivationData) => number | undefined) => {
-      const pts: { x: number; y: number; day: number; value: number }[] = [];
-      
-      for (let i = 0; i < data.length; i++) {
-        const d = data[i];
-        const value = getValue(d);
-        if (value !== undefined) {
-          const x = (d.day - 1) * cellWidth + cellWidth / 2;
-          const y = chartHeight - (value / maxProgress) * (chartHeight - 10);
-          pts.push({ x, y, day: d.day, value });
-        }
+    const pts: { x: number; y: number; day: number; value: number }[] = [];
+    
+    for (let i = 0; i < data.length; i++) {
+      const d = data[i];
+      const value = d.mood;
+      if (value !== undefined) {
+        const x = (d.day - 1) * cellWidth + cellWidth / 2;
+        const y = chartHeight - (value / maxProgress) * (chartHeight - 10);
+        pts.push({ x, y, day: d.day, value });
       }
+    }
 
-      if (pts.length === 0) return { linePath: '', areaPath: '', points: [] };
+    if (pts.length === 0) return { moodPath: '', moodAreaPath: '', moodPoints: [] };
 
-      let path = `M ${pts[0].x} ${pts[0].y}`;
-      
-      for (let i = 1; i < pts.length; i++) {
-        const prev = pts[i - 1];
-        const curr = pts[i];
-        const tension = 0.3;
-        const cp1x = prev.x + (curr.x - prev.x) * tension;
-        const cp1y = prev.y;
-        const cp2x = curr.x - (curr.x - prev.x) * tension;
-        const cp2y = curr.y;
-        path += ` C ${cp1x} ${cp1y}, ${cp2x} ${cp2y}, ${curr.x} ${curr.y}`;
-      }
+    let path = `M ${pts[0].x} ${pts[0].y}`;
+    
+    for (let i = 1; i < pts.length; i++) {
+      const prev = pts[i - 1];
+      const curr = pts[i];
+      const tension = 0.3;
+      const cp1x = prev.x + (curr.x - prev.x) * tension;
+      const cp1y = prev.y;
+      const cp2x = curr.x - (curr.x - prev.x) * tension;
+      const cp2y = curr.y;
+      path += ` C ${cp1x} ${cp1y}, ${cp2x} ${cp2y}, ${curr.x} ${curr.y}`;
+    }
 
-      const linePath = path;
-      const lastPoint = pts[pts.length - 1];
-      const firstPoint = pts[0];
-      const areaPath = `${path} L ${lastPoint.x} ${chartHeight} L ${firstPoint.x} ${chartHeight} Z`;
-
-      return { linePath, areaPath, points: pts };
-    };
-
-    const mood = createPathAndPoints(d => d.mood);
-    const motivation = createPathAndPoints(d => d.motivation);
+    const linePath = path;
+    const lastPoint = pts[pts.length - 1];
+    const firstPoint = pts[0];
+    const areaPath = `${path} L ${lastPoint.x} ${chartHeight} L ${firstPoint.x} ${chartHeight} Z`;
 
     return {
-      moodPath: mood.linePath,
-      moodAreaPath: mood.areaPath,
-      moodPoints: mood.points,
-      motivationPath: motivation.linePath,
-      motivationAreaPath: motivation.areaPath,
-      motivationPoints: motivation.points,
+      moodPath: linePath,
+      moodAreaPath: areaPath,
+      moodPoints: pts,
     };
   }, [data, cellWidth, containerWidth, chartHeight, maxProgress]);
 
   const handleChartMouseMove = (e: React.MouseEvent<SVGSVGElement>) => {
-    const allPoints = [...moodPoints, ...motivationPoints];
-    if (allPoints.length === 0) return;
+    if (moodPoints.length === 0) return;
     
     const rect = containerRef.current?.getBoundingClientRect();
     if (!rect) return;
@@ -110,14 +99,12 @@ export function MoodMotivationChart({ data, daysInMonth, currentDay }: MoodMotiv
     
     if (dayData && dayAtMouse <= currentDay) {
       const x = (dayAtMouse - 1) * cellWidth + cellWidth / 2;
-      const moodY = dayData.mood !== undefined ? chartHeight - (dayData.mood / maxProgress) * (chartHeight - 10) : null;
-      const motivationY = dayData.motivation !== undefined ? chartHeight - (dayData.motivation / maxProgress) * (chartHeight - 10) : null;
-      const y = moodY ?? motivationY ?? 50;
+      const moodY = dayData.mood !== undefined ? chartHeight - (dayData.mood / maxProgress) * (chartHeight - 10) : 50;
       
       setTooltip({
         visible: true,
         x,
-        y: y - 60,
+        y: moodY - 60,
         day: dayAtMouse,
         mood: dayData.mood,
         motivation: dayData.motivation,
@@ -180,10 +167,6 @@ export function MoodMotivationChart({ data, daysInMonth, currentDay }: MoodMotiv
                   <stop offset="0%" stopColor="hsl(24, 95%, 53%)" stopOpacity={0.3} />
                   <stop offset="100%" stopColor="hsl(38, 100%, 60%)" stopOpacity={0.02} />
                 </linearGradient>
-                <linearGradient id="motivationAreaGradient" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stopColor="hsl(280, 70%, 55%)" stopOpacity={0.3} />
-                  <stop offset="100%" stopColor="hsl(280, 70%, 55%)" stopOpacity={0.02} />
-                </linearGradient>
               </defs>
               
               <rect x={0} y={0} width={containerWidth} height={chartHeight} fill="transparent" />
@@ -203,21 +186,6 @@ export function MoodMotivationChart({ data, daysInMonth, currentDay }: MoodMotiv
                 />
               )}
               
-              {/* Motivation Area and Line */}
-              {motivationAreaPath && (
-                <path d={motivationAreaPath} fill="url(#motivationAreaGradient)" />
-              )}
-              {motivationPath && (
-                <path
-                  d={motivationPath}
-                  fill="none"
-                  stroke="hsl(280, 70%, 55%)"
-                  strokeWidth={2.5}
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-              )}
-              
               {/* Mood Points */}
               {moodPoints.map((point, i) => (
                 <circle
@@ -226,20 +194,6 @@ export function MoodMotivationChart({ data, daysInMonth, currentDay }: MoodMotiv
                   cy={point.y}
                   r={5}
                   fill="hsl(24, 95%, 53%)"
-                  stroke="white"
-                  strokeWidth={2}
-                  className="pointer-events-none"
-                />
-              ))}
-              
-              {/* Motivation Points */}
-              {motivationPoints.map((point, i) => (
-                <circle
-                  key={`motivation-${i}`}
-                  cx={point.x}
-                  cy={point.y}
-                  r={5}
-                  fill="hsl(280, 70%, 55%)"
                   stroke="white"
                   strokeWidth={2}
                   className="pointer-events-none"
@@ -277,15 +231,11 @@ export function MoodMotivationChart({ data, daysInMonth, currentDay }: MoodMotiv
         <div style={{ width: '84px' }} className="flex-shrink-0"></div>
       </div>
       
-      {/* Legend */}
-      <div className="flex justify-center gap-6 mt-3">
+      {/* Legend - Mood only */}
+      <div className="flex justify-center mt-3">
         <div className="flex items-center gap-2">
           <span className="w-3 h-3 rounded-full" style={{ backgroundColor: 'hsl(24, 95%, 53%)' }} />
           <span className="text-xs text-muted-foreground">Mood</span>
-        </div>
-        <div className="flex items-center gap-2">
-          <span className="w-3 h-3 rounded-full" style={{ backgroundColor: 'hsl(280, 70%, 55%)' }} />
-          <span className="text-xs text-muted-foreground">Motivation</span>
         </div>
       </div>
     </div>
