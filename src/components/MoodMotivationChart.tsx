@@ -46,15 +46,27 @@ export function MoodMotivationChart({ data, daysInMonth, currentDay }: MoodMotiv
       return { moodPath: '', moodAreaPath: '', moodPoints: [] };
     }
 
-    const pts: { x: number; y: number; day: number; value: number }[] = [];
+    const pts: { x: number; y: number; day: number; combinedValue: number; mood?: number; motivation?: number }[] = [];
     
     for (let i = 0; i < data.length; i++) {
       const d = data[i];
-      const value = d.mood;
-      if (value !== undefined) {
+      // Calculate combined average of mood and motivation
+      const moodValue = d.mood;
+      const motivationValue = d.motivation;
+      
+      let combinedValue: number | undefined;
+      if (moodValue !== undefined && motivationValue !== undefined) {
+        combinedValue = (moodValue + motivationValue) / 2;
+      } else if (moodValue !== undefined) {
+        combinedValue = moodValue;
+      } else if (motivationValue !== undefined) {
+        combinedValue = motivationValue;
+      }
+      
+      if (combinedValue !== undefined) {
         const x = (d.day - 1) * cellWidth + cellWidth / 2;
-        const y = chartHeight - (value / maxProgress) * (chartHeight - 10);
-        pts.push({ x, y, day: d.day, value });
+        const y = chartHeight - (combinedValue / maxProgress) * (chartHeight - 10);
+        pts.push({ x, y, day: d.day, combinedValue, mood: moodValue, motivation: motivationValue });
       }
     }
 

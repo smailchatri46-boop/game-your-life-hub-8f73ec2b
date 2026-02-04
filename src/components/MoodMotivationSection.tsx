@@ -53,21 +53,24 @@ export function MoodMotivationSection({ daysInMonth, currentDay, year, month }: 
   const chartHeight = 120;
   const chartWidth = 100;
 
-  const { moodPath, motivationPath, moodArea, motivationArea, points } = useMemo(() => {
-    if (chartData.length === 0) return { moodPath: '', motivationPath: '', moodArea: '', motivationArea: '', points: [] };
+  const { moodPath, moodArea, points } = useMemo(() => {
+    if (chartData.length === 0) return { moodPath: '', moodArea: '', points: [] };
 
     const padding = 1;
     const getX = (day: number) => padding + ((day - 1) / (daysInMonth - 1)) * (chartWidth - padding * 2);
-    const getMoodY = (value: number) => chartHeight - 10 - ((value - 1) / 4) * (chartHeight - 20);
-    const getMotivationY = (value: number) => chartHeight - 10 - ((value - 1) / 9) * (chartHeight - 20);
+    // Combined average uses 0-100 scale (mood is 1-5 mapped to 0-100, motivation is 1-10 mapped to 0-100)
+    const getCombinedY = (mood: number, motivation: number) => {
+      const moodPct = ((mood - 1) / 4) * 100;
+      const motivationPct = ((motivation - 1) / 9) * 100;
+      const combined = (moodPct + motivationPct) / 2;
+      return chartHeight - 10 - (combined / 100) * (chartHeight - 20);
+    };
 
-    const moodPts: { x: number; y: number; day: number; mood: number; motivation: number }[] = [];
-    const motivationPts: { x: number; y: number }[] = [];
+    const combinedPts: { x: number; y: number; day: number; mood: number; motivation: number }[] = [];
 
     chartData.forEach(d => {
       const x = getX(d.day);
-      moodPts.push({ x, y: getMoodY(d.mood), day: d.day, mood: d.mood, motivation: d.motivation });
-      motivationPts.push({ x, y: getMotivationY(d.motivation) });
+      combinedPts.push({ x, y: getCombinedY(d.mood, d.motivation), day: d.day, mood: d.mood, motivation: d.motivation });
     });
 
     const createPath = (points: { x: number; y: number }[]) => {
@@ -90,11 +93,9 @@ export function MoodMotivationSection({ daysInMonth, currentDay, year, month }: 
     };
 
     return {
-      moodPath: createPath(moodPts),
-      motivationPath: createPath(motivationPts),
-      moodArea: createArea(moodPts),
-      motivationArea: createArea(motivationPts),
-      points: moodPts,
+      moodPath: createPath(combinedPts),
+      moodArea: createArea(combinedPts),
+      points: combinedPts,
     };
   }, [chartData, daysInMonth, chartHeight, chartWidth]);
 
@@ -169,7 +170,7 @@ export function MoodMotivationSection({ daysInMonth, currentDay, year, month }: 
 
       {/* Trend Chart Card */}
       <GlassCard className="p-5 bg-white/80 dark:bg-zinc-900/80">
-        <h3 className="text-base font-semibold text-foreground mb-4">Monthly Mood Trend</h3>
+        <h3 className="text-base font-semibold text-foreground mb-4">Monthly Wellbeing Trend</h3>
         
         <div className="relative">
 
@@ -266,11 +267,11 @@ export function MoodMotivationSection({ daysInMonth, currentDay, year, month }: 
             )}
           </div>
 
-          {/* Legend - Mood only */}
+          {/* Legend - Wellbeing (combined) */}
           <div className="flex justify-center mt-3">
             <div className="flex items-center gap-2">
               <span className="w-3 h-3 rounded-full bg-orange-400" />
-              <span className="text-xs text-muted-foreground">Mood</span>
+              <span className="text-xs text-muted-foreground">Wellbeing</span>
             </div>
           </div>
 
