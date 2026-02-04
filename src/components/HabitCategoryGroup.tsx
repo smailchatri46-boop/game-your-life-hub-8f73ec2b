@@ -1,9 +1,7 @@
-import { useState, useMemo } from "react";
+import { useState } from "react";
 import { ChevronDown, ChevronRight, GripVertical, Check, Trash2 } from "lucide-react";
 import { AppleEmoji } from "@/components/AppleEmoji";
 import { MarqueeText } from "@/components/MarqueeText";
-import { useSortable } from "@dnd-kit/sortable";
-import { CSS } from "@dnd-kit/utilities";
 
 interface Habit {
   id: string;
@@ -31,8 +29,6 @@ interface HabitCategoryGroupProps {
 
 export function HabitCategoryGroup({
   category,
-  categoryColor,
-  categoryEmoji,
   habits,
   completionsMap,
   getDateKey,
@@ -42,7 +38,7 @@ export function HabitCategoryGroup({
   onDelete,
   getProgress,
   categoryColors,
-}: HabitCategoryGroupProps & { categoryEmoji?: string }) {
+}: HabitCategoryGroupProps) {
   const shouldAutoCollapse = habits.length >= 3;
   const [isExpanded, setIsExpanded] = useState(!shouldAutoCollapse);
 
@@ -53,65 +49,6 @@ export function HabitCategoryGroup({
     }
     return habit.schedule_days.includes(dayOfWeek);
   };
-
-  // Calculate group completion for a specific day
-  const getGroupDayCompletion = (day: number): { completed: number; total: number; percent: number } => {
-    const dateKey = getDateKey(day);
-    const [yearStr, monthStr] = dateKey.split('-');
-    const dateObj = new Date(parseInt(yearStr), parseInt(monthStr) - 1, day);
-    const dayOfWeek = dateObj.getDay();
-    
-    let completed = 0;
-    let total = 0;
-
-    habits.forEach(habit => {
-      if (isVisibleOnDay(habit, dayOfWeek)) {
-        total++;
-        const value = completionsMap[habit.id]?.[dateKey] || 0;
-        if (habit.target === 1) {
-          if (value >= 1) completed++;
-        } else {
-          if (value >= habit.target) completed++;
-        }
-      }
-    });
-
-    return {
-      completed,
-      total,
-      percent: total > 0 ? Math.round((completed / total) * 100) : 0
-    };
-  };
-
-  // Calculate overall group progress
-  const groupOverallProgress = useMemo(() => {
-    let totalCompleted = 0;
-    let totalPossible = 0;
-
-    habits.forEach(habit => {
-      for (let day = 1; day <= currentDay; day++) {
-        const dateKey = getDateKey(day);
-        const [yearStr, monthStr] = dateKey.split('-');
-        const dateObj = new Date(parseInt(yearStr), parseInt(monthStr) - 1, day);
-        const dayOfWeek = dateObj.getDay();
-        
-        if (isVisibleOnDay(habit, dayOfWeek)) {
-          totalPossible++;
-          const value = completionsMap[habit.id]?.[dateKey] || 0;
-          if (habit.target === 1) {
-            if (value >= 1) totalCompleted++;
-          } else {
-            if (value >= habit.target) totalCompleted++;
-          }
-        }
-      }
-    });
-
-    return totalPossible > 0 ? Math.round((totalCompleted / totalPossible) * 100) : 0;
-  }, [habits, completionsMap, currentDay, getDateKey]);
-
-  // Get first habit emoji for group icon
-  const groupEmoji = categoryEmoji || habits[0]?.icon || "📁";
 
   // If less than 3 habits, render directly without grouping header
   if (!shouldAutoCollapse) {
@@ -139,187 +76,83 @@ export function HabitCategoryGroup({
 
   return (
     <>
-      {/* Collapsed view - group row that looks like a habit row */}
-      {!isExpanded && (
-        <tr className="border-t border-border/30">
-          <td className="p-1.5 lg:p-2">
-            <div className="flex items-center gap-1.5">
-              <button
-                className="touch-none cursor-grab active:cursor-grabbing p-0.5 rounded hover:bg-secondary/50 transition-colors"
-              >
-                <GripVertical className="w-3 h-3 text-muted-foreground/50 flex-shrink-0" />
-              </button>
-              <button
-                onClick={() => setIsExpanded(true)}
-                className="p-0.5 rounded hover:bg-secondary/50 transition-colors"
-              >
-                <ChevronRight className="w-4 h-4 text-muted-foreground" />
-              </button>
-              <AppleEmoji emoji={groupEmoji} size="lg" />
-              <div className="min-w-0 flex-1">
-                <button
-                  onClick={() => setIsExpanded(true)}
-                  className="text-left w-full"
-                >
-                  <MarqueeText text={category} className="text-xs lg:text-sm font-medium" index={0} />
-                  <div className="flex items-center gap-1.5">
-                    <span 
-                      className="w-2 h-2 rounded-full flex-shrink-0"
-                      style={{ backgroundColor: categoryColor || '#6B7280' }}
-                    />
-                    <p className="text-[10px] lg:text-xs text-muted-foreground">{habits.length} habits</p>
-                  </div>
-                </button>
+      {/* Group row - identical structure to habit rows */}
+      <tr className="border-t border-border/30">
+        <td className="p-1.5 lg:p-2">
+          <div className="flex items-center gap-1.5">
+            <button
+              className="touch-none cursor-grab active:cursor-grabbing p-0.5 rounded hover:bg-secondary/50 transition-colors"
+            >
+              <GripVertical className="w-3 h-3 text-muted-foreground/50 flex-shrink-0" />
+            </button>
+            {/* Toggle icon in place of emoji */}
+            <button
+              onClick={() => setIsExpanded(!isExpanded)}
+              className="w-6 h-6 lg:w-7 lg:h-7 flex items-center justify-center rounded hover:bg-secondary/50 transition-colors flex-shrink-0"
+            >
+              {isExpanded ? (
+                <ChevronDown className="w-4 h-4 lg:w-5 lg:h-5 text-muted-foreground" />
+              ) : (
+                <ChevronRight className="w-4 h-4 lg:w-5 lg:h-5 text-muted-foreground" />
+              )}
+            </button>
+            <div className="min-w-0 flex-1">
+              <MarqueeText 
+                text={`${category} · ${habits.length} habits`} 
+                className="text-xs lg:text-sm font-medium" 
+                index={0} 
+              />
+              <div className="flex items-center gap-1.5">
+                <span 
+                  className="w-2 h-2 rounded-full flex-shrink-0"
+                  style={{ backgroundColor: categoryColors[category] || '#6B7280' }}
+                />
+                <p className="text-[10px] lg:text-xs text-muted-foreground">{category}</p>
               </div>
             </div>
+          </div>
+        </td>
+        {/* Same dot columns as habits - empty for groups */}
+        {Array.from({ length: daysInMonth }, (_, i) => (
+          <td key={i} className="p-0.5 lg:p-1">
+            <div className="w-5 h-5 lg:w-6 lg:h-6 xl:w-7 xl:h-7 mx-auto" />
           </td>
-          {/* Daily dots for group progress */}
-          {Array.from({ length: daysInMonth }, (_, i) => {
-            const day = i + 1;
-            const isFuture = day > currentDay;
-            const { percent, total } = getGroupDayCompletion(day);
-            const isFullyCompleted = percent === 100 && total > 0;
-            
-            return (
-              <td key={i} className="p-0.5 lg:p-1">
-                {total > 0 ? (
-                  <button
-                    disabled={isFuture}
-                    onClick={() => !isFuture && setIsExpanded(true)}
-                    className={`w-5 h-5 lg:w-6 lg:h-6 xl:w-7 xl:h-7 mx-auto rounded-md flex items-center justify-center text-xs ${
-                      isFuture 
-                        ? 'bg-muted/30 cursor-not-allowed'
-                        : isFullyCompleted
-                          ? 'bg-gradient-to-br from-accent to-primary text-primary-foreground shadow-sm'
-                          : 'bg-secondary hover:bg-secondary/80 cursor-pointer'
-                    }`}
-                  >
-                    {!isFuture && isFullyCompleted && (
-                      <Check className="w-3 h-3 lg:w-4 lg:h-4" />
-                    )}
-                    {!isFuture && !isFullyCompleted && percent > 0 && (
-                      <span className="font-medium text-[8px] lg:text-[10px] text-muted-foreground">
-                        {percent}
-                      </span>
-                    )}
-                  </button>
-                ) : (
-                  <div className="w-5 h-5 lg:w-6 lg:h-6 xl:w-7 xl:h-7 mx-auto" />
-                )}
-              </td>
-            );
-          })}
-          <td className="p-1 lg:p-2 text-right">
-            <span className="text-xs lg:text-sm font-bold gradient-text">{groupOverallProgress}%</span>
-          </td>
-          <td className="p-1 lg:p-2">
-            {/* Empty cell for alignment with delete button column */}
+        ))}
+        {/* Same percentage column */}
+        <td className="p-1 lg:p-2 text-right">
+          <span className="text-xs lg:text-sm font-bold gradient-text">—</span>
+        </td>
+        {/* Same delete column - empty for groups */}
+        <td className="p-1 lg:p-2">
+          <div className="p-1">
             <div className="w-3.5 h-3.5 lg:w-4 lg:h-4" />
-          </td>
-        </tr>
-      )}
+          </div>
+        </td>
+      </tr>
 
-      {/* Expanded view - show category header and individual habits */}
-      {isExpanded && (
-        <>
-          <tr className="border-t border-border/30">
-            <td className="p-1.5 lg:p-2">
-              <div className="flex items-center gap-1.5">
-                <button
-                  className="touch-none cursor-grab active:cursor-grabbing p-0.5 rounded hover:bg-secondary/50 transition-colors"
-                >
-                  <GripVertical className="w-3 h-3 text-muted-foreground/50 flex-shrink-0" />
-                </button>
-                <button
-                  onClick={() => setIsExpanded(false)}
-                  className="p-0.5 rounded hover:bg-secondary/50 transition-colors"
-                >
-                  <ChevronDown className="w-4 h-4 text-muted-foreground" />
-                </button>
-                <AppleEmoji emoji={groupEmoji} size="lg" />
-                <div className="min-w-0 flex-1">
-                  <button
-                    onClick={() => setIsExpanded(false)}
-                    className="text-left w-full"
-                  >
-                    <MarqueeText text={category} className="text-xs lg:text-sm font-medium" index={0} />
-                    <div className="flex items-center gap-1.5">
-                      <span 
-                        className="w-2 h-2 rounded-full flex-shrink-0"
-                        style={{ backgroundColor: categoryColor || '#6B7280' }}
-                      />
-                      <p className="text-[10px] lg:text-xs text-muted-foreground">{habits.length} habits</p>
-                    </div>
-                  </button>
-                </div>
-              </div>
-            </td>
-            {/* Daily dots for expanded group header */}
-            {Array.from({ length: daysInMonth }, (_, i) => {
-              const day = i + 1;
-              const isFuture = day > currentDay;
-              const { percent, total } = getGroupDayCompletion(day);
-              const isFullyCompleted = percent === 100 && total > 0;
-              
-              return (
-                <td key={i} className="p-0.5 lg:p-1">
-                  {total > 0 ? (
-                    <div
-                      className={`w-5 h-5 lg:w-6 lg:h-6 xl:w-7 xl:h-7 mx-auto rounded-md flex items-center justify-center text-xs ${
-                        isFuture 
-                          ? 'bg-muted/30'
-                          : isFullyCompleted
-                            ? 'bg-gradient-to-br from-accent to-primary text-primary-foreground shadow-sm'
-                            : 'bg-secondary'
-                      }`}
-                    >
-                      {!isFuture && isFullyCompleted && (
-                        <Check className="w-3 h-3 lg:w-4 lg:h-4" />
-                      )}
-                      {!isFuture && !isFullyCompleted && percent > 0 && (
-                        <span className="font-medium text-[8px] lg:text-[10px] text-muted-foreground">
-                          {percent}
-                        </span>
-                      )}
-                    </div>
-                  ) : (
-                    <div className="w-5 h-5 lg:w-6 lg:h-6 xl:w-7 xl:h-7 mx-auto" />
-                  )}
-                </td>
-              );
-            })}
-            <td className="p-1 lg:p-2 text-right">
-              <span className="text-xs lg:text-sm font-bold gradient-text">{groupOverallProgress}%</span>
-            </td>
-            <td className="p-1 lg:p-2">
-              {/* Empty cell for alignment */}
-              <div className="w-3.5 h-3.5 lg:w-4 lg:h-4" />
-            </td>
-          </tr>
-          {habits.map((habit, idx) => (
-            <HabitRow
-              key={habit.id}
-              habit={habit}
-              habitIndex={idx}
-              daysInMonth={daysInMonth}
-              currentDay={currentDay}
-              getDateKey={getDateKey}
-              completionsMap={completionsMap}
-              onToggleCompletion={onToggleCompletion}
-              onDelete={onDelete}
-              getProgress={getProgress}
-              categoryColors={categoryColors}
-              isVisibleOnDay={isVisibleOnDay}
-              isGrouped
-            />
-          ))}
-        </>
-      )}
+      {/* Expanded habits */}
+      {isExpanded && habits.map((habit, idx) => (
+        <HabitRow
+          key={habit.id}
+          habit={habit}
+          habitIndex={idx}
+          daysInMonth={daysInMonth}
+          currentDay={currentDay}
+          getDateKey={getDateKey}
+          completionsMap={completionsMap}
+          onToggleCompletion={onToggleCompletion}
+          onDelete={onDelete}
+          getProgress={getProgress}
+          categoryColors={categoryColors}
+          isVisibleOnDay={isVisibleOnDay}
+          isGrouped
+        />
+      ))}
     </>
   );
 }
 
-// Individual habit row component (non-sortable version for grouped display)
+// Individual habit row component
 function HabitRow({
   habit,
   habitIndex,
@@ -357,7 +190,7 @@ function HabitRow({
             <GripVertical className="w-3 h-3 text-muted-foreground/50 flex-shrink-0" />
           </button>
           {isGrouped && (
-            <div className="w-4 h-4 flex-shrink-0" /> 
+            <div className="w-6 h-6 lg:w-7 lg:h-7 flex-shrink-0" /> 
           )}
           <AppleEmoji emoji={habit.icon} size="lg" />
           <div className="min-w-0 flex-1">
