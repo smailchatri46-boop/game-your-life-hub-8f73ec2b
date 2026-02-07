@@ -73,7 +73,7 @@ export default function Landing() {
             {/* Left Column - Title, Description, CTA */}
             <div className="order-2 lg:order-1 flex flex-col lg:justify-end lg:pb-0">
               <h1 className="font-display text-4xl md:text-5xl lg:text-6xl font-semibold mb-6 animate-fade-in text-center lg:text-left">
-                <span className="gradient-text">Your ADHD brain</span>
+                <span className="italic gradient-text">Your ADHD brain</span>
                 <br />
                 <span className="text-foreground">finally has a </span>
                 <span className="gradient-text">system</span>
