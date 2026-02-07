@@ -210,7 +210,7 @@ export function AnalyticsCarousel({ isOnboarding = false }: AnalyticsCarouselPro
       <div className={`max-w-6xl mx-auto text-center ${isOnboarding ? 'mb-2' : 'mb-6'}`}>
         <ScrollReveal animation="fade-up">
           <h2 className={`font-display ${titleSize} font-semibold`}>
-            Get Deep <span className={`gradient-text ${isOnboarding ? 'italic' : ''}`}>Insights</span> About Your Life
+            See Patterns Your <span className={`gradient-text ${isOnboarding ? 'italic' : ''}`}>ADHD Brain</span> Misses
           </h2>
         </ScrollReveal>
       </div>
@@ -273,8 +273,8 @@ export function AnalyticsCarousel({ isOnboarding = false }: AnalyticsCarouselPro
         <ScrollReveal animation="fade-up" delay={200}>
           <p className={`text-muted-foreground ${descriptionSize} leading-relaxed`}>
             {isOnboarding 
-              ? "See your patterns across progress, mood, motivation, and consistency with clean analytics that tell the full story. Understand what's working, what's not, and adjust faster with insights that feel clear and useful."
-              : "Understand your progress and patterns with beautiful analytics that show you the full picture."
+              ? "Time blindness solved. See exactly what happened, when, and why some days felt harder. AI connects mood, habits, and consistency so you finally understand your patterns."
+              : "Time blindness solved. AI shows patterns across mood, habits, and consistency—finally understand why some days feel impossible."
             }
           </p>
         </ScrollReveal>
