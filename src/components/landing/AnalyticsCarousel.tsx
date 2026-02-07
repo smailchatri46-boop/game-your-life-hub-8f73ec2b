@@ -1,10 +1,59 @@
 import { useEffect, useRef } from "react";
-import { TrendingUp, Target, Heart, BarChart3 } from "lucide-react";
+import { TrendingUp, Calendar, Target, Heart, BarChart3 } from "lucide-react";
 import { AppleEmoji } from "@/components/AppleEmoji";
 import { ScrollReveal } from "@/components/ScrollReveal";
 
-// Exact replica of Overview dashboard cards
-function OverviewCard({ 
+// Reusing exact StatCard design from the app
+function StatCardPreview({ 
+  title, 
+  subtitle, 
+  value, 
+  suffix = "%", 
+  icon: Icon,
+  iconColor = "text-primary",
+  progress 
+}: {
+  title: string;
+  subtitle?: string;
+  value: number | string;
+  suffix?: string;
+  icon: React.ElementType;
+  iconColor?: string;
+  progress?: number;
+}) {
+  return (
+    <div className="glass-card p-5 min-w-[200px] flex-shrink-0">
+      <div className="flex items-start justify-between mb-3">
+        <div>
+          <h3 className="text-sm font-semibold text-foreground">{title}</h3>
+          {subtitle && (
+            <p className="text-xs text-muted-foreground mt-0.5">{subtitle}</p>
+          )}
+        </div>
+        <div className={`p-2 rounded-xl bg-secondary ${iconColor}`}>
+          <Icon className="w-4 h-4" />
+        </div>
+      </div>
+      
+      <div className="flex items-baseline gap-0.5 mb-3">
+        <span className="text-3xl font-bold gradient-text">{value}</span>
+        <span className="text-lg font-medium text-primary/70">{suffix}</span>
+      </div>
+      
+      {progress !== undefined && (
+        <div className="h-1.5 bg-secondary rounded-full overflow-hidden">
+          <div 
+            className="h-full progress-bar-orange rounded-full transition-all duration-500"
+            style={{ width: `${progress}%` }}
+          />
+        </div>
+      )}
+    </div>
+  );
+}
+
+// Overview-style stat cards
+function OverviewStatCard({ 
   title, 
   value, 
   suffix,
@@ -24,7 +73,7 @@ function OverviewCard({
   emoji?: string;
 }) {
   return (
-    <div className="glass-card p-5 min-w-[180px] flex-shrink-0 hover:shadow-large transition-all duration-300">
+    <div className="glass-card p-5 min-w-[200px] flex-shrink-0">
       <div className="flex items-start justify-between mb-3">
         <div>
           <h3 className="text-base font-semibold text-foreground">{title}</h3>
@@ -59,9 +108,36 @@ function OverviewCard({
   );
 }
 
-// Matches exact cards from Overview.tsx dashboard
 const analyticsCards = [
   {
+    component: "stat",
+    title: "This Month",
+    subtitle: "December progress so far",
+    value: 74,
+    icon: TrendingUp,
+    iconColor: "text-primary",
+    progress: 74,
+  },
+  {
+    component: "stat",
+    title: "This Week Average",
+    subtitle: "Last 7 days",
+    value: 80,
+    icon: Calendar,
+    iconColor: "text-accent",
+    progress: 80,
+  },
+  {
+    component: "stat",
+    title: "Today",
+    subtitle: "Today's progress",
+    value: 95,
+    icon: Target,
+    iconColor: "text-primary",
+    progress: 95,
+  },
+  {
+    component: "overview",
     title: "Perfect Days",
     value: 5,
     suffix: " / 7",
@@ -71,13 +147,15 @@ const analyticsCards = [
     progress: 71,
   },
   {
+    component: "overview",
     title: "Mood Average",
-    emoji: "🤗",
+    emoji: "😊",
     subtitle: "Your average mood is Happy.",
     icon: Heart,
     iconColor: "text-primary",
   },
   {
+    component: "overview",
     title: "Mood Stability",
     value: 7,
     suffix: " / 10",
@@ -85,33 +163,6 @@ const analyticsCards = [
     icon: BarChart3,
     iconColor: "text-accent",
     progress: 70,
-  },
-  {
-    title: "This Month",
-    value: 74,
-    suffix: "%",
-    subtitle: "December progress so far",
-    icon: TrendingUp,
-    iconColor: "text-primary",
-    progress: 74,
-  },
-  {
-    title: "This Week",
-    value: 80,
-    suffix: "%",
-    subtitle: "Last 7 days",
-    icon: TrendingUp,
-    iconColor: "text-accent",
-    progress: 80,
-  },
-  {
-    title: "Daily Progress",
-    value: 95,
-    suffix: "%",
-    subtitle: "Yesterday's completion",
-    icon: TrendingUp,
-    iconColor: "text-primary",
-    progress: 95,
   },
 ];
 
@@ -188,17 +239,29 @@ export function AnalyticsCarousel({ isOnboarding = false }: AnalyticsCarouselPro
           >
             {/* Duplicate cards for infinite scroll effect */}
             {[...analyticsCards, ...analyticsCards].map((card, index) => (
-              <OverviewCard
-                key={index}
-                title={card.title}
-                value={card.value}
-                suffix={card.suffix}
-                subtitle={card.subtitle}
-                icon={card.icon}
-                iconColor={card.iconColor}
-                progress={card.progress}
-                emoji={card.emoji}
-              />
+              card.component === "stat" ? (
+                <StatCardPreview 
+                  key={index}
+                  title={card.title}
+                  subtitle={card.subtitle}
+                  value={card.value!}
+                  icon={card.icon}
+                  iconColor={card.iconColor}
+                  progress={card.progress}
+                />
+              ) : (
+                <OverviewStatCard
+                  key={index}
+                  title={card.title}
+                  value={card.value}
+                  suffix={card.suffix}
+                  subtitle={card.subtitle}
+                  icon={card.icon}
+                  iconColor={card.iconColor}
+                  progress={card.progress}
+                  emoji={card.emoji}
+                />
+              )
             ))}
           </div>
           </div>
