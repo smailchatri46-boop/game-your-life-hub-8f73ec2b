@@ -18,8 +18,6 @@ const legalLinks = [
   { name: "Refund Policy", path: "/refund" },
 ];
 
-const AFFILIATE_SIGNUP_URL = "https://neylercom-7c64.endorsely.com/";
-const EARN_PER_VIEWS_URL = "https://forms.gle/ekE542XjQjcAx2NFA";
 
 export function Footer() {
   return (
@@ -88,26 +86,8 @@ export function Footer() {
               <img src={neylerLogo} alt="Neyler" className="h-5" loading="lazy" decoding="async" width={71} height={20} />
             </div>
             
-            {/* Center: Partner links - perfectly centered */}
-            <div className="flex items-center justify-center gap-3">
-              <a
-                href={AFFILIATE_SIGNUP_URL}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="font-body text-sm text-muted-foreground hover:text-foreground transition-colors"
-              >
-                Become an Affiliate
-              </a>
-              <span className="text-muted-foreground/40">•</span>
-              <a
-                href={EARN_PER_VIEWS_URL}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="font-body text-sm text-muted-foreground hover:text-foreground transition-colors"
-              >
-                Earn Per 1K Views
-              </a>
-            </div>
+            {/* Center: spacer */}
+            <div />
             
             {/* Right: Copyright */}
             <div className="flex justify-center md:justify-end">
