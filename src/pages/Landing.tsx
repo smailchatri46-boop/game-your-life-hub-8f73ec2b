@@ -5,12 +5,19 @@ import { GlassCard } from "@/components/GlassCard";
 import { AppleEmoji } from "@/components/AppleEmoji";
 import { Link } from "react-router-dom";
 import { YouTubeEmbed } from "@/components/YouTubeEmbed";
-import { Check } from "lucide-react";
+import { Plus, Check } from "lucide-react";
 import googleLogo from "@/assets/google-logo.png";
 import { ScrollReveal } from "@/components/ScrollReveal";
 import { Footer } from "@/components/Footer";
 import dashboardThumbnail from "@/assets/dashboard-thumbnail.png";
 import { useReferral } from "@/hooks/use-referral";
+
+// Lazy load below-fold sections for better initial load
+const AnalyticsCarousel = lazy(() => import("@/components/landing/AnalyticsCarousel").then(m => ({ default: m.AnalyticsCarousel })));
+const HabitsShowcase = lazy(() => import("@/components/landing/HabitsShowcase").then(m => ({ default: m.HabitsShowcase })));
+
+const GoalsShowcase = lazy(() => import("@/components/landing/GoalsShowcase").then(m => ({ default: m.GoalsShowcase })));
+
 
 const LandingFAQ = lazy(() => import("@/components/landing/LandingFAQ").then(m => ({ default: m.LandingFAQ })));
 
@@ -105,7 +112,101 @@ export default function Landing() {
         </div>
       </section>
 
+      {/* Lazy loaded sections */}
+      <Suspense fallback={<SectionPlaceholder />}>
+        <AnalyticsCarousel />
+      </Suspense>
       
+      <Suspense fallback={<SectionPlaceholder />}>
+        <HabitsShowcase />
+      </Suspense>
+      
+      
+      <Suspense fallback={<SectionPlaceholder />}>
+        <GoalsShowcase />
+      </Suspense>
+      
+      {/* Value Proposition - Combined section */}
+      <section className="py-10 px-4">
+        <div className="max-w-5xl mx-auto text-center">
+          {/* Single Title */}
+          <ScrollReveal animation="fade-up">
+            <h2 className="font-display text-2xl md:text-4xl font-semibold mb-10">
+              Your <span className="gradient-text">external brain</span>
+            </h2>
+          </ScrollReveal>
+          
+          {/* Image + To-Do Card side by side */}
+          <div className="flex flex-col md:flex-row items-center justify-center gap-8 md:gap-12 mb-10">
+            {/* Apps image - shifted slightly left */}
+            <ScrollReveal animation="fade-right" delay={100}>
+              <div className="flex items-center gap-2 md:gap-4 flex-shrink-0">
+                <img 
+                  src="/images/apps-arrows.png" 
+                  alt="Apps flowing into Neyler" 
+                  className="h-48 md:h-64 object-contain"
+                  loading="lazy"
+                  decoding="async"
+                  width={200}
+                  height={256}
+                />
+                <img 
+                  src="/images/neyler-logo-full.png" 
+                  alt="Neyler" 
+                  className="h-12 md:h-16 object-contain"
+                  loading="lazy"
+                  decoding="async"
+                  width={150}
+                  height={64}
+                />
+              </div>
+            </ScrollReveal>
+            
+            {/* To-Do List Card - matching Overview exactly */}
+            <ScrollReveal animation="fade-left" delay={200}>
+              <div className="p-6 rounded-3xl bg-gradient-to-br from-[hsl(30,70%,96%)] to-[hsl(25,60%,92%)] w-[320px] md:w-[360px]">
+                <div className="flex items-start justify-between mb-1">
+                  <div>
+                    <h3 className="font-display text-xl font-semibold text-foreground">To-Do List</h3>
+                    <p className="text-sm text-muted-foreground">
+                      1 décembre 2025
+                    </p>
+                  </div>
+                  <AppleEmoji emoji="😌" size="2xl" />
+                </div>
+                
+                <div className="space-y-2 mt-4">
+                  {/* Call mom task - completed */}
+                  <div className="flex items-center gap-3 p-3 rounded-2xl bg-white/80 shadow-sm">
+                    <AppleEmoji emoji="💬" size="lg" />
+                    <span className="text-sm flex-1 text-muted-foreground line-through text-left">
+                      Call mom
+                    </span>
+                    <button className="w-6 h-6 rounded-full border-2 flex items-center justify-center bg-[hsl(25,60%,70%)] border-[hsl(25,60%,70%)]">
+                      <Check className="w-4 h-4 text-white" />
+                    </button>
+                  </div>
+
+                  {/* Add task button */}
+                  <button
+                    className="w-full flex items-center justify-center gap-2 p-3 rounded-2xl bg-white/50 hover:bg-white/70 transition-colors text-muted-foreground border-2 border-dashed border-muted-foreground/20"
+                  >
+                    <Plus className="w-4 h-4" />
+                    <span className="text-sm">Add task</span>
+                  </button>
+                </div>
+              </div>
+            </ScrollReveal>
+          </div>
+          
+          {/* Single description paragraph */}
+          <ScrollReveal animation="fade-up" delay={300}>
+            <p className="text-muted-foreground text-lg md:text-xl max-w-2xl mx-auto">
+              Done with Notion overwhelm and Habitica burnout. Everything visible in one place—no more losing track mid-task or forgetting what you were doing.
+            </p>
+          </ScrollReveal>
+        </div>
+      </section>
       
       {/* Features Grid */}
       <section className="py-10 px-4">
