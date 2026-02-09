@@ -13,7 +13,7 @@ import dashboardThumbnail from "@/assets/dashboard-thumbnail.png";
 import { useReferral } from "@/hooks/use-referral";
 
 // Lazy load below-fold sections for better initial load
-const OverviewCardsShowcase = lazy(() => import("@/components/landing/OverviewCardsShowcase").then(m => ({ default: m.OverviewCardsShowcase })));
+const AnalyticsCarousel = lazy(() => import("@/components/landing/AnalyticsCarousel").then(m => ({ default: m.AnalyticsCarousel })));
 const HabitsShowcase = lazy(() => import("@/components/landing/HabitsShowcase").then(m => ({ default: m.HabitsShowcase })));
 
 const GoalsShowcase = lazy(() => import("@/components/landing/GoalsShowcase").then(m => ({ default: m.GoalsShowcase })));
@@ -114,7 +114,7 @@ export default function Landing() {
 
       {/* Lazy loaded sections */}
       <Suspense fallback={<SectionPlaceholder />}>
-        <OverviewCardsShowcase />
+        <AnalyticsCarousel />
       </Suspense>
       
       <Suspense fallback={<SectionPlaceholder />}>
