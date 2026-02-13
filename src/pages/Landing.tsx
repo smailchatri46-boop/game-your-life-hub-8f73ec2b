@@ -73,14 +73,14 @@ export default function Landing() {
             {/* Left Column - Title, Description, CTA */}
             <div className="order-2 lg:order-1 flex flex-col lg:justify-end lg:pb-0">
               <h1 className="font-display text-4xl md:text-5xl lg:text-6xl font-semibold mb-6 animate-fade-in text-center lg:text-left">
-                <span className="italic gradient-text">Your ADHD brain</span>
+                <span className="italic gradient-text">Turn your life</span>
                 <br />
-                <span className="text-foreground">finally has a </span>
-                <span className="gradient-text">system</span>
+                <span className="text-foreground">into a Game</span>
+                <span className="gradient-text"> with AI</span>
               </h1>
               
               <p className="text-lg md:text-xl text-muted-foreground max-w-lg mb-8 animate-fade-in delay-100 text-center lg:text-left mx-auto lg:mx-0">
-                Stop app-switching. Stop forgetting. One calm place for habits, tasks, goals, and AI that actually understands how your brain works.
+                Analyze your life with AI using the most beautiful tracker ever. Track habits & tasks, set goals, level up, and turn your day into data.
               </p>
 
               {/* Sign Up Button */}
@@ -132,7 +132,7 @@ export default function Landing() {
           {/* Single Title */}
           <ScrollReveal animation="fade-up">
             <h2 className="font-display text-2xl md:text-4xl font-semibold mb-10">
-              Your <span className="gradient-text">external brain</span>
+              Your all in <span className="gradient-text">one tracker</span>
             </h2>
           </ScrollReveal>
           
@@ -202,7 +202,7 @@ export default function Landing() {
           {/* Single description paragraph */}
           <ScrollReveal animation="fade-up" delay={300}>
             <p className="text-muted-foreground text-lg md:text-xl max-w-2xl mx-auto">
-              Done with Notion overwhelm and Habitica burnout. Everything visible in one place—no more losing track mid-task or forgetting what you were doing.
+              Replace scattered spreadsheets, multiple AI apps, and messy notes with one beautiful solution. No more switching between different tools.
             </p>
           </ScrollReveal>
         </div>
@@ -213,7 +213,7 @@ export default function Landing() {
         <div className="max-w-5xl mx-auto">
           <ScrollReveal animation="fade-up">
             <h2 className="font-display text-2xl md:text-4xl font-semibold text-center mb-10">
-              Built for how <span className="gradient-text">ADHD works</span>
+              Everything you need to <span className="gradient-text">succeed</span>
             </h2>
           </ScrollReveal>
           
@@ -223,9 +223,9 @@ export default function Landing() {
                 <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-accent/30 to-primary/30 flex items-center justify-center mb-4">
                   <AppleEmoji emoji="🎯" size="2xl" />
                 </div>
-                <h3 className="font-display text-xl font-semibold mb-3">Visual Habit Grid</h3>
+                <h3 className="font-display text-xl font-semibold mb-3">Habits <span className="font-body">&</span> Tasks Tracking</h3>
                 <p className="text-muted-foreground text-sm leading-relaxed">
-                  Your working memory finally has backup. See exactly what you did, when, with instant color-coded completion that gives your brain the dopamine hit it craves.
+                  Track your daily habits and one-time tasks with a beautiful spreadsheet-style grid. See your progress at a glance and link them directly to your goals.
                 </p>
               </GlassCard>
             </ScrollReveal>
@@ -235,9 +235,9 @@ export default function Landing() {
                 <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-accent/30 to-primary/30 flex items-center justify-center mb-4">
                   <AppleEmoji emoji="🏆" size="2xl" />
                 </div>
-                <h3 className="font-display text-xl font-semibold mb-3">Goals You Won't Forget</h3>
+                <h3 className="font-display text-xl font-semibold mb-3">Set Goals <span className="font-body">&</span> Track Them</h3>
                 <p className="text-muted-foreground text-sm leading-relaxed">
-                  Long-term goals broken into daily actions your ADHD brain can actually follow. Visual progress bars show exactly where you stand—no more time blindness.
+                  Create meaningful goals, connect them to your daily habits, and see your progress toward them in a clear, visual way that keeps you motivated.
                 </p>
               </GlassCard>
             </ScrollReveal>
@@ -247,9 +247,9 @@ export default function Landing() {
                 <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-accent/30 to-primary/30 flex items-center justify-center mb-4">
                   <AppleEmoji emoji="🧠" size="2xl" />
                 </div>
-                <h3 className="font-display text-xl font-semibold mb-3">AI That Gets ADHD</h3>
+                <h3 className="font-display text-xl font-semibold mb-3">AI-Powered</h3>
                 <p className="text-muted-foreground text-sm leading-relaxed">
-                  Your executive function backup. AI provides structure when your brain can't, spots patterns you miss, and gives guidance without the overwhelm.
+                  AI analyzes all your goals, tasks, and habits to give you personalized structure, actionable insights, and expert guidance to achieve your goals faster.
                 </p>
               </GlassCard>
             </ScrollReveal>
@@ -259,9 +259,9 @@ export default function Landing() {
                 <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-accent/30 to-primary/30 flex items-center justify-center mb-4">
                   <AppleEmoji emoji="📊" size="2xl" />
                 </div>
-                <h3 className="font-display text-xl font-semibold mb-3">See Your Patterns</h3>
+                <h3 className="font-display text-xl font-semibold mb-3">Beautiful Analytics</h3>
                 <p className="text-muted-foreground text-sm leading-relaxed">
-                  Finally understand why some days feel impossible. AI spots connections between mood, habits, and consistency your brain can't track alone.
+                  Beautiful charts and insights to understand your patterns, mood trends, and growth over time. See the full picture of your progress.
                 </p>
               </GlassCard>
             </ScrollReveal>
@@ -271,9 +271,9 @@ export default function Landing() {
                 <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-accent/30 to-primary/30 flex items-center justify-center mb-4">
                   <AppleEmoji emoji="📝" size="2xl" />
                 </div>
-                <h3 className="font-display text-xl font-semibold mb-3">Tasks Won't Slip Away</h3>
+                <h3 className="font-display text-xl font-semibold mb-3">Add One-Time Tasks Too</h3>
                 <p className="text-muted-foreground text-sm leading-relaxed">
-                  One-time tasks and daily habits in the same place. No app-switching means no losing track mid-task—the #1 ADHD struggle, solved.
+                  Add to-do lists and one-time tasks alongside your habits, so you don't need any other app to track what you do throughout your day.
                 </p>
               </GlassCard>
             </ScrollReveal>
@@ -285,7 +285,7 @@ export default function Landing() {
                 </div>
                 <h3 className="font-display text-xl font-semibold mb-3">AI Buddy</h3>
                 <p className="text-muted-foreground text-sm leading-relaxed">
-                  An AI that knows your context without you re-explaining everything. Ask anything about your progress—it remembers what your ADHD brain forgets.
+                  Your personal AI companion that understands your habits, goals, and journal entries to provide personalized motivation and insights.
                 </p>
               </GlassCard>
             </ScrollReveal>
@@ -305,10 +305,10 @@ export default function Landing() {
           <div className="max-w-2xl mx-auto text-center">
             <GlassCard className="p-10" glow>
               <h2 className="font-display text-2xl md:text-3xl font-semibold mb-4">
-                Done hopping between apps?
+                Ready to level up?
               </h2>
               <p className="text-muted-foreground text-lg mb-8">
-                Finally, a system designed for ADHD brains—not against them. One calm place that works with your executive dysfunction, not around it.
+                Build habits, reflect on your days, and keep everything in one calm place designed to help you stay consistent without friction.
               </p>
               
               <Button variant="gradient" size="xl" asChild>

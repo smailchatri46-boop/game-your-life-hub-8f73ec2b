@@ -74,7 +74,7 @@ export function HabitsShowcase({ isOnboarding = false }: HabitsShowcaseProps) {
       <div className={`max-w-6xl mx-auto text-center ${isOnboarding ? 'mb-2' : 'mb-6'}`}>
         <ScrollReveal animation="fade-up">
           <h2 className={`font-display ${titleSize} font-semibold`}>
-            A Visual System That <span className={`gradient-text ${isOnboarding ? 'italic' : ''}`}>Just Works</span>
+            Organize Your Daily Routine <span className={`gradient-text ${isOnboarding ? 'italic' : ''}`}>Effortlessly</span>
           </h2>
         </ScrollReveal>
       </div>
@@ -168,8 +168,8 @@ export function HabitsShowcase({ isOnboarding = false }: HabitsShowcaseProps) {
         <ScrollReveal animation="fade-up" delay={200}>
           <p className={`text-muted-foreground ${descriptionSize} leading-relaxed`}>
             {isOnboarding 
-              ? "No blank-page paralysis. Your habits and tasks in one clean grid—instant dopamine from color-coded completion, external memory of what you actually did."
-              : "No overwhelm, no complexity. Everything visible in one clean grid with instant color-coded feedback your ADHD brain actually responds to."
+              ? "Plan your days with a clean system that makes habits and tasks easy to follow without stress. See your progress at a glance and stay consistent with a routine that actually feels simple."
+              : "Track habits and tasks in a beautiful clean style. See your progress at a glance."
             }
           </p>
         </ScrollReveal>

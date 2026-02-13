@@ -145,7 +145,7 @@ export function GoalsShowcase({ isOnboarding = false }: GoalsShowcaseProps) {
       <div className="max-w-6xl mx-auto text-center mb-6">
         <ScrollReveal animation="fade-up">
           <h2 className={`font-display ${titleSize} font-semibold`}>
-            Long-Term Goals Made <span className={`gradient-text ${isOnboarding ? 'italic' : ''}`}>ADHD-Friendly</span>
+            Set Goals and <span className={`gradient-text ${isOnboarding ? 'italic' : ''}`}>Track Them</span>
           </h2>
         </ScrollReveal>
       </div>
@@ -232,7 +232,7 @@ export function GoalsShowcase({ isOnboarding = false }: GoalsShowcaseProps) {
       <div className="max-w-3xl mx-auto text-center mt-4">
         <ScrollReveal animation="fade-up" delay={200}>
           <p className={`text-muted-foreground ${descriptionSize} leading-relaxed`}>
-            Break the "overcommit → burnout → quit" cycle. Goals link to daily habits with progressive buildup—start small, build gradually, actually finish things.
+            Create meaningful goals, link them to your daily habits, and watch your progress grow. Stay motivated with visual progress tracking, pace indicators, and deadline reminders.
           </p>
         </ScrollReveal>
       </div>
