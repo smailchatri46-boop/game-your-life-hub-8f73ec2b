@@ -10,7 +10,7 @@ export const faqs: FAQ[] = [
     question: "How does this prevent the ADHD burnout cycle?",
     answer: (
       <>
-        Progressive buildup is built in. Start with 1 minute of meditation instead of 30—the app automatically increases your target over time so you build habits gradually without overwhelming yourself. No more overcommitting on day 1 and quitting by week 2.
+        Progressive buildup is built in. Start with 1 minute of meditation instead of 30. The app automatically increases your target over time—so you build habits gradually without overwhelming yourself. No more overcommitting on day 1 and quitting by week 2.
       </>
     ),
   },
@@ -26,7 +26,7 @@ export const faqs: FAQ[] = [
     question: "Will this actually work for my ADHD brain?",
     answer: (
       <>
-        It's built around how ADHD works, not against it. Visual dopamine hits from colored completion boxes, external memory so you don't forget what you did, AI that spots patterns your brain misses. No overwhelming features—just what you need, visible at a glance.
+        It's built around how ADHD works, not against it. Visual dopamine hits from colored completion boxes. External memory so you don't forget what you did. AI that spots patterns your brain misses. No overwhelming features—just what you need, visible at a glance.
       </>
     ),
   },
@@ -34,7 +34,7 @@ export const faqs: FAQ[] = [
     question: "Can I add habits that happen only on certain days?",
     answer: (
       <>
-        Yes! Set habits for specific days of the week or month—the app shows only what's relevant today, no visual clutter from habits that don't apply. Progress is calculated only for scheduled days, so no guilt for "off" days.
+        Yes! Go to the <strong>Dashboard</strong> and click the plus button. You can set habits for specific days of the week or month. The app shows only what's relevant today—no visual clutter from habits that don't apply.
       </>
     ),
   },
@@ -42,7 +42,7 @@ export const faqs: FAQ[] = [
     question: "How does the AI understand my ADHD patterns?",
     answer: (
       <>
-        The AI sees your habits, mood, tasks, and journal entries to spot connections you can't see yourself. It notices things like "you skip exercise when your sleep was bad" or "your mood dips after missing morning routines." Time blindness and pattern recognition—finally externalized.
+        The AI looks at your habits, mood, and completion patterns to spot connections you can't see yourself. It'll notice things like "you skip exercise when your sleep was bad" or "your mood dips after missing morning routines." Time blindness and pattern recognition—finally externalized.
       </>
     ),
   },
@@ -50,7 +50,7 @@ export const faqs: FAQ[] = [
     question: "What if I miss a day (or a week)?",
     answer: (
       <>
-        No shame, no broken streaks staring at you. Your overall progress is preserved, and the AI helps you understand why gaps happened—not to judge, but to learn. Missing days is normal with ADHD; just pick back up when you can.
+        No shame, no broken streaks staring at you. Your overall progress is preserved. The goal isn't perfection—it's consistency over time. Missing days is normal, especially with ADHD. Just pick back up when you can.
       </>
     ),
   },
@@ -58,7 +58,7 @@ export const faqs: FAQ[] = [
     question: "Can I track mood alongside habits?",
     answer: (
       <>
-        Yes! Mood and motivation tracking is built into the Dashboard. The AI correlates your emotional state with habit completion, showing patterns you'd never notice otherwise—like why some days feel impossible and others flow easily.
+        Yes! The <strong>Dashboard</strong> has mood and motivation tracking built in. This helps the AI understand why some days feel impossible—and shows you patterns between your emotional state and habit completion you'd never notice otherwise.
       </>
     ),
   },
@@ -74,7 +74,7 @@ export const faqs: FAQ[] = [
     question: "Is there a to-do list for one-time tasks?",
     answer: (
       <>
-        Yes! The Overview page has one-time tasks alongside your repeating habits. Everything in one place, no app-switching to lose your focus.
+        Yes! Navigate to the <strong>Overview</strong> page. You can add one-time tasks that disappear when completed—alongside your repeating habits. Everything in one place, no app-switching to lose your focus.
       </>
     ),
   },
@@ -90,7 +90,7 @@ export const faqs: FAQ[] = [
     question: "Is there a video walkthrough?",
     answer: (
       <>
-        Yes! We have a short video showing all the features. <Link to="/video-tutorial" className="font-bold text-primary hover:underline">Watch it here</Link>—it covers everything you need to get started.
+        Yes! We have a video showing all the features. <Link to="/video-tutorial" className="font-bold text-primary hover:underline">Watch it here</Link>—it's short and covers everything you need to get started.
       </>
     ),
   },
@@ -98,7 +98,7 @@ export const faqs: FAQ[] = [
     question: "Can I write journals and reflections?",
     answer: (
       <>
-        Yes. The Journal tab is for deeper thoughts, while daily reflections are quick notes about how your day went. Both feed into the AI for personalized insights about your patterns.
+        Yes. The <strong>Journal</strong> tab is for deeper thoughts, while daily reflections are quick notes about how your day went. Both are saved and can be shared with the AI for personalized insights about your patterns.
       </>
     ),
   },

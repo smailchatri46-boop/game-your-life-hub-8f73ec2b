@@ -37,9 +37,6 @@ const Refund = lazy(() => import("./pages/Refund"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 const Paywall = lazy(() => import("./pages/Paywall"));
 const PaymentSuccess = lazy(() => import("./pages/PaymentSuccess"));
-const TestLanding1 = lazy(() => import("./pages/TestLanding1"));
-const TestLanding2 = lazy(() => import("./pages/TestLanding2"));
-const TestLanding3 = lazy(() => import("./pages/TestLanding3"));
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -78,9 +75,6 @@ const App = () => (
                   <Route path="/cookies" element={<Cookies />} />
                   <Route path="/refund" element={<Refund />} />
                   <Route path="/contact" element={<Contact />} />
-                  <Route path="/test-landing-1" element={<TestLanding1 />} />
-                  <Route path="/test-landing-2" element={<TestLanding2 />} />
-                  <Route path="/test-landing-3" element={<TestLanding3 />} />
                   
                   {/* Auth routes - redirect if already authenticated */}
                   <Route path="/auth" element={<AuthGuard><Auth /></AuthGuard>} />

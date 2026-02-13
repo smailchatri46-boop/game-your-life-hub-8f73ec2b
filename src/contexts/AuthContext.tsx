@@ -2,6 +2,7 @@ import { createContext, useContext, useState, useEffect, ReactNode, useCallback 
 import { User, Session } from "@supabase/supabase-js";
 import { supabase } from "@/integrations/supabase/client";
 import { lovable } from "@/integrations/lovable/index";
+import { hasCompletedOnboarding } from "@/services/supabase/onboarding";
 
 interface AuthUser {
   id: string;
@@ -17,11 +18,9 @@ interface AuthContextType {
   session: Session | null;
   loading: boolean;
   isNewUser: boolean | null;
-  onboardingComplete: boolean | null;
   signInWithGoogle: () => Promise<{ error: Error | null }>;
   signOut: () => Promise<void>;
   clearNewUserFlag: () => void;
-  setOnboardingComplete: (complete: boolean) => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -39,55 +38,39 @@ const mapSupabaseUser = (supabaseUser: User | null): AuthUser | null => {
   };
 };
 
-// Check localStorage first (instant)
-function getLocalOnboardingStatus(): boolean | null {
-  const complete = localStorage.getItem("locked_onboarding_complete") === "true";
-  const skipped = localStorage.getItem("locked_onboarding_skipped") === "true";
-  if (complete || skipped) return true;
-  return null; // Unknown - need to check DB
-}
-
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<AuthUser | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
   const [isNewUser, setIsNewUser] = useState<boolean | null>(null);
-  const [onboardingComplete, setOnboardingCompleteState] = useState<boolean | null>(null);
 
-  // Fast onboarding check - localStorage first, then DB
-  const checkOnboardingStatus = useCallback(async (userId: string) => {
-    // Instant check from localStorage
-    const localStatus = getLocalOnboardingStatus();
-    if (localStatus === true) {
-      setOnboardingCompleteState(true);
-      setIsNewUser(false);
-      return;
-    }
-
-    // DB check (only if localStorage doesn't have status)
+  // Check onboarding completion to determine new vs returning user
+  const checkUserStatus = useCallback(async (userId: string) => {
     try {
-      const { data, error } = await supabase
-        .from("onboarding_data")
-        .select("completed")
-        .eq("user_id", userId)
-        .maybeSingle();
-
-      if (error) {
-        console.error("Error checking onboarding:", error);
-        setOnboardingCompleteState(false);
-        setIsNewUser(true);
+      // First check localStorage for quick response
+      const localOnboardingComplete = 
+        localStorage.getItem("locked_onboarding_complete") === "true" ||
+        localStorage.getItem("locked_onboarding_skipped") === "true";
+      
+      if (localOnboardingComplete) {
+        setIsNewUser(false);
         return;
       }
 
-      const complete = data?.completed ?? false;
-      if (complete) {
+      // Then check database for onboarding completion
+      const dbOnboardingComplete = await hasCompletedOnboarding(userId);
+      
+      if (dbOnboardingComplete) {
+        // Sync localStorage with database
         localStorage.setItem("locked_onboarding_complete", "true");
+        setIsNewUser(false);
+      } else {
+        // User hasn't completed onboarding - treat as "new user"
+        setIsNewUser(true);
       }
-      setOnboardingCompleteState(complete);
-      setIsNewUser(!complete);
     } catch (error) {
-      console.error("Error checking onboarding:", error);
-      setOnboardingCompleteState(false);
+      console.error("Error checking user status:", error);
+      // If we can't determine, assume new user to be safe
       setIsNewUser(true);
     }
   }, []);
@@ -100,25 +83,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         const mappedUser = mapSupabaseUser(session?.user ?? null);
         setUser(mappedUser);
 
+        // Defer profile check to avoid deadlock
         if (session?.user) {
-          // Check localStorage immediately (synchronous)
-          const localStatus = getLocalOnboardingStatus();
-          if (localStatus === true) {
-            setOnboardingCompleteState(true);
-            setIsNewUser(false);
-            setLoading(false);
-          } else {
-            // Defer DB check to avoid deadlock
-            setTimeout(() => {
-              checkOnboardingStatus(session.user.id);
-            }, 0);
-            setLoading(false);
-          }
+          setTimeout(() => {
+            checkUserStatus(session.user.id);
+          }, 0);
         } else {
-          setOnboardingCompleteState(null);
           setIsNewUser(null);
-          setLoading(false);
         }
+        
+        setLoading(false);
       }
     );
 
@@ -129,25 +103,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setUser(mappedUser);
 
       if (session?.user) {
-        // Check localStorage immediately
-        const localStatus = getLocalOnboardingStatus();
-        if (localStatus === true) {
-          setOnboardingCompleteState(true);
-          setIsNewUser(false);
-          setLoading(false);
-        } else {
-          setTimeout(() => {
-            checkOnboardingStatus(session.user.id);
-          }, 0);
-          setLoading(false);
-        }
-      } else {
-        setLoading(false);
+        setTimeout(() => {
+          checkUserStatus(session.user.id);
+        }, 0);
       }
+      
+      setLoading(false);
     });
 
     return () => subscription.unsubscribe();
-  }, [checkOnboardingStatus]);
+  }, [checkUserStatus]);
 
   const signInWithGoogle = async (): Promise<{ error: Error | null }> => {
     try {
@@ -158,10 +123,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         !window.location.hostname.includes("localhost");
 
       // Store the current origin to ensure proper redirect after OAuth
+      // This helps maintain the custom domain throughout the auth flow
       sessionStorage.setItem("auth_redirect_origin", window.location.origin);
 
       if (isCustomDomain) {
         // Bypass Lovable auth-bridge for custom domains by using Supabase directly
+        // The redirectTo should be the custom domain origin to stay on the same domain
         const { data, error } = await supabase.auth.signInWithOAuth({
           provider: "google",
           options: {
@@ -204,10 +171,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setUser(null);
       setSession(null);
       setIsNewUser(null);
-      setOnboardingCompleteState(null);
-      // Clear cached onboarding status
-      localStorage.removeItem("locked_onboarding_complete");
-      localStorage.removeItem("locked_onboarding_skipped");
     } catch (error) {
       console.error("Sign out error:", error);
     }
@@ -217,26 +180,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setIsNewUser(false);
   }, []);
 
-  const setOnboardingComplete = useCallback((complete: boolean) => {
-    setOnboardingCompleteState(complete);
-    if (complete) {
-      localStorage.setItem("locked_onboarding_complete", "true");
-      setIsNewUser(false);
-    }
-  }, []);
-
   return (
-    <AuthContext.Provider value={{ 
-      user, 
-      session, 
-      loading, 
-      isNewUser, 
-      onboardingComplete,
-      signInWithGoogle, 
-      signOut, 
-      clearNewUserFlag,
-      setOnboardingComplete
-    }}>
+    <AuthContext.Provider value={{ user, session, loading, isNewUser, signInWithGoogle, signOut, clearNewUserFlag }}>
       {children}
     </AuthContext.Provider>
   );
