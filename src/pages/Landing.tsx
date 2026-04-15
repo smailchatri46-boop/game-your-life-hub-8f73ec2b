@@ -69,7 +69,7 @@ export default function Landing() {
       <LandingNavbar />
       
       {/* Hero Section */}
-      <section className="pt-32 pb-20 px-4">
+      <section className="pt-44 pb-20 px-4">
         <div className="max-w-7xl mx-auto">
           <div className="grid lg:grid-cols-[5fr_7fr] gap-10 lg:gap-12 items-start">
             {/* Left Column - Title, Description, CTA */}
