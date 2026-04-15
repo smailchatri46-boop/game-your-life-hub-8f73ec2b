@@ -21,8 +21,11 @@ export default function Acquisition() {
         </Link>
       </div>
 
-      {/* Centered video */}
-      <div className="flex-1 flex items-center justify-center px-4 pb-12">
+      {/* Heading + Centered video */}
+      <div className="flex-1 flex flex-col items-center justify-center px-4 pb-12">
+        <h1 className="font-display text-2xl md:text-4xl font-semibold text-center mb-8 max-w-3xl">
+          Watch How to <span className="gradient-text">Grow</span> Neyler and Bring Your <span className="gradient-text">First Users</span> In
+        </h1>
         <div className="w-full max-w-[960px]">
           <div className="rounded-2xl overflow-hidden shadow-2xl shadow-black/10">
             <YouTubeEmbed
