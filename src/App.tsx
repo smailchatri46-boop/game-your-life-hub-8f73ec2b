@@ -76,6 +76,7 @@ const App = () => (
                   <Route path="/cookies" element={<Cookies />} />
                   <Route path="/refund" element={<Refund />} />
                   <Route path="/contact" element={<Contact />} />
+                  <Route path="/acquisition" element={<Acquisition />} />
                   
                   {/* Auth routes - redirect if already authenticated */}
                   <Route path="/auth" element={<AuthGuard><Auth /></AuthGuard>} />
