@@ -11,6 +11,7 @@ import { ScrollReveal } from "@/components/ScrollReveal";
 import { Footer } from "@/components/Footer";
 import dashboardThumbnail from "@/assets/dashboard-thumbnail.png";
 import { useReferral } from "@/hooks/use-referral";
+import { AnnouncementBanner } from "@/components/AnnouncementBanner";
 
 // Lazy load below-fold sections for better initial load
 const AnalyticsCarousel = lazy(() => import("@/components/landing/AnalyticsCarousel").then(m => ({ default: m.AnalyticsCarousel })));
@@ -64,6 +65,7 @@ export default function Landing() {
 
   return (
     <div className="min-h-screen gradient-hero overflow-hidden">
+      <AnnouncementBanner />
       <LandingNavbar />
       
       {/* Hero Section */}

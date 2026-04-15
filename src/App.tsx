@@ -37,6 +37,7 @@ const Refund = lazy(() => import("./pages/Refund"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 const Paywall = lazy(() => import("./pages/Paywall"));
 const PaymentSuccess = lazy(() => import("./pages/PaymentSuccess"));
+const Acquisition = lazy(() => import("./pages/Acquisition"));
 
 const queryClient = new QueryClient({
   defaultOptions: {
