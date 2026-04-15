@@ -15,9 +15,9 @@ export function AuthRedirect({ children }: AuthRedirectProps) {
   const { subscription, isLoading: subscriptionLoading } = useSubscription();
   const location = useLocation();
 
-  // Show nothing while loading to prevent flash
+  // Show landing page while loading (don't block with white screen)
   if (loading || !onboardingChecked || subscriptionLoading) {
-    return null;
+    return <>{children}</>;
   }
 
   // If user is authenticated and on root, redirect appropriately
