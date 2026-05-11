@@ -1,10 +1,36 @@
 import { useEffect } from "react";
 
 /**
- * Temporarily fully disabled — all redirects are off so we can preview
- * the homepage and acquisition page on the Lovable domain.
+ * Detects when the app is loaded on the Lovable subdomain but should be on a custom domain.
+ * After OAuth callback, users may land on game-your-life-hub.lovable.app instead of neyler.com.
+ * This component redirects them to the custom domain while preserving the auth session.
  */
+
+// The custom domain where users should be redirected
+const CUSTOM_DOMAIN = "https://neyler.com";
+
+// Check if hostname is a Lovable domain
+function isLovableDomain(hostname: string): boolean {
+  return (
+    hostname.includes("lovable.app") ||
+    hostname.includes("lovableproject.com") ||
+    hostname.includes("localhost")
+  );
+}
+
 export function DomainRedirect() {
-  // All redirects disabled for now
+  useEffect(() => {
+    const currentHost = window.location.hostname;
+    
+    // Only redirect if we're on a Lovable domain (not already on custom domain)
+    if (!isLovableDomain(currentHost)) {
+      return;
+    }
+    
+    // Always redirect to custom domain when on Lovable subdomain
+    const newUrl = `${CUSTOM_DOMAIN}${window.location.pathname}${window.location.search}${window.location.hash}`;
+    window.location.href = newUrl;
+  }, []);
+  
   return null;
 }

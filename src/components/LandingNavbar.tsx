@@ -33,7 +33,7 @@ export function LandingNavbar() {
   }, []);
 
   return (
-    <nav className="fixed top-[3.75rem] left-1/2 -translate-x-1/2 z-50 w-full max-w-4xl px-4">
+    <nav className="fixed top-6 left-1/2 -translate-x-1/2 z-50 w-full max-w-4xl px-4">
       <div className="glass-card px-4 py-3 flex items-center justify-between">
         <Link to="/" className="px-2">
           <img src={neylerLogo} alt="Neyler" className="h-7 w-auto" loading="eager" fetchPriority="high" width={100} height={28} />
