@@ -17,16 +17,27 @@ interface SuggestedQuestionsProps {
 export function SuggestedQuestions({ onSelect, disabled }: SuggestedQuestionsProps) {
   const scrollRef = useRef<HTMLDivElement>(null);
   const animationRef = useRef<number>();
+  const isVisibleRef = useRef(true);
 
   useEffect(() => {
     const container = scrollRef.current;
     if (!container) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => { isVisibleRef.current = entry.isIntersecting; },
+      { threshold: 0 }
+    );
+    observer.observe(container);
 
     let scrollPos = 0;
     const scrollSpeed = 0.2;
 
     const animate = () => {
       if (!container) return;
+      if (!isVisibleRef.current) {
+        animationRef.current = requestAnimationFrame(animate);
+        return;
+      }
 
       scrollPos += scrollSpeed;
 
@@ -57,6 +68,7 @@ export function SuggestedQuestions({ onSelect, disabled }: SuggestedQuestionsPro
     container.addEventListener("touchend", handleMouseLeave);
 
     return () => {
+      observer.disconnect();
       if (animationRef.current) cancelAnimationFrame(animationRef.current);
       container.removeEventListener("mouseenter", handleMouseEnter);
       container.removeEventListener("mouseleave", handleMouseLeave);

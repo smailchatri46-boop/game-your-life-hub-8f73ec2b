@@ -173,15 +173,26 @@ interface AnalyticsCarouselProps {
 export function AnalyticsCarousel({ isOnboarding = false }: AnalyticsCarouselProps) {
   const scrollRef = useRef<HTMLDivElement>(null);
   const animationRef = useRef<number>();
+  const isVisibleRef = useRef(true);
 
   useEffect(() => {
     const scrollContainer = scrollRef.current;
     if (!scrollContainer) return;
 
+    const observer = new IntersectionObserver(
+      ([entry]) => { isVisibleRef.current = entry.isIntersecting; },
+      { threshold: 0 }
+    );
+    observer.observe(scrollContainer);
+
     let scrollPosition = 0;
     const speed = 0.5;
 
     const animate = () => {
+      if (!isVisibleRef.current) {
+        animationRef.current = requestAnimationFrame(animate);
+        return;
+      }
       scrollPosition += speed;
       if (scrollPosition >= scrollContainer.scrollWidth / 2) {
         scrollPosition = 0;
@@ -193,6 +204,7 @@ export function AnalyticsCarousel({ isOnboarding = false }: AnalyticsCarouselPro
     animationRef.current = requestAnimationFrame(animate);
 
     return () => {
+      observer.disconnect();
       if (animationRef.current) {
         cancelAnimationFrame(animationRef.current);
       }
