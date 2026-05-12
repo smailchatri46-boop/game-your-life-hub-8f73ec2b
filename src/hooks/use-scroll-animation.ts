@@ -6,17 +6,20 @@ interface UseScrollAnimationOptions {
   triggerOnce?: boolean;
 }
 
-// Shared observer for better performance - reduces observer instances
-const observerCache = new Map<string, IntersectionObserver>();
+// Shared observer cache with reference counting so observers are
+// disconnected and removed when no components are using them anymore.
+interface CacheEntry {
+  observer: IntersectionObserver;
+  count: number;
+}
 
-function getObserver(
-  threshold: number,
-  rootMargin: string,
-  callback: (entry: IntersectionObserverEntry) => void
-): IntersectionObserver {
+const observerCache = new Map<string, CacheEntry>();
+
+function acquireObserver(threshold: number, rootMargin: string): IntersectionObserver {
   const key = `${threshold}-${rootMargin}`;
-  
-  if (!observerCache.has(key)) {
+  let entry = observerCache.get(key);
+
+  if (!entry) {
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
@@ -26,10 +29,24 @@ function getObserver(
       },
       { threshold, rootMargin }
     );
-    observerCache.set(key, observer);
+    entry = { observer, count: 0 };
+    observerCache.set(key, entry);
   }
-  
-  return observerCache.get(key)!;
+
+  entry.count += 1;
+  return entry.observer;
+}
+
+function releaseObserver(threshold: number, rootMargin: string): void {
+  const key = `${threshold}-${rootMargin}`;
+  const entry = observerCache.get(key);
+  if (!entry) return;
+
+  entry.count -= 1;
+  if (entry.count <= 0) {
+    entry.observer.disconnect();
+    observerCache.delete(key);
+  }
 }
 
 export function useScrollAnimation<T extends HTMLElement = HTMLDivElement>(
@@ -58,12 +75,13 @@ export function useScrollAnimation<T extends HTMLElement = HTMLDivElement>(
     // Attach callback to element for shared observer pattern
     (element as any).__scrollCallback = handleIntersection;
 
-    const observer = getObserver(threshold, rootMargin, handleIntersection);
+    const observer = acquireObserver(threshold, rootMargin);
     observer.observe(element);
 
     return () => {
       observer.unobserve(element);
       delete (element as any).__scrollCallback;
+      releaseObserver(threshold, rootMargin);
     };
   }, [threshold, rootMargin, handleIntersection]);
 

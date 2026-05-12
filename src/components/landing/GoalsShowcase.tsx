@@ -11,15 +11,26 @@ interface GoalsShowcaseProps {
 export function GoalsShowcase({ isOnboarding = false }: GoalsShowcaseProps) {
   const scrollRef = useRef<HTMLDivElement>(null);
   const animationRef = useRef<number>();
+  const isVisibleRef = useRef(true);
 
   useEffect(() => {
     const scrollContainer = scrollRef.current;
     if (!scrollContainer) return;
 
+    const observer = new IntersectionObserver(
+      ([entry]) => { isVisibleRef.current = entry.isIntersecting; },
+      { threshold: 0 }
+    );
+    observer.observe(scrollContainer);
+
     let scrollPosition = 0;
     const scrollSpeed = 0.4;
 
     const animate = () => {
+      if (!isVisibleRef.current) {
+        animationRef.current = requestAnimationFrame(animate);
+        return;
+      }
       scrollPosition += scrollSpeed;
       
       // Reset when we've scrolled half (since content is duplicated)
@@ -34,6 +45,7 @@ export function GoalsShowcase({ isOnboarding = false }: GoalsShowcaseProps) {
     animationRef.current = requestAnimationFrame(animate);
 
     return () => {
+      observer.disconnect();
       if (animationRef.current) {
         cancelAnimationFrame(animationRef.current);
       }

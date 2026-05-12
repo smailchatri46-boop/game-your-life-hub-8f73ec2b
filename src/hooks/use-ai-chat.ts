@@ -221,7 +221,10 @@ export function useAIChat() {
       };
 
       // Immediately render user message
-      setMessages((prev) => [...prev, userMessage]);
+      setMessages((prev) => {
+        const updated = [...prev, userMessage];
+        return updated.length > 200 ? updated.slice(-200) : updated;
+      });
       setIsLoading(true);
 
       try {
@@ -253,10 +256,13 @@ export function useAIChat() {
         }
         
         const assistantId = crypto.randomUUID();
-        setMessages((prev) => [
-          ...prev,
-          { id: assistantId, role: "assistant", content: assistantContent, timestamp: new Date() },
-        ]);
+        setMessages((prev) => {
+          const updated = [
+            ...prev,
+            { id: assistantId, role: "assistant" as const, content: assistantContent, timestamp: new Date() },
+          ];
+          return updated.length > 200 ? updated.slice(-200) : updated;
+        });
 
         // Save assistant message to database if authenticated
         if (isAuthed && user) {
@@ -270,15 +276,18 @@ export function useAIChat() {
         }
       } catch (error) {
         console.error("Chat error:", error);
-        setMessages((prev) => [
-          ...prev,
-          {
-            id: crypto.randomUUID(),
-            role: "assistant",
-            content: `Sorry — I ran into an error: ${error instanceof Error ? error.message : "Unknown error"}.`,
-            timestamp: new Date(),
-          },
-        ]);
+        setMessages((prev) => {
+          const updated = [
+            ...prev,
+            {
+              id: crypto.randomUUID(),
+              role: "assistant" as const,
+              content: `Sorry — I ran into an error: ${error instanceof Error ? error.message : "Unknown error"}.`,
+              timestamp: new Date(),
+            },
+          ];
+          return updated.length > 200 ? updated.slice(-200) : updated;
+        });
       } finally {
         setIsLoading(false);
       }

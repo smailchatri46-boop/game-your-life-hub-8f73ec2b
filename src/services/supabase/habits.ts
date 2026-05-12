@@ -104,7 +104,7 @@ export async function getCompletions(
 ): Promise<HabitCompletion[]> {
   const { data, error } = await supabase
     .from("habit_completions")
-    .select("*")
+    .select("id, habit_id, user_id, date, value, created_at")
     .eq("user_id", userId)
     .gte("date", startDate)
     .lte("date", endDate);

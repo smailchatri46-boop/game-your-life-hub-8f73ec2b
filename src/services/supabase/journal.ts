@@ -6,10 +6,14 @@ export async function getJournalEntries(
   userId: string,
   limitCount: number = 50
 ): Promise<JournalEntry[]> {
+  const ninetyDaysAgo = new Date();
+  ninetyDaysAgo.setDate(ninetyDaysAgo.getDate() - 90);
+
   const { data, error } = await supabase
     .from("journal_entries")
-    .select("*")
+    .select("id, user_id, emoji, content, bg_color, created_at, updated_at")
     .eq("user_id", userId)
+    .gte("created_at", ninetyDaysAgo.toISOString())
     .order("created_at", { ascending: false })
     .limit(limitCount);
 

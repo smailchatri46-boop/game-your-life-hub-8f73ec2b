@@ -1,4 +1,4 @@
-import { useMemo, useRef, useEffect, useState } from "react";
+import { memo, useMemo, useRef, useEffect, useState } from "react";
 
 interface ChartData {
   day: number;
@@ -20,7 +20,7 @@ interface TooltipState {
   progress: number;
 }
 
-export function AlignedProgressChart({ data, daysInMonth, currentDay, monthName }: AlignedProgressChartProps) {
+function AlignedProgressChartComponent({ data, daysInMonth, currentDay, monthName }: AlignedProgressChartProps) {
   const chartHeight = 120;
   const maxProgress = 100;
   const containerRef = useRef<HTMLDivElement>(null);
@@ -256,3 +256,5 @@ export function AlignedProgressChart({ data, daysInMonth, currentDay, monthName 
     </div>
   );
 }
+
+export const AlignedProgressChart = memo(AlignedProgressChartComponent);

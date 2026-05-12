@@ -19,15 +19,26 @@ interface AIBuddyShowcaseProps {
 export function AIBuddyShowcase({ isOnboarding = false }: AIBuddyShowcaseProps) {
   const scrollRef = useRef<HTMLDivElement>(null);
   const animationRef = useRef<number>();
+  const isVisibleRef = useRef(true);
 
   useEffect(() => {
     const scrollContainer = scrollRef.current;
     if (!scrollContainer) return;
 
+    const observer = new IntersectionObserver(
+      ([entry]) => { isVisibleRef.current = entry.isIntersecting; },
+      { threshold: 0 }
+    );
+    observer.observe(scrollContainer);
+
     let scrollPosition = 0;
     const scrollSpeed = 0.3;
 
     const animate = () => {
+      if (!isVisibleRef.current) {
+        animationRef.current = requestAnimationFrame(animate);
+        return;
+      }
       scrollPosition += scrollSpeed;
       
       if (scrollPosition >= scrollContainer.scrollWidth / 2) {
@@ -41,6 +52,7 @@ export function AIBuddyShowcase({ isOnboarding = false }: AIBuddyShowcaseProps) 
     animationRef.current = requestAnimationFrame(animate);
 
     return () => {
+      observer.disconnect();
       if (animationRef.current) {
         cancelAnimationFrame(animationRef.current);
       }

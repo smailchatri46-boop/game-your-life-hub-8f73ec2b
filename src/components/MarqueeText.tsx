@@ -21,6 +21,7 @@ export function MarqueeText({ text, className = "", index = 0, hideOverlay = fal
   const containerRef = useRef<HTMLDivElement>(null);
   const textRef = useRef<HTMLSpanElement>(null);
   const [isOverflowing, setIsOverflowing] = useState(false);
+  const [isVisible, setIsVisible] = useState(true);
 
   const checkOverflow = useCallback(() => {
     if (containerRef.current && textRef.current) {
@@ -34,9 +35,21 @@ export function MarqueeText({ text, className = "", index = 0, hideOverlay = fal
       checkOverflow();
     });
     window.addEventListener("resize", checkOverflow);
+
+    const el = containerRef.current;
+    let observer: IntersectionObserver | null = null;
+    if (el) {
+      observer = new IntersectionObserver(
+        ([entry]) => setIsVisible(entry.isIntersecting),
+        { threshold: 0 }
+      );
+      observer.observe(el);
+    }
+
     return () => {
       cancelAnimationFrame(raf);
       window.removeEventListener("resize", checkOverflow);
+      observer?.disconnect();
     };
   }, [text, checkOverflow]);
 
@@ -58,6 +71,7 @@ export function MarqueeText({ text, className = "", index = 0, hideOverlay = fal
         className="whitespace-nowrap block"
         style={isOverflowing ? {
           animation: `marquee-scroll ${config.duration}s linear ${config.delay}s infinite`,
+          animationPlayState: isVisible ? 'running' : 'paused',
         } : undefined}
       >
         {text}
