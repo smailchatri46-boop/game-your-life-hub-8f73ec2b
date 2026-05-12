@@ -1,6 +1,6 @@
 // Supabase service for user profiles
 import { supabase } from "@/integrations/supabase/client";
-import type { Profile } from "@/services/firestore/types";
+import type { Profile } from "@/services/supabase/types";
 
 export async function getProfile(userId: string): Promise<Profile | null> {
   const { data, error } = await supabase

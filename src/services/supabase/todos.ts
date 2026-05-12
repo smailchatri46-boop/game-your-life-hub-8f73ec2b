@@ -1,6 +1,6 @@
 // Supabase service for daily todos
 import { supabase } from "@/integrations/supabase/client";
-import type { DailyTodo } from "@/services/firestore/types";
+import type { DailyTodo } from "@/services/supabase/types";
 
 export interface TodoWithEmoji extends DailyTodo {
   emoji?: string;

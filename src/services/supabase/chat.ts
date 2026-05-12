@@ -1,6 +1,6 @@
 // Supabase service for chat conversations and messages
 import { supabase } from "@/integrations/supabase/client";
-import type { ChatConversation, ChatMessage, AIUsage } from "@/services/firestore/types";
+import type { ChatConversation, ChatMessage, AIUsage } from "@/services/supabase/types";
 
 // ============ CONVERSATIONS ============
 

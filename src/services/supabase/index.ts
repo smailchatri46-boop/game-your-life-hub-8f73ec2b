@@ -12,7 +12,7 @@ export type {
   ChatConversation,
   ChatMessage,
   AIUsage,
-} from "@/services/firestore/types";
+} from "@/services/supabase/types";
 
 // Habits
 export {

@@ -1,6 +1,6 @@
 // Supabase service for journal entries
 import { supabase } from "@/integrations/supabase/client";
-import type { JournalEntry } from "@/services/firestore/types";
+import type { JournalEntry } from "@/services/supabase/types";
 
 export async function getJournalEntries(
   userId: string,

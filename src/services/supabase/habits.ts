@@ -1,6 +1,6 @@
 // Supabase service for habits
 import { supabase } from "@/integrations/supabase/client";
-import type { Habit, HabitCompletion } from "@/services/firestore/types";
+import type { Habit, HabitCompletion } from "@/services/supabase/types";
 
 // ============ HABITS ============
 
