@@ -1,4 +1,4 @@
-import { useMemo, useRef, useEffect, useState } from "react";
+import { memo, useMemo, useRef, useEffect, useState } from "react";
 
 interface MoodMotivationData {
   day: number;
@@ -21,7 +21,7 @@ interface TooltipState {
   motivation?: number;
 }
 
-export function MoodMotivationChart({ data, daysInMonth, currentDay }: MoodMotivationChartProps) {
+function MoodMotivationChartComponent({ data, daysInMonth, currentDay }: MoodMotivationChartProps) {
   const chartHeight = 120;
   const maxProgress = 100;
   const containerRef = useRef<HTMLDivElement>(null);
@@ -244,3 +244,5 @@ export function MoodMotivationChart({ data, daysInMonth, currentDay }: MoodMotiv
     </div>
   );
 }
+
+export const MoodMotivationChart = memo(MoodMotivationChartComponent);
