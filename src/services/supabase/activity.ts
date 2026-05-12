@@ -22,12 +22,16 @@ export async function getRecentActivities(
   userId: string,
   limit: number = 4
 ): Promise<ActivityLog[]> {
+  const ninetyDaysAgo = new Date();
+  ninetyDaysAgo.setDate(ninetyDaysAgo.getDate() - 90);
+
   const { data, error } = await supabase
     .from("activity_logs")
-    .select("*")
+    .select("id, user_id, activity_type, entity_id, entity_name, emoji, created_at")
     .eq("user_id", userId)
+    .gte("created_at", ninetyDaysAgo.toISOString())
     .order("created_at", { ascending: false })
-    .limit(limit);
+    .limit(Math.min(limit, 200));
 
   if (error) {
     console.error("Error fetching activity logs:", error);

@@ -9,7 +9,7 @@ export async function getMoodLogs(
 ): Promise<MoodLog[]> {
   const { data, error } = await supabase
     .from("mood_logs")
-    .select("*")
+    .select("id, user_id, date, mood, motivation, reflection, created_at")
     .eq("user_id", userId)
     .gte("date", startDate)
     .lte("date", endDate)
