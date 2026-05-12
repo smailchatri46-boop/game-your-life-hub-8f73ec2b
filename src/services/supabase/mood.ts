@@ -1,6 +1,6 @@
 // Supabase service for mood logs
 import { supabase } from "@/integrations/supabase/client";
-import type { MoodLog } from "@/services/firestore/types";
+import type { MoodLog } from "@/services/supabase/types";
 
 export async function getMoodLogs(
   userId: string,

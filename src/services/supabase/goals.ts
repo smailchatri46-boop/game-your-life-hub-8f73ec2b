@@ -1,6 +1,6 @@
 // Supabase service for goals
 import { supabase } from "@/integrations/supabase/client";
-import type { Goal, GoalHabit } from "@/services/firestore/types";
+import type { Goal, GoalHabit } from "@/services/supabase/types";
 
 // ============ GOALS ============
 
