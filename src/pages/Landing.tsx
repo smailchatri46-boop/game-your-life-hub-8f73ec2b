@@ -89,7 +89,7 @@ export default function Landing() {
         <div className="max-w-7xl mx-auto">
           <div className="grid lg:grid-cols-[5fr_7fr] gap-10 lg:gap-12 items-start">
             {/* Left Column - Title, Description, CTA */}
-            <div className="order-2 lg:order-1 flex flex-col lg:justify-end lg:pb-0">
+            <div className="lg:order-1 flex flex-col lg:justify-end lg:pb-0">
               <h1 className="font-display text-4xl md:text-5xl lg:text-6xl font-semibold mb-6 animate-fade-in text-center lg:text-left">
                 <span className="italic gradient-text">Turn your life</span>
                 <br />
