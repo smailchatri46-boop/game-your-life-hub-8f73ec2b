@@ -115,7 +115,7 @@ export default function Landing() {
             </div>
 
             {/* Right Column - Video/Demo */}
-            <div className="order-1 lg:order-2 animate-fade-in delay-100">
+            <div className="lg:order-2 animate-fade-in delay-100">
               <div className="overflow-hidden rounded-3xl">
                 <YouTubeEmbed 
                   videoId="0GO0SyFo8dc" 
