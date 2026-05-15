@@ -354,7 +354,7 @@ export default function Landing() {
         }`}
       >
         <Button variant="gradient" size="xl" asChild className="shadow-lg">
-          <Link to="/signup" className="gap-3">
+          <Link to="/signup" className="gap-3" onClick={handleSignupClick}>
             <span className="w-6 h-6 bg-white rounded-full flex items-center justify-center flex-shrink-0">
               <img src={googleLogo} alt="Google" className="w-4 h-4 block" loading="eager" width={16} height={16} style={{ opacity: 1 }} />
             </span>
