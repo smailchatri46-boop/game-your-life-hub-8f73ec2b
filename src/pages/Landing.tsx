@@ -135,9 +135,11 @@ export default function Landing() {
         <AnalyticsCarousel />
       </Suspense>
       
-      <Suspense fallback={<SectionPlaceholder />}>
-        <HabitsShowcase />
-      </Suspense>
+      <div className="hidden md:block">
+        <Suspense fallback={<SectionPlaceholder />}>
+          <HabitsShowcase />
+        </Suspense>
+      </div>
       
       
       <Suspense fallback={<SectionPlaceholder />}>
