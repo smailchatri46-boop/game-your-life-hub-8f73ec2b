@@ -1,4 +1,4 @@
-import { useRef, useState, useEffect, lazy, Suspense } from "react";
+import { useRef, useState, useEffect, lazy, Suspense, useCallback, MouseEvent as ReactMouseEvent } from "react";
 import { LandingNavbar } from "@/components/LandingNavbar";
 import { Button } from "@/components/ui/button";
 import { GlassCard } from "@/components/GlassCard";
@@ -11,6 +11,8 @@ import { ScrollReveal } from "@/components/ScrollReveal";
 import { Footer } from "@/components/Footer";
 import dashboardThumbnail from "@/assets/dashboard-thumbnail.png";
 import { useReferral } from "@/hooks/use-referral";
+import { useAuth } from "@/contexts/AuthContext";
+import { toast } from "sonner";
 
 // Lazy load below-fold sections for better initial load
 const AnalyticsCarousel = lazy(() => import("@/components/landing/AnalyticsCarousel").then(m => ({ default: m.AnalyticsCarousel })));
@@ -29,9 +31,25 @@ export default function Landing() {
   const finalCtaRef = useRef<HTMLDivElement>(null);
   const [showStickyButton, setShowStickyButton] = useState(false);
   const [nearFinalCta, setNearFinalCta] = useState(false);
+  const { signInWithGoogle } = useAuth();
 
   // Capture affiliate referral ID from URL
   useReferral();
+
+  // On mobile, bypass intermediate /signup page and trigger Google OAuth directly.
+  const handleSignupClick = useCallback(
+    async (e: ReactMouseEvent<HTMLAnchorElement>) => {
+      if (typeof window === "undefined") return;
+      if (window.matchMedia("(max-width: 767px)").matches) {
+        e.preventDefault();
+        const { error } = await signInWithGoogle();
+        if (error) {
+          toast.error("Failed to sign in with Google. Please try again.");
+        }
+      }
+    },
+    [signInWithGoogle]
+  );
 
   useEffect(() => {
     const signUpObserver = new IntersectionObserver(
@@ -71,7 +89,7 @@ export default function Landing() {
         <div className="max-w-7xl mx-auto">
           <div className="grid lg:grid-cols-[5fr_7fr] gap-10 lg:gap-12 items-start">
             {/* Left Column - Title, Description, CTA */}
-            <div className="order-2 lg:order-1 flex flex-col lg:justify-end lg:pb-0">
+            <div className="lg:order-1 flex flex-col lg:justify-end lg:pb-0">
               <h1 className="font-display text-4xl md:text-5xl lg:text-6xl font-semibold mb-6 animate-fade-in text-center lg:text-left">
                 <span className="italic gradient-text">Turn your life</span>
                 <br />
@@ -86,7 +104,7 @@ export default function Landing() {
               {/* Sign Up Button */}
               <div ref={signUpButtonRef} className="animate-fade-in delay-200 flex flex-col items-center lg:items-start">
                 <Button variant="gradient" size="xl" asChild>
-                  <Link to="/signup" className="gap-3">
+                  <Link to="/signup" className="gap-3" onClick={handleSignupClick}>
                     <span className="w-6 h-6 bg-white rounded-full flex items-center justify-center">
                       <img src={googleLogo} alt="Google" className="w-4 h-4" loading="eager" width={16} height={16} />
                     </span>
@@ -97,7 +115,7 @@ export default function Landing() {
             </div>
 
             {/* Right Column - Video/Demo */}
-            <div className="order-1 lg:order-2 animate-fade-in delay-100">
+            <div className="lg:order-2 animate-fade-in delay-100">
               <div className="overflow-hidden rounded-3xl">
                 <YouTubeEmbed 
                   videoId="0GO0SyFo8dc" 
@@ -117,9 +135,11 @@ export default function Landing() {
         <AnalyticsCarousel />
       </Suspense>
       
-      <Suspense fallback={<SectionPlaceholder />}>
-        <HabitsShowcase />
-      </Suspense>
+      <div className="hidden md:block">
+        <Suspense fallback={<SectionPlaceholder />}>
+          <HabitsShowcase />
+        </Suspense>
+      </div>
       
       
       <Suspense fallback={<SectionPlaceholder />}>
@@ -312,7 +332,7 @@ export default function Landing() {
               </p>
               
               <Button variant="gradient" size="xl" asChild>
-                <Link to="/signup" className="gap-3">
+                <Link to="/signup" className="gap-3" onClick={handleSignupClick}>
                   <span className="w-6 h-6 bg-white rounded-full flex items-center justify-center">
                     <img src={googleLogo} alt="Google" className="w-4 h-4" loading="lazy" decoding="async" width={16} height={16} />
                   </span>
@@ -336,7 +356,7 @@ export default function Landing() {
         }`}
       >
         <Button variant="gradient" size="xl" asChild className="shadow-lg">
-          <Link to="/signup" className="gap-3">
+          <Link to="/signup" className="gap-3" onClick={handleSignupClick}>
             <span className="w-6 h-6 bg-white rounded-full flex items-center justify-center flex-shrink-0">
               <img src={googleLogo} alt="Google" className="w-4 h-4 block" loading="eager" width={16} height={16} style={{ opacity: 1 }} />
             </span>
