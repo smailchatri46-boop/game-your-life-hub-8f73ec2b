@@ -1,4 +1,4 @@
-import { useRef, useState, useEffect, lazy, Suspense } from "react";
+import { useRef, useState, useEffect, lazy, Suspense, useCallback, MouseEvent as ReactMouseEvent } from "react";
 import { LandingNavbar } from "@/components/LandingNavbar";
 import { Button } from "@/components/ui/button";
 import { GlassCard } from "@/components/GlassCard";
@@ -11,6 +11,8 @@ import { ScrollReveal } from "@/components/ScrollReveal";
 import { Footer } from "@/components/Footer";
 import dashboardThumbnail from "@/assets/dashboard-thumbnail.png";
 import { useReferral } from "@/hooks/use-referral";
+import { useAuth } from "@/contexts/AuthContext";
+import { toast } from "sonner";
 
 // Lazy load below-fold sections for better initial load
 const AnalyticsCarousel = lazy(() => import("@/components/landing/AnalyticsCarousel").then(m => ({ default: m.AnalyticsCarousel })));
