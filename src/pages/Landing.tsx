@@ -104,7 +104,7 @@ export default function Landing() {
               {/* Sign Up Button */}
               <div ref={signUpButtonRef} className="animate-fade-in delay-200 flex flex-col items-center lg:items-start">
                 <Button variant="gradient" size="xl" asChild>
-                  <Link to="/signup" className="gap-3">
+                  <Link to="/signup" className="gap-3" onClick={handleSignupClick}>
                     <span className="w-6 h-6 bg-white rounded-full flex items-center justify-center">
                       <img src={googleLogo} alt="Google" className="w-4 h-4" loading="eager" width={16} height={16} />
                     </span>
