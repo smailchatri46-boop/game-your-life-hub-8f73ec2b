@@ -31,9 +31,25 @@ export default function Landing() {
   const finalCtaRef = useRef<HTMLDivElement>(null);
   const [showStickyButton, setShowStickyButton] = useState(false);
   const [nearFinalCta, setNearFinalCta] = useState(false);
+  const { signInWithGoogle } = useAuth();
 
   // Capture affiliate referral ID from URL
   useReferral();
+
+  // On mobile, bypass intermediate /signup page and trigger Google OAuth directly.
+  const handleSignupClick = useCallback(
+    async (e: ReactMouseEvent<HTMLAnchorElement>) => {
+      if (typeof window === "undefined") return;
+      if (window.matchMedia("(max-width: 767px)").matches) {
+        e.preventDefault();
+        const { error } = await signInWithGoogle();
+        if (error) {
+          toast.error("Failed to sign in with Google. Please try again.");
+        }
+      }
+    },
+    [signInWithGoogle]
+  );
 
   useEffect(() => {
     const signUpObserver = new IntersectionObserver(
