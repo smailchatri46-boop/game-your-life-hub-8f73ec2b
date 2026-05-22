@@ -54,9 +54,7 @@ export function LandingPricing() {
 
   const getPrice = (plan: Plan) => {
     if (plan.monthlyPrice === 0) return 0;
-    if (isYearly) {
-      return Math.floor(plan.yearlyPrice / 12);
-    }
+    if (isYearly) return 2.9;
     return plan.monthlyPrice;
   };
 
@@ -72,7 +70,7 @@ export function LandingPricing() {
 
   const getYearlyTotal = (plan: Plan) => {
     if (plan.monthlyPrice === 0 || !isYearly) return null;
-    return `Pay only $${plan.yearlyPrice}/year`;
+    return `Billed yearly ($34.99/year)`;
   };
 
   const handleGetStarted = (planName: string) => {
