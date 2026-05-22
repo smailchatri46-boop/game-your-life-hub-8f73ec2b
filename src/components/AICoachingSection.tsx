@@ -63,13 +63,13 @@ export function AICoachingSection({ onUpgrade, onDismiss }: AICoachingSectionPro
       <div className="pt-6 border-t border-border/50">
         <div className="flex justify-center items-center gap-8">
           <div className="text-center">
-            <div className="text-xl font-bold text-foreground">$14<span className="text-sm font-normal text-muted-foreground">/mo</span></div>
+            <div className="text-xl font-bold text-foreground">$4.9<span className="text-sm font-normal text-muted-foreground">/mo</span></div>
             <div className="text-xs text-muted-foreground">Monthly</div>
           </div>
           <div className="w-px h-10 bg-border/50" />
           <div className="text-center">
-            <div className="text-xl font-bold text-foreground">$7<span className="text-sm font-normal text-muted-foreground">/mo</span></div>
-            <div className="text-xs text-muted-foreground">Yearly (save 50%)</div>
+            <div className="text-xl font-bold text-foreground">$2.9<span className="text-sm font-normal text-muted-foreground">/mo</span></div>
+            <div className="text-xs text-muted-foreground">Yearly ($34.99/year)</div>
           </div>
         </div>
       </div>
