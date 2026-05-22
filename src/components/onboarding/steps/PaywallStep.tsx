@@ -85,8 +85,8 @@ export function PaywallStep({ commitmentName }: PaywallStepProps) {
   const { openCheckout, isLoading } = usePolarCheckout({ theme: "light" });
   const { minutes, seconds, isExpired } = useCountdown();
 
-  const monthlyPrice = 14;
-  const yearlyPrice = 7;
+  const monthlyPrice = 4.9;
+  const yearlyPrice = 2.9;
   const originalPrice = 29;
 
   const displayPrice = isYearly ? yearlyPrice : monthlyPrice;
