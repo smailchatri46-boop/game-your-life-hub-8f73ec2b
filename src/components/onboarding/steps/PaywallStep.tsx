@@ -182,7 +182,7 @@ export function PaywallStep({ commitmentName }: PaywallStepProps) {
                 </span>
               </div>
               <p className="text-sm text-muted-foreground mt-2">
-                {isYearly ? "Billed yearly" : "Billed monthly"}
+                {isYearly ? "Billed yearly ($34.99/year)" : "Billed monthly"}
               </p>
             </div>
 
@@ -193,12 +193,12 @@ export function PaywallStep({ commitmentName }: PaywallStepProps) {
               onClick={handleSubscribe}
               disabled={isLoading}
             >
-              Get Started Now
+              Start Free 3-Day Trial
             </Button>
 
             {/* Guarantee Text */}
             <p className="text-sm text-muted-foreground text-center mt-5">
-              Cancel anytime. 7-Day Money-Back Guarantee.
+              No payment charged for 3 days. Cancel anytime.
             </p>
           </div>
         </div>
