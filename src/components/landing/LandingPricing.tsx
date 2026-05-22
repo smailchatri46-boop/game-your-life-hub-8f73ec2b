@@ -27,8 +27,8 @@ interface Plan {
 const plans: Plan[] = [
   {
     name: "Pro",
-    monthlyPrice: 9,
-    yearlyPrice: 49,
+    monthlyPrice: 4.9,
+    yearlyPrice: 34.99,
     subtitle: "Unlock the full AI experience",
     benefitText: "Everything in Neyler unlocked.",
     popular: true,
@@ -54,9 +54,7 @@ export function LandingPricing() {
 
   const getPrice = (plan: Plan) => {
     if (plan.monthlyPrice === 0) return 0;
-    if (isYearly) {
-      return Math.floor(plan.yearlyPrice / 12);
-    }
+    if (isYearly) return 2.9;
     return plan.monthlyPrice;
   };
 
@@ -72,7 +70,7 @@ export function LandingPricing() {
 
   const getYearlyTotal = (plan: Plan) => {
     if (plan.monthlyPrice === 0 || !isYearly) return null;
-    return `Pay only $${plan.yearlyPrice}/year`;
+    return `Billed yearly ($34.99/year)`;
   };
 
   const handleGetStarted = (planName: string) => {
@@ -258,8 +256,13 @@ export function LandingPricing() {
                   onClick={() => handleGetStarted(plan.name)}
                   disabled={isLoading}
                 >
-                  {plan.monthlyPrice === 0 ? "Start for free" : "Get started"}
+                  {plan.monthlyPrice === 0 ? "Start for free" : "Start Free 3-Day Trial"}
                 </Button>
+                {plan.monthlyPrice !== 0 && (
+                  <p className="text-xs text-muted-foreground text-center mt-2">
+                    No payment charged for 3 days. Cancel anytime.
+                  </p>
+                )}
               </div>
             </ScrollReveal>
           ))}

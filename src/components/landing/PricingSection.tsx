@@ -28,8 +28,8 @@ const ORIGINAL_PRICE = 29;
 const plans: Plan[] = [
   {
     name: "Pro",
-    monthlyPrice: 14,
-    yearlyPrice: 85,
+    monthlyPrice: 4.9,
+    yearlyPrice: 34.99,
     subtitle: "Unlock the full experience",
     benefitText: "Everything in Neyler unlocked.",
     popular: true,
@@ -54,10 +54,7 @@ export function PricingSection() {
 
   const getPrice = (plan: Plan) => {
     if (plan.monthlyPrice === 0) return 0;
-    // When yearly is selected, show the monthly equivalent as the main price
-    if (isYearly) {
-      return Math.floor(plan.yearlyPrice / 12);
-    }
+    if (isYearly) return 2.9;
     return plan.monthlyPrice;
   };
 
@@ -73,7 +70,7 @@ export function PricingSection() {
 
   const getBillingText = (plan: Plan) => {
     if (plan.monthlyPrice === 0) return null;
-    return isYearly ? "Billed yearly" : "Billed monthly";
+    return isYearly ? "Billed yearly ($34.99/year)" : "Billed monthly";
   };
 
   const handleGetStarted = () => {
@@ -252,8 +249,11 @@ export function PricingSection() {
                 onClick={() => handleGetStarted()}
                 disabled={isLoading}
               >
-                Get started
+                Start Free 3-Day Trial
               </Button>
+              <p className="text-xs text-muted-foreground text-center mt-2">
+                No payment charged for 3 days. Cancel anytime.
+              </p>
             </div>
           ))}
         </div>
