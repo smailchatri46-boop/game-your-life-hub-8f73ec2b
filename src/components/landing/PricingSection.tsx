@@ -28,8 +28,8 @@ const ORIGINAL_PRICE = 29;
 const plans: Plan[] = [
   {
     name: "Pro",
-    monthlyPrice: 14,
-    yearlyPrice: 85,
+    monthlyPrice: 4.9,
+    yearlyPrice: 34.99,
     subtitle: "Unlock the full experience",
     benefitText: "Everything in Neyler unlocked.",
     popular: true,
