@@ -42,7 +42,7 @@ export function UpgradeModal({ open, onClose }: UpgradeModalProps) {
             className="w-full rounded-full text-primary-foreground font-medium shadow-[0_2px_8px_hsl(var(--primary)/0.3)]"
             style={{ background: 'linear-gradient(135deg, hsl(38 100% 70%) 0%, hsl(24 95% 53%) 100%)' }}
           >
-            $4/month (billed yearly) — Best Value
+            $2.9/month (billed yearly $34.99) — Best Value
           </Button>
           <Button
             onClick={() => handleUpgrade("monthly")}
@@ -50,8 +50,11 @@ export function UpgradeModal({ open, onClose }: UpgradeModalProps) {
             variant="outline"
             className="w-full rounded-full"
           >
-            $9/month (billed monthly)
+            $4.9/month (billed monthly)
           </Button>
+          <p className="text-xs text-muted-foreground text-center">
+            No payment charged for 3 days. Cancel anytime.
+          </p>
         </div>
 
         <div className="flex flex-col gap-3 pt-2">
