@@ -237,7 +237,7 @@ export function PaywallModal({ open, onOpenChange, limitMessage }: PaywallModalP
               <div className="text-center mb-3 h-[52px] flex flex-col justify-center">
                 <div className="flex items-baseline justify-center gap-0.5">
                   <span className="text-3xl font-bold text-foreground">
-                    {isYearly ? "$4" : `$${proPlan.monthlyPrice}`}
+                    {isYearly ? "$2.9" : `$${proPlan.monthlyPrice}`}
                   </span>
                   <span className="text-muted-foreground text-sm">
                     /{isYearly ? "month" : "mo"}
@@ -247,7 +247,7 @@ export function PaywallModal({ open, onOpenChange, limitMessage }: PaywallModalP
                   "text-primary text-xs font-medium mt-0.5",
                   isYearly ? "visible" : "invisible"
                 )}>
-                  Pay only $49/year
+                  Billed yearly ($34.99/year)
                 </p>
               </div>
 
@@ -276,12 +276,12 @@ export function PaywallModal({ open, onOpenChange, limitMessage }: PaywallModalP
                 onClick={() => handleUpgrade("Pro")}
                 disabled={isLoading}
               >
-                Unlock Pro
+                Start Free 3-Day Trial
               </Button>
 
               {/* Trust Line - closer to button */}
               <p className="text-center text-[10px] text-muted-foreground mt-2">
-                Cancel anytime.
+                No payment charged for 3 days. Cancel anytime.
               </p>
             </div>
           </div>
