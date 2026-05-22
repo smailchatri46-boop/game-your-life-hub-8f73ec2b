@@ -242,10 +242,10 @@ export function PaywallStep({ commitmentName }: PaywallStepProps) {
             onClick={handleSubscribe}
             disabled={isLoading}
           >
-            Get Started Now
+            Start Free 3-Day Trial
           </Button>
           <p className="text-sm text-muted-foreground mt-4">
-            Cancel anytime. 7-Day Money-Back Guarantee.
+            No payment charged for 3 days. Cancel anytime.
           </p>
         </div>
       </div>
