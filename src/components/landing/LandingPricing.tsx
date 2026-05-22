@@ -256,8 +256,13 @@ export function LandingPricing() {
                   onClick={() => handleGetStarted(plan.name)}
                   disabled={isLoading}
                 >
-                  {plan.monthlyPrice === 0 ? "Start for free" : "Get started"}
+                  {plan.monthlyPrice === 0 ? "Start for free" : "Start Free 3-Day Trial"}
                 </Button>
+                {plan.monthlyPrice !== 0 && (
+                  <p className="text-xs text-muted-foreground text-center mt-2">
+                    No payment charged for 3 days. Cancel anytime.
+                  </p>
+                )}
               </div>
             </ScrollReveal>
           ))}
