@@ -64,7 +64,7 @@ export function usePolarCheckout(options: UsePolarCheckoutOptions = {}) {
         // These amounts should match your Polar pricing
         let amount = 0;
         if (plan === "pro") {
-          amount = period === "yearly" ? 85 : 14; // $85/year or $14/month
+          amount = period === "yearly" ? 34.99 : 4.9; // $34.99/year or $4.9/month
         }
         
         // Track the referral before redirecting
