@@ -26,6 +26,23 @@ export default function Onboarding() {
     }
   }, [user, authLoading, subscription, subLoading, navigate]);
 
+  // Start session recording only during the onboarding flow.
+  // Stop on unmount (completion, skip, or navigation away).
+  useEffect(() => {
+    try {
+      posthog.startSessionRecording();
+    } catch (e) {
+      // no-op if PostHog isn't ready yet
+    }
+    return () => {
+      try {
+        posthog.stopSessionRecording();
+      } catch (e) {
+        // no-op
+      }
+    };
+  }, []);
+
   // Show loading while checking
   if (authLoading || subLoading) {
     return (
