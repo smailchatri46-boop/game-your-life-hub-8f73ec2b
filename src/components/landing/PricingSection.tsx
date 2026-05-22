@@ -249,8 +249,11 @@ export function PricingSection() {
                 onClick={() => handleGetStarted()}
                 disabled={isLoading}
               >
-                Get started
+                Start Free 3-Day Trial
               </Button>
+              <p className="text-xs text-muted-foreground text-center mt-2">
+                No payment charged for 3 days. Cancel anytime.
+              </p>
             </div>
           ))}
         </div>
