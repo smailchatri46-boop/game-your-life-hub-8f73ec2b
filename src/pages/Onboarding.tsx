@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
+import posthog from "posthog-js";
 import { OnboardingFlow } from "@/components/onboarding";
 import { useSubscription } from "@/contexts/SubscriptionContext";
 import { useAuth } from "@/contexts/AuthContext";
@@ -24,6 +25,23 @@ export default function Onboarding() {
       navigate("/dashboard", { replace: true });
     }
   }, [user, authLoading, subscription, subLoading, navigate]);
+
+  // Start session recording only during the onboarding flow.
+  // Stop on unmount (completion, skip, or navigation away).
+  useEffect(() => {
+    try {
+      posthog.startSessionRecording();
+    } catch (e) {
+      // no-op if PostHog isn't ready yet
+    }
+    return () => {
+      try {
+        posthog.stopSessionRecording();
+      } catch (e) {
+        // no-op
+      }
+    };
+  }, []);
 
   // Show loading while checking
   if (authLoading || subLoading) {
