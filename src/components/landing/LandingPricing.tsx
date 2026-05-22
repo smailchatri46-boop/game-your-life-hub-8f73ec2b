@@ -27,8 +27,8 @@ interface Plan {
 const plans: Plan[] = [
   {
     name: "Pro",
-    monthlyPrice: 9,
-    yearlyPrice: 49,
+    monthlyPrice: 4.9,
+    yearlyPrice: 34.99,
     subtitle: "Unlock the full AI experience",
     benefitText: "Everything in Neyler unlocked.",
     popular: true,
