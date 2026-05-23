@@ -104,7 +104,7 @@ export function PaywallStep({ commitmentName }: PaywallStepProps) {
         {/* Header */}
         <div className="text-center mb-12 max-w-2xl">
           <h1 className="font-display text-3xl md:text-4xl font-semibold text-foreground mb-2 tracking-tight">
-            It's time to invest in yourself
+            Your organized life starts now
             {commitmentName ? `, ${commitmentName}` : ""}
           </h1>
         </div>
@@ -206,7 +206,7 @@ export function PaywallStep({ commitmentName }: PaywallStepProps) {
         {/* Feature Cards Section */}
         <div className="w-full max-w-5xl mb-12">
           <h2 className="font-display text-3xl md:text-4xl font-semibold text-center mb-8">
-            Unlock everything you need to succeed
+            Everything unlocked, completely free for 3 days
           </h2>
           
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-5">
