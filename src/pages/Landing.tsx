@@ -88,8 +88,16 @@ export default function Landing() {
       <section className="pt-16 md:pt-32 pb-20 px-4">
         <div className="max-w-7xl mx-auto">
           <div className="grid lg:grid-cols-[5fr_7fr] gap-10 lg:gap-12 items-start">
-            {/* Right Column - Video/Demo (first on mobile) */}
-            <div className="lg:order-2 animate-fade-in delay-100">
+            {/* Mobile-only title (appears above video on mobile) */}
+            <h1 className="lg:hidden order-1 font-display text-4xl md:text-5xl font-semibold animate-fade-in text-center -mb-4">
+              <span className="italic gradient-text">Turn your life</span>
+              <br />
+              <span className="text-foreground">into a Game</span>
+              <span className="gradient-text"> with AI</span>
+            </h1>
+
+            {/* Right Column - Video/Demo (second on mobile) */}
+            <div className="order-2 lg:order-2 animate-fade-in delay-100">
               <div className="overflow-hidden rounded-3xl">
                 <YouTubeEmbed 
                   videoId="0GO0SyFo8dc" 
@@ -101,9 +109,9 @@ export default function Landing() {
               </div>
             </div>
 
-            {/* Left Column - Title, Description, CTA (second on mobile) */}
-            <div className="lg:order-1 flex flex-col lg:justify-end lg:pb-0">
-              <h1 className="font-display text-4xl md:text-5xl lg:text-6xl font-semibold mb-6 animate-fade-in text-center lg:text-left">
+            {/* Left Column - Title (desktop only), Description, CTA */}
+            <div className="order-3 lg:order-1 flex flex-col lg:justify-end lg:pb-0">
+              <h1 className="hidden lg:block font-display text-4xl md:text-5xl lg:text-6xl font-semibold mb-6 animate-fade-in text-center lg:text-left">
                 <span className="italic gradient-text">Turn your life</span>
                 <br />
                 <span className="text-foreground">into a Game</span>
