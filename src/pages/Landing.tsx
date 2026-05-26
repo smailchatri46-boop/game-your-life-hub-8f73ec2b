@@ -85,10 +85,23 @@ export default function Landing() {
       <LandingNavbar />
       
       {/* Hero Section */}
-      <section className="pt-32 pb-20 px-4">
+      <section className="pt-16 md:pt-32 pb-20 px-4">
         <div className="max-w-7xl mx-auto">
           <div className="grid lg:grid-cols-[5fr_7fr] gap-10 lg:gap-12 items-start">
-            {/* Left Column - Title, Description, CTA */}
+            {/* Right Column - Video/Demo (first on mobile) */}
+            <div className="lg:order-2 animate-fade-in delay-100">
+              <div className="overflow-hidden rounded-3xl">
+                <YouTubeEmbed 
+                  videoId="0GO0SyFo8dc" 
+                  thumbnail={dashboardThumbnail}
+                  showThumbnailBottomFade
+                  thumbnailClassName="scale-110 object-[50%_35%]"
+                  className="[&_img]:rounded-none [&>div]:rounded-none"
+                />
+              </div>
+            </div>
+
+            {/* Left Column - Title, Description, CTA (second on mobile) */}
             <div className="lg:order-1 flex flex-col lg:justify-end lg:pb-0">
               <h1 className="font-display text-4xl md:text-5xl lg:text-6xl font-semibold mb-6 animate-fade-in text-center lg:text-left">
                 <span className="italic gradient-text">Turn your life</span>
@@ -111,19 +124,6 @@ export default function Landing() {
                     Continue with Google
                   </Link>
                 </Button>
-              </div>
-            </div>
-
-            {/* Right Column - Video/Demo */}
-            <div className="lg:order-2 animate-fade-in delay-100">
-              <div className="overflow-hidden rounded-3xl">
-                <YouTubeEmbed 
-                  videoId="0GO0SyFo8dc" 
-                  thumbnail={dashboardThumbnail}
-                  showThumbnailBottomFade
-                  thumbnailClassName="scale-110 object-[50%_35%]"
-                  className="[&_img]:rounded-none [&>div]:rounded-none"
-                />
               </div>
             </div>
           </div>
