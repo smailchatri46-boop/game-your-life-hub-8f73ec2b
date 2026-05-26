@@ -95,7 +95,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           checkUserStatus(session.user.id);
         } else {
           setIsNewUser(null);
-          setOnboardingChecked(false);
+          // No user => nothing to check; mark as resolved so guards can render
+          setOnboardingChecked(true);
         }
         
         setLoading(false);
@@ -111,6 +112,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       if (session?.user) {
         // Call directly - no setTimeout delay
         checkUserStatus(session.user.id);
+      } else {
+        // No user => nothing to check; mark as resolved so guards can render
+        setOnboardingChecked(true);
       }
       
       setLoading(false);
@@ -118,6 +122,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     return () => subscription.unsubscribe();
   }, [checkUserStatus]);
+
 
   const signInWithGoogle = async (): Promise<{ error: Error | null }> => {
     try {
