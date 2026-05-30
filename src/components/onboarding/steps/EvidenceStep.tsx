@@ -66,45 +66,44 @@ export function EvidenceStep({ variant, onNext }: EvidenceStepProps) {
     const html = document.documentElement;
     const originalOverflow = html.style.overflow;
     const originalOverflowY = html.style.overflowY;
-    
-    // Hide the scrollbar completely
+
     html.style.overflow = 'hidden';
     html.style.overflowY = 'hidden';
-    
+
     return () => {
-      // Restore original scrollbar behavior on unmount
       html.style.overflow = originalOverflow;
       html.style.overflowY = originalOverflowY;
     };
   }, []);
 
   return (
-    <div className="fixed inset-0 flex items-center justify-center gradient-hero overflow-hidden">
+    <div className="fixed inset-0 flex items-center justify-center gradient-hero overflow-hidden p-3">
       <div
         className={cn(
-          "bg-white rounded-[2rem] w-full max-w-xl mx-4 shadow-lg",
+          "bg-white rounded-2xl md:rounded-[2rem] w-full max-w-xl shadow-lg",
           "border border-white/60",
           "animate-fade-in",
-          "px-10 py-12"
+          "p-5 md:px-10 md:py-12",
+          "max-h-[95vh] overflow-y-auto"
         )}
       >
-        <div className="flex flex-col gap-8">
+        <div className="flex flex-col gap-5 md:gap-8">
           {/* Title with emoji */}
-          <div className="flex items-start gap-4">
-            <AppleEmoji emoji={data.emoji} size="4xl" className="flex-shrink-0 mt-0.5" />
-            <h2 className="text-2xl font-bold font-display text-foreground leading-snug">
+          <div className="flex items-start gap-3 md:gap-4">
+            <AppleEmoji emoji={data.emoji} size="2xl" className="flex-shrink-0 mt-0.5 md:!text-4xl" />
+            <h2 className="text-lg md:text-2xl font-bold font-display text-foreground leading-snug">
               {data.title}
             </h2>
           </div>
 
           {/* Body text */}
-          <p className="text-muted-foreground text-base leading-[1.8]">
+          <p className="text-muted-foreground text-sm md:text-base leading-relaxed md:leading-[1.8]">
             {data.body}
           </p>
 
           {/* Data highlight box */}
-          <div className="bg-amber-50/80 rounded-xl px-6 py-5">
-            <p className="text-sm font-medium text-foreground/90 leading-relaxed">
+          <div className="bg-amber-50/80 rounded-xl px-4 py-3 md:px-6 md:py-5">
+            <p className="text-xs md:text-sm font-medium text-foreground/90 leading-relaxed">
               {data.dataHighlight}
             </p>
           </div>
@@ -115,7 +114,7 @@ export function EvidenceStep({ variant, onNext }: EvidenceStepProps) {
               <TooltipTrigger asChild>
                 <div className="flex items-center gap-2 cursor-help">
                   <Info className="w-4 h-4 text-muted-foreground/60 flex-shrink-0" />
-                  <span className="text-sm text-muted-foreground/60">
+                  <span className="text-xs md:text-sm text-muted-foreground/60">
                     {data.citation}
                   </span>
                 </div>
@@ -138,7 +137,7 @@ export function EvidenceStep({ variant, onNext }: EvidenceStepProps) {
           <Button
             onClick={onNext}
             variant="gradient"
-            className="h-14 w-full text-base hover:opacity-90 mt-2"
+            className="h-12 md:h-14 w-full text-base hover:opacity-90 mt-1 md:mt-2"
           >
             Next <ChevronRight className="w-4 h-4 ml-1" />
           </Button>

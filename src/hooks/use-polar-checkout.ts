@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback, useEffect, useRef } from "react";
 import { getCheckoutLink, type PlanType, type BillingPeriod } from "@/lib/polar";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
@@ -13,7 +13,7 @@ interface UsePolarCheckoutOptions {
 // Track referral when a purchase is made
 async function trackReferralConversion(email: string | null, amount: number) {
   const referralId = getReferralId();
-  
+
   if (!referralId) {
     console.log("No referral ID found, skipping affiliate tracking");
     return;
@@ -24,7 +24,7 @@ async function trackReferralConversion(email: string | null, amount: number) {
       body: {
         referralId,
         email: email || undefined,
-        amount, // in dollars
+        amount,
       },
     });
 
@@ -34,7 +34,6 @@ async function trackReferralConversion(email: string | null, amount: number) {
     }
 
     console.log("Referral tracked successfully:", data);
-    // Clear the referral ID after successful tracking
     clearReferralId();
   } catch (err) {
     console.error("Error tracking referral:", err);
@@ -44,45 +43,75 @@ async function trackReferralConversion(email: string | null, amount: number) {
 export function usePolarCheckout(options: UsePolarCheckoutOptions = {}) {
   const [isLoading, setIsLoading] = useState(false);
   const { theme = "light", onError } = options;
+  const safetyTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const resetLoading = useCallback(() => {
+    setIsLoading(false);
+    if (safetyTimeoutRef.current) {
+      clearTimeout(safetyTimeoutRef.current);
+      safetyTimeoutRef.current = null;
+    }
+  }, []);
+
+  // Reset loading state whenever the user returns to the tab/window
+  // (e.g. comes back from Polar checkout without completing payment)
+  useEffect(() => {
+    const handleFocus = () => resetLoading();
+    const handleVisibility = () => {
+      if (document.visibilityState === "visible") resetLoading();
+    };
+    const handlePageShow = () => resetLoading();
+
+    window.addEventListener("focus", handleFocus);
+    document.addEventListener("visibilitychange", handleVisibility);
+    window.addEventListener("pageshow", handlePageShow);
+
+    return () => {
+      window.removeEventListener("focus", handleFocus);
+      document.removeEventListener("visibilitychange", handleVisibility);
+      window.removeEventListener("pageshow", handlePageShow);
+      if (safetyTimeoutRef.current) clearTimeout(safetyTimeoutRef.current);
+    };
+  }, [resetLoading]);
 
   const openCheckout = useCallback(
     async (plan: PlanType, period: BillingPeriod, userEmail?: string | null) => {
       setIsLoading(true);
 
+      // Safety timeout: never let the button stay disabled forever
+      if (safetyTimeoutRef.current) clearTimeout(safetyTimeoutRef.current);
+      safetyTimeoutRef.current = setTimeout(() => {
+        setIsLoading(false);
+      }, 10000);
+
       try {
         const checkoutLink = getCheckoutLink(plan, period);
-        
-        // Add theme parameter and redirect to full page checkout
+
         const url = new URL(checkoutLink);
         url.searchParams.set("theme", theme);
-        
-        // Add success URL to redirect to payment success page after payment
+
         const successUrl = `${window.location.origin}/payment-success`;
         url.searchParams.set("success_url", successUrl);
-        
-        // Calculate the amount based on plan and period for affiliate tracking
-        // These amounts should match your Polar pricing
+
         let amount = 0;
         if (plan === "pro") {
-          amount = period === "yearly" ? 34.99 : 4.9; // $34.99/year or $4.9/month
+          amount = period === "yearly" ? 34.99 : 4.9;
         }
-        
-        // Track the referral before redirecting
+
         if (amount > 0) {
           await trackReferralConversion(userEmail || null, amount);
         }
-        
-        // Redirect to full-page Polar checkout
+
         window.location.href = url.toString();
       } catch (error) {
         console.error("Failed to open checkout:", error);
         const err = error instanceof Error ? error : new Error("Checkout failed");
         toast.error("Failed to open checkout. Please try again.");
         onError?.(err);
-        setIsLoading(false);
+        resetLoading();
       }
     },
-    [theme, onError]
+    [theme, onError, resetLoading]
   );
 
   return {
