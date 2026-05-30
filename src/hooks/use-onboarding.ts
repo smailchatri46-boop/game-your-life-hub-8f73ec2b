@@ -385,8 +385,8 @@ export function useOnboarding() {
   const completeOnboarding = useCallback(async () => {
     setIsComplete(true);
     localStorage.setItem("locked_onboarding_complete", "true");
-    
-    // Save to database if user is logged in
+    localStorage.removeItem("onboarding_reached_paywall");
+
     if (user?.id) {
       await saveOnboardingData(user.id, data, true);
       await completeOnboardingInDb(user.id);
@@ -395,9 +395,9 @@ export function useOnboarding() {
 
   const skipOnboarding = useCallback(async () => {
     localStorage.setItem("locked_onboarding_skipped", "true");
+    localStorage.removeItem("onboarding_reached_paywall");
     setIsComplete(true);
-    
-    // Save to database if user is logged in
+
     if (user?.id) {
       await saveOnboardingData(user.id, data, true);
       await completeOnboardingInDb(user.id);
