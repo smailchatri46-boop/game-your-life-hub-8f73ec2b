@@ -193,7 +193,13 @@ const STEP_ORDER: OnboardingStep[] = [
 
 export function useOnboarding() {
   const { user } = useAuth();
-  const [currentStep, setCurrentStep] = useState<OnboardingStep>("survey-1");
+  const [currentStep, setCurrentStep] = useState<OnboardingStep>(() => {
+    // If the user previously reached the paywall, lock them there on reload
+    if (typeof window !== "undefined" && localStorage.getItem("onboarding_reached_paywall") === "true") {
+      return "paywall";
+    }
+    return "survey-1";
+  });
   const [data, setData] = useState<OnboardingData>(INITIAL_DATA);
   const [isComplete, setIsComplete] = useState(false);
 
@@ -201,36 +207,54 @@ export function useOnboarding() {
   const totalSteps = STEP_ORDER.length;
   const progress = ((currentIndex + 1) / totalSteps) * 100;
 
-  const canGoBack = currentIndex > 0 && currentStep !== "loading" && currentStep !== "success";
+  const canGoBack = currentIndex > 0 && currentStep !== "loading" && currentStep !== "success" && currentStep !== "paywall";
   const canGoNext = currentIndex < totalSteps - 1;
+
+  // Lock navigation when user reaches paywall: persist + trap browser back button
+  useEffect(() => {
+    if (currentStep !== "paywall") return;
+
+    localStorage.setItem("onboarding_reached_paywall", "true");
+
+    // Push sentinel history entry so popstate fires without actually leaving
+    window.history.pushState({ paywallLock: true }, "");
+    const handlePopState = () => {
+      window.history.pushState({ paywallLock: true }, "");
+    };
+    window.addEventListener("popstate", handlePopState);
+
+    return () => {
+      window.removeEventListener("popstate", handlePopState);
+    };
+  }, [currentStep]);
 
   // Auto-save onboarding data when step changes (debounced)
   useEffect(() => {
     if (!user?.id) return;
-    
-    // Don't save on initial step or if no meaningful data yet
+
     if (currentStep === "survey-1" && !data.surveyAnswers.survey1) return;
-    
-    // Save progress to database
+
     const saveProgress = async () => {
       await saveOnboardingData(user.id, data, false);
     };
-    
+
     const timeoutId = setTimeout(saveProgress, 1000);
     return () => clearTimeout(timeoutId);
   }, [currentStep, user?.id, data]);
 
   const goToNext = useCallback(() => {
+    if (currentStep === "paywall") return; // locked: never advance past paywall
     if (currentIndex < totalSteps - 1) {
       setCurrentStep(STEP_ORDER[currentIndex + 1]);
     }
-  }, [currentIndex, totalSteps]);
+  }, [currentIndex, totalSteps, currentStep]);
 
   const goToPrevious = useCallback(() => {
+    if (currentStep === "paywall") return; // locked
     if (currentIndex > 0) {
       setCurrentStep(STEP_ORDER[currentIndex - 1]);
     }
-  }, [currentIndex]);
+  }, [currentIndex, currentStep]);
 
   const goToStep = useCallback((step: OnboardingStep) => {
     setCurrentStep(step);
@@ -361,8 +385,8 @@ export function useOnboarding() {
   const completeOnboarding = useCallback(async () => {
     setIsComplete(true);
     localStorage.setItem("locked_onboarding_complete", "true");
-    
-    // Save to database if user is logged in
+    localStorage.removeItem("onboarding_reached_paywall");
+
     if (user?.id) {
       await saveOnboardingData(user.id, data, true);
       await completeOnboardingInDb(user.id);
@@ -371,9 +395,9 @@ export function useOnboarding() {
 
   const skipOnboarding = useCallback(async () => {
     localStorage.setItem("locked_onboarding_skipped", "true");
+    localStorage.removeItem("onboarding_reached_paywall");
     setIsComplete(true);
-    
-    // Save to database if user is logged in
+
     if (user?.id) {
       await saveOnboardingData(user.id, data, true);
       await completeOnboardingInDb(user.id);
